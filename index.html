@@ -200,7 +200,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Startseite
+            Home
           </a>
         </li>
       
@@ -210,7 +210,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
-            Kategorien
+            Categories
           </a>
         </li>
       
@@ -220,7 +220,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
-            Über
+            About
           </a>
         </li>
       
@@ -230,7 +230,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
-            Archiv
+            Archives
           </a>
         </li>
       
@@ -253,7 +253,7 @@
             
               <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
             
-            Suche
+            Search
           </a>
         </li>
       
@@ -307,6 +307,227 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/28/note-advance-swift-collection-protocols/" itemprop="url">Swift中Collection的Protocol</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-28T17:37:51+08:00">
+                2017-07-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Sequences"><a href="#Sequences" class="headerlink" title="Sequences"></a>Sequences</h2><p><code>Sequence</code>协议位于系统架构的底层，其定义是</p>
+<pre><code>protocol Sequence {
+
+ associatedtype Iterator: IteratorProtocol
+ func makeIterator()-&gt; Iterator
+
+}
+</code></pre><h2 id="Iterators"><a href="#Iterators" class="headerlink" title="Iterators"></a>Iterators</h2><pre><code>protocol IteratorProtocol{
+associatedtype Element
+mutating func next()-&gt; Element?
+}
+</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：</p>
+<pre><code>struct PrefixIterator:IteratorProtocol {
+
+let string:String
+var offset:String.Index
+init(string:String) {
+    self.string = string
+    offset = string.startIndex
+}
+typealias Element =  String // 这里可以省略，因为编译器可以从返回值的类型中推断出来
+mutating func next() -&gt; String? {
+
+    guard offset &lt; string.endIndex else { return nil }
+    offset = string.index(after: offset)
+    let offSetString = string[string.startIndex..&lt;offset]
+    return offSetString;
+}
+
+}
+
+ var prefixIterator = PrefixIterator.init(string: &quot;Hello&quot;)
+ while let content = prefixIterator.next() {
+    print(content)
+}
+
+ struct PrefixSequence:Sequence {
+ let string: String
+ func makeIterator() -&gt; PrefixIterator {
+
+    return PrefixIterator(string:string)
+
+}
+
+}
+
+for prefix in PrefixSequence(string:&quot;Hello&quot;){
+
+print(&quot;for in\(prefix)&quot;)
+}
+PrefixSequence(string:&quot;Hello&quot;).map {$0.uppercased()}
+</code></pre><p>如上所示，我么要想对一个Type实现for in 操作，需要两步：</p>
+<ol>
+<li>创建一个遍历器：让其遵守<code>IteratorProtocol</code>协议</li>
+<li><p>创建一个Type：让其遵守<code>Sequence</code>协议，在实现<code>makeIterator</code>方法时将第一步中的<code>Iterator</code>返回即可<br><code>Iterator</code>有两种不同的语义，<strong>值语义</strong>(将要遍历的实例拷贝)和<strong>引用语义</strong>（不拷贝所遍历的实例），比如</p>
+<pre><code>let sequ = stride(from: 0, to: 10, by: 1)
+var i1 = sequ.makeIterator() // StrideToIterator
+i1.next() //Optional(0)
+i1.next() //Optional(1)
+
+var i2 = i1;
+i1.next() //Optional(2)
+i1.next() //Optional(3)
+
+i2.next() //Optional(2)
+i2.next() //Optional(3)
+</code></pre></li>
+</ol>
+<p>这个StrideToIterator是值语义，所以在赋值的时候会执行拷贝操作。<br>AnyIterator会将基础Iterator用内部box对象封装，这个box对象时引用类型的，所以其是引用语义。比如:</p>
+<pre><code>  var i3 = AnyIterator(i1)
+  var i4 = i3
+
+  i3.next() // Optional(4)
+  i4.next() // Optional(5)
+
+
+  let fibsSequence2 = sequence(state:(0, 1)) { (state:inout (Int, Int)) -&gt; Int? in
+
+let upcomingNumber = state.0
+state = (state.1 , state.0 + state.1)
+return upcomingNumber
+
+ }
+ Array(fibsSequence2.prefix(10))
+</code></pre><p>  Sequence的闭包是懒执行的，只有到获取某个数值的时候才执行，比如</p>
+<pre><code>Array(fibsSequence2.prefix(10))
+</code></pre><p>   这才让构造方法<code>fibsSequence2.prefix(10)</code>产生作用，如果<code>Sequence</code>提前计算了其数值，因为其实无穷<code>Sequence</code>，所以当越界的时候其就会崩溃。</p>
+<p>  有些Sequence是不稳定的，也就是说每次的遍历，结果可能不一样，比如网络流，磁盘文件，UI事件流，以及其它类型的数据，它们都可以被建模，作为<code>Sequence</code>。这也就是为什么，<strong>取出第一个元素的属性只存在于Collection中</strong>，而不是在<code>Sequence</code>中，因为改这个<code>first</code>方法一定要是<code>nondestructive</code>的，也就是说取出第一个元素不应该对其输出结果产生影响，也就是说必须是稳定的。</p>
+<p>  怎样判断一个<code>Sequence</code>是否是稳定的？<br>  如果一个<code>Sequence</code>遵守<code>Collection</code>，那么它就是稳定的。<br>  反过来，就不成立了：如果一个<code>Sequence</code>是稳定的，那么它就是遵守<code>Collection</code>协议的。这时不成立的。比如：<code>StrideTo</code>和<code>StrideThrough</code>类型，就是稳定的，然而他们没有遵守<code>Collection</code>协议。</p>
+<h2 id="Sequences和Iterator之间的关系是怎样的？"><a href="#Sequences和Iterator之间的关系是怎样的？" class="headerlink" title="Sequences和Iterator之间的关系是怎样的？"></a>Sequences和Iterator之间的关系是怎样的？</h2><p>Sequences和Iterator那么相似，为什么不把他们合并成一个呢？在<code>destructively consumed sequence</code>中可以，因为他们可以共用一个Iterator，但是在<code>stable sequence</code>中是不行的，因为它们需要Iterator提供的隔离的遍历状态和遍历逻辑（这种遍历状态就是Iterator创建的）。<code>makeIterator</code>也就是为了创建这种遍历状态。</p>
+<h2 id="SubSequence"><a href="#SubSequence" class="headerlink" title="SubSequence"></a>SubSequence</h2><p>Sequence有另外的一个关联属性SubSequence</p>
+<pre><code>public protocol Sequence {
+associatedtype Iterator : IteratorProtocol
+associatedtype SubSequence 
+...
+}
+</code></pre><p>我们可以对其<code>SubSequence</code>做以限制，比如：</p>
+<pre><code>extension Sequence where Iterator.Element: Equatable,
+SubSequence: Sequence,
+SubSequence.Iterator.Element == Iterator.Element {
+
+func headMirrorsTrail(_ n:Int) -&gt; Bool {
+
+    let head = self.prefix(n)
+    let trail = self.suffix(n).reversed()
+    return head.elementsEqual(trail)
+
+}
+}
+let result = [1,2,3,4,2,1].headMirrorsTrail(1)
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collections/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -336,7 +557,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-28T09:30:32+08:00">
                 2017-07-28
@@ -497,7 +718,7 @@ let result = [1,2,3,12,1,3,4,5,6,4,6].unique()
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-26T20:26:22+08:00">
                 2017-07-26
@@ -609,7 +830,7 @@ let result = [1,2,3,12,1,3,4,5,6,4,6].unique()
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-22T16:01:14+08:00">
                 2017-07-22
@@ -737,8 +958,8 @@ let result = [1,2,3,12,1,3,4,5,6,4,6].unique()
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">3</span>
-                <span class="site-state-item-name">Artikel</span>
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">posts</span>
               </a>
             </div>
           
@@ -751,7 +972,7 @@ let result = [1,2,3,12,1,3,4,5,6,4,6].unique()
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
                 <span class="site-state-item-count">1</span>
-                <span class="site-state-item-name">Tags</span>
+                <span class="site-state-item-name">tags</span>
               </a>
             </div>
           
@@ -801,7 +1022,7 @@ let result = [1,2,3,12,1,3,4,5,6,4,6].unique()
 
 
 <div class="powered-by">
-  Erstellt mit  <a class="theme-link" href="https://hexo.io">Hexo</a>
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
 </div>
 
 <div class="theme-info">

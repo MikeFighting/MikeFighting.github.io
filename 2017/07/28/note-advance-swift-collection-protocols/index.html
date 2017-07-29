@@ -93,12 +93,16 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="击水湘江">
-<meta property="og:url" content="https://mikefighting.github.io/archives/index.html">
+<meta name="description" content="SequencesSequence协议位于系统架构的底层，其定义是 protocol Sequence {   associatedtype Iterator: IteratorProtocol  func makeIterator()-&amp;gt; Iterator  } Iteratorsprotocol IteratorProtocol{ associatedtype Element mutat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift中Collection的Protocol">
+<meta property="og:url" content="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/index.html">
 <meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="SequencesSequence协议位于系统架构的底层，其定义是 protocol Sequence {   associatedtype Iterator: IteratorProtocol  func makeIterator()-&amp;gt; Iterator  } Iteratorsprotocol IteratorProtocol{ associatedtype Element mutat">
+<meta property="og:updated_time" content="2017-07-29T08:32:24.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="击水湘江">
+<meta name="twitter:title" content="Swift中Collection的Protocol">
+<meta name="twitter:description" content="SequencesSequence协议位于系统架构的底层，其定义是 protocol Sequence {   associatedtype Iterator: IteratorProtocol  func makeIterator()-&amp;gt; Iterator  } Iteratorsprotocol IteratorProtocol{ associatedtype Element mutat">
 
 
 
@@ -126,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/archives/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/"/>
 
 
 
 
 
-  <title>Archive | 击水湘江</title>
+  <title>Swift中Collection的Protocol | 击水湘江</title>
   
 
 
@@ -157,7 +161,7 @@
     
   
 
-  <div class="container sidebar-position-right  page-archive  ">
+  <div class="container sidebar-position-right page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -295,177 +299,251 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <span class="archive-move-on"></span>
-
-    <span class="archive-page-counter">
-      
-      
-      
-        
-      
-      Um..! 4 posts in total. Keep on posting.
-    </span>
-
+  <div id="posts" class="posts-expand">
     
-
-      
-      
-      
-
-      
-        
-        <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-2017">2017</h2>
-        </div>
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/07/28/note-advance-swift-collection-protocols/" itemprop="url">
-              
-                <span itemprop="name">Swift中Collection的Protocol</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-07-28T17:37:51+08:00"
-              content="2017-07-28" >
-          07-28
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/07/28/note-advance-swift-collections/" itemprop="url">
-              
-                <span itemprop="name">Swift中的Dictionary，Set，Range</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-07-28T09:30:32+08:00"
-              content="2017-07-28" >
-          07-28
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/07/26/VaporBasicUse/" itemprop="url">
-              
-                <span itemprop="name">Vapor基础用法</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-07-26T20:26:22+08:00"
-              content="2017-07-26" >
-          07-26
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/07/22/hello-world/" itemprop="url">
-              
-                <span itemprop="name">Hello World</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-07-22T16:01:14+08:00"
-              content="2017-07-22" >
-          07-22
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-  </section>
 
   
 
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Swift中Collection的Protocol</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-28T17:37:51+08:00">
+                2017-07-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Sequences"><a href="#Sequences" class="headerlink" title="Sequences"></a>Sequences</h2><p><code>Sequence</code>协议位于系统架构的底层，其定义是</p>
+<pre><code>protocol Sequence {
+
+ associatedtype Iterator: IteratorProtocol
+ func makeIterator()-&gt; Iterator
+
+}
+</code></pre><h2 id="Iterators"><a href="#Iterators" class="headerlink" title="Iterators"></a>Iterators</h2><pre><code>protocol IteratorProtocol{
+associatedtype Element
+mutating func next()-&gt; Element?
+}
+</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：</p>
+<pre><code>struct PrefixIterator:IteratorProtocol {
+
+let string:String
+var offset:String.Index
+init(string:String) {
+    self.string = string
+    offset = string.startIndex
+}
+typealias Element =  String // 这里可以省略，因为编译器可以从返回值的类型中推断出来
+mutating func next() -&gt; String? {
+
+    guard offset &lt; string.endIndex else { return nil }
+    offset = string.index(after: offset)
+    let offSetString = string[string.startIndex..&lt;offset]
+    return offSetString;
+}
+
+}
+
+ var prefixIterator = PrefixIterator.init(string: &quot;Hello&quot;)
+ while let content = prefixIterator.next() {
+    print(content)
+}
+
+ struct PrefixSequence:Sequence {
+ let string: String
+ func makeIterator() -&gt; PrefixIterator {
+
+    return PrefixIterator(string:string)
+
+}
+
+}
+
+for prefix in PrefixSequence(string:&quot;Hello&quot;){
+
+print(&quot;for in\(prefix)&quot;)
+}
+PrefixSequence(string:&quot;Hello&quot;).map {$0.uppercased()}
+</code></pre><p>如上所示，我么要想对一个Type实现for in 操作，需要两步：</p>
+<ol>
+<li>创建一个遍历器：让其遵守<code>IteratorProtocol</code>协议</li>
+<li><p>创建一个Type：让其遵守<code>Sequence</code>协议，在实现<code>makeIterator</code>方法时将第一步中的<code>Iterator</code>返回即可<br><code>Iterator</code>有两种不同的语义，<strong>值语义</strong>(将要遍历的实例拷贝)和<strong>引用语义</strong>（不拷贝所遍历的实例），比如</p>
+<pre><code>let sequ = stride(from: 0, to: 10, by: 1)
+var i1 = sequ.makeIterator() // StrideToIterator
+i1.next() //Optional(0)
+i1.next() //Optional(1)
+
+var i2 = i1;
+i1.next() //Optional(2)
+i1.next() //Optional(3)
+
+i2.next() //Optional(2)
+i2.next() //Optional(3)
+</code></pre></li>
+</ol>
+<p>这个StrideToIterator是值语义，所以在赋值的时候会执行拷贝操作。<br>AnyIterator会将基础Iterator用内部box对象封装，这个box对象时引用类型的，所以其是引用语义。比如:</p>
+<pre><code>  var i3 = AnyIterator(i1)
+  var i4 = i3
+
+  i3.next() // Optional(4)
+  i4.next() // Optional(5)
+
+
+  let fibsSequence2 = sequence(state:(0, 1)) { (state:inout (Int, Int)) -&gt; Int? in
+
+let upcomingNumber = state.0
+state = (state.1 , state.0 + state.1)
+return upcomingNumber
+
+ }
+ Array(fibsSequence2.prefix(10))
+</code></pre><p>  Sequence的闭包是懒执行的，只有到获取某个数值的时候才执行，比如</p>
+<pre><code>Array(fibsSequence2.prefix(10))
+</code></pre><p>   这才让构造方法<code>fibsSequence2.prefix(10)</code>产生作用，如果<code>Sequence</code>提前计算了其数值，因为其实无穷<code>Sequence</code>，所以当越界的时候其就会崩溃。</p>
+<p>  有些Sequence是不稳定的，也就是说每次的遍历，结果可能不一样，比如网络流，磁盘文件，UI事件流，以及其它类型的数据，它们都可以被建模，作为<code>Sequence</code>。这也就是为什么，<strong>取出第一个元素的属性只存在于Collection中</strong>，而不是在<code>Sequence</code>中，因为改这个<code>first</code>方法一定要是<code>nondestructive</code>的，也就是说取出第一个元素不应该对其输出结果产生影响，也就是说必须是稳定的。</p>
+<p>  怎样判断一个<code>Sequence</code>是否是稳定的？<br>  如果一个<code>Sequence</code>遵守<code>Collection</code>，那么它就是稳定的。<br>  反过来，就不成立了：如果一个<code>Sequence</code>是稳定的，那么它就是遵守<code>Collection</code>协议的。这时不成立的。比如：<code>StrideTo</code>和<code>StrideThrough</code>类型，就是稳定的，然而他们没有遵守<code>Collection</code>协议。</p>
+<h2 id="Sequences和Iterator之间的关系是怎样的？"><a href="#Sequences和Iterator之间的关系是怎样的？" class="headerlink" title="Sequences和Iterator之间的关系是怎样的？"></a>Sequences和Iterator之间的关系是怎样的？</h2><p>Sequences和Iterator那么相似，为什么不把他们合并成一个呢？在<code>destructively consumed sequence</code>中可以，因为他们可以共用一个Iterator，但是在<code>stable sequence</code>中是不行的，因为它们需要Iterator提供的隔离的遍历状态和遍历逻辑（这种遍历状态就是Iterator创建的）。<code>makeIterator</code>也就是为了创建这种遍历状态。</p>
+<h2 id="SubSequence"><a href="#SubSequence" class="headerlink" title="SubSequence"></a>SubSequence</h2><p>Sequence有另外的一个关联属性SubSequence</p>
+<pre><code>public protocol Sequence {
+associatedtype Iterator : IteratorProtocol
+associatedtype SubSequence 
+...
+}
+</code></pre><p>我们可以对其<code>SubSequence</code>做以限制，比如：</p>
+<pre><code>extension Sequence where Iterator.Element: Equatable,
+SubSequence: Sequence,
+SubSequence.Iterator.Element == Iterator.Element {
+
+func headMirrorsTrail(_ n:Int) -&gt; Bool {
+
+    let head = self.prefix(n)
+    let trail = self.suffix(n).reversed()
+    return head.elementsEqual(trail)
+
+}
+}
+let result = [1,2,3,4,2,1].headMirrorsTrail(1)
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/28/note-advance-swift-collections/" rel="next" title="Swift中的Dictionary，Set，Range">
+                <i class="fa fa-chevron-left"></i> Swift中的Dictionary，Set，Range
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -473,6 +551,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -493,8 +575,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -547,6 +638,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Sequences"><span class="nav-number">1.</span> <span class="nav-text">Sequences</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Iterators"><span class="nav-number">2.</span> <span class="nav-text">Iterators</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sequences和Iterator之间的关系是怎样的？"><span class="nav-number">3.</span> <span class="nav-text">Sequences和Iterator之间的关系是怎样的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SubSequence"><span class="nav-number">4.</span> <span class="nav-text">SubSequence</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -660,11 +767,9 @@
   
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
 
 
   
