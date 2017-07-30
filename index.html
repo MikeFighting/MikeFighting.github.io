@@ -336,7 +336,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/07/30/wwdc-understand-swift-performance/" itemprop="url">WWDC笔记Understanding Swift Performance</a></h1>
+                <a class="post-title-link" href="/2017/07/30/wwdc-understand-swift-performance/" itemprop="url">理解Swift的性能</a></h1>
         
 
         <div class="post-meta">
@@ -391,8 +391,8 @@
 <li>Reference Count多还是少</li>
 <li>Method Dispatch中Static多还是Dynamic多</li>
 </ol>
-<p>堆上的操作效率是更低的，因为每次开辟堆控件都需要寻找空闲的内存块。在消除的时候需要重新插入一个内存块。除此之外，Class等存在堆上的对象，需要开辟我们看不到的空间，这些空间是需要消耗内存的。<br>引用计数的不断操作会降低性能。所以要尽可能少的创建Class。<br>在Struct中包含Class是会降低性能的，我们要尽量减少这种情况的出现，比如在使用纯字符串的时候，我们可以使用Enum，或者其它的值类型来替代。<br>Swift在调用一个函数的时候，我们需要跳到对应的方法实现。<br>Static方法：如果在编译时期就可以确定某个方法的实现的话，就可以直接跳转到相应的方法的。并且是inline方法</p>
-<p>Static Dispatches &amp; Dynamic Dispatch<br>Dynamic方法：需要在运行时在表中找到对应的方法的实现。并且会妨碍inlining及其它的性能优化。当我们利用了多态之后，我们就难以确定这个方法究竟是调用那个方法，也就是说必须在运行时去确定到底要执行那个方法的实现。</p>
+<p>栈上的操作更加高效，降低栈指针来创建，增加栈指针来释放栈。<br>堆上可以存放高级数据结构，但是堆的操作效率是更低的，因为每次开辟堆空间都需要寻找空闲的内存块。在消除的时候需要重新插入一个内存块。除此之外，Class等存在堆上的对象，需要开辟我们看不到的空间，这些空间是需要消耗内存的。<br>引用计数的不断操作会降低性能。所以要尽可能少的创建Class。<br>在Struct中包含Class是会降低性能的，我们要尽量减少这种情况的出现，比如在使用纯字符串的时候，我们可以使用Enum，或者其它的值类型来替代。<br>Swift在调用一个函数的时候，我们需要跳到对应的方法实现。<br>Static方法：如果在编译时期就可以确定某个方法的实现的话，就可以直接跳转到相应的方法的。并且是inline方法</p>
+<p>Static Dispatches VS Dynamic Dispatch<br>Static方法：可以在编译时确定需要调用的方法实现，在运行时，可以直接调用并且可以做<code>inline</code>优化。<br>Dynamic方法：需要在运行时在表中找到对应的方法的实现。并且会妨碍inlining及其它的性能优化。当我们利用了多态之后，我们就难以确定这个方法究竟是调用那个方法，也就是说必须在运行时去确定到底要执行那个方法的实现。<br>Swift使用了一种Protocol Witness Table的技术来调度方法。利用Existential Container来封装protocol type，大数据是存储在Heap上的。Value Witness Table包含以下几部分：<br>allocate:<br>copy:<br>destruct:<br>deallocate:<br>Whole Model优化可以让同一个模块中的不同文件都可以同时优化。<br>Type不会在运行时改变。</p>
 
           
         
@@ -1021,7 +1021,7 @@ let result = [1,2,3,12,1,3,4,5,6,4,6].unique()
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>
