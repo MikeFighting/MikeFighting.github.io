@@ -99,17 +99,17 @@
 
 
 
-<meta name="description" content="击水湘江真名黄智辉，洛阳人，除编程之外，喜欢英语，书法，健身。 喜欢编程的原因之一就是可以不断学习新技术，并且可以接触不断得使用英语，和全世界的开发者一起交流学习，现在词汇量大于11k，还在不断得学习英语，对英语学习的感受是：英语是一门工具，只要不断的使用才能够喜欢，只有不断的使用才可以掌握。因为自幼字体潦草，后来决心改正并不断练习，慢慢得爱上书法，会在心烦或者闲暇时间去练习书法来让自己静心。高中">
-<meta property="og:type" content="website">
-<meta property="og:title" content="about">
-<meta property="og:url" content="https://mikefighting.github.io/about/index.html">
+<meta name="description" content="Swift性能指标：  Stack VS Heap Reference Count多还是少 Method Dispatch中Static多还是Dynamic多  堆上的操作效率是更低的，因为每次开辟堆控件都需要寻找空闲的内存块。在消除的时候需要重新插入一个内存块。除此之外，Class等存在堆上的对象，需要开辟我们看不到的空间，这些空间是需要消耗内存的。引用计数的不断操作会降低性能。所以要尽可能少的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WWDC笔记Understanding Swift Performance">
+<meta property="og:url" content="https://mikefighting.github.io/2017/07/30/wwdc-understand-swift-performance/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="击水湘江真名黄智辉，洛阳人，除编程之外，喜欢英语，书法，健身。 喜欢编程的原因之一就是可以不断学习新技术，并且可以接触不断得使用英语，和全世界的开发者一起交流学习，现在词汇量大于11k，还在不断得学习英语，对英语学习的感受是：英语是一门工具，只要不断的使用才能够喜欢，只有不断的使用才可以掌握。因为自幼字体潦草，后来决心改正并不断练习，慢慢得爱上书法，会在心烦或者闲暇时间去练习书法来让自己静心。高中">
+<meta property="og:description" content="Swift性能指标：  Stack VS Heap Reference Count多还是少 Method Dispatch中Static多还是Dynamic多  堆上的操作效率是更低的，因为每次开辟堆控件都需要寻找空闲的内存块。在消除的时候需要重新插入一个内存块。除此之外，Class等存在堆上的对象，需要开辟我们看不到的空间，这些空间是需要消耗内存的。引用计数的不断操作会降低性能。所以要尽可能少的">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-07-30T08:44:12.000Z">
+<meta property="og:updated_time" content="2017-07-30T08:44:09.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="about">
-<meta name="twitter:description" content="击水湘江真名黄智辉，洛阳人，除编程之外，喜欢英语，书法，健身。 喜欢编程的原因之一就是可以不断学习新技术，并且可以接触不断得使用英语，和全世界的开发者一起交流学习，现在词汇量大于11k，还在不断得学习英语，对英语学习的感受是：英语是一门工具，只要不断的使用才能够喜欢，只有不断的使用才可以掌握。因为自幼字体潦草，后来决心改正并不断练习，慢慢得爱上书法，会在心烦或者闲暇时间去练习书法来让自己静心。高中">
+<meta name="twitter:title" content="WWDC笔记Understanding Swift Performance">
+<meta name="twitter:description" content="Swift性能指标：  Stack VS Heap Reference Count多还是少 Method Dispatch中Static多还是Dynamic多  堆上的操作效率是更低的，因为每次开辟堆控件都需要寻找空闲的内存块。在消除的时候需要重新插入一个内存块。除此之外，Class等存在堆上的对象，需要开辟我们看不到的空间，这些空间是需要消耗内存的。引用计数的不断操作会降低性能。所以要尽可能少的">
 
 
 
@@ -137,13 +137,13 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/about/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/07/30/wwdc-understand-swift-performance/"/>
 
 
 
 
 
-  <title>about | 击水湘江</title>
+  <title>WWDC笔记Understanding Swift Performance | 击水湘江</title>
   
 
 
@@ -307,21 +307,147 @@
             
 
   <div id="posts" class="posts-expand">
-  <header class="post-header">
+    
 
-	<h1 class="post-title" itemprop="name headline">about</h1>
+  
 
+  
+  
+  
 
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/30/wwdc-understand-swift-performance/">
 
-</header>
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
 
     
-    
-      <h2 id="击水湘江"><a href="#击水湘江" class="headerlink" title="击水湘江"></a>击水湘江</h2><p>真名黄智辉，洛阳人，除<strong>编程</strong>之外，喜欢<strong>英语，书法，健身</strong>。</p>
-<p>喜欢编程的原因之一就是可以不断学习新技术，并且可以接触不断得使用英语，和全世界的开发者一起交流学习，现在词汇量大于11k，还在不断得学习英语，对英语学习的感受是：英语是一门工具，只要不断的使用才能够喜欢，只有不断的使用才可以掌握。<br>因为自幼字体潦草，后来决心改正并不断练习，慢慢得爱上书法，会在心烦或者闲暇时间去练习书法来让自己静心。<br>高中之前，体弱多病，并开始跑步健身。这个习惯一直保持，大学四年，如未遇到特殊情况，每天晚上保持四千米长跑。现在每天到公司健身房健身半小时左右。</p>
-<p>本人现工作于五八同城商家技术部。</p>
+      <header class="post-header">
 
+        
+        
+          <h1 class="post-title" itemprop="name headline">WWDC笔记Understanding Swift Performance</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-30T13:26:43+08:00">
+                2017-07-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
     
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Swift性能指标：</p>
+<ol>
+<li>Stack VS Heap</li>
+<li>Reference Count多还是少</li>
+<li>Method Dispatch中Static多还是Dynamic多</li>
+</ol>
+<p>堆上的操作效率是更低的，因为每次开辟堆控件都需要寻找空闲的内存块。在消除的时候需要重新插入一个内存块。除此之外，Class等存在堆上的对象，需要开辟我们看不到的空间，这些空间是需要消耗内存的。<br>引用计数的不断操作会降低性能。所以要尽可能少的创建Class。<br>在Struct中包含Class是会降低性能的，我们要尽量减少这种情况的出现，比如在使用纯字符串的时候，我们可以使用Enum，或者其它的值类型来替代。<br>Swift在调用一个函数的时候，我们需要跳到对应的方法实现。<br>Static方法：如果在编译时期就可以确定某个方法的实现的话，就可以直接跳转到相应的方法的。并且是inline方法</p>
+<p>Static Dispatches &amp; Dynamic Dispatch<br>Dynamic方法：需要在运行时在表中找到对应的方法的实现。并且会妨碍inlining及其它的性能优化。当我们利用了多态之后，我们就难以确定这个方法究竟是调用那个方法，也就是说必须在运行时去确定到底要执行那个方法的实现。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/28/note-advance-swift-collection-protocols/" rel="next" title="Swift中Collection的Protocol">
+                <i class="fa fa-chevron-left"></i> Swift中Collection的Protocol
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -354,17 +480,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            Overview
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -417,22 +534,6 @@
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#击水湘江"><span class="nav-number">1.</span> <span class="nav-text">击水湘江</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -546,10 +647,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
