@@ -99,17 +99,17 @@
 
 
 
-<meta name="description" content="SequencesSequence协议位于系统架构的底层，其定义是    123456protocol Sequence &amp;#123;    associatedtype Iterator: IteratorProtocol func makeIterator()-&amp;gt; Iterator   &amp;#125; Iterators123456protocol IteratorProtocol&amp;#12">
+<meta name="description" content="SequencesSequence协议位于系统架构的底层，其定义是   123456protocol Sequence &amp;#123;    associatedtype Iterator: IteratorProtocol func makeIterator()-&amp;gt; Iterator   &amp;#125; Iterators123456protocol IteratorProtocol&amp;#123">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Swift中Collection的Protocol">
 <meta property="og:url" content="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="SequencesSequence协议位于系统架构的底层，其定义是    123456protocol Sequence &amp;#123;    associatedtype Iterator: IteratorProtocol func makeIterator()-&amp;gt; Iterator   &amp;#125; Iterators123456protocol IteratorProtocol&amp;#12">
+<meta property="og:description" content="SequencesSequence协议位于系统架构的底层，其定义是   123456protocol Sequence &amp;#123;    associatedtype Iterator: IteratorProtocol func makeIterator()-&amp;gt; Iterator   &amp;#125; Iterators123456protocol IteratorProtocol&amp;#123">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-07-29T09:15:37.000Z">
+<meta property="og:updated_time" content="2017-07-30T00:47:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Swift中Collection的Protocol">
-<meta name="twitter:description" content="SequencesSequence协议位于系统架构的底层，其定义是    123456protocol Sequence &amp;#123;    associatedtype Iterator: IteratorProtocol func makeIterator()-&amp;gt; Iterator   &amp;#125; Iterators123456protocol IteratorProtocol&amp;#12">
+<meta name="twitter:description" content="SequencesSequence协议位于系统架构的底层，其定义是   123456protocol Sequence &amp;#123;    associatedtype Iterator: IteratorProtocol func makeIterator()-&amp;gt; Iterator   &amp;#125; Iterators123456protocol IteratorProtocol&amp;#123">
 
 
 
@@ -380,109 +380,25 @@
       
 
       
-        <h2 id="Sequences"><a href="#Sequences" class="headerlink" title="Sequences"></a>Sequences</h2><p><code>Sequence</code>协议位于系统架构的底层，其定义是</p>
-   <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>&#123;</div><div class="line">   </div><div class="line"> associatedtype <span class="type">Iterator</span>: <span class="type">IteratorProtocol</span></div><div class="line"> <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span>-&gt; <span class="type">Iterator</span></div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        <h2 id="Sequences"><a href="#Sequences" class="headerlink" title="Sequences"></a>Sequences</h2><p><code>Sequence</code>协议位于系统架构的底层，其定义是<br>   <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>&#123;</div><div class="line">   </div><div class="line"> associatedtype <span class="type">Iterator</span>: <span class="type">IteratorProtocol</span></div><div class="line"> <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span>-&gt; <span class="type">Iterator</span></div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h2 id="Iterators"><a href="#Iterators" class="headerlink" title="Iterators"></a>Iterators</h2><pre><code><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">IteratorProtocol</span></span>&#123;</div><div class="line"></div><div class="line">associatedtype <span class="type">Element</span></div><div class="line"><span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span>-&gt; <span class="type">Element</span>?</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：</p>
-<pre><code>struct PrefixIterator:IteratorProtocol {
-
-let string:String
-var offset:String.Index
-init(string:String) {
-    self.string = string
-    offset = string.startIndex
-}
-typealias Element =  String // 这里可以省略，因为编译器可以从返回值的类型中推断出来
-mutating func next() -&gt; String? {
-
-    guard offset &lt; string.endIndex else { return nil }
-    offset = string.index(after: offset)
-    let offSetString = string[string.startIndex..&lt;offset]
-    return offSetString;
-}
-
-}
-
- var prefixIterator = PrefixIterator.init(string: &quot;Hello&quot;)
- while let content = prefixIterator.next() {
-    print(content)
-}
-
- struct PrefixSequence:Sequence {
- let string: String
- func makeIterator() -&gt; PrefixIterator {
-
-    return PrefixIterator(string:string)
-
-}
-
-}
-
-for prefix in PrefixSequence(string:&quot;Hello&quot;){
-
-print(&quot;for in\(prefix)&quot;)
-}
-PrefixSequence(string:&quot;Hello&quot;).map {$0.uppercased()}
-</code></pre><p>如上所示，我么要想对一个Type实现for in 操作，需要两步：</p>
+</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</div><div class="line">   <span class="keyword">let</span> string:<span class="type">String</span></div><div class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></div><div class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</div><div class="line">       <span class="keyword">self</span>.string = string</div><div class="line">       offset = string.startIndex</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></div><div class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String</span>? &#123;</div><div class="line"></div><div class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</div><div class="line">       offset = string.index(after: offset)</div><div class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</div><div class="line">       <span class="keyword">return</span> offSetString;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</div><div class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</div><div class="line">    <span class="built_in">print</span>(content)</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> string: <span class="type">String</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</div><div class="line">       </div><div class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</div><div class="line">       </div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"for in<span class="subst">\(<span class="keyword">prefix</span>)</span>"</span>)</div><div class="line">   &#125;</div><div class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</div></pre></td></tr></table></figure></p>
+<p>如上所示，我么要想对一个Type实现for in 操作，需要两步：</p>
 <ol>
 <li>创建一个遍历器：让其遵守<code>IteratorProtocol</code>协议</li>
-<li><p>创建一个Type：让其遵守<code>Sequence</code>协议，在实现<code>makeIterator</code>方法时将第一步中的<code>Iterator</code>返回即可<br><code>Iterator</code>有两种不同的语义，<strong>值语义</strong>(将要遍历的实例拷贝)和<strong>引用语义</strong>（不拷贝所遍历的实例），比如</p>
-<pre><code>let sequ = stride(from: 0, to: 10, by: 1)
-var i1 = sequ.makeIterator() // StrideToIterator
-i1.next() //Optional(0)
-i1.next() //Optional(1)
-
-var i2 = i1;
-i1.next() //Optional(2)
-i1.next() //Optional(3)
-
-i2.next() //Optional(2)
-i2.next() //Optional(3)
-</code></pre></li>
+<li>创建一个Type：让其遵守<code>Sequence</code>协议，在实现<code>makeIterator</code>方法时将第一步中的<code>Iterator</code>返回即可<br><code>Iterator</code>有两种不同的语义，<strong>值语义</strong>(将要遍历的实例拷贝)和<strong>引用语义</strong>（不拷贝所遍历的实例），比如</li>
 </ol>
-<p>这个StrideToIterator是值语义，所以在赋值的时候会执行拷贝操作。<br>AnyIterator会将基础Iterator用内部box对象封装，这个box对象时引用类型的，所以其是引用语义。比如:</p>
-<pre><code>  var i3 = AnyIterator(i1)
-  var i4 = i3
-
-  i3.next() // Optional(4)
-  i4.next() // Optional(5)
-
-
-  let fibsSequence2 = sequence(state:(0, 1)) { (state:inout (Int, Int)) -&gt; Int? in
-
-let upcomingNumber = state.0
-state = (state.1 , state.0 + state.1)
-return upcomingNumber
-
- }
- Array(fibsSequence2.prefix(10))
-</code></pre><p>  Sequence的闭包是懒执行的，只有到获取某个数值的时候才执行，比如</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">		<span class="keyword">let</span> sequ = <span class="built_in">stride</span>(from: <span class="number">0</span>, to: <span class="number">10</span>, by: <span class="number">1</span>)</div><div class="line">		<span class="keyword">var</span> i1 = sequ.makeIterator() <span class="comment">// StrideToIterator</span></div><div class="line">		i1.next() <span class="comment">//Optional(0)</span></div><div class="line">		i1.next() <span class="comment">//Optional(1)</span></div><div class="line">		</div><div class="line">		<span class="keyword">var</span> i2 = i1;</div><div class="line">		i1.next() <span class="comment">//Optional(2)</span></div><div class="line">		i1.next() <span class="comment">//Optional(3)</span></div><div class="line">		</div><div class="line">		i2.next() <span class="comment">//Optional(2)</span></div><div class="line">		i2.next() <span class="comment">//Optional(3)</span></div><div class="line">		```	</div><div class="line">这个<span class="type">StrideToIterator</span>是值语义，所以在赋值的时候会执行拷贝操作。</div><div class="line"><span class="type">AnyIterator</span>会将基础<span class="type">Iterator</span>用内部box对象封装，这个box对象时引用类型的，所以其是引用语义。比如:</div><div class="line">      ```<span class="type">Swift</span></div><div class="line">      <span class="keyword">var</span> i3 = <span class="type">AnyIterator</span>(i1)</div><div class="line">      <span class="keyword">var</span> i4 = i3   </div><div class="line">      i3.next() <span class="comment">// Optional(4)</span></div><div class="line">      i4.next() <span class="comment">// Optional(5)</span></div><div class="line">      <span class="keyword">let</span> fibsSequence2 = sequence(state:(<span class="number">0</span>, <span class="number">1</span>)) &#123; (state:<span class="keyword">inout</span> (<span class="type">Int</span>, <span class="type">Int</span>)) -&gt; <span class="type">Int</span>? <span class="keyword">in</span></div><div class="line">   </div><div class="line">    <span class="keyword">let</span> upcomingNumber = state.<span class="number">0</span></div><div class="line">    state = (state.<span class="number">1</span> , state.<span class="number">0</span> + state.<span class="number">1</span>)</div><div class="line">    <span class="keyword">return</span> upcomingNumber</div><div class="line">    </div><div class="line">     &#125;</div><div class="line">     <span class="type">Array</span>(fibsSequence2.<span class="keyword">prefix</span>(<span class="number">10</span>))</div></pre></td></tr></table></figure>
+<p>  Sequence的闭包是懒执行的，只有到获取某个数值的时候才执行，比如</p>
 <pre><code>Array(fibsSequence2.prefix(10))
 </code></pre><p>   这才让构造方法<code>fibsSequence2.prefix(10)</code>产生作用，如果<code>Sequence</code>提前计算了其数值，因为其实无穷<code>Sequence</code>，所以当越界的时候其就会崩溃。</p>
 <p>  有些Sequence是不稳定的，也就是说每次的遍历，结果可能不一样，比如网络流，磁盘文件，UI事件流，以及其它类型的数据，它们都可以被建模，作为<code>Sequence</code>。这也就是为什么，<strong>取出第一个元素的属性只存在于Collection中</strong>，而不是在<code>Sequence</code>中，因为改这个<code>first</code>方法一定要是<code>nondestructive</code>的，也就是说取出第一个元素不应该对其输出结果产生影响，也就是说必须是稳定的。</p>
 <p>  怎样判断一个<code>Sequence</code>是否是稳定的？<br>  如果一个<code>Sequence</code>遵守<code>Collection</code>，那么它就是稳定的。<br>  反过来，就不成立了：如果一个<code>Sequence</code>是稳定的，那么它就是遵守<code>Collection</code>协议的。这时不成立的。比如：<code>StrideTo</code>和<code>StrideThrough</code>类型，就是稳定的，然而他们没有遵守<code>Collection</code>协议。</p>
 <h2 id="Sequences和Iterator之间的关系是怎样的？"><a href="#Sequences和Iterator之间的关系是怎样的？" class="headerlink" title="Sequences和Iterator之间的关系是怎样的？"></a>Sequences和Iterator之间的关系是怎样的？</h2><p>Sequences和Iterator那么相似，为什么不把他们合并成一个呢？在<code>destructively consumed sequence</code>中可以，因为他们可以共用一个Iterator，但是在<code>stable sequence</code>中是不行的，因为它们需要Iterator提供的隔离的遍历状态和遍历逻辑（这种遍历状态就是Iterator创建的）。<code>makeIterator</code>也就是为了创建这种遍历状态。</p>
-<h2 id="SubSequence"><a href="#SubSequence" class="headerlink" title="SubSequence"></a>SubSequence</h2><p>Sequence有另外的一个关联属性SubSequence</p>
-<pre><code>public protocol Sequence {
-associatedtype Iterator : IteratorProtocol
-associatedtype SubSequence 
-...
-}
-</code></pre><p>我们可以对其<code>SubSequence</code>做以限制，比如：</p>
-<pre><code>extension Sequence where Iterator.Element: Equatable,
-SubSequence: Sequence,
-SubSequence.Iterator.Element == Iterator.Element {
+<h2 id="SubSequence"><a href="#SubSequence" class="headerlink" title="SubSequence"></a>SubSequence</h2><p>Sequence有另外的一个关联属性SubSequence<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>&#123;</div><div class="line">associatedtype <span class="type">Iterator</span> : <span class="type">IteratorProtocol</span></div><div class="line">associatedtype <span class="type">SubSequence</span> </div><div class="line">...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我们可以对其<code>SubSequence</code>做以限制，比如：<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Sequence</span> <span class="title">where</span> <span class="title">Iterator</span>.<span class="title">Element</span>: <span class="title">Equatable</span>,</span></div><div class="line"><span class="title">SubSequence</span>: <span class="title">Sequence</span>,</div><div class="line"><span class="title">SubSequence</span>.<span class="title">Iterator</span>.<span class="title">Element</span> == <span class="title">Iterator</span>.<span class="title">Element</span> &#123;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">headMirrorsTrail</span><span class="params">(<span class="number">_</span> n:Int)</span></span> -&gt; <span class="type">Bool</span> &#123;</div><div class="line"></div><div class="line">    <span class="keyword">let</span> head = <span class="keyword">self</span>.<span class="keyword">prefix</span>(n)</div><div class="line">    <span class="keyword">let</span> trail = <span class="keyword">self</span>.suffix(n).reversed()</div><div class="line">    <span class="keyword">return</span> head.elementsEqual(trail)</div><div class="line">    </div><div class="line">&#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">let</span> result = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">2</span>,<span class="number">1</span>].headMirrorsTrail(<span class="number">1</span>)</div></pre></td></tr></table></figure></p>
+<h2 id="Collection-Protocol"><a href="#Collection-Protocol" class="headerlink" title="Collection Protocol"></a>Collection Protocol</h2><p>   如上文所示Collection都是稳定的<code>Sequence</code>，它可以稳定的被屡次遍历，并且没有破坏。并且其元素可以使用脚标的形式被访问。Colllection的<code>Index</code>通常是<code>integer</code>，存在数组中，并且是有限的。也就是说不像<code>Sequence</code>，<code>Collection</code>必须是有限的。这也就是为啥其有<code>count</code>属性。</p>
 
-func headMirrorsTrail(_ n:Int) -&gt; Bool {
-
-    let head = self.prefix(n)
-    let trail = self.suffix(n).reversed()
-    return head.elementsEqual(trail)
-
-}
-}
-let result = [1,2,3,4,2,1].headMirrorsTrail(1)
-</code></pre>
       
     </div>
 
@@ -647,7 +563,7 @@ let result = [1,2,3,4,2,1].headMirrorsTrail(1)
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Sequences"><span class="nav-number">1.</span> <span class="nav-text">Sequences</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Iterators"><span class="nav-number">2.</span> <span class="nav-text">Iterators</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sequences和Iterator之间的关系是怎样的？"><span class="nav-number">3.</span> <span class="nav-text">Sequences和Iterator之间的关系是怎样的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SubSequence"><span class="nav-number">4.</span> <span class="nav-text">SubSequence</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Sequences"><span class="nav-number">1.</span> <span class="nav-text">Sequences</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Iterators"><span class="nav-number">2.</span> <span class="nav-text">Iterators</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sequences和Iterator之间的关系是怎样的？"><span class="nav-number">3.</span> <span class="nav-text">Sequences和Iterator之间的关系是怎样的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SubSequence"><span class="nav-number">4.</span> <span class="nav-text">SubSequence</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Collection-Protocol"><span class="nav-number">5.</span> <span class="nav-text">Collection Protocol</span></a></li></ol></div>
             
 
           </div>
