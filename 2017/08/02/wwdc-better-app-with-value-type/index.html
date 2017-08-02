@@ -110,7 +110,7 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-6b88775e60bbef0f.png">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-fb29f1978b1a0b66.png">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-f574f73819356261.png">
-<meta property="og:updated_time" content="2017-08-02T09:57:02.000Z">
+<meta property="og:updated_time" content="2017-08-02T10:00:06.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="怎样用好Value Type?">
 <meta name="twitter:description" content="Swift–怎样用好Value Type? 为什么要用Value Type?首先我们要说明为什么我们需要Value Type。因为我们通常使用的Reference Type不能满足我们的需求，并且容易出Bug，什么是Reference Type?Reference Type就是我们常说的Class，我们不是用的很好吗？我们举两个例子来看看例一：但是现在又一种需求：进入用于信息页面编辑页面，如果用户">
@@ -425,7 +425,8 @@ home.oven.temperature.fahrenheit += <span class="number">10.0</span>
 <span class="comment">//Without mutability </span> <span class="keyword">let</span> temp = home.oven.temperature home.oven.temperature = <span class="type">Temperature</span>(fahrenheit: temp.fahrenheit + <span class="number">10.0</span>)
 </code></pre>
 <p>在上面的例子中，我们把Temperature类的某个属性改成了<code>let</code>，那么如果我们要更改这个数值，我们就需要在堆上开辟内存空间然后创建一个新的Temperature，最后更换掉整个Temperature类。<br>Cocoa[Touch]中有很多的不可变类比如：NSDate，NSURL，UIImage，NSNumber等<br>这更加安全了（不需要使用Copy），也不必担心接下来的程序会改变这个数值。</p>
-<pre><code class="Objective-C">    NSArray&lt;NSString *&gt; *array = [NSArray arrayWithObject: NSHomeDirectory()];      NSString *component;  while ((component = getNextSubdir()) { 
+<pre><code class="Objective-C">NSArray&lt;NSString *&gt; *array = [NSArray arrayWithObject: NSHomeDirectory()];
+NSString *component;  while ((component = getNextSubdir()) { 
      array = [array arrayByAddingObject: component]; } 
      url = [NSURL fileURLWithPathComponents: array];
 </code></pre>
@@ -474,7 +475,15 @@ scheduler.processNumbersAsynchronously(numbers) <span class="comment">//异步�
 </code></pre>
 <p>但是由于UIImage是不可变的，所以我们不必担心image2的image对象的改变会影响到image的image对象。<br><em>注：上面<code>===</code>表示引用相同，但是不表示其指向<code>Image</code>是相同的，如果要表示其相同，需要使用<code>==</code>操作。</em></p>
 <h3 id="Value-Type-中含有可变的Reference-Type"><a href="#Value-Type-中含有可变的Reference-Type" class="headerlink" title="Value Type 中含有可变的Reference Type"></a>Value Type 中含有可变的Reference Type</h3><p>下面我们来看一个可变的Reference Type。</p>
-<pre><code class="Swift">&lt;!--￼<span class="number">0</span>--&gt;
+<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">BezierPath</span>: <span class="title">Drawable</span> </span>{
+  <span class="keyword">var</span> path = <span class="type">UIBezierPath</span>()
+  <span class="keyword">var</span> isEmpty: <span class="type">Bool</span> {
+    <span class="keyword">return</span> path.empty
+} 
+  <span class="comment">// **注意这种写法是错误的**</span>
+  <span class="function"><span class="keyword">func</span> <span class="title">addLineToPoint</span><span class="params">(point: CGPoint)</span></span> {
+    path.addLineToPoint(point)
+} }
 </code></pre>
 <p>其内存结构是这样的：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-f574f73819356261.png" alt="Value Contains Reference Type"></p>
 <p>这时如果我们如果执行下面的代码</p>
