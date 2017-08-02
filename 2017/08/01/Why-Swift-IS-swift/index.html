@@ -83,7 +83,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Write the Code,Change the World" />
+  <meta name="keywords" content="Swift," />
 
 
 
@@ -99,16 +99,20 @@
 
 
 
-<meta name="description" content="努力让明天的自己爱上今天的自己！">
-<meta property="og:type" content="website">
-<meta property="og:title" content="击水湘江">
-<meta property="og:url" content="https://mikefighting.github.io/tags/Sever-Swift/index.html">
+<meta name="description" content="Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，Swift将很多在运行时才可以确定的信息，在编译期就决定了。这就让Swift更加快速。方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（S">
+<meta name="keywords" content="Swift">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为什么Swift比OC快？">
+<meta property="og:url" content="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="努力让明天的自己爱上今天的自己！">
+<meta property="og:description" content="Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，Swift将很多在运行时才可以确定的信息，在编译期就决定了。这就让Swift更加快速。方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（S">
 <meta property="og:locale" content="en">
+<meta property="og:image" content="file:///images/dispatch_logo.png">
+<meta property="og:updated_time" content="2017-08-02T04:26:58.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="击水湘江">
-<meta name="twitter:description" content="努力让明天的自己爱上今天的自己！">
+<meta name="twitter:title" content="为什么Swift比OC快？">
+<meta name="twitter:description" content="Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，Swift将很多在运行时才可以确定的信息，在编译期就决定了。这就让Swift更加快速。方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（S">
+<meta name="twitter:image" content="file:///images/dispatch_logo.png">
 
 
 
@@ -136,13 +140,13 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/tags/Sever-Swift/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/"/>
 
 
 
 
 
-  <title>Tag: Sever-Swift | 击水湘江</title>
+  <title>为什么Swift比OC快？ | 击水湘江</title>
   
 
 
@@ -167,7 +171,7 @@
     
   
 
-  <div class="container sidebar-position-left  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -305,44 +309,168 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-collapse">
-    <div class="collection-title">
-      <h1>Sever-Swift<small>Tag</small>
-      </h1>
-    </div>
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
 
     
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">为什么Swift比OC快？</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-01T19:34:23+08:00">
+                2017-08-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
       
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+      
+        <p><img src="file:/images/dispatch_logo.png" alt=""><br>Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，<strong>Swift将很多在运行时才可以确定的信息，在编译期就决定了</strong>。这就让Swift更加快速。<br>方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（Static Dispatch），如果调度发生在运行时，那么我们称它为动态调度（Dynamic Dispatch）。静态调度往往要比动态调度要快。那么问题来了，为什么我们需要动态调度呢？全部用静态调度不就得了？<br>问题就在于我们很多时候我们需要用到多态，看看下面这段非常简单的代码<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">eat</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"animal eat"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"animal sleep"</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span>: <span class="title">Animal</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"dog sleep"</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rabbit</span>: <span class="title">Animal</span> </span>&#123;</div><div class="line">    </div><div class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">eat</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"rabbit sleep"</span>);</div><div class="line">    &#125;</div><div class="line">   <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"rabbit sleep"</span>)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> animal:<span class="type">Animal</span>?</div><div class="line"><span class="keyword">var</span> somThingTrue = <span class="literal">false</span></div><div class="line"><span class="comment">//执行很多业务逻辑</span></div><div class="line"><span class="keyword">if</span> somThingTrue &#123;</div><div class="line">    animal = <span class="type">Rabbit</span>()</div><div class="line">    </div><div class="line">&#125;<span class="keyword">else</span>&#123;</div><div class="line"></div><div class="line">    animal = <span class="type">Dog</span>()</div><div class="line">&#125;</div><div class="line">animal?.eat()</div></pre></td></tr></table></figure></p>
+<p>上面的代码中<code>animal?.eat()</code>就不能够在编译期确定，因为其中需要很多的业务逻辑(比如根据用户的不同，或者网络请求结果的不同)来确定就究竟创建出来的对象是Rabbit还是Dog，也就无法最终确定要调用那个对象的eat()方法。相似的代码在OC中是怎样执行的呢？在OC中编译器会将这个方法翻译成<code>objc_msgSend(target,@selector(eat),nil)</code>这个方法，然后到了运行时，会分为以下几步进行调用：</p>
+<ol>
+<li>找到方法target中isa对应的Class（如果是类方法要到其metaClass中找）。</li>
+<li>从其中的<code>struct objc_method_list **methodLists</code>找到对应的方法实现。</li>
+<li>如果没有找到就到superClass的<code>methodLists</code>中找。</li>
+</ol>
+<p>如果在Swift中，它是怎样做方法调度的呢？</p>
+<ol>
+<li>找到target对应的class</li>
+<li><p>从class的V-Table中的那得到函数的实现<br>Swift中的类会创建一个V-Table，这个Table是一个数组，其中存放的是函数指针。子类会按照父类V-Table中函数的存放，如果子类没有覆盖某个方法，那么就会拷贝父类方法的地址，如上面的例子会得到下面的V-Table。</p>
+<h2 id="Animal"><a href="#Animal" class="headerlink" title=" Animal"></a> Animal</h2><p> Index0 eat 0x0001<br> Index1 sleep 0x0004</p>
+<h2 id="Dog"><a href="#Dog" class="headerlink" title=" Dog"></a> Dog</h2><p> Index0 eat 0x0001 (copied)<br> Index1 sleep 0x0008 (overrideen)</p>
+<h2 id="Rabbit"><a href="#Rabbit" class="headerlink" title=" Rabbit"></a> Rabbit</h2><p> Index0 eat 0x0002 (overrideen)<br> Index1 sleep 0x0003 (overrideen)</p>
+<p>可以注意到Dog因为没有覆盖父类的<code>eat</code>方法，所以其copy了父类的<code>0x0010</code>指针。因为Swift是Type Safe的，所以在调用它的时候它不会变成<code>Robot</code>或者其它的类（如果不能通过编译），所以无论是调用上面结构中的Animal，Dog，还是Rabbit类，它都是调用相同的Index，得到对应的方法实现。<strong>将函数指针和Index所做的映射在编译期就确定了，这就大大减少了运行时的工作量，提高了运行速度。</strong>所以在运行时它没有必要知道是哪个类型的实例调用了这个方法，只需要找到相应的V-Table即可，至于是其中的哪个Index已经在编译期确定了，没必要再去查找Index的值。<br>然而Swift的方法调度不仅仅是动态方法调度，还有很多静态方法调度。<br><strong>如果我们将某个方法标记为final或者private，或者我们不用类，而使用结构体，枚举，这时就不需要动态调度，只需要静态调度即可，这样速度会更快。</strong></p>
+</li>
+</ol>
 
-      <h2 class="post-title">
+      
+    </div>
+
+    <div>
+      
         
-            <a class="post-title-link" href="/2017/07/26/VaporBasicUse/" itemprop="url">
-              
-                <span itemprop="name">Vapor基础用法</span>
-              
-            </a>
+
+      
+    </div>
+
+    <div>
+      
         
-      </h2>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-07-26T20:26:22+08:00"
-              content="2017-07-26" >
-          07-26
-        </time>
-      </div>
+      
+    </div>
 
-    </header>
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Swift/" rel="tag"># Swift</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/30/method-dispatch/" rel="next" title="method_dispatch">
+                <i class="fa fa-chevron-left"></i> method_dispatch
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/02/Upload-Images/" rel="prev" title="Upload_Images">
+                Upload_Images <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </article>
 
 
-    
-  </div>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -350,6 +478,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -370,8 +502,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -424,6 +565,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Animal"><span class="nav-number">1.</span> <span class="nav-text"> Animal</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dog"><span class="nav-number">2.</span> <span class="nav-text"> Dog</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rabbit"><span class="nav-number">3.</span> <span class="nav-text"> Rabbit</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -537,10 +694,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
