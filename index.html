@@ -336,7 +336,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/08/02/wwdc-better-app-with-value-type/" itemprop="url">wwdc_better_app_with_value_type</a></h1>
+                <a class="post-title-link" href="/2017/08/02/wwdc-better-app-with-value-type/" itemprop="url">怎样用好Value Type?</a></h1>
         
 
         <div class="post-meta">
@@ -425,16 +425,26 @@ home.oven.temperature.fahrenheit += <span class="number">10.0</span>
 <span class="comment">//Without mutability </span> <span class="keyword">let</span> temp = home.oven.temperature home.oven.temperature = <span class="type">Temperature</span>(fahrenheit: temp.fahrenheit + <span class="number">10.0</span>)
 </code></pre>
 <p>在上面的例子中，我们把Temperature类的某个属性改成了<code>let</code>，那么如果我们要更改这个数值，我们就需要在堆上开辟内存空间然后创建一个新的Temperature，最后更换掉整个Temperature类。<br>Cocoa[Touch]中有很多的不可变类比如：NSDate，NSURL，UIImage，NSNumber等<br>这更加安全了（不需要使用Copy），也不必担心接下来的程序会改变这个数值。</p>
-<pre><code>NSArray&lt;NSString *&gt; *array = [NSArray arrayWithObject: NSHomeDirectory()];      NSString *component;  while ((component = getNextSubdir()) { 
- array = [array arrayByAddingObject: component]; } 
- url = [NSURL fileURLWithPathComponents: array];
-</code></pre><h2 id="Value-Type将怎样解决这种问题呢？"><a href="#Value-Type将怎样解决这种问题呢？" class="headerlink" title="Value Type将怎样解决这种问题呢？"></a>Value Type将怎样解决这种问题呢？</h2><p>Swift中的所有基础类型都是Value Type的，像：Int，Double，String …<br>Swift中所有的Collection都是Value Type的，像：Array，Set，Dictianry…<br>Swift中的<code>Tuples，Struct，Enums</code>如果只包含Value Types那么他们自身也是Value Type的。<br>Value Type要是完全可以直接比较的，可以直接使用<code>==</code>，<strong>自定义的Value Type并且其必须要遵守<code>Equable</code>协议，覆盖<code>==</code>方法才可以使用的</strong>。</p>
+<pre><code class="Objective-C">    NSArray&lt;NSString *&gt; *array = [NSArray arrayWithObject: NSHomeDirectory()];      NSString *component;  while ((component = getNextSubdir()) { 
+     array = [array arrayByAddingObject: component]; } 
+     url = [NSURL fileURLWithPathComponents: array];
+</code></pre>
+<h2 id="Value-Type将怎样解决这种问题呢？"><a href="#Value-Type将怎样解决这种问题呢？" class="headerlink" title="Value Type将怎样解决这种问题呢？"></a>Value Type将怎样解决这种问题呢？</h2><p>Swift中的所有基础类型都是Value Type的，像：Int，Double，String …<br>Swift中所有的Collection都是Value Type的，像：Array，Set，Dictianry…<br>Swift中的<code>Tuples，Struct，Enums</code>如果只包含Value Types那么他们自身也是Value Type的。<br>Value Type要是完全可以直接比较的，可以直接使用<code>==</code>，<strong>自定义的Value Type并且其必须要遵守<code>Equable</code>协议，覆盖<code>==</code>方法才可以使用的</strong>。</p>
 <pre><code class="Swift"><span class="keyword">var</span> a: [<span class="type">Int</span>] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]
 <span class="keyword">var</span> b: [<span class="type">Int</span>] = [<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>].sorted(by:&lt;)
 <span class="built_in">assert</span>(a == b) <span class="comment">// true</span>
 </code></pre>
 <p>如果是自身的定义的Struct，那么需要遵守<code>Equable</code>协议，并且覆盖<code>==</code>方法来实现。比如：</p>
-<pre><code class="Swift">&lt;!--￼<span class="number">0</span>--&gt;
+<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">Temperature</span>: <span class="title">Equatable</span> </span>{
+  <span class="keyword">var</span> celsius: <span class="type">Double</span> = <span class="number">0</span>
+  <span class="keyword">var</span> fahrenheit: <span class="type">Double</span> {
+    <span class="keyword">get</span> { <span class="keyword">return</span> celsius * <span class="number">9</span> / <span class="number">5</span> + <span class="number">32</span> }
+    <span class="keyword">set</span> { celsius = (newValue - <span class="number">32</span>) * <span class="number">5</span> / <span class="number">9</span> }
+ }
+}
+<span class="function"><span class="keyword">func</span> ==<span class="params">(lhs: Temperature, rhs: Temperature)</span></span> -&gt; <span class="type">Bool</span> {
+  <span class="keyword">return</span> lhs.celsius == rhs.celsius
+}
 </code></pre>
 <p>使用Value Type不用担心竞争条件。也就是不用担心资源抢夺，加锁等。看下面的代码：</p>
 <pre><code class="Swift"><span class="keyword">var</span> numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]
@@ -464,7 +474,7 @@ scheduler.processNumbersAsynchronously(numbers) <span class="comment">//异步�
 </code></pre>
 <p>但是由于UIImage是不可变的，所以我们不必担心image2的image对象的改变会影响到image的image对象。<br><em>注：上面<code>===</code>表示引用相同，但是不表示其指向<code>Image</code>是相同的，如果要表示其相同，需要使用<code>==</code>操作。</em></p>
 <h3 id="Value-Type-中含有可变的Reference-Type"><a href="#Value-Type-中含有可变的Reference-Type" class="headerlink" title="Value Type 中含有可变的Reference Type"></a>Value Type 中含有可变的Reference Type</h3><p>下面我们来看一个可变的Reference Type。</p>
-<pre><code class="Swift">&lt;!--￼<span class="number">1</span>--&gt;
+<pre><code class="Swift">&lt;!--￼<span class="number">0</span>--&gt;
 </code></pre>
 <p>其内存结构是这样的：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-f574f73819356261.png" alt="Value Contains Reference Type"></p>
 <p>这时如果我们如果执行下面的代码</p>
