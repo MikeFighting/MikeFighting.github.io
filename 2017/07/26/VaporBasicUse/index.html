@@ -83,7 +83,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Sever-Swift," />
+  <meta name="keywords" content="Server-Swift," />
 
 
 
@@ -99,18 +99,21 @@
 
 
 
-<meta name="description" content="在Swift常用的后端框架中，Vapor是比较常用的，发展迅速的框架，现将其简单的使用流程做以介绍。 安装初始化新建项目部署">
-<meta name="keywords" content="Sever-Swift">
+<meta name="description" content="在Swift后端框架中，Vapor是比较常用的，它发展迅速，语法简洁，社区活跃，现将其在Mac上的简单的使用流程做以介绍。 安装一、安装最新版的XcodeXcode是免费的可以直接在App Store中直接下载。下载完之后需要打开Xcode来完成安装，这可能需要等一段时间。 二、验证Swif时候安装通过执行1234567891011121314151617181920212223242526272">
+<meta name="keywords" content="Server-Swift">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Vapor基础用法">
+<meta property="og:title" content="Vapor的安装和部署">
 <meta property="og:url" content="https://mikefighting.github.io/2017/07/26/VaporBasicUse/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="在Swift常用的后端框架中，Vapor是比较常用的，发展迅速的框架，现将其简单的使用流程做以介绍。 安装初始化新建项目部署">
+<meta property="og:description" content="在Swift后端框架中，Vapor是比较常用的，它发展迅速，语法简洁，社区活跃，现将其在Mac上的简单的使用流程做以介绍。 安装一、安装最新版的XcodeXcode是免费的可以直接在App Store中直接下载。下载完之后需要打开Xcode来完成安装，这可能需要等一段时间。 二、验证Swif时候安装通过执行1234567891011121314151617181920212223242526272">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-07-26T12:32:19.000Z">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-fcef541624cb576e.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-63e932cd79cf7564.png">
+<meta property="og:updated_time" content="2017-08-03T03:09:47.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vapor基础用法">
-<meta name="twitter:description" content="在Swift常用的后端框架中，Vapor是比较常用的，发展迅速的框架，现将其简单的使用流程做以介绍。 安装初始化新建项目部署">
+<meta name="twitter:title" content="Vapor的安装和部署">
+<meta name="twitter:description" content="在Swift后端框架中，Vapor是比较常用的，它发展迅速，语法简洁，社区活跃，现将其在Mac上的简单的使用流程做以介绍。 安装一、安装最新版的XcodeXcode是免费的可以直接在App Store中直接下载。下载完之后需要打开Xcode来完成安装，这可能需要等一段时间。 二、验证Swif时候安装通过执行1234567891011121314151617181920212223242526272">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-fcef541624cb576e.png">
 
 
 
@@ -144,7 +147,7 @@
 
 
 
-  <title>Vapor基础用法 | 击水湘江</title>
+  <title>Vapor的安装和部署 | 击水湘江</title>
   
 
 
@@ -334,7 +337,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Vapor基础用法</h1>
+          <h1 class="post-title" itemprop="name headline">Vapor的安装和部署</h1>
         
 
         <div class="post-meta">
@@ -381,8 +384,73 @@
       
 
       
-        <p>在Swift常用的后端框架中，Vapor是比较常用的，发展迅速的框架，现将其简单的使用流程做以介绍。</p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><h2 id="新建项目"><a href="#新建项目" class="headerlink" title="新建项目"></a>新建项目</h2><h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2>
+        <p><img src="http://upload-images.jianshu.io/upload_images/1513759-fcef541624cb576e.png" alt="Vapor"><br>在Swift后端框架中，Vapor是比较常用的，它发展迅速，语法简洁，社区活跃，现将其在Mac上的简单的使用流程做以介绍。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h4 id="一、安装最新版的Xcode"><a href="#一、安装最新版的Xcode" class="headerlink" title="一、安装最新版的Xcode"></a>一、安装最新版的Xcode</h4><p>Xcode是免费的可以直接在App Store中直接下载。下载完之后需要打开Xcode来完成安装，这可能需要等一段时间。<br><img src="http://upload-images.jianshu.io/upload_images/1513759-63e932cd79cf7564.png" alt="安装Xcode"></p>
+<h4 id="二、验证Swif时候安装"><a href="#二、验证Swif时候安装" class="headerlink" title="二、验证Swif时候安装"></a>二、验证Swif时候安装</h4><p>通过执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">eval</span> <span class="string">"<span class="variable">$(curl -sL check.vapor.sh)</span>"</span></div><div class="line">``` </div><div class="line"></div><div class="line">来第二次确定安装是否成功。</div><div class="line"></div><div class="line"><span class="comment">#### 三、安装Vapor</span></div><div class="line"></div><div class="line">确定Swift成功安装之后我们来安装Vapor toolbox，这其中包含了Vapor的所有依赖以及创建项目时好用的CLI。</div><div class="line"><span class="comment">##### 安装Homebrew</span></div><div class="line"></div><div class="line">Homebrew在安装OpenSSL，MySQL，Postgres，Redis，SQLite等依赖的时候极其有用，没有的时候执行如下命令安装：</div><div class="line">```bash </div><div class="line">/usr/bin/ruby -e <span class="string">"<span class="variable">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)</span>"</span></div><div class="line">``` </div><div class="line"></div><div class="line"><span class="comment">##### 安装Homebrew Tap</span></div><div class="line"></div><div class="line">Vapor的Homebrew Tap可以让你安装Vapor的所有包。执行如下命令安装</div><div class="line">```bash</div><div class="line">brew tap vapor/homebrew-tap</div><div class="line">brew update</div><div class="line">``` </div><div class="line"></div><div class="line"><span class="comment">##### 安装Vapor</span></div><div class="line"></div><div class="line">执行如下命令安装</div><div class="line">```bash</div><div class="line">brew install vapor</div><div class="line">```  </div><div class="line">安装完成之后会出现如下图案：</div><div class="line"></div><div class="line"><span class="comment">## 新建项目</span></div><div class="line"></div><div class="line"><span class="comment">#### 新建</span></div><div class="line"></div><div class="line">接下来我们用api模板（toolbox提供了web,api等各种模板）来创建一个Hello的项目。执行如下指令</div><div class="line">```bash</div><div class="line">vapor new Hello --template=api</div><div class="line">``` </div><div class="line">然后我们执行`tree`指令就可以看到如下的目录结构：</div><div class="line">![Vapor 目录结构](http://upload-images.jianshu.io/upload_images/1513759-bb8633f9c5a20c04.png)</div><div class="line">如果出现`Command not found`不能执行请安装tree软件</div><div class="line">```bash</div><div class="line">brew install tree</div><div class="line">``` </div><div class="line">我们打开如下的目录找到`Routes.swift`文件。在Build方法中我们看到：</div><div class="line">```Swift</div><div class="line">get(<span class="string">"plaintext"</span>) &#123; req <span class="keyword">in</span></div><div class="line"></div><div class="line"><span class="built_in">return</span> <span class="string">"Hello, world!"</span></div><div class="line">&#125;</div><div class="line">```   </div><div class="line"></div><div class="line">上述表示执行get方法，闭包返回请求结果。</div><div class="line"></div><div class="line"><span class="comment">##### 编译</span></div><div class="line"></div><div class="line">确保你所在的是项目的根目录执行如下指令来编译：</div><div class="line"></div><div class="line">```bash</div><div class="line">vapor build</div><div class="line">```  </div><div class="line">执行完毕之后将会看到</div><div class="line">```bash</div><div class="line">Building Project [Done]</div></pre></td></tr></table></figure></p>
+<h5 id="发布状态编译"><a href="#发布状态编译" class="headerlink" title="发布状态编译"></a>发布状态编译</h5><p>在发布状态编译会提升其性能，执行如下指令：</p>
+<pre><code class="bash">vapor build --release
+</code></pre>
+<h2 id="启动本地服务"><a href="#启动本地服务" class="headerlink" title="启动本地服务"></a>启动本地服务</h2><p>执行如下指令来启动服务</p>
+<pre><code class="bash">vapor run serve
+</code></pre>
+<p>然后你会看到如下信息：</p>
+<pre><code class="bash">Server starting....
+</code></pre>
+<p>然后就可以在浏览器中执行<code>localhost:8080/plaintext</code>来看到刚才的<code>Hello, World</code>了。</p>
+<h5 id="生成Xcode项目"><a href="#生成Xcode项目" class="headerlink" title="生成Xcode项目"></a>生成Xcode项目</h5><p>我们刚才做的启动等操作都是通过终端来的，我们也可以使用Xcode来完成，要使用Xcode来执行，我们需要首先创建一个*.xcodeproj文件，执行如下指令来创建：</p>
+<pre><code class="bash">vapor xcode
+</code></pre>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>完成上述操作之后你就可以在本地访问自己的服务了，但怎样才能部署到远程，生成自己的链接来访问呢？我们使用Heroku，来完成，Heroku的免费版完全可以满足我们日常练习的需求，并且其简单快捷的Git操作指令一定会让你爱不释手。</p>
+<h4 id="创建Heroku账户"><a href="#创建Heroku账户" class="headerlink" title="创建Heroku账户"></a>创建Heroku账户</h4><p>请在<a href="https://devcenter.heroku.com/" target="_blank" rel="external">Heroku官网</a>创建自己的账号。</p>
+<p>注意要记住自己的邮箱和密码，因为一会儿需要在终端进行登录。</p>
+<h4 id="安装Heroku-CLI"><a href="#安装Heroku-CLI" class="headerlink" title="安装Heroku CLI"></a>安装Heroku CLI</h4><p>Heroku CLI用来创建、管理Heroku上apps的命令行工具。执行如下指令来完成安装：</p>
+<pre><code class="bash">brew install heroku
+</code></pre>
+<p>安装完成之后执行如下指令来登录，输入邮箱和密码来登录：</p>
+<pre><code>heroku login
+Enter your Heroku credentials.
+Email: adam@example.com
+Password (typing will be hidden):
+Authentication successful.
+</code></pre><h4 id="创建程序"><a href="#创建程序" class="headerlink" title="创建程序"></a>创建程序</h4><p>进入你要部署的App，比如上文的Hello项目，然后执行：</p>
+<pre><code class="bash"><span class="variable">$cd</span> Hello
+<span class="variable">$git</span> init
+<span class="variable">$git</span> add.
+<span class="variable">$git</span> commit -m <span class="string">"add hello app"</span>
+</code></pre>
+<p>然后在Heroku中创建一个app，以便其接收你的代码，执行<code>heroku apps:creat [NAME]</code>指令其中名字必须以字母开头，字呢个包含小写字母，数字和连字符，并且其在heroku的所有程序中必须是唯一的。如果出现：</p>
+<pre><code class="bash">Creating app... <span class="keyword">done</span>, ⬢ young-island-91962
+         https://young-island-91962.herokuapp.com/ | https://git.heroku.com/young-island-91962.git
+</code></pre>
+<p>这说明执行成功了。<br>执行<code>git remote -v</code>，就会出现远程git的URL了</p>
+<pre><code>heroku    https://git.heroku.com/young-island-91962.git (fetch)
+heroku    https://git.heroku.com/young-island-91962.git (push)
+</code></pre><p>然后执行</p>
+<pre><code class="bash">heroku create
+Creating falling-wind-1624... <span class="keyword">done</span>, stack is cedar-14
+http://falling-wind-1624.herokuapp.com/ | https://git.heroku.com/falling-wind-1624.git
+Git remote heroku added
+</code></pre>
+<p>####注意坑：<br>然后执行<code>git push heroku master</code><br>这时会报错：</p>
+<pre><code class="bash">No default language could be detected <span class="keyword">for</span> this app.
+          remote: HINT: This occurs when Heroku cannot detect the buildpack to use <span class="keyword">for</span> this application automatically.
+</code></pre>
+<p>这说明heroku官方没有swift的<code>buildpack</code>，所以我们要自己添加</p>
+<pre><code>heroku create --buildpack https://github.com/kylef/heroku-buildpack-swift.git
+heroku buildpacks:set https://github.com/kylef/heroku-buildpack-swift.git
+</code></pre><p>最后在执行push的时候还会报错：</p>
+<p><code>error at=error code=H10 desc=&quot;App crashed&quot; method=GET path=&quot;/plaintext&quot;</code>，这时需要修改<code>Procfile</code>文件，<code>Procfile</code>需要放到项目的根目录里，内容如下：</p>
+<pre><code class="bash">web: Run --env=production --workdir=./ --config:servers.default.port=<span class="variable">$PORT</span>
+</code></pre>
+<p>这样就可以执行Git的push指令进行部署了：</p>
+<pre><code class="bash">git push heroku master
+</code></pre>
+<p>随后的操作就变得像平时提交项目一样简单。</p>
+<pre><code class="bash">git commit -m <span class="string">"change something"</span> -a
+git push heroku master
+</code></pre>
+<p>这样一个项目就部署成功了</p>
+
       
     </div>
 
@@ -411,7 +479,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Sever-Swift/" rel="tag"># Sever-Swift</a>
+            <a href="/tags/Server-Swift/" rel="tag"># Server-Swift</a>
           
         </div>
       
@@ -557,7 +625,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化"><span class="nav-number">2.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#新建项目"><span class="nav-number">3.</span> <span class="nav-text">新建项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署"><span class="nav-number">4.</span> <span class="nav-text">部署</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、安装最新版的Xcode"><span class="nav-number">1.0.1.</span> <span class="nav-text">一、安装最新版的Xcode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、验证Swif时候安装"><span class="nav-number">1.0.2.</span> <span class="nav-text">二、验证Swif时候安装</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#发布状态编译"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">发布状态编译</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动本地服务"><span class="nav-number">2.</span> <span class="nav-text">启动本地服务</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#生成Xcode项目"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">生成Xcode项目</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署"><span class="nav-number">3.</span> <span class="nav-text">部署</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建Heroku账户"><span class="nav-number">3.0.1.</span> <span class="nav-text">创建Heroku账户</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装Heroku-CLI"><span class="nav-number">3.0.2.</span> <span class="nav-text">安装Heroku CLI</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建程序"><span class="nav-number">3.0.3.</span> <span class="nav-text">创建程序</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
