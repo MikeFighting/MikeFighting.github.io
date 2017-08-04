@@ -317,6 +317,401 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/04/intermedia-swift/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/04/intermedia-swift/" itemprop="url">Swift中级</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-04T08:28:26+08:00">
+                2017-08-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文源于对：<a href="https://developer.apple.com/videos/play/wwdc2014/403/" target="_blank" rel="external">WWDC2014–Intermediate Swift</a>的总结。</p>
+<h2 id="为什么需要Optional"><a href="#为什么需要Optional" class="headerlink" title="为什么需要Optional?"></a>为什么需要Optional?</h2><p>我们队某个对象的操作可能会返回错误的结果：比如我们将某个字符串转为Int型，执行下面的指令：</p>
+<pre><code class="Swift"><span class="keyword">let</span> age = response.toInt()
+</code></pre>
+<p>这response可能是用户输入的,可能会输入不确定的数值<code>Do you konw?</code>那么肯定会得到错误的结果，在OC中遇到这种情况我们怎么处理呢？我们有如下的值可以表示错误：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-65ce6dec3ca6cade.png" alt="Wrong!"><br>但是你必须从不同的接口中去选择相应的错误类型，并且要记住这些错误类型。为了解决这个问题，Swift中引入了Optional的概念，将这种可能是nil的值进行打包。它可以表示上述所有错误的类型，同时，<strong>如果我们使用Optional，就一定要对它进行拆包，使用<code>!</code>号，如果不拆包会造成编译器错误</strong>，如下所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-03cea3691052ac9b.png" alt="Need Unwrap"><br><strong>也可以使用Optional Binding将判断是否有值和拆包结合在一起使用：<code>if let</code></strong>。</p>
+<pre><code class="Swift"><span class="keyword">var</span> neighbors = [<span class="string">"Alex"</span>, <span class="string">"Anna"</span>, <span class="string">"Madison"</span>, <span class="string">"Dave"</span>] <span class="keyword">let</span> index = findIndexOfString(<span class="string">"Anna"</span>, neighbors)  <span class="keyword">if</span> <span class="keyword">let</span> indexValue = index { 
+    <span class="built_in">println</span>(<span class="string">"Hello, <span class="subst">\(neighbors[indexValue])</span>"</span>)
+} <span class="keyword">else</span> {
+    <span class="built_in">println</span>(<span class="string">"Must've moved away"</span>)
+}
+</code></pre>
+<p>当然我们还可以进一步使用Optional Binding–Optional Chain：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-040ccbafce764e18.png" alt="Optional Chain Binding"></p>
+<p>在Optional Chain中，只要其中一个Optional的值是nil，那么整个Optional Chain都将是nil，并且不会再执行接下来的取值，如果不是nil则继续执行。这样让我们的代码更加简洁更加安全。<br>Swift中的Optional其实是个枚举：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">enum</span> <span class="title">Optional</span>&lt;<span class="title">T</span>&gt; </span>{
+   <span class="keyword">case</span> <span class="type">None</span>
+   <span class="keyword">case</span> <span class="type">Some</span>(<span class="type">T</span>)
+}
+</code></pre>
+<h2 id="Swift中的内存管理"><a href="#Swift中的内存管理" class="headerlink" title="Swift中的内存管理"></a>Swift中的内存管理</h2><p>在Swift中也用的是ARC，也容易出现循环引用，这时需要使用<code>weak</code>属性。需要注意的是</p>
+<blockquote>
+<p><code>weak</code>引用的类型是Optional的。<br>Binding该Optional Type将会产生一个强引用。<br>如果仅仅是判断即用<code>if</code>判断，则不会产生强引用。<br>例如：</p>
+</blockquote>
+<pre><code class="Swift"><span class="keyword">if</span> <span class="keyword">let</span> tenant = apt.tenant {
+  tenant.buzzIn()
+ }
+</code></pre>
+<p>但是有些时候我们同时需要weak，又同时需要非Optional的。那么该怎么办？我们需要<code>unowned</code>属性，他也是weak的。</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>{
+    <span class="keyword">var</span> card: <span class="type">CreditCard</span>?
+} <span class="class"><span class="keyword">class</span> <span class="title">CreditCard</span> </span>{ <span class="keyword">unowned</span> <span class="keyword">let</span> holder: <span class="type">Person</span> 
+    <span class="keyword">init</span>(holder: <span class="type">Person</span>) {
+        <span class="keyword">self</span>.holder = holder
+  } 
+}
+</code></pre>
+<p>这说明<code>holder</code>没持指向Person，但是holder离开了Person它就不存在了。<code>unowned</code>很像<code>unsafe unretain</code></p>
+<h2 id="Swift中的初始化"><a href="#Swift中的初始化" class="headerlink" title="Swift中的初始化"></a>Swift中的初始化</h2><p>在Swift的初始化中需要谨记：</p>
+<blockquote>
+<p>所有的变量在使用前必须初始化<br>设定完自己所有的变量之后再调用Super的初始化方法</p>
+</blockquote>
+<p>在下面这个初始化的例子中：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-71bbd45dcf36f0a3.png" alt="init wrong"><br>这样在init方法中没有初始化完自己的<code>hasTurbo</code>变量就直接调用super方法是会在编译的时候报错的，Swift为什么要这么做呢？因为可能会出现如下的情况：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-bd1edb7b7a89a7bc.png" alt="why init wrong"><br>也就是说在父类的<code>init</code>方法中可能会调用<code>filGasTank()</code>这个方法，而这个方法被子类所覆盖了，所以这时候就可能发生意向不到的bug。<br>初始化方法的覆盖也可能会产生问题：<br>比如我们有这样一个Car的类：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>{
+    <span class="keyword">var</span> paintColor: <span class="type">Color</span>
+    <span class="function"><span class="keyword">func</span> <span class="title">fillGasTank</span><span class="params">()</span></span> {...}
+    <span class="keyword">init</span>(color: <span class="type">Color</span>) {
+        paintColor = color
+        fillGasTank()
+    }
+} 
+<span class="class"><span class="keyword">class</span> <span class="title">RaceCar</span>: <span class="title">Car</span> </span>{
+    <span class="keyword">var</span> hasTurbo: <span class="type">Bool</span>
+    <span class="keyword">init</span>(color: <span class="type">Color</span>, turbo: <span class="type">Bool</span>) {
+        hasTurbo = turbo
+        <span class="keyword">super</span>.<span class="keyword">init</span>(color: color)
+} 
+    <span class="keyword">convenience</span> <span class="keyword">init</span>(color: <span class="type">Color</span>) {
+        <span class="keyword">self</span>.<span class="keyword">init</span>(color: color, turbo: <span class="literal">true</span>)
+} 
+    <span class="keyword">convenience</span> <span class="keyword">init</span>() {
+        <span class="keyword">self</span>.<span class="keyword">init</span>(color: <span class="type">Color</span>(gray: <span class="number">0.4</span>))
+} } 
+
+<span class="class"><span class="keyword">class</span> <span class="title">FormulaOne</span>: <span class="title">RaceCar</span> </span>{
+    <span class="keyword">let</span> minimumWeight = <span class="number">642</span>
+
+    <span class="comment">// inherited from RaceCar</span>
+    <span class="comment">/*init(color: Color, turbo: Bool) {
+        hasTurbo = turbo
+        super.init(color: color)
+    }
+    convenience init(color: Color) {
+        self.init(color: color, turbo: true)
+    }
+    convenience init() {
+        self.init(color: Color(gray: 0.4))
+    }
+    */</span>
+}
+</code></pre>
+<p>上面注释的内容是从父类中继承过来的，如果我们在子类中调用<code>convenience init(color: Color)</code>这个方法的时候，想让<code>turbo</code>这个参数的默认值为<code>false</code>，这时候我们就需要覆盖掉父类的<code>convenience init</code>方法了。这时我们需要实现自己的<code>designed initializer</code>  </p>
+<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">FormulaOne</span>: <span class="title">RaceCar</span> </span>{
+    <span class="keyword">let</span> minimumWeight = <span class="number">642</span>
+    <span class="keyword">init</span>(color: <span class="type">Color</span>) {
+        <span class="keyword">super</span>.<span class="keyword">init</span>(color: color, turbo: <span class="literal">false</span>)
+} 
+    <span class="comment">// not inherited from RaceCar</span>
+    <span class="comment">/*init(color: Color, turbo: Bool)
+    convenience init()
+    */</span>
+}
+</code></pre>
+<p>这样以后被注释的内容就不会再被继承了。就会直接掉用子类的<code>designed init</code>方法了。</p>
+<h2 id="懒加载属性"><a href="#懒加载属性" class="headerlink" title="懒加载属性"></a>懒加载属性</h2><p>如果我们的某个属性需要很大的性能消耗，那么我们希望在使用的时候再创建该类，那么我们不必像在OC中那样重写其<code>get</code>方法，我们只需要在变量声明的前面加上<code>lazy</code>关键字即可。</p>
+<pre><code class="Swift"><span class="built_in">lazy</span> <span class="keyword">var</span> color:<span class="type">UIColor</span> = <span class="type">UIColor</span>.red
+</code></pre>
+<p>这样就可以声明了一个懒加载的属性了。</p>
+<h2 id="Closures"><a href="#Closures" class="headerlink" title="Closures"></a>Closures</h2><h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h3><p>Swift中Array的sort方法实现了Closure，我们来看下：</p>
+<pre><code class="Swift"><span class="keyword">var</span> clients = [<span class="string">"Pestov"</span>, <span class="string">"Buenaventura"</span>, <span class="string">"Sreeram"</span>, <span class="string">"Babbage"</span>]
+
+clients.<span class="built_in">sort</span>({(a: <span class="type">String</span>, b: <span class="type">String</span>) -&gt; <span class="type">Bool</span> <span class="keyword">in</span> 
+<span class="keyword">return</span> a &lt; b }) 
+
+<span class="built_in">println</span>(clients)
+<span class="comment">// [Babbage, Buenaventura, Pestov, Sreeram]</span>
+</code></pre>
+<p>这样就实现了数组中的元素排序。<br>但是基于<code>Swift</code>强大的类型推断功能，我们可以将其简化为：</p>
+<pre><code class="Swift">clients.<span class="built_in">sort</span>({ a, b <span class="keyword">in</span>
+<span class="keyword">return</span> a &lt; b
+})
+</code></pre>
+<p>因为这个<code>Closure</code>是有返回值的，所以编译器可以再次推断，所以我们可以这样写</p>
+<pre><code class="Swift">clients.<span class="built_in">sort</span>({ a, b <span class="keyword">in</span> a &lt; b })
+</code></pre>
+<p>编译器还可以推断出其参数值，所以，我们这里可以写成</p>
+<pre><code class="Swift">clients.<span class="built_in">sort</span>({$<span class="number">0</span> &lt; $<span class="number">1</span>})
+</code></pre>
+<p>因为我们还有尾随闭包，所以我们可以进一步简化</p>
+<pre><code class="Swift">clients.<span class="built_in">sort</span>{$<span class="number">0</span> &lt; $<span class="number">1</span>}
+</code></pre>
+<h3 id="Functional-Programming"><a href="#Functional-Programming" class="headerlink" title="Functional Programming"></a>Functional Programming</h3><p>我们有很多函数式编程的高阶函数可以供调用：</p>
+<pre><code class="Swift"><span class="keyword">let</span> result = words.<span class="built_in">filter</span>{ $<span class="number">0</span>.hasSuffix(<span class="string">"gry"</span>)}.<span class="built_in">map</span>{$<span class="number">0</span>.uppercaseString}
+</code></pre>
+<p>这样我们就可以找到所有以<code>gry</code>结尾的单词，并且将其转化为大写字母。如果这时结果是</p>
+<pre><code class="Swift"><span class="type">ANGRY</span>
+<span class="type">HUNGRY</span>
+</code></pre>
+<p>我们还可以调用<code>reduce</code>方法将其和成一个字符串</p>
+<pre><code class="Swift"><span class="keyword">let</span> reducedResult = result.<span class="built_in">reduce</span>(<span class="string">"HULK"</span>){<span class="string">"<span class="subst">\($<span class="number">0</span>)</span> <span class="subst">\($<span class="number">1</span>)</span>"</span>}
+</code></pre>
+<p>这时结果如下：</p>
+<pre><code class="Swift"><span class="type">HULK</span> <span class="type">ANGRY</span> <span class="type">HUNGRY</span>
+</code></pre>
+<h3 id="函数值"><a href="#函数值" class="headerlink" title="函数值"></a>函数值</h3><p>比高可以传递一个函数，例如：</p>
+<pre><code class="Swift"> numbers.<span class="built_in">map</span> {
+        <span class="built_in">println</span>($<span class="number">0</span>)
+} 
+numbers.<span class="built_in">map</span>(<span class="built_in">println</span>)    <span class="comment">// 可以将一个函数传递过去</span>
+
+
+<span class="keyword">var</span> indexes = <span class="type">NSMutableIndexSet</span>()
+numbers.<span class="built_in">map</span> {
+    indexes.addIndex($<span class="number">0</span>)
+} 
+
+numbers.<span class="built_in">map</span> (indexes.addIndex) <span class="comment">// 可以将一个Method传过去</span>
+</code></pre>
+<h3 id="闭包是一个ARC对象"><a href="#闭包是一个ARC对象" class="headerlink" title="闭包是一个ARC对象"></a>闭包是一个ARC对象</h3><p>我们可以声明一个Closure属性：</p>
+<pre><code class="Swift"><span class="keyword">var</span> onTempratureChange: (<span class="type">Int</span>) -&gt; <span class="type">Void</span> = {}
+<span class="function"><span class="keyword">func</span> <span class="title">logTemperatureDifferences</span><span class="params">(initial: Int)</span></span> {
+    <span class="keyword">var</span> prev = initial
+    onTemperatureChange = { next <span class="keyword">in</span>
+        <span class="built_in">println</span>(<span class="string">"Changed <span class="subst">\(next - prev)</span>°F"</span>)
+prev = next 
+}
+</code></pre>
+<p>因为function也是closure，那么我们可以这样写：</p>
+<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">logTemperatureDifferences</span><span class="params">(initial: Int)</span></span> {
+    <span class="keyword">var</span> prev = initial
+    <span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(next: Int)</span></span> {
+        <span class="built_in">println</span>(<span class="string">"Changed <span class="subst">\(next - prev)</span>°F"</span>)
+prev = next } 
+    onTemperatureChange = log
+</code></pre>
+<h3 id="闭包的循环引用问题"><a href="#闭包的循环引用问题" class="headerlink" title="闭包的循环引用问题"></a>闭包的循环引用问题</h3><p>和OC中的Block一样，Swift中也会出现循环引用的问题，我们来看看怎样解决：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">TemperatureNotifier</span> </span>{
+    <span class="keyword">var</span> onChange: (<span class="type">Int</span>) -&gt; <span class="type">Void</span> = {}
+    <span class="keyword">var</span> currentTemp = <span class="number">72</span>
+    <span class="keyword">init</span>() {
+        onChange = { temp <span class="keyword">in</span>
+currentTemp = temp    } <span class="comment">// error: requires explicit 'self' </span>
+  } 
+}
+</code></pre>
+<p>如果出现上面的循环引用问题，编译器会直接报错的，所以我们可以用上文提到的<code>unowned</code>来解决。我们可以将init()方法用下面的来取代：</p>
+<pre><code class="Swift"><span class="keyword">init</span>() { 
+    <span class="keyword">unowned</span> <span class="keyword">let</span> uSelf = <span class="keyword">self</span>
+    onChange = { temp <span class="keyword">in</span>
+      uSelf.currentTemp = temp
+    }
+</code></pre>
+<p>但是这样写还会出现一个问题，就是如果别处有一份逻辑一样的代码，某个人不注意拷贝过来了忘记将<code>self</code>改成uSelf，或者这个方法很长，写到下面的是忘记了将<code>self</code>改成uSelf，那么就会出现内存泄漏的问题。为了解决这个问题Swift中提出了下面的优雅做法：</p>
+<pre><code class="Swift"><span class="keyword">init</span>() { onChange = {[<span class="keyword">unowned</span> <span class="keyword">self</span>] temp <span class="keyword">in</span> 
+<span class="keyword">self</span>.currentTemp = temp 
+} }
+</code></pre>
+<h2 id="Pattern-Matching"><a href="#Pattern-Matching" class="headerlink" title="Pattern Matching"></a>Pattern Matching</h2><p><code>switch</code>中可以有范围，字符串和数字，并且Enum中可以关联属性，比如：</p>
+<pre><code class="Swift"><span class="comment">// case中含有范围</span>
+<span class="function"><span class="keyword">func</span> <span class="title">describe</span><span class="params">(value: Int)</span></span> { <span class="keyword">switch</span> value { 
+<span class="keyword">case</span> <span class="number">0</span>...<span class="number">4</span>: <span class="built_in">println</span>(<span class="string">"a few"</span>) 
+<span class="keyword">case</span> <span class="number">5</span>...<span class="number">12</span>: <span class="built_in">println</span>(<span class="string">"a lot"</span>) 
+      <span class="keyword">default</span>:
+        <span class="built_in">println</span>(<span class="string">"a ton"</span>)
+} } 
+<span class="comment">// case中</span>
+
+<span class="class"><span class="keyword">enum</span> <span class="title">TrainStatus</span> </span>{
+    <span class="keyword">case</span> <span class="type">OnTime</span>
+    <span class="keyword">case</span> <span class="type">Delayed</span>(<span class="type">Int</span>)
+}
+</code></pre>
+<p>使用的时候如下：</p>
+<pre><code class="Swift"><span class="keyword">switch</span> trainStatus {
+  <span class="keyword">case</span> .<span class="type">OnTime</span>:
+} 
+  <span class="built_in">println</span>(<span class="string">"on time"</span>)
+<span class="keyword">case</span> .<span class="type">Delayed</span>(<span class="keyword">let</span> minutes)
+                        :
+<span class="built_in">println</span>(<span class="string">"delayed by <span class="subst">\(minutes)</span> minutes"</span>)
+</code></pre>
+<p>我们可以对这个<code>delay</code>做各种各样的匹配：</p>
+<pre><code class="Swift"><span class="keyword">switch</span> trainStatus {
+  <span class="keyword">case</span> .<span class="type">OnTime</span>:
+    <span class="built_in">println</span>(<span class="string">"on time"</span>)
+  <span class="keyword">case</span> .<span class="type">Delayed</span>(<span class="number">1</span>):
+    <span class="built_in">println</span>(<span class="string">"nearly on time"</span>)
+  <span class="keyword">case</span> .<span class="type">Delayed</span>(<span class="number">2</span>...<span class="number">10</span>):
+    <span class="built_in">println</span>(<span class="string">"almost on time, I swear"</span>)
+  <span class="keyword">case</span> .<span class="type">Delayed</span>(<span class="number">_</span>):
+    <span class="built_in">println</span>(<span class="string">"it'll get here when it's ready"</span>)
+</code></pre>
+<h3 id="Pattern-Compose"><a href="#Pattern-Compose" class="headerlink" title="Pattern Compose"></a>Pattern Compose</h3><p>也就是说Pattern可以组合出现，一个Pattern中可以包含其它的Pattern，比如对上文的<code>TrainStatus</code>再做以Pattern Compose：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">enum</span> <span class="title">VacationStatus</span> </span>{
+    <span class="keyword">case</span> <span class="type">Traveling</span>(<span class="type">TrainStatus</span>)
+    <span class="keyword">case</span> <span class="type">Relaxing</span>(daysLeft: <span class="type">Int</span>)
+} 
+
+<span class="keyword">switch</span> vacationStatus {
+  <span class="keyword">case</span> .<span class="type">Traveling</span>(.<span class="type">OnTime</span>):
+    tweet(<span class="string">"Train's on time! Can't wait to get there!"</span>)
+  <span class="keyword">case</span> .<span class="type">Traveling</span>(.<span class="type">Delayed</span>(<span class="number">1</span>...<span class="number">15</span>)):
+    tweet(<span class="string">"Train is delayed."</span>)
+  <span class="keyword">case</span> .<span class="type">Traveling</span>(.<span class="type">Delayed</span>(<span class="number">_</span>)):
+    tweet(<span class="string">"OMG when will this train ride end #railfail"</span>)
+  <span class="keyword">default</span>:
+  <span class="built_in">print</span>(<span class="string">"relaxing"</span>)
+</code></pre>
+<h3 id="Type-Pattern"><a href="#Type-Pattern" class="headerlink" title="Type Pattern"></a>Type Pattern</h3><p><code>Pattern</code>不仅仅可以作用于<code>Enum</code>，还可以作用于动态的类型，如：<code>Class</code></p>
+<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">tuneUp</span><span class="params">(car: Car)</span></span> {
+    <span class="keyword">switch</span> car {
+      <span class="keyword">case</span> <span class="keyword">let</span> formulaOne <span class="keyword">as</span> <span class="type">FormulaOne</span>:
+        formulaOne.enterPit()
+      <span class="keyword">case</span> <span class="keyword">let</span> raceCar <span class="keyword">as</span> <span class="type">RaceCar</span>:
+        <span class="keyword">if</span> raceCar.hasTurbo { raceCar.tuneTurbo() }
+        <span class="keyword">fallthrough</span>
+      <span class="keyword">default</span>:
+        car.checkOil()
+        car.pumpTires()
+} }
+</code></pre>
+<p>这样在多态中就会变得非常有用了。</p>
+<h3 id="Tuple-Patterns"><a href="#Tuple-Patterns" class="headerlink" title="Tuple Patterns"></a>Tuple Patterns</h3><p>Tuple pattern有其极其强大的功能，其可以对tuple的各个数值做以类型匹配。</p>
+<pre><code class="Swift"><span class="keyword">let</span> color = (<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>)
+<span class="keyword">switch</span> color {
+  <span class="keyword">case</span> (<span class="number">0.0</span>, <span class="number">0.5</span>...<span class="number">1.0</span>, <span class="keyword">let</span> blue, <span class="number">_</span>):
+    <span class="built_in">println</span>(<span class="string">"Green and <span class="subst">\(blue * <span class="number">100</span>)</span>% blue"</span>)
+  <span class="keyword">case</span> <span class="keyword">let</span> (r, g, b, <span class="number">1.0</span>) <span class="keyword">where</span> r == g &amp;&amp; g == b:
+    <span class="built_in">println</span>(<span class="string">"Opaque grey <span class="subst">\(r * <span class="number">100</span>)</span>%"</span>)
+</code></pre>
+<p>我们甚至可以对其中的各个数值做以相应的模式匹配。</p>
+<h3 id="Pattern-Matching的应用PList校验"><a href="#Pattern-Matching的应用PList校验" class="headerlink" title="Pattern Matching的应用PList校验"></a>Pattern Matching的应用PList校验</h3><p>比如我们有下面的方法来校验Plist中的内容是否有效</p>
+<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">stateFromPlist</span><span class="params">(list: Dictionary&lt;String, AnyObject&gt;)</span></span>
+  -&gt; <span class="type">State</span>?
+stateFromPlist([<span class="string">"name"</span>: <span class="string">"California"</span>,
+                <span class="string">"population"</span>: <span class="number">38_040_000</span>,
+                <span class="string">"abbr"</span>: <span class="string">"CA"</span>])
+</code></pre>
+<p>这时我们要对<code>population</code>的值做以限制，如果是字符串返回<code>nil</code>，如果是超过某个范围的时候返回<code>nil</code>，如果是<code>abbr</code>中字母的个数大于2时候我们也返回<code>nil</code>，利用tuple pattern matching的强大特性，我们可以这样去做：</p>
+<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">stateFromPlist</span><span class="params">(list: Dictionary&lt;String, AnyObject&gt;)</span></span>
+  -&gt; <span class="type">State</span>? {
+
+<span class="keyword">switch</span> (list[<span class="string">"name"</span>], list[<span class="string">"population"</span>], list[<span class="string">"abbr"</span>]) { 
+<span class="keyword">case</span> ( 
+        .<span class="type">Some</span>(<span class="keyword">let</span> listName <span class="keyword">as</span> <span class="type">NSString</span>), 
+        .<span class="type">Some</span>(<span class="keyword">let</span> pop <span class="keyword">as</span> <span class="type">NSNumber</span>),
+        .<span class="type">Some</span>(<span class="keyword">let</span> abbr <span class="keyword">as</span> <span class="type">NSString</span>)
+      ) <span class="keyword">where</span> abbr.length == <span class="number">2</span>:
+    <span class="keyword">return</span> <span class="type">State</span>(name: listName, population: pop, abbr: abbr)
+  <span class="keyword">default</span>:
+<span class="keyword">return</span> <span class="literal">nil</span> 
+   } 
+}
+</code></pre>
+<p>这就利用了tuple和限制想结合的方式优雅的解决了这个问题。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/02/wwdc-better-app-with-value-type/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1585,7 +1980,7 @@ git push heroku master
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
