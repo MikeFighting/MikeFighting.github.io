@@ -112,7 +112,7 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-040ccbafce764e18.png">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-71bbd45dcf36f0a3.png">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-bd1edb7b7a89a7bc.png">
-<meta property="og:updated_time" content="2017-08-04T00:33:38.000Z">
+<meta property="og:updated_time" content="2017-08-04T00:45:35.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Swift中级">
 <meta name="twitter:description" content="本文源于对：WWDC2014–Intermediate Swift的总结。 为什么需要Optional?我们队某个对象的操作可能会返回错误的结果：比如我们将某个字符串转为Int型，执行下面的指令： let age = response.toInt()  这response可能是用户输入的,可能会输入不确定的数值Do you konw?那么肯定会得到错误的结果，在OC中遇到这种情况我们怎么处理呢？我">
@@ -408,8 +408,9 @@
 </code></pre>
 <h2 id="Swift中的内存管理"><a href="#Swift中的内存管理" class="headerlink" title="Swift中的内存管理"></a>Swift中的内存管理</h2><p>在Swift中也用的是ARC，也容易出现循环引用，这时需要使用<code>weak</code>属性。需要注意的是</p>
 <blockquote>
-<p><code>weak</code>引用的类型是Optional的。<br>Binding该Optional Type将会产生一个强引用。<br>如果仅仅是判断即用<code>if</code>判断，则不会产生强引用。<br>例如：</p>
+<p><code>weak</code>引用的类型是Optional的。<br>Binding该Optional Type将会产生一个强引用。<br>如果仅仅是判断即用<code>if</code>判断，则不会产生强引用。</p>
 </blockquote>
+<p>例如：</p>
 <pre><code class="Swift"><span class="keyword">if</span> <span class="keyword">let</span> tenant = apt.tenant {
   tenant.buzzIn()
  }
