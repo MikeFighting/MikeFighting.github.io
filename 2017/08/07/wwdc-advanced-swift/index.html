@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="WWDC," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="本文是对WWDC2014–AdvancedSwift的总结 改变参数名比如我们要改变Thing对象的参数名： class Thing { init(location: Thing?, name:String,      longDescription: String){ ... } }  如果我们不想用默认的Thing.init(location:Beijing, name:&amp;quot;wall&amp;">
+<meta name="keywords" content="WWDC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift进阶">
+<meta property="og:url" content="https://mikefighting.github.io/2017/08/07/wwdc-advanced-swift/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="本文是对WWDC2014–AdvancedSwift的总结 改变参数名比如我们要改变Thing对象的参数名： class Thing { init(location: Thing?, name:String,      longDescription: String){ ... } }  如果我们不想用默认的Thing.init(location:Beijing, name:&amp;quot;wall&amp;">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-1d9abd75b75e42ea.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-12e6e8ab9ae865d9.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-9d39a23bddecaefd.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-3cb2500863892632.png">
+<meta property="og:updated_time" content="2017-08-09T04:25:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Swift进阶">
+<meta name="twitter:description" content="本文是对WWDC2014–AdvancedSwift的总结 改变参数名比如我们要改变Thing对象的参数名： class Thing { init(location: Thing?, name:String,      longDescription: String){ ... } }  如果我们不想用默认的Thing.init(location:Beijing, name:&amp;quot;wall&amp;">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-1d9abd75b75e42ea.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/08/07/wwdc-advanced-swift/"/>
+
+
+
+
+
+  <title>Swift进阶 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keeep Refactoring, Keeep Moving!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/07/wwdc-advanced-swift/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Swift进阶</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-07T22:29:53+08:00">
+                2017-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文是对<a href="">WWDC2014–AdvancedSwift的总结</a></p>
+<h2 id="改变参数名"><a href="#改变参数名" class="headerlink" title="改变参数名"></a>改变参数名</h2><p>比如我们要改变Thing对象的参数名：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">Thing</span> </span>{
+<span class="keyword">init</span>(location: <span class="type">Thing</span>?, name:<span class="type">String</span>,
+     longDescription: <span class="type">String</span>){ ... }
+}
+</code></pre>
+<p>如果我们不想用默认的<code>Thing.init(location:Beijing, name:&quot;wall&quot;,longDescription:&quot;An amazing city&quot;)</code>这种方式进行初始化，我们可以在参数前面添加<code>label</code>的形式：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">Thing</span> </span>{
+  <span class="keyword">init</span>(newLocation location: <span class="type">Thing</span>?, newName name: <span class="type">String</span>,
+newLongDescription longDescription: <span class="type">String</span>) { ... }
+}
+</code></pre>
+<p>这样我们就可以使用<code>Thing.init(newLocation:Beijing, newName:&quot;wall&quot;,newLongDescription:&quot;An amazing city&quot;)</code>这种参数来进行初始化。</p>
+<h2 id="匿名参数"><a href="#匿名参数" class="headerlink" title="匿名参数"></a>匿名参数</h2><p>比如下面的例子，我们不需要字典中的value，那么我们就只需要遍历其<code>key</code>即可。</p>
+<pre><code class="Swift"><span class="keyword">for</span> (key,<span class="number">_</span>) <span class="keyword">in</span> dictionary {
+ <span class="built_in">print</span>(\(key))
+}
+</code></pre>
+<p>在这个例子中，我们使用下划线<code>_</code>来进行你匿名操作，略过了我们不关心的value值，而只输出了<code>key</code>的值。</p>
+<p>在上面<code>Thing</code>的例子中，如果我们要移除其参数名称，那么我们可以将<code>label</code>变为下划线，这样我们在调用的时候就不必写参数名了。</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">Thing</span> </span>{
+  <span class="keyword">init</span>(<span class="number">_</span> location: <span class="type">Thing</span>?, <span class="number">_</span> name: <span class="type">String</span>,
+
+   <span class="number">_</span> longDescription: <span class="type">String</span>) { ... }
+}
+</code></pre>
+<p>这样我们就可以使用<code>Thing.init(Beijing, &quot;wall&quot;,&quot;An amazing city&quot;)</code>来初始化了。</p>
+<h2 id="Protocol"><a href="#Protocol" class="headerlink" title="Protocol"></a>Protocol</h2><p>如果我们要给上面的<code>Thing</code>对象添加一个方法<code>performPull</code>来执行其是否可以被拉动的方法。</p>
+<pre><code class="Swift">        <span class="comment">// The parser will call this. func performPull(object: Thing) </span>
+{ <span class="keyword">if</span> <span class="comment">/* object is   pullable */</span> {      <span class="comment">/* pull it */</span> }<span class="keyword">else</span>{      <span class="comment">/* complain */</span>   } }
+</code></pre>
+<p>这时我们可以添加一个Protocol：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">protocol</span> <span class="title">Pullable</span> </span>{
+  <span class="function"><span class="keyword">func</span> <span class="title">pull</span><span class="params">()</span></span>
+} 
+<span class="class"><span class="keyword">class</span> <span class="title">Boards</span>: <span class="title">Thing</span>, <span class="title">Pullable</span> </span>{
+<span class="function"><span class="keyword">func</span> <span class="title">pull</span><span class="params">()</span></span> {
+....
+}
+}
+</code></pre>
+<p>这样我们的<code>Boards</code>类就遵守了<code>Pullable</code>协议，当我们来检查某个对象是否遵守了某个协议时，我们可以这样做：</p>
+<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">performPull</span><span class="params">(object: Thing)</span></span> { <span class="keyword">if</span> <span class="keyword">let</span> pullableObject = object <span class="keyword">as</span> <span class="type">Pullable</span> { pullableObject.pull()    }<span class="keyword">else</span>{ 
+     <span class="built_in">print</span>(<span class="string">"You are not sure how to print a <span class="subst">\(object.name)</span>."</span>)
+   } 
+}
+</code></pre>
+<h3 id="对象转String"><a href="#对象转String" class="headerlink" title="对象转String"></a>对象转String</h3><p>如果我们要打印某个对象，并且需要打印出其中的有效信息，那么我们要像OC中实现<code>description</code>方法一样，来遵守<code>CustomStringConvertible</code>协议并且实现其中的<code>description</code>方法。<br>还有很多类似的方法</p>
+<table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ExpressibleByStringLiteral</td>
+<td>“abc”</td>
+</tr>
+<tr>
+<td>ExpressibleByArrayLiteral</td>
+<td>[ a, b, c ]</td>
+</tr>
+<tr>
+<td>ExpressibleByDictionaryLiteral</td>
+<td>[a: x, b: y]</td>
+</tr>
+<tr>
+<td>Sequence</td>
+<td>for x in sequence</td>
+</tr>
+<tr>
+<td>CustomStringConvertible</td>
+<td>“(convertible)”</td>
+</tr>
+</tbody>
+</table>
+<p>同样，如果我们要对某个对象使用下表，那么我们要<code>subscript</code>。怎样对某个类使用下表呢？</p>
+<h2 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h2><p> 比如以下三个方法，其参数的形式是一样的，但是其参数类型不同，我们想把它变成一个函数，这时候我们最常想到的做法就是使用<code>Any</code>来表示任何类型的参数和任何类型的返回值。</p>
+<pre><code class="Swift"><span class="comment">// 之前的三个函数</span>
+<span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: String)</span></span> {
+  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
+}
+<span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Int)</span></span> {
+  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
+}
+<span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Float)</span></span> {
+  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
+} 
+<span class="comment">// 变为一个函数</span>
+<span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Any)</span></span> {
+  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
+}
+</code></pre>
+<p>但是这有个问题，在我们要调用返回值的某个方法时候编译器会报错，因为我们的返回值<code>Any</code>并没有所调用的方法，也就是说我们需要一次强转，强转在代码层面是很难看的，也很麻烦，这时候我们就可以使用泛型来解决这个问题，如果我们使用了泛型，那么编译器会将输入的参数和输出的参数给我们推断出来，这样就不必强转了。并且当编译器可以推断出来是那种type的时候它会给我们做各种优化。</p>
+<p>泛型在Swift中很常见，比如：<br>Array<t>以及Dictionary<k,v>：是范型的结构体<br>Optional<t>：范型枚举<br>我们也可以创建自己的泛型类</t></k,v></t></p>
+<h3 id="Type间的关系"><a href="#Type间的关系" class="headerlink" title="Type间的关系"></a>Type间的关系</h3><p>比如我们要转换两个变量的值，我们可以调用下面的方法：</p>
+<pre><code class="Swift"> // Exchange the values of x and y
+func swap&lt;T&gt;(inout x: T, inout y: T) { 
+let tmp = x     x = y     y = tmp 
+} 
+var studentCount = 42
+var teacherCount = 7
+swap(&amp;studentCount, &amp;teacherCount) // OK
+var schoolName = “Homestead High School"
+swap(&amp;studentCount, &amp;schoolName) // error: 'Int' is not identical to 'String'
+</code></pre>
+<p>有了这样的编译器提示，这样我们就可以保证了输入的两种类型是相同的，这样就会更加<strong>安全</strong>，代码也会少很多bug。</p>
+<h3 id="对泛型进行Protocol限制"><a href="#对泛型进行Protocol限制" class="headerlink" title="对泛型进行Protocol限制"></a>对泛型进行Protocol限制</h3><p>我们可以给泛型加上限制，让它遵守某些协议，比如：</p>
+<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">indexOf</span>&lt;T&gt;<span class="params">(sought: T, inArray array: T[])</span></span> -&gt; <span class="type">Int</span>? {
+  <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span>..array.<span class="built_in">count</span> {
+    <span class="keyword">if</span> array[i] == sought { <span class="comment">// error: could not find an overload for '==' that accepts the supplied arguments </span>
+      <span class="keyword">return</span> i
+} } 
+<span class="keyword">return</span> <span class="literal">nil</span> }
+</code></pre>
+<p>这是编译不通过的，因为编译器不知道我们的<code>T</code>是否遵守了<code>Equatable</code>协议，如果我们将其变为<code>func indexOf&lt;T:Equatable&gt;(Sought: T, inArray array: T[]) -&gt; Int?</code>就可以编译通过了。</p>
+<h3 id="实现Equatable协议"><a href="#实现Equatable协议" class="headerlink" title="实现Equatable协议"></a>实现Equatable协议</h3><p>Enum，Class以及Struct都可以实现协议，比如我们有如下的Struct，实现Equatable协议如下：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">Temperature</span> : <span class="title">Equatable</span> </span>{ 
+  <span class="keyword">let</span> value: <span class="type">Int</span> = <span class="number">0</span>
+}
+
+<span class="function"><span class="keyword">func</span> == <span class="params">(lhs: Temperature, rhs: Temperature)</span></span> -&gt; <span class="type">Bool</span> {
+  <span class="keyword">return</span> lhs.value == rhs.value
+}
+</code></pre>
+<p>当我们实现了<code>Equatable</code>，那么对于<code>!=</code>这种操作，Swift在底层就会自动帮我们实现。</p>
+<h2 id="斐波那契数列的例子"><a href="#斐波那契数列的例子" class="headerlink" title="斐波那契数列的例子"></a>斐波那契数列的例子</h2><p>什么是菲波那切数列？数列的前两个数相加等于后面的一个数。 <code>0, 1, 1, 2, 3, 5, 8, 13, 21, ...</code><br>我们创建一个菲波那切数列的函数：</p>
+<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">fibonacci</span><span class="params">(n: Int)</span></span> -&gt; <span class="type">Double</span> {
+  <span class="keyword">return</span> n &lt; <span class="number">2</span> ? <span class="type">Double</span>(n) : fibonacci(n - <span class="number">1</span>) + fibonacci(n - <span class="number">2</span>)
+}
+</code></pre>
+<p>这个函数的返回值仍然是一个函数，它是一个递归调用的函数，这个函数的效率极低。当你在Playground中实验的时候就会卡的不行。如果调用<code>fibonacci(44)</code>估计要十几秒的时间。原因就是它需要一个调用一个树状结构，我们用<code>fibonacci(5)</code>做个图示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-1d9abd75b75e42ea.png" alt="fibonacci(n:5)"></p>
+<p>在图中我们发现fib(1)，fib(2)等函数被持续的调用，我们如果可以把这个已经计算过的数值存下来，那么以后不是就就可以直接计算了呢？这样不就可以极大的提高计算的速度。这样我们就只计算下面带星号的函数即可：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-12e6e8ab9ae865d9.png" alt="valuable func"></p>
+<p>这时最先想到的就是用一个全局的字典手动来存储这个数值，实现方法如下：</p>
+<pre><code class="Swift"><span class="keyword">var</span> fibonacciMemo = <span class="type">Dictionary</span>&lt;<span class="type">Int</span>, <span class="type">Double</span>&gt;() <span class="comment">// implementation detail </span> <span class="comment">// Return the nth fibonacci number: 0, 1, 1, 2, 3, 5, 8, 13, 21, ...</span> <span class="function"><span class="keyword">func</span> <span class="title">fibonacci</span><span class="params">(n: Int)</span></span> -&gt; <span class="type">Double</span> { 
+  <span class="keyword">if</span> <span class="keyword">let</span> result = fibonacciMemo[n] {
+    <span class="keyword">return</span> result
+  }
+  <span class="keyword">let</span> result = n &lt; <span class="number">2</span> ? <span class="type">Double</span>(n) : fibonacci(n - <span class="number">1</span>) + fibonacci(n - <span class="number">2</span>)
+  fibonacciMemo[n] = result
+  <span class="keyword">return</span> result
+} 
+
+<span class="comment">// 1.61803399...</span>
+<span class="keyword">let</span> phi = fibonacci(<span class="number">45</span>) / fibonacci(<span class="number">44</span>) <span class="comment">//0.1 seconds = 100x speedup</span>
+</code></pre>
+<p>这样一来，我们之前计算<code>fibonacci(44)</code>中十几秒的计算时间一下子缩短到了0.1秒，缩减了100倍。<br>如果这样做的话，我们以后每次用到这个方法就都需要写一个字典，每次把这个计算过程过一遍，并且更重要的是它不具备通用型，如果我要放进去字符串，那就不起作用了。下面我们写一个通用的函数来解决这种需要保留中间数值，并且不需要额外的全局变量<code>fibonacciMemo</code>就可以解决问题的方法。先看一个不递归时候的函数：</p>
+<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">memoize</span>&lt;T: Hashable, U&gt;<span class="params">(work: @escaping <span class="params">(T)</span></span></span>-&gt;<span class="type">U</span>) -&gt; (<span class="type">T</span>)-&gt;<span class="type">U</span> {
+
+    <span class="keyword">var</span> memo = <span class="type">Dictionary</span>&lt;<span class="type">T</span>, <span class="type">U</span>&gt;()
+    <span class="keyword">return</span> { x <span class="keyword">in</span>
+        <span class="keyword">if</span> <span class="keyword">let</span> q = memo[x] { <span class="keyword">return</span> q }
+        <span class="keyword">let</span> r = work(x)
+        memo[x] = r
+        <span class="keyword">return</span> r
+    }
+}
+</code></pre>
+<p>然后再来一个可以递归的方法：</p>
+<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">memoize</span>&lt;T: Hashable, U&gt;<span class="params">(work: @escaping <span class="params">(<span class="params">(T)</span></span></span></span>-&gt;<span class="type">U</span>, <span class="type">T</span>) -&gt; <span class="type">U</span>) -&gt; (<span class="type">T</span>)-&gt;<span class="type">U</span> {
+    <span class="keyword">var</span> memo = <span class="type">Dictionary</span>&lt;<span class="type">T</span>, <span class="type">U</span>&gt;()
+    <span class="function"><span class="keyword">func</span> <span class="title">wrap</span><span class="params">(x: T)</span></span>-&gt;<span class="type">U</span> {
+        <span class="keyword">if</span> <span class="keyword">let</span> q = memo[x] { <span class="keyword">return</span> q }
+        <span class="keyword">let</span> r = work(wrap, x)
+        memo[x] = r
+        <span class="keyword">return</span> r
+    }
+    <span class="keyword">return</span> wrap
+}
+</code></pre>
+<p>这两个函数包含了swift中的很多高级语法：</p>
+<ul>
+<li>强大的编译器推断匹配,比如你调用：</li>
+</ul>
+<pre><code class="Swift">     <span class="keyword">let</span> fibonacci = memoize {
+    (n: <span class="type">Int</span>) <span class="keyword">in</span>
+    <span class="type">String</span>(n)
+}
+</code></pre>
+<p>那么上面泛型中的<code>T</code>就会被推断成<code>Int</code>，而<code>U</code>怎会被推断成<code>String</code>。</p>
+<ul>
+<li>尾随闭包，比如调用<code>let fibonacci = memoize {...}</code>的时候。</li>
+<li>更通用，更安全，性能更高的泛型函数。</li>
+</ul>
+<p>关于这个函数，有人专门写了一篇博客来说明:<a href="https://medium.com/@mvxlr/swift-memoize-walk-through-c5224a558194" target="_blank" rel="external">https://medium.com/@mvxlr/swift-memoize-walk-through-c5224a558194</a></p>
+<h2 id="泛型结构体的一个例子"><a href="#泛型结构体的一个例子" class="headerlink" title="泛型结构体的一个例子"></a>泛型结构体的一个例子</h2><pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">StringStack</span> </span>{
+  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(x: String)</span></span> {
+items += x } 
+  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">String</span> {
+    <span class="keyword">return</span> items.removeLast()
+} 
+  <span class="keyword">var</span> items: <span class="type">String</span>[]
+}
+</code></pre>
+<p>这里我们创建了一个字符串的栈，如果我们要变为泛型，则需要：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">Stack</span>&lt;<span class="title">T</span>&gt; </span>{
+  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(x: T)</span></span> {
+items += x } 
+  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">T</span> {
+    <span class="keyword">return</span> items.removeLast()
+} 
+  <span class="keyword">var</span> items: <span class="type">T</span>[]
+}
+</code></pre>
+<p>这样我们就可以往里面放任何数据类型了：</p>
+<pre><code class="Swift"><span class="keyword">var</span> intStack = <span class="type">Stack</span>&lt;<span class="type">Int</span>&gt;()
+intStack.push(<span class="number">42</span>)
+</code></pre>
+<p>但是当我们需要对这个Stack做<code>for in</code>操作时候，却得到了下面的错误提示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-9d39a23bddecaefd.png" alt="for_in_error"><br>这时候我们需要理解下，什么是<code>Sequence</code>，当Swift给我们做<code>for in</code>操作的时候在底层给我们做了什么？</p>
+<pre><code class="Swift"><span class="comment">// 我们代码</span>
+ <span class="keyword">for</span> x <span class="keyword">in</span> someSequence {
+  ...
+ }
+<span class="comment">// Swift翻译后的代码</span>
+<span class="keyword">var</span> __g = someSequence.generate()
+<span class="keyword">while</span> <span class="keyword">let</span> x = __g.next(){
+...
+}
+</code></pre>
+<p>从上面可以看到，首先我们的<code>someSequence</code>需要关联一个<code>generate</code>，并且这个<code>generate</code>需要实现一个<code>next</code>方法，这样我们就可以对这个结构体做<code>for in</code>操作了。<br>我们先看这个<code>generate()</code>，它是一个结构体，其遵守<code>Generator</code>（<code>protocol</code>)。</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">protocol</span> <span class="title">Generator</span> </span>{
+ <span class="keyword">typealias</span> <span class="type">Element</span>
+ <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">Element</span> ?
+}
+</code></pre>
+<p>然后我们创建一个遵守<code>Generator</code>的结构体：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">StackGenerator</span>&lt;<span class="title">T</span>&gt; : <span class="title">Generator</span> </span>{
+  <span class="keyword">typealias</span> <span class="type">Element</span> = <span class="type">T</span>
+  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">T</span>? {
+    <span class="keyword">if</span> items.isEmpty { <span class="keyword">return</span> <span class="literal">nil</span> }
+    <span class="keyword">let</span> ret = items[<span class="number">0</span>]
+    items = items[<span class="number">1</span>..items.<span class="built_in">count</span>]
+    <span class="keyword">return</span> ret
+} 
+  <span class="keyword">var</span> items: <span class="type">Slice</span>&lt;<span class="type">T</span>&gt;
+}
+</code></pre>
+<p>那么什么是<code>Sequence</code>呢？它也是一个<code>protocol</code></p>
+<pre><code class="Swift"> <span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>{
+  <span class="keyword">typealias</span> <span class="type">GeneratorType</span> : <span class="type">Generator</span>
+  <span class="function"><span class="keyword">func</span> <span class="title">generate</span><span class="params">()</span></span> -&gt; <span class="type">GeneratorType</span>
+}
+</code></pre>
+<p>它关联了一个<code>Generator</code>，然后我们让新建的<code>Stack</code>遵守这个<code>Sequence</code>协议：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">extension</span> <span class="title">Stack</span> : <span class="title">Sequence</span> </span>{
+  <span class="function"><span class="keyword">func</span> <span class="title">generate</span><span class="params">()</span></span> -&gt; <span class="type">StackGenerator</span>&lt;<span class="type">T</span>&gt; {
+    <span class="keyword">return</span> <span class="type">StackGenerator</span>( items[<span class="number">0</span>..itemCount] )
+  }
+}
+</code></pre>
+<p>这样就可以对<code>Stack</code>做<code>for in</code>操作了。</p>
+<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">peekStack</span><span class="params">(s: Stack&lt;T&gt;)</span></span> {
+  <span class="keyword">for</span> x <span class="keyword">in</span> s { <span class="built_in">println</span>(x) }
+}
+</code></pre>
+<p>关于<code>Sequence</code>和<code>Generator</code>的详细说明，请看我的另外一篇博客<a href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/">Swift中Collection的Protocol</a></p>
+<h3 id="执行效率"><a href="#执行效率" class="headerlink" title="执行效率"></a>执行效率</h3><p>Swift是静态编译，很小的runtime。写好的代码传到设备上之后不需要再重新编译，只需要等着运行即可。Swift中的编译器，相比于C，C++，Objective-C的Clang，做了一步优化：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-3cb2500863892632.png" alt="SwiftComplier"><br>除此之外，Swift会在编译时候做以下几点</p>
+<ul>
+<li>全局分析App</li>
+<li>使用Struct不会对Runtime的性能造成影响</li>
+<li>Int，Float等很多标准库都是Struct的</li>
+</ul>
+<p>Swift还有去虚拟化的特点，它可以让再运行期确定的事情放到了编译期，这样就会更快了，详细内容可以参考我的另外一篇博客<a href="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/">为什么Swift比OC快</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/WWDC/" rel="tag"># WWDC</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/05/avfoundation-play/" rel="next" title="AVFoundation--视频播放">
+                <i class="fa fa-chevron-left"></i> AVFoundation--视频播放
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="击水湘江" />
+          <p class="site-author-name" itemprop="name">击水湘江</p>
+           
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#改变参数名"><span class="nav-number">1.</span> <span class="nav-text">改变参数名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#匿名参数"><span class="nav-number">2.</span> <span class="nav-text">匿名参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Protocol"><span class="nav-number">3.</span> <span class="nav-text">Protocol</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对象转String"><span class="nav-number">3.1.</span> <span class="nav-text">对象转String</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型"><span class="nav-number">4.</span> <span class="nav-text">泛型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Type间的关系"><span class="nav-number">4.1.</span> <span class="nav-text">Type间的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对泛型进行Protocol限制"><span class="nav-number">4.2.</span> <span class="nav-text">对泛型进行Protocol限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现Equatable协议"><span class="nav-number">4.3.</span> <span class="nav-text">实现Equatable协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#斐波那契数列的例子"><span class="nav-number">5.</span> <span class="nav-text">斐波那契数列的例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型结构体的一个例子"><span class="nav-number">6.</span> <span class="nav-text">泛型结构体的一个例子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#执行效率"><span class="nav-number">6.1.</span> <span class="nav-text">执行效率</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.1"></script>
+
+
+  
+
+</body>
+</html>
