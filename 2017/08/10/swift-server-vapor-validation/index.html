@@ -99,18 +99,20 @@
 
 
 
-<meta name="description" content="服务端在有数据请求时需要对数据进行校验然后返回响应的校验结果，比如要求必须输入邮箱，必须输入电话等，Validation工具给我们提供了非常方便的常用操作，接下来就对其使用过程做以总结（本文用到的是Validation 1.2.0版本）。 Vapor中添加Validation依赖包在Package.swift文件中添加如下的依赖，比如： .Package(url: &amp;quot;https://gi">
+<meta name="description" content="服务端在有数据请求时需要对数据进行校验然后返回响应的校验结果，比如要求必须输入邮箱，必须输入电话等，Validation工具给我们提供了非常方便的常用操作，接下来就对其使用过程做以总结（本文用到的是Validation 1.2.0版本）。 Vapor中添加Validation依赖包在Package.swift文件中添加如下的依赖，比如： .Package(url: &amp;quot;https:/">
 <meta name="keywords" content="Server-Swift">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Vapor中的数据校验">
 <meta property="og:url" content="https://mikefighting.github.io/2017/08/10/swift-server-vapor-validation/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="服务端在有数据请求时需要对数据进行校验然后返回响应的校验结果，比如要求必须输入邮箱，必须输入电话等，Validation工具给我们提供了非常方便的常用操作，接下来就对其使用过程做以总结（本文用到的是Validation 1.2.0版本）。 Vapor中添加Validation依赖包在Package.swift文件中添加如下的依赖，比如： .Package(url: &amp;quot;https://gi">
+<meta property="og:description" content="服务端在有数据请求时需要对数据进行校验然后返回响应的校验结果，比如要求必须输入邮箱，必须输入电话等，Validation工具给我们提供了非常方便的常用操作，接下来就对其使用过程做以总结（本文用到的是Validation 1.2.0版本）。 Vapor中添加Validation依赖包在Package.swift文件中添加如下的依赖，比如： .Package(url: &amp;quot;https:/">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-08-10T15:09:45.000Z">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-267da7a2929f0562.jpg">
+<meta property="og:updated_time" content="2017-08-11T05:06:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vapor中的数据校验">
-<meta name="twitter:description" content="服务端在有数据请求时需要对数据进行校验然后返回响应的校验结果，比如要求必须输入邮箱，必须输入电话等，Validation工具给我们提供了非常方便的常用操作，接下来就对其使用过程做以总结（本文用到的是Validation 1.2.0版本）。 Vapor中添加Validation依赖包在Package.swift文件中添加如下的依赖，比如： .Package(url: &amp;quot;https://gi">
+<meta name="twitter:description" content="服务端在有数据请求时需要对数据进行校验然后返回响应的校验结果，比如要求必须输入邮箱，必须输入电话等，Validation工具给我们提供了非常方便的常用操作，接下来就对其使用过程做以总结（本文用到的是Validation 1.2.0版本）。 Vapor中添加Validation依赖包在Package.swift文件中添加如下的依赖，比如： .Package(url: &amp;quot;https:/">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-267da7a2929f0562.jpg">
 
 
 
@@ -371,12 +373,12 @@
       
 
       
-        <p>服务端在有数据请求时需要对数据进行校验然后返回响应的校验结果，比如要求必须输入邮箱，必须输入电话等，Validation工具给我们提供了非常方便的常用操作，接下来就对其使用过程做以总结（<em>本文用到的是Validation 1.2.0版本</em>）。</p>
+        <p>   <img src="http://upload-images.jianshu.io/upload_images/1513759-267da7a2929f0562.jpg" alt="Validation"><br>服务端在有数据请求时需要对数据进行校验然后返回响应的校验结果，比如要求必须输入邮箱，必须输入电话等，Validation工具给我们提供了非常方便的常用操作，接下来就对其使用过程做以总结（<em>本文用到的是Validation 1.2.0版本</em>）。</p>
 <h2 id="Vapor中添加Validation依赖包"><a href="#Vapor中添加Validation依赖包" class="headerlink" title="Vapor中添加Validation依赖包"></a>Vapor中添加Validation依赖包</h2><p>在<code>Package.swift</code>文件中添加如下的依赖，比如：</p>
 <pre><code>.Package(url: &quot;https://github.com/vapor/vapor.git&quot;, majorVersion: 2),
 .Package(url: &quot;https://github.com/vapor/validation-provider.git&quot;, majorVersion: 1)
 </code></pre><blockquote>
-<p>之后要执行<code>vapor clean</code>或者<code>rm -rf .build Package.pins</code>，然后执行<code>vapor update</code>或者<code>swift package update</code>，这样才可以安装好依赖。</p>
+<p>之后要执行<code>vapor clean</code>或者<code>rm -rf .build Package.pins</code>，然后执行<code>vapor update</code>或者<code>swift package update</code>，<code>vapor xcode</code>，这样才可以安装好依赖。</p>
 </blockquote>
 <h2 id="校验实例"><a href="#校验实例" class="headerlink" title="校验实例"></a>校验实例</h2><h3 id="Alphanumeric校验"><a href="#Alphanumeric校验" class="headerlink" title="Alphanumeric校验"></a>Alphanumeric校验</h3><p> 接下来我们来做一个简单的校验，校验输入的字符串是否是a-z或者0-9在请求中加入如下代码：</p>
 <pre><code class="Swift"><span class="keyword">get</span>(<span class="string">"alpha"</span>) { request <span class="keyword">in</span>
@@ -516,6 +518,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2017/08/11/vapor-prepare-data-base/" rel="prev" title="Swift后端Vapor安装数据库">
+                Swift后端Vapor安装数据库 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -587,7 +593,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>

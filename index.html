@@ -307,6 +307,206 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/11/vapor-prepare-data-base/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/11/vapor-prepare-data-base/" itemprop="url">Swift后端Vapor安装数据库</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-11T09:52:02+08:00">
+                2017-08-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><img src="http://upload-images.jianshu.io/upload_images/1513759-b14c0ae08140a1d3.png" alt="MySQL"></p>
+<p>Vapor中使用<code>Fluent</code>作为数据库的驱动，它现在可支持的数据库类型有：MySQL，SQL lite，MongoDB，PostgreSQL。因为MySQL用得较多，我们先来学习它。</p>
+<h2 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h2><h3 id="安装MySQL-Provider"><a href="#安装MySQL-Provider" class="headerlink" title="安装MySQL-Provider"></a>安装<code>MySQL-Provider</code></h3><p>在<code>Package.swift</code>文件中加入</p>
+<pre><code>.Package(url: &quot;https://github.com/vapor/mysql-provider.git&quot;, majorVersion: 2)
+</code></pre><p>然后执行执行<code>vapor clean</code>和<code>rm -rf .build Package.pins</code>，最后执行<code>vapor update</code>和<code>vapor build</code>。<br>安装完MySql之后报错<code>mysql/mysql.h file not found</code>以及<code>Could not build Objective-C module CMySQL</code>，这时因为MySql数据库需要更新，执行下面的指令</p>
+<pre><code>brew update &amp;&amp; brew install mysql vapor/tap/cmysql pkg-config
+</code></pre><p>然后再执行<code>vapor xcode</code>就可以运行成功了。</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="在Droplet中添加驱动"><a href="#在Droplet中添加驱动" class="headerlink" title="在Droplet中添加驱动"></a>在Droplet中添加驱动</h3><p>我们要往<code>Config</code>对象中添加相应的<code>Provider</code>，如下所示</p>
+<pre><code class="Swift"><span class="keyword">import</span> MySQLProvider
+<span class="keyword">let</span> config = <span class="keyword">try</span> <span class="type">Config</span>()
+<span class="keyword">try</span> config.addProvider(<span class="type">MySQLProvider</span>.<span class="type">Provider</span>.<span class="keyword">self</span>)
+<span class="keyword">let</span> drop = <span class="keyword">try</span> <span class="type">Droplet</span>(config)
+</code></pre>
+<h3 id="配置Fluent"><a href="#配置Fluent" class="headerlink" title="配置Fluent"></a>配置Fluent</h3><p>在<code>fluent.json</code>文件中加入如下的配置</p>
+<pre><code>{
+    &quot;//&quot;: &quot;The underlying database technology to use.&quot;,
+    &quot;//&quot;: &quot;memory: SQLite in-memory DB.&quot;,
+    &quot;//&quot;: &quot;sqlite: Persisted SQLite DB (configure with sqlite.json)&quot;,
+    &quot;//&quot;: &quot;Other drivers are available through Vapor providers&quot;,
+    &quot;//&quot;: &quot;https://github.com/search?q=topic:vapor-provider+topic:database&quot;,
+    &quot;driver&quot;: &quot;mysql&quot;,
+}
+</code></pre><h3 id="配置MySQL"><a href="#配置MySQL" class="headerlink" title="配置MySQL"></a>配置MySQL</h3><p>在Config文件夹下面新建文件<code>mysql.json</code>，并添加如下内容</p>
+<pre><code>{
+    &quot;hostname&quot;: &quot;localhost&quot;,
+    &quot;user&quot;: &quot;root&quot;,
+    &quot;password&quot;: &quot;yourPassword&quot;,
+    &quot;database&quot;: &quot;yourDatabase&quot;
+    &quot;poort&quot;: &quot;3306&quot;
+}      
+</code></pre><p>也可以将证书作为url传入MySQL。</p>
+<pre><code>{
+&quot;url&quot;: &quot;http://root:password@172.0.0.1/hello&quot;
+}
+</code></pre><h3 id="多份读取（Read-Replicas）"><a href="#多份读取（Read-Replicas）" class="headerlink" title="多份读取（Read Replicas）"></a>多份读取（Read Replicas）</h3><p>多份读取可以通过配置hostname或者是<code>readReplicas</code>接口数组来进行配置。在mysql.josn中加入：</p>
+<pre><code>{
+   {
+    &quot;master&quot;: &quot;master.mysql.foo.com&quot;,
+    &quot;readReplicas&quot;: [&quot;read01.mysql.foo.com&quot;, &quot;read02.mysql.foo.com&quot;],
+    &quot;user&quot;: &quot;root&quot;,
+    &quot;password&quot;: &quot;password&quot;,
+    &quot;database&quot;: &quot;hello&quot;
+   }
+}
+</code></pre><p><em>Tip:也可以将readReplicas用字符串表示，多个字符串用逗号分隔开。</em></p>
+<h3 id="驱动"><a href="#驱动" class="headerlink" title="驱动"></a>驱动</h3><p>你可以在Routes中得到<code>MySQL Driver</code>（前提是在你自己的MySQL数据库中创建了<code>your_table</code>)表。</p>
+<pre><code class="Swift"><span class="keyword">import</span> MySQLProvider
+<span class="keyword">get</span>(<span class="string">"mysql"</span>) { req <span class="keyword">in</span>
+
+           <span class="keyword">let</span> mysqlDriver = <span class="keyword">try</span> <span class="keyword">self</span>.mysql()
+           <span class="keyword">let</span> user = <span class="keyword">try</span> mysqlDriver.raw(<span class="string">"SELECT * FROM your_table"</span>)
+           <span class="keyword">let</span> reusltJon = <span class="keyword">try</span> <span class="type">JSON</span>(node: user)
+           <span class="keyword">return</span> reusltJon
+
+       }
+</code></pre>
+<p>然后在浏览器中输入<code>http://localhost:8080/mysql</code>，如果看到输出了相应的JSON传就证明安装成功了。</p>
+<h3 id="配置缓存"><a href="#配置缓存" class="headerlink" title="配置缓存"></a>配置缓存</h3><p>在<code>Config/droplet.json</code>里面可以配置<code>fluent</code>缓存，这里<code>fluent</code>缓存走的是<code>mysql</code>：</p>
+<pre><code class="Swift">{
+ <span class="string">"driver"</span>: <span class="string">"fluent"</span>
+}
+</code></pre>
+<p>下次，当启动Droplet的时候，如果出现：</p>
+<pre><code class="bash">Database prepared
+</code></pre>
+<p>就说明安装成功了。</p>
+<h3 id="帮助："><a href="#帮助：" class="headerlink" title="帮助："></a>帮助：</h3><ol>
+<li>如果运行出现 </li>
+</ol>
+<pre><code class="bash">The current <span class="built_in">hash</span> key <span class="string">"0000000000000000"</span> is not secure.
+Update hash.key <span class="keyword">in</span> Config/crypto.json before using <span class="keyword">in</span> production.
+Use `openssl rand -base64 &lt;length&gt;` to generate a random string.
+The current cipher key <span class="string">"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="</span> is not secure.
+Update cipher.key <span class="keyword">in</span> Config/crypto.json before using <span class="keyword">in</span> production.
+Use `openssl rand -base64 32` to generate a random string.
+</code></pre>
+<p>这说明我们需要运行<code>openssl rand -base64 &lt;length&gt;</code>，以及<code>openssl rand -base64 32</code>来产生新的hash key和cipher key，并且将原来的数值替换掉。</p>
+<ol>
+<li>MySql更改密码：</li>
+</ol>
+<p>请参考：</p>
+<ol>
+<li><a href="https://stackoverflow.com/questions/2101694/mysql-how-to-set-root-password-to-null" target="_blank" rel="external">https://stackoverflow.com/questions/2101694/mysql-how-to-set-root-password-to-null</a> </li>
+<li><a href="https://stackoverflow.com/questions/30692812/mysql-user-db-does-not-have-password-columns-installing-mysql-on-osx" target="_blank" rel="external">https://stackoverflow.com/questions/30692812/mysql-user-db-does-not-have-password-columns-installing-mysql-on-osx</a></li>
+<li><a href="https://sraji.wordpress.com/2011/08/10/how-to-reset-mysql-root-password/" target="_blank" rel="external">https://sraji.wordpress.com/2011/08/10/how-to-reset-mysql-root-password/</a></li>
+<li><a href="https://stackoverflow.com/questions/9624774/after-mysql-install-via-brew-i-get-the-error-the-server-quit-without-updating" target="_blank" rel="external">https://stackoverflow.com/questions/9624774/after-mysql-install-via-brew-i-get-the-error-the-server-quit-without-updating</a></li>
+<li><a href="https://stackoverflow.com/questions/9624774/after-mysql-install-via-brew-i-get-the-error-the-server-quit-without-updating/9704993#comment16367803_9704993" target="_blank" rel="external">https://stackoverflow.com/questions/9624774/after-mysql-install-via-brew-i-get-the-error-the-server-quit-without-updating/9704993#comment16367803_9704993</a></li>
+</ol>
+<p>需要注意的是：<em><code>sudo mysqld_safe --skip-grant-tables</code>执行完之后，要重新打开一个终端执行</em>。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/10/swift-server-vapor-validation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -375,12 +575,12 @@
       
         
           
-            <p>服务端在有数据请求时需要对数据进行校验然后返回响应的校验结果，比如要求必须输入邮箱，必须输入电话等，Validation工具给我们提供了非常方便的常用操作，接下来就对其使用过程做以总结（<em>本文用到的是Validation 1.2.0版本</em>）。</p>
+            <p>   <img src="http://upload-images.jianshu.io/upload_images/1513759-267da7a2929f0562.jpg" alt="Validation"><br>服务端在有数据请求时需要对数据进行校验然后返回响应的校验结果，比如要求必须输入邮箱，必须输入电话等，Validation工具给我们提供了非常方便的常用操作，接下来就对其使用过程做以总结（<em>本文用到的是Validation 1.2.0版本</em>）。</p>
 <h2 id="Vapor中添加Validation依赖包"><a href="#Vapor中添加Validation依赖包" class="headerlink" title="Vapor中添加Validation依赖包"></a>Vapor中添加Validation依赖包</h2><p>在<code>Package.swift</code>文件中添加如下的依赖，比如：</p>
 <pre><code>.Package(url: &quot;https://github.com/vapor/vapor.git&quot;, majorVersion: 2),
 .Package(url: &quot;https://github.com/vapor/validation-provider.git&quot;, majorVersion: 1)
 </code></pre><blockquote>
-<p>之后要执行<code>vapor clean</code>或者<code>rm -rf .build Package.pins</code>，然后执行<code>vapor update</code>或者<code>swift package update</code>，这样才可以安装好依赖。</p>
+<p>之后要执行<code>vapor clean</code>或者<code>rm -rf .build Package.pins</code>，然后执行<code>vapor update</code>或者<code>swift package update</code>，<code>vapor xcode</code>，这样才可以安装好依赖。</p>
 </blockquote>
 <h2 id="校验实例"><a href="#校验实例" class="headerlink" title="校验实例"></a>校验实例</h2><h3 id="Alphanumeric校验"><a href="#Alphanumeric校验" class="headerlink" title="Alphanumeric校验"></a>Alphanumeric校验</h3><p> 接下来我们来做一个简单的校验，校验输入的字符串是否是a-z或者0-9在请求中加入如下代码：</p>
 <pre><code class="Swift"><span class="keyword">get</span>(<span class="string">"alpha"</span>) { request <span class="keyword">in</span>
@@ -2303,167 +2503,6 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collections/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/28/note-advance-swift-collections/" itemprop="url">Swift中的Dictionary，Set，Range</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-28T09:30:32+08:00">
-                2017-07-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Dictionary，Set，Range"><a href="#Dictionary，Set，Range" class="headerlink" title="Dictionary，Set，Range"></a>Dictionary，Set，Range</h1><h2 id="Dictionay的Key"><a href="#Dictionay的Key" class="headerlink" title="Dictionay的Key"></a>Dictionay的Key</h2><p>Swift中<code>Dictionary</code>的<code>Key</code>都应该是可哈希的，也就是遵守<code>Hashable</code>协议，又因为<code>Hashable</code>是<code>Equatable</code>的扩展，所以又必须遵守<code>Equatable</code>协议</p>
-<p>在Swift中比较两个Type对象(<strong>引用相等用===</strong>)是否相等，需要遵守<code>Equatable</code>协议，并覆盖<code>==</code>方法，如：</p>
-<pre><code>   struct Person {
-   var name: String
-   var zipCode: Int
-   var birthday: Date
-}
-    extension Person: Equatable {
-    static func ==(lhs: Person, rhs: Person) -&gt; Bool {
-    return lhs.name == rhs.name
-    &amp;&amp; lhs.zipCode == rhs.zipCode
-    &amp;&amp; lhs.birthday == rhs.birthday
-    }
-}
-</code></pre><p>也就是必须明确一下两点：</p>
-<ol>
-<li>相等的实例必须有相同的哈希值。</li>
-<li>具有相同哈希值的两个对象不一定相等。</li>
-</ol>
-<p>由于每次往<code>Dictionary</code>中插入数据，都会判断哈希方法，以确定是否覆盖之前<code>Key</code>的<code>Value</code>。所以这个哈希方法应该具备以下两个特点:</p>
-<p>一、应该的执行效率就会影响到对<code>Dictionary</code>的操作效率。<br>二、哈希方法应该尽可能得减少碰撞。</p>
-<p> 如上面的<code>Person</code>所示，如果要做为<code>Key</code>就还需要增加下面的代码：</p>
-<pre><code>extension Person: Hashable {
-  var hashValue:Int {
-  returen name.hasValue^zipCode.hashValue^birthday.hashValue
-  }
-}
-</code></pre><p>注：</p>
-<ol>
-<li>标注库中的基础类型如: String,integer,float,boole，以及没有关联值的Enum。</li>
-<li>在<code>Dictionary</code>中，如果使用可变的引用类型来作为<code>Key</code>并且将其改变，这个改变同时又改变了哈希值，那么这个<code>Key</code>对应的<code>Value</code>就丢失了。但是如果值类型的实例作为了<code>Key</code>，因为它执行了一次<code>Copy</code>，所以就不用担心被改变了。这也是值类型的一个优势所在。</li>
-</ol>
-<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><p><code>Set</code>是Swift标准库中唯一遵循<code>SetAlgebra</code>协议的类型（Foundation中的:IndexSet和CharacterSet也遵循该协议），<code>SetAlgebra</code>中提供了<code>subtracting</code>减法，<code>intersection</code>取交集，<code>formUnion</code>取并集，<code>isDisjoint</code>是否有交集等代数方法。<code>IndexSet</code>中存储都是正整数，它和Set<int>相比存储效率更高，因为<code>IndexSet</code>是存储范围的，比如10000中的前500个数只需要存储俩个数值：起点和终点。</int></p>
-<p>在过滤某个数组中的相同元素时候我们往往可以将其放到<code>Set</code>中，这样就可以将相同元素过滤，但是会遇到一个问题，得打的<code>Set</code>和原来的不是顺序不一样，这时，我们可以给<code>Sequence</code>添加<code>Extension</code>来解决。</p>
-<pre><code>extension Sequence where Iterator.Element: Hashable {
-func unique() -&gt; [Iterator.Element] {
-    var seen:Set&lt;Iterator.Element&gt; = []
-    return filter{
-        if seen.contains($0){
-          return false
-        }else{
-            seen.insert($0)
-            return true
-        }
-    }
-}
-}
-let result = [1,2,3,12,1,3,4,5,6,4,6].unique()
-</code></pre><p>通过上面的方法就可以将元素按照原来的顺序排列下来。</p>
-<h2 id="Range"><a href="#Range" class="headerlink" title="Range"></a>Range</h2><p>Swift中管更capable的集合叫countable，countable的边界包含<code>integer</code>和指针。但是不包含浮点型，因为<code>Stride</code>对    <code>integer</code>有限制。如果要遍历浮点型数据，那么需要使用<code>stride(from:to:by)</code>，以及<code>stride(from:through:by)</code>来新建一个<code>Sequence</code>。<br>将封闭的<code>Ragne</code>转化成半封闭的<code>Range</code>是不可能的，因为在浮点数的情况下不能确定比最大值小的值是多少。    除非这个<code>Sequence</code>是<code>Strideable</code>的。如果一个函数接受一个Range座位返回值的话，不可以用<code>...</code>来创建。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2514,7 +2553,7 @@ let result = [1,2,3,12,1,3,4,5,6,4,6].unique()
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
