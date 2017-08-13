@@ -107,7 +107,7 @@
 <meta property="og:site_name" content="击水湘江">
 <meta property="og:description" content="上篇博客中我们讲到了怎样配置数据库，以及怎样将数据库中的数据读出并且返回给客户端，本文将说明怎样将数据库中的数据用Model来表示，并且怎样对Model进行各种操作。 建立Class我们建立以个简单的User类，如下： final class User {  var id: String     var name: String     var age: Int     var gender: S">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-08-13T12:07:05.000Z">
+<meta property="og:updated_time" content="2017-08-13T12:12:07.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vapor制作JSON Model">
 <meta name="twitter:description" content="上篇博客中我们讲到了怎样配置数据库，以及怎样将数据库中的数据读出并且返回给客户端，本文将说明怎样将数据库中的数据用Model来表示，并且怎样对Model进行各种操作。 建立Class我们建立以个简单的User类，如下： final class User {  var id: String     var name: String     var age: Int     var gender: S">
@@ -381,7 +381,8 @@
     <span class="keyword">var</span> imageUrl: <span class="type">String</span>
     <span class="keyword">var</span> oatch: <span class="type">String</span>
 
-    <span class="keyword">init</span>(id: <span class="type">String</span>, name: <span class="type">String</span>, age:<span class="type">Int</span>, gender: <span class="type">String</span>, imageUrl: <span class="type">String</span>, oatch: <span class="type">String</span>) {
+    <span class="keyword">init</span>(id: <span class="type">String</span>, name: <span class="type">String</span>, age:<span class="type">Int</span>, gender: <span class="type">String</span>, imageUrl: <span class="type">String</span>, oatch: <span class="type">String</span>) 
+    {
 
         <span class="keyword">self</span>.id = id
         <span class="keyword">self</span>.age = age
@@ -392,7 +393,7 @@
     }
 }
 </code></pre>
-<p>从之前返回JSON时，JSONS的生成过程<code>JSON(node:someNode)</code>，那么Node是什么呢？其实就是一个遵守<code>NodeRepresentable</code>的对象，我们让User遵守<code>NodeRepresentable</code>协议，兵且实现其<code>makeNode</code>方法，这样就可以传入<code>JSON(node:user)</code>了：</p>
+<h2 id="遵守NodeRepresentable和NodeRepresentable协议"><a href="#遵守NodeRepresentable和NodeRepresentable协议" class="headerlink" title="遵守NodeRepresentable和NodeRepresentable协议"></a>遵守NodeRepresentable和NodeRepresentable协议</h2><p>从之前返回JSON时，JSONS的生成过程<code>JSON(node:someNode)</code>，那么Node是什么呢？其实就是一个遵守<code>NodeRepresentable</code>的对象，我们让User遵守<code>NodeRepresentable</code>协议，兵且实现其<code>makeNode</code>方法，这样就可以传入<code>JSON(node:user)</code>了：</p>
 <pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">makeNode</span><span class="params">(<span class="keyword">in</span> context: Context?)</span></span> <span class="keyword">throws</span> -&gt; <span class="type">Node</span> {
 
         <span class="keyword">return</span> <span class="keyword">try</span> <span class="type">Node</span>(node:[
@@ -582,7 +583,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#建立Class"><span class="nav-number">1.</span> <span class="nav-text">建立Class</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#建立Class"><span class="nav-number">1.</span> <span class="nav-text">建立Class</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遵守NodeRepresentable和NodeRepresentable协议"><span class="nav-number">2.</span> <span class="nav-text">遵守NodeRepresentable和NodeRepresentable协议</span></a></li></ol></div>
             
 
           </div>
