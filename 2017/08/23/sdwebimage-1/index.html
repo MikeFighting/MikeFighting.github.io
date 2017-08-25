@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="FrameWork," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="本文是根据SDWebImage，Tag2.0到Tag2.6所做的总结。 注意判空为了安全起见，方法中每个参数的值的异常我们都需考虑到，我们要有一个guard，然后直接返回，否则在某些特殊情况下，比如这个参数是服务端返回的，某次服务端没有返回，就会崩溃，加了guard之后就不会了，在swift中加入了guard关键字来做： 12345678910111213141516171819202122232">
+<meta name="keywords" content="FrameWork">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从SDWebImage中学到的（二）">
+<meta property="og:url" content="https://mikefighting.github.io/2017/08/23/sdwebimage-1/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="本文是根据SDWebImage，Tag2.0到Tag2.6所做的总结。 注意判空为了安全起见，方法中每个参数的值的异常我们都需考虑到，我们要有一个guard，然后直接返回，否则在某些特殊情况下，比如这个参数是服务端返回的，某次服务端没有返回，就会崩溃，加了guard之后就不会了，在swift中加入了guard关键字来做： 12345678910111213141516171819202122232">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-08-23T02:08:08.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从SDWebImage中学到的（二）">
+<meta name="twitter:description" content="本文是根据SDWebImage，Tag2.0到Tag2.6所做的总结。 注意判空为了安全起见，方法中每个参数的值的异常我们都需考虑到，我们要有一个guard，然后直接返回，否则在某些特殊情况下，比如这个参数是服务端返回的，某次服务端没有返回，就会崩溃，加了guard之后就不会了，在swift中加入了guard关键字来做： 12345678910111213141516171819202122232">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/08/23/sdwebimage-1/"/>
+
+
+
+
+
+  <title>从SDWebImage中学到的（二） | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/23/sdwebimage-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">从SDWebImage中学到的（二）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-23T09:52:09+08:00">
+                2017-08-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文是根据SDWebImage，Tag2.0到Tag2.6所做的总结。</p>
+<h2 id="注意判空"><a href="#注意判空" class="headerlink" title="注意判空"></a>注意判空</h2><p>为了安全起见，方法中每个参数的值的异常我们都需考虑到，我们要有一个guard，然后直接返回，否则在某些特殊情况下，比如这个参数是服务端返回的，某次服务端没有返回，就会崩溃，加了guard之后就不会了，在swift中加入了<code>guard</code>关键字来做：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div></pre></td><td class="code"><pre><div class="line"> <span class="keyword">guard</span> x &gt; <span class="number">0</span> <span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">// 变量不符合条件判断,则返回</span></div><div class="line">        <span class="keyword">return</span></div><div class="line">    &#125;</div><div class="line">```     </div><div class="line"></div><div class="line">因为在<span class="type">OC</span>中没有这样的判断，所以我们需要添加如下的代码：</div><div class="line">```objc </div><div class="line">  <span class="keyword">if</span> (!url)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">self</span>.image = <span class="literal">nil</span>;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">```   </div><div class="line"></div><div class="line">## 针对某个机型做接口适配</div><div class="line"></div><div class="line">如果某个机型的手机需要做一些特殊处理，我们可以这么做：</div><div class="line"></div><div class="line">```objc</div><div class="line"> #ifdef __IPHONE_4_0</div><div class="line"> <span class="type">UIDevice</span> *device = [<span class="type">UIDevice</span> currentDevice];</div><div class="line">        <span class="keyword">if</span> ([device respondsToSelector:@selector(isMultitaskingSupported)] &amp;&amp; device.multitaskingSupported)</div><div class="line">        &#123;</div><div class="line">            <span class="comment">// When in background, clean memory in order to have less chance to be killed</span></div><div class="line">            [[<span class="type">NSNotificationCenter</span> defaultCenter] addObserver:<span class="keyword">self</span></div><div class="line">                                                     selector:@selector(clearMemory)</div><div class="line">                                                         name:<span class="type">UIApplicationDidEnterBackgroundNotification</span></div><div class="line">                                                       object:<span class="literal">nil</span>];</div><div class="line">        &#125;</div><div class="line">#endif</div><div class="line">```   </div><div class="line"></div><div class="line">这样一来就只有iPhone4会执行里面的代码（__IPHONE_4_0是系统自带的宏）。</div><div class="line"></div><div class="line">## 多线程中如何使用`<span class="type">NSFileManager</span>`</div><div class="line"></div><div class="line">如果某个方法是在后台线程中执行的，并且这个线程中使用了`<span class="type">NSFileManager</span>`，为了避免资源竞争，需要使用`[[<span class="type">NSFileManager</span> alloc] <span class="keyword">init</span>]`的方式进行初始化：</div><div class="line"></div><div class="line">```objc</div><div class="line">  <span class="comment">// Can't use defaultManager another thread</span></div><div class="line">    <span class="type">NSFileManager</span> *fileManager = [[<span class="type">NSFileManager</span> alloc] <span class="keyword">init</span>];</div><div class="line">```   </div><div class="line"></div><div class="line">## 存储图片时候不改变其图片类型</div><div class="line"></div><div class="line">如果我们在存储图片的时候要存储成某种格式的图片类型，那么可以使用：</div><div class="line"></div><div class="line">```objc</div><div class="line"> [fileManager createFileAtPath:[<span class="keyword">self</span> cachePathForKey:key] contents:<span class="type">UIImageJPEGRepresentation</span>(image, (<span class="type">CGFloat</span>)<span class="number">1.0</span>) attributes:<span class="literal">nil</span>];</div><div class="line">```   </div><div class="line"></div><div class="line">如果我们不想改变存储时候的数据类型，那么可以使用：</div><div class="line"></div><div class="line">```objc</div><div class="line">   [fileManager createFileAtPath:[<span class="keyword">self</span> cachePathForKey:key] contents:data attributes:<span class="literal">nil</span>];</div><div class="line">```   </div><div class="line"></div><div class="line">来完成。</div><div class="line"></div><div class="line">## 在<span class="type">NSOperationQueue</span>中添加立即执行的任务</div><div class="line"></div><div class="line">如果要在<span class="type">NSOperationQueue</span>中添加要立即执行的任务，那么可以这样做：</div><div class="line"></div><div class="line">```objc</div><div class="line">[cacheOutQueue addOperation:[[[<span class="type">NSInvocationOperation</span> alloc] initWithTarget:<span class="keyword">self</span> selector:@selector(queryDiskCacheOperation:) object:arguments]</div><div class="line">```   </div><div class="line"></div><div class="line"></div><div class="line">## 头文件引入过多</div><div class="line"></div><div class="line">如果我们的头文件引入过多，那么我们需要将这些头文件都放到一个新的文件中去，然后引入那个单独的文件即可，比如<span class="type">SDWebImageCompat</span>文件的存在就是为了解决这个问题：</div><div class="line"></div><div class="line">```objc</div><div class="line">#<span class="keyword">import</span> &lt;TargetConditionals.h&gt;</div><div class="line">#<span class="keyword">if</span> !<span class="type">TARGET_OS_IPHONE</span></div><div class="line">#<span class="keyword">import</span> &lt;AppKit/AppKit.h&gt;</div><div class="line">#ifndef <span class="type">UIImage</span></div><div class="line">#define <span class="type">UIImage</span> <span class="type">NSImage</span></div><div class="line">#endif</div><div class="line">#ifndef <span class="type">UIImageView</span></div><div class="line">#define <span class="type">UIImageView</span> <span class="type">NSImageView</span></div><div class="line">#endif</div><div class="line">#<span class="keyword">else</span></div><div class="line">#<span class="keyword">import</span> &lt;UIKit/UIKit.h&gt;</div><div class="line">#endif</div></pre></td></tr></table></figure>
+<h2 id="从数组中找到指向同一块内存空间的指针"><a href="#从数组中找到指向同一块内存空间的指针" class="headerlink" title="从数组中找到指向同一块内存空间的指针"></a>从数组中找到指向同一块内存空间的指针</h2><p>如果要从数组中找到数值相同的指针，我们可以使用：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line">    <span class="built_in">NSUInteger</span> idx = [cacheDelegates indexOfObjectIdenticalTo:delegate];</div><div class="line">    <span class="keyword">if</span> (idx == <span class="built_in">NSNotFound</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="comment">// Request has since been canceled</span></div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">```     </div><div class="line"></div><div class="line">这种形式，但是要注意没有找到时候的处理。</div><div class="line"></div><div class="line"><span class="meta">## UIImage的解压缩</span></div><div class="line"></div><div class="line">PNG和JPEG等只是一种图片压缩格式，PNG是无损压缩，含有alpha通道，JPEG是有损压缩，没有alpha通道。我们每次展示图片的时候都需要先将<span class="built_in">UIImage</span>进行解压缩。解压缩默认是在主线程中进行的，如果图片较大则会造成很大的性能消耗，如果在IO线程中进行则会提高性能，框架中使用的方式是：</div><div class="line"></div><div class="line">```objc</div><div class="line"><span class="built_in">CGImageRef</span> imageRef = image.CGImage;</div><div class="line"><span class="built_in">CGColorSpaceRef</span> colorSpace = <span class="built_in">CGColorSpaceCreateDeviceRGB</span>();</div><div class="line"><span class="built_in">CGContextRef</span> context = <span class="built_in">CGBitmapContextCreate</span>(<span class="literal">NULL</span>,</div><div class="line">                                                 <span class="built_in">CGImageGetWidth</span>(imageRef),</div><div class="line">                                                 <span class="built_in">CGImageGetHeight</span>(imageRef),</div><div class="line">                                                 <span class="number">8</span>,</div><div class="line">                                                 <span class="comment">// Just always return width * 4 will be enough</span></div><div class="line">                                                 <span class="built_in">CGImageGetWidth</span>(imageRef) * <span class="number">4</span>,</div><div class="line">                                                 <span class="comment">// System only supports RGB, set explicitly</span></div><div class="line">                                                 colorSpace,</div><div class="line">                                                 <span class="comment">// Makes system don't need to do extra conversion when displayed.</span></div><div class="line">                                                 kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little); </div><div class="line">    <span class="built_in">CGColorSpaceRelease</span>(colorSpace);</div><div class="line">    <span class="keyword">if</span> (!context) <span class="keyword">return</span> <span class="literal">nil</span>;</div><div class="line"></div><div class="line">    <span class="built_in">CGRect</span> rect = (<span class="built_in">CGRect</span>)&#123;<span class="built_in">CGPointZero</span>, <span class="built_in">CGImageGetWidth</span>(imageRef), <span class="built_in">CGImageGetHeight</span>(imageRef)&#125;;</div><div class="line">    <span class="built_in">CGContextDrawImage</span>(context, rect, imageRef);</div><div class="line">    <span class="built_in">CGImageRef</span> decompressedImageRef = <span class="built_in">CGBitmapContextCreateImage</span>(context);</div><div class="line">    <span class="built_in">CGContextRelease</span>(context);</div><div class="line"></div><div class="line">    <span class="built_in">UIImage</span> *decompressedImage = [[<span class="built_in">UIImage</span> alloc] initWithCGImage:decompressedImageRef];</div><div class="line">    <span class="built_in">CGImageRelease</span>(decompressedImageRef);</div><div class="line">    <span class="keyword">return</span> [decompressedImage autorelease];</div><div class="line">```     </div><div class="line"></div><div class="line">关于<span class="built_in">UIImage</span>的解压缩，可以参考相关文章：</div><div class="line">[怎样避免<span class="built_in">UIImage</span>解压缩造成的性能消耗？](https:<span class="comment">//www.cocoanetics.com/2011/10/avoiding-image-decompression-sickness/)，[IOS中的图片解压缩](http://blog.leichunfeng.com/blog/2017/02/20/talking-about-the-decompression-of-the-image-in-ios/)，[UIImage解压缩的两种形式](https://stackoverflow.com/questions/19682804/why-does-this-code-decompress-a-uiimage-so-much-better-than-the-naive-approach)，[谈谈IOS中图片的解压缩](http://blog.leichunfeng.com/blog/2017/02/20/talking-about-the-decompression-of-the-image-in-ios/)</span></div><div class="line"></div><div class="line"><span class="meta">## 怎样获取某个目录下的文件大小？</span></div><div class="line"></div><div class="line">```objc</div><div class="line">-(<span class="keyword">int</span>)getSize</div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> size = <span class="number">0</span>;</div><div class="line">    <span class="built_in">NSDirectoryEnumerator</span> *fileEnumerator = [[<span class="built_in">NSFileManager</span> defaultManager] enumeratorAtPath:diskCachePath];</div><div class="line">    <span class="keyword">for</span> (<span class="built_in">NSString</span> *fileName <span class="keyword">in</span> fileEnumerator)</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">NSString</span> *filePath = [diskCachePath stringByAppendingPathComponent:fileName];</div><div class="line">        <span class="built_in">NSDictionary</span> *attrs = [[<span class="built_in">NSFileManager</span> defaultManager] attributesOfItemAtPath:filePath error:<span class="literal">nil</span>];</div><div class="line">        size += [attrs fileSize];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> size;</div><div class="line">&#125; </div><div class="line">```  </div><div class="line"></div><div class="line"><span class="meta">## Struct初始化</span></div><div class="line"></div><div class="line">在某些情况下，Struct可以使用如下的方法进行初始化：</div><div class="line"></div><div class="line">```objc</div><div class="line"><span class="built_in">CGRect</span> rect = (<span class="built_in">CGRect</span>)&#123;<span class="built_in">CGPointZero</span>, &#123; <span class="built_in">CGImageGetWidth</span>(imageRef), <span class="built_in">CGImageGetHeight</span>(imageRef) &#125;&#125;;</div></pre></td></tr></table></figure>
+<h2 id="调用方法是需要注意"><a href="#调用方法是需要注意" class="headerlink" title="调用方法是需要注意"></a>调用方法是需要注意</h2><p>在某种特殊情况下，调用方法前要判断是否该对象具有某个方法，以免引起崩溃：</p>
+<pre><code class="objc">-    <span class="keyword">if</span> ([((<span class="built_in">NSHTTPURLResponse</span> *)response) statusCode] &gt;= <span class="number">400</span>)
++    <span class="keyword">if</span> ([response respondsToSelector:<span class="keyword">@selector</span>(statusCode)] &amp;&amp; [((<span class="built_in">NSHTTPURLResponse</span> *)response) statusCode] &gt;= <span class="number">400</span>)
+</code></pre>
+<p>因为在上述代码中<code>response</code>可能不是HTTP的response。</p>
+<h2 id="ImageIO实现图片边下边展示效果"><a href="#ImageIO实现图片边下边展示效果" class="headerlink" title="ImageIO实现图片边下边展示效果"></a>ImageIO实现图片边下边展示效果</h2><p>实现渐下渐放效果是在<code>SDWebImageDownloader.m</code>文件的<code>- (void)connection:(NSURLConnection *)aConnection didReceiveData:(NSData *)data{}</code>方法中。其中的关键代码为：</p>
+<pre><code class="objc"> <span class="comment">/// Create the image</span>
+            <span class="built_in">CGImageRef</span> partialImageRef = <span class="built_in">CGImageSourceCreateImageAtIndex</span>(imageSource, <span class="number">0</span>, <span class="literal">NULL</span>);
+
+<span class="meta">#ifdef TARGET_OS_IPHONE</span>
+            <span class="comment">// Workaround for iOS anamorphic image</span>
+            <span class="keyword">if</span> (partialImageRef)
+            {
+                <span class="keyword">const</span> size_t partialHeight = <span class="built_in">CGImageGetHeight</span>(partialImageRef);
+                <span class="built_in">CGColorSpaceRef</span> colorSpace = <span class="built_in">CGColorSpaceCreateDeviceRGB</span>();
+                <span class="built_in">CGContextRef</span> bmContext = <span class="built_in">CGBitmapContextCreate</span>(<span class="literal">NULL</span>, width, height, <span class="number">8</span>, width * <span class="number">4</span>, colorSpace, kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedFirst);
+                <span class="built_in">CGColorSpaceRelease</span>(colorSpace);
+                <span class="keyword">if</span> (bmContext)
+                {
+                    <span class="built_in">CGContextDrawImage</span>(bmContext, (<span class="built_in">CGRect</span>){.origin.x = <span class="number">0.0</span>f, .origin.y = <span class="number">0.0</span>f, .size.width = width, .size.height = partialHeight}, partialImageRef);
+                    <span class="built_in">CGImageRelease</span>(partialImageRef);
+                    partialImageRef = <span class="built_in">CGBitmapContextCreateImage</span>(bmContext);
+                    <span class="built_in">CGContextRelease</span>(bmContext);
+                }
+                <span class="keyword">else</span>
+                {
+                    <span class="built_in">CGImageRelease</span>(partialImageRef);
+                    partialImageRef = <span class="literal">nil</span>;
+                }
+            }
+</code></pre>
+<p>然后根据<code>CGImageRef</code>生成对应的<code>UIImage</code>并且将结果返回给delegate：</p>
+<pre><code class="objc"><span class="built_in">UIImage</span> *image = [[<span class="built_in">UIImage</span> alloc] initWithCGImage:partialImageRef];
+[delegate imageDownloader:<span class="keyword">self</span> didUpdatePartialImage:image];
+</code></pre>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/FrameWork/" rel="tag"># FrameWork</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/14/wwdc-protocol-value-type-uikit/" rel="next" title="怎样在UIKit中更好的使用ValueType">
+                <i class="fa fa-chevron-left"></i> 怎样在UIKit中更好的使用ValueType
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/24/avfoundation-edit/" rel="prev" title="AVFoundation--视频编辑">
+                AVFoundation--视频编辑 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="击水湘江" />
+          <p class="site-author-name" itemprop="name">击水湘江</p>
+           
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#注意判空"><span class="nav-number">1.</span> <span class="nav-text">注意判空</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从数组中找到指向同一块内存空间的指针"><span class="nav-number">2.</span> <span class="nav-text">从数组中找到指向同一块内存空间的指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调用方法是需要注意"><span class="nav-number">3.</span> <span class="nav-text">调用方法是需要注意</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ImageIO实现图片边下边展示效果"><span class="nav-number">4.</span> <span class="nav-text">ImageIO实现图片边下边展示效果</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.1"></script>
+
+
+  
+
+</body>
+</html>

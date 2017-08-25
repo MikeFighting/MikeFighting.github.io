@@ -83,7 +83,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Foundation," />
+  <meta name="keywords" content="Objective-C," />
 
 
 
@@ -99,20 +99,20 @@
 
 
 
-<meta name="description" content="Swift中的方法调度ISA Swizzling  ##扩展阅读：https://www.raizlabs.com/dev/2016/12/swift-method-dispatch/https://www.skilled.io/u/purpleyay/why-swift-is-swifthttps://oleb.net/blog/2016/06/kevin-ballard-swift-dispa">
-<meta name="keywords" content="Foundation">
+<meta name="description" content="AVFoundation是很多处理基于时间的音视频文件的框架之一。你可以用它来检查，创建，编辑或者对媒体文件重编码。可以从设备中得到输入流，以及在实时捕捉和播放的时候对视频进行处理。   如果你仅仅需要播放视频，在IOS上你可以使用Media Player框架中的MPMoviePlayerController或者MPMoviePlayerViewController，如果是基于Web的视频，那么你">
+<meta name="keywords" content="Objective-C">
 <meta property="og:type" content="article">
-<meta property="og:title" content="method_dispatch">
-<meta property="og:url" content="https://mikefighting.github.io/2017/07/30/method-dispatch/index.html">
+<meta property="og:title" content="AVFoundation--简介">
+<meta property="og:url" content="https://mikefighting.github.io/2017/08/04/avfoundation-introduction/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="Swift中的方法调度ISA Swizzling  ##扩展阅读：https://www.raizlabs.com/dev/2016/12/swift-method-dispatch/https://www.skilled.io/u/purpleyay/why-swift-is-swifthttps://oleb.net/blog/2016/06/kevin-ballard-swift-dispa">
+<meta property="og:description" content="AVFoundation是很多处理基于时间的音视频文件的框架之一。你可以用它来检查，创建，编辑或者对媒体文件重编码。可以从设备中得到输入流，以及在实时捕捉和播放的时候对视频进行处理。   如果你仅仅需要播放视频，在IOS上你可以使用Media Player框架中的MPMoviePlayerController或者MPMoviePlayerViewController，如果是基于Web的视频，那么你">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-95ac273f0c0d68b5.png">
-<meta property="og:updated_time" content="2017-08-02T06:07:03.000Z">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-d41cc62c5bec457a.png">
+<meta property="og:updated_time" content="2017-08-24T02:21:32.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="method_dispatch">
-<meta name="twitter:description" content="Swift中的方法调度ISA Swizzling  ##扩展阅读：https://www.raizlabs.com/dev/2016/12/swift-method-dispatch/https://www.skilled.io/u/purpleyay/why-swift-is-swifthttps://oleb.net/blog/2016/06/kevin-ballard-swift-dispa">
-<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-95ac273f0c0d68b5.png">
+<meta name="twitter:title" content="AVFoundation--简介">
+<meta name="twitter:description" content="AVFoundation是很多处理基于时间的音视频文件的框架之一。你可以用它来检查，创建，编辑或者对媒体文件重编码。可以从设备中得到输入流，以及在实时捕捉和播放的时候对视频进行处理。   如果你仅仅需要播放视频，在IOS上你可以使用Media Player框架中的MPMoviePlayerController或者MPMoviePlayerViewController，如果是基于Web的视频，那么你">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-d41cc62c5bec457a.png">
 
 
 
@@ -140,13 +140,13 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/2017/07/30/method-dispatch/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/08/04/avfoundation-introduction/"/>
 
 
 
 
 
-  <title>method_dispatch | 击水湘江</title>
+  <title>AVFoundation--简介 | 击水湘江</title>
   
 
 
@@ -309,7 +309,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/30/method-dispatch/">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/04/avfoundation-introduction/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
@@ -326,7 +326,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">method_dispatch</h1>
+          <h1 class="post-title" itemprop="name headline">AVFoundation--简介</h1>
         
 
         <div class="post-meta">
@@ -338,8 +338,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-30T18:37:43+08:00">
-                2017-07-30
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-04T23:37:34+08:00">
+                2017-08-04
               </time>
             
 
@@ -373,9 +373,42 @@
       
 
       
-        <h1 id="Swift中的方法调度"><a href="#Swift中的方法调度" class="headerlink" title="Swift中的方法调度"></a>Swift中的方法调度</h1><p><a href="https://stackoverflow.com/questions/38877465/are-method-swizzling-and-isa-swizzling-the-same-thing/38878119#38878119" target="_blank" rel="external">ISA Swizzling</a></p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-95ac273f0c0d68b5.png" alt="Iamges"></p>
-<p>##扩展阅读：<br><a href="https://www.raizlabs.com/dev/2016/12/swift-method-dispatch/" target="_blank" rel="external">https://www.raizlabs.com/dev/2016/12/swift-method-dispatch/</a><br><a href="https://www.skilled.io/u/purpleyay/why-swift-is-swift" target="_blank" rel="external">https://www.skilled.io/u/purpleyay/why-swift-is-swift</a><br><a href="https://oleb.net/blog/2016/06/kevin-ballard-swift-dispatch/" target="_blank" rel="external">https://oleb.net/blog/2016/06/kevin-ballard-swift-dispatch/</a><br><a href="https://lists.swift.org/pipermail/swift-evolution/Week-of-Mon-20151207/001922.html" target="_blank" rel="external">https://lists.swift.org/pipermail/swift-evolution/Week-of-Mon-20151207/001922.html</a><br><a href="https://developer.apple.com/swift/blog/?id=27" target="_blank" rel="external">https://developer.apple.com/swift/blog/?id=27</a><br><a href="https://lists.swift.org/pipermail/swift-evolution/Week-of-Mon-20151207/001948.html" target="_blank" rel="external">https://lists.swift.org/pipermail/swift-evolution/Week-of-Mon-20151207/001948.html</a><br><a href="https://medium.com/@leandromperez/protocol-extensions-gotcha-9ef1a42c83b6" target="_blank" rel="external">https://medium.com/@leandromperez/protocol-extensions-gotcha-9ef1a42c83b6</a><br><a href="https://stackoverflow.com/questions/38332616/at-runtime-how-does-swift-know-which-implementation-to-use" target="_blank" rel="external">https://stackoverflow.com/questions/38332616/at-runtime-how-does-swift-know-which-implementation-to-use</a><br><a href="https://untitledkingdom.com/blog/obj-c-vs-swift/" target="_blank" rel="external">https://untitledkingdom.com/blog/obj-c-vs-swift/</a><br><a href="http://cocoasamurai.blogspot.kr/2010/01/understanding-objective-c-runtime.html" target="_blank" rel="external">http://cocoasamurai.blogspot.kr/2010/01/understanding-objective-c-runtime.html</a></p>
+        <p>AVFoundation是很多处理基于时间的音视频文件的框架之一。你可以用它来检查，创建，编辑或者对媒体文件重编码。可以从设备中得到输入流，以及在实时捕捉和播放的时候对视频进行处理。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-d41cc62c5bec457a.png" alt="AVFoundation"></p>
+<ul>
+<li>如果你仅仅需要播放视频，在IOS上你可以使用Media Player框架中的<code>MPMoviePlayerController</code>或者<code>MPMoviePlayerViewController</code>，如果是基于Web的视频，那么你可以使用<code>UIWebView</code>。</li>
+<li>为了录制视频，并且几乎不需要关注其格式，那么你可以使用UIKit框架中的<code>UIImagePickerController</code>。</li>
+</ul>
+<p>然而请注意：在AVFoundation中使用的一些原始数据（包括基于时间的数据结构以及携带及包含媒体信息的封装对象）都是在<code>Core Media</code>框架中声明的。</p>
+<h1 id="AVFoundation框架简介"><a href="#AVFoundation框架简介" class="headerlink" title="AVFoundation框架简介"></a>AVFoundation框架简介</h1><p>AV Foundation中有两个方面的API(处理视频的和处理音频的)。</p>
+<ul>
+<li>使用<code>AVAudioPlayer</code>来播放音频文件</li>
+<li>使用<code>AVAudioRecorder</code>来录制音频文件</li>
+</ul>
+<p>你可以通过<code>AVAudioSessin</code>对象来对配置音频的播放行为，相关配置可以参考：<code>Audio Session Programming Guide</code>。</p>
+<p>AVFoundation中用来代表媒体信息的关键类是AVAsset。该框架的大部分功能都是有AVAsset来表现的。理解AVAsset将有助于理解整个框架是如何工作的。AVAsset是一片或者多片媒体数据的集合。它统一提供这个集合的信息，包括其标题，时长，自然表现大小（natural presentation size）等。一个AVAsset不合具体的数据格式相绑定。AVAsset是其它用URL来创建asset实例的父类。<br>asset中的每一个独立媒体片是一个统一的类型并且其成为<code>track</code>。</p>
+<h2 id="使用Assets"><a href="#使用Assets" class="headerlink" title="使用Assets"></a>使用Assets</h2><p>AVAsset是AVFoundation的基础类。AVFoundation框架的设计很大程度上都是通过这个类来表现的。它提供了视频的名称，时间，正常展示的大小(natural presentation size)。AVAsset没有和具体的数据形式相绑定。AVAsset是从一个<code>URL</code>来创建出Asset实例的父类，并且可以创建出新的组合。每个asset中独立的视频片段都是统一的类型叫做<code>track</code>。一般情况下：一个track代表音频成分，一个track代表视频成分。很重要的一点是：初始化一个asset并不意味着立即就可以用。它还需要一些时间来计算。但是这种计算不会阻塞主线程，他会异步的执行。</p>
+<h2 id="播放"><a href="#播放" class="headerlink" title="播放"></a>播放</h2><p><code>presentation state</code>是由<code>player item</code>对象管理的，某个track的<code>presentation state</code>是由<code>player item track</code>对象管理的。你可以使用<code>player</code>对象来播放，并且直接将其输出到<code>Core Animation</code>上。可以使用一个<code>player queue</code>有续地来管理一系列的<code>player items</code>。</p>
+<h2 id="读，写以及重新编码Asset"><a href="#读，写以及重新编码Asset" class="headerlink" title="读，写以及重新编码Asset"></a>读，写以及重新编码<code>Asset</code></h2><p>AV Foundation让你给一个Asset用不同的方式创建出新的展示。你可以仅仅对一个已经存在的asset进行重编码（ios4.1之后），你可以在一个asset的内容上执行不同的操作，然后将结果用新的asset来存储。将一种表现转化成其他类型的表现，可以使用<code>asset reader</code>和<code>asset writer</code>来串联两个视频动画。</p>
+<h2 id="缩略图"><a href="#缩略图" class="headerlink" title="缩略图"></a>缩略图</h2><p>使用<code>AVAssetImageGenerator</code>对象可以来创建缩略图。编辑，AV Foundation使用<code>compositions</code>来从现有的媒体片段中新建assets。可以设置相对volume，音频<code>track ramp</code>，设置透明度。</p>
+<h2 id="Media捕捉和使用Camera"><a href="#Media捕捉和使用Camera" class="headerlink" title="Media捕捉和使用Camera"></a>Media捕捉和使用Camera</h2><p>可以使用<code>preview player</code>来展示camera录制的内容。</p>
+<h2 id="AV-Foundation和多线程并发"><a href="#AV-Foundation和多线程并发" class="headerlink" title="AV Foundation和多线程并发"></a>AV Foundation和多线程并发</h2><p>有两点需要注意的：</p>
+<ul>
+<li>UI相关的通知应该在主线程中触发。</li>
+<li>需要自己明确指定类和方法所在线程的话会在响应的线程中年触发通知</li>
+</ul>
+<p>如果要开发多线程的应用，那么你应该使用<code>isMainThread</code>或者<code>[[NSThread currentThread] isEqual:&lt;#A stored thread reference#&gt;]</code>来提前测试是否该线程是你期望的要执行的线程。如果要跨线程，你可能需要如下方法</p>
+<pre><code class="Objective-C">performSelectorOnMainThread:withObject:waitUntilDone: 
+performSelector:onThread:withObject:waitUntilDone:modes:
+dispatch_async
+</code></pre>
+<p>为了更好的开发AVFoundation，你需要具备如下前提知识：</p>
+<ul>
+<li>全面理解基础的Cocoa开发工具及技术</li>
+<li>基本理解Block</li>
+<li>基本理解KVC和KVO</li>
+<li>对于视频回播，需要理解合理动画，对于基本的回播，需要理解AV Kit框架参考手册</li>
+</ul>
 
       
     </div>
@@ -405,7 +438,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Foundation/" rel="tag"># Foundation</a>
+            <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
           
         </div>
       
@@ -418,8 +451,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/07/30/wwdc-understand-swift-performance/" rel="next" title="理解Swift的性能">
-                <i class="fa fa-chevron-left"></i> 理解Swift的性能
+              <a href="/2017/08/04/intermedia-swift/" rel="next" title="Swift中级">
+                <i class="fa fa-chevron-left"></i> Swift中级
               </a>
             
           </div>
@@ -428,8 +461,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/08/01/Why-Swift-IS-swift/" rel="prev" title="为什么Swift比OC快？">
-                为什么Swift比OC快？ <i class="fa fa-chevron-right"></i>
+              <a href="/2017/08/04/avfoundation-asset/" rel="prev" title="AVFoundation--使用Asset">
+                AVFoundation--使用Asset <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -503,7 +536,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-count">19</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -516,7 +549,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">7</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>
@@ -551,7 +584,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Swift中的方法调度"><span class="nav-number">1.</span> <span class="nav-text">Swift中的方法调度</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#AVFoundation框架简介"><span class="nav-number">1.</span> <span class="nav-text">AVFoundation框架简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Assets"><span class="nav-number">1.1.</span> <span class="nav-text">使用Assets</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#播放"><span class="nav-number">1.2.</span> <span class="nav-text">播放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#读，写以及重新编码Asset"><span class="nav-number">1.3.</span> <span class="nav-text">读，写以及重新编码Asset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缩略图"><span class="nav-number">1.4.</span> <span class="nav-text">缩略图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Media捕捉和使用Camera"><span class="nav-number">1.5.</span> <span class="nav-text">Media捕捉和使用Camera</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AV-Foundation和多线程并发"><span class="nav-number">1.6.</span> <span class="nav-text">AV Foundation和多线程并发</span></a></li></ol></li></ol></div>
             
 
           </div>

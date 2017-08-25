@@ -83,7 +83,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="WWDC," />
+  <meta name="keywords" content="Objective-C," />
 
 
 
@@ -99,22 +99,20 @@
 
 
 
-<meta name="description" content="Swift–怎样用好Value Type? 为什么要用Value Type?首先我们要说明为什么我们需要Value Type。因为我们通常使用的Reference Type不能满足我们的需求，并且容易出Bug，什么是Reference Type?Reference Type就是我们常说的Class，我们不是用的很好吗？我们举两个例子来看看例一：但是现在又一种需求：进入用于信息页面编辑页面，如果用户">
-<meta name="keywords" content="WWDC">
+<meta name="description" content="Asset可能来自于文件，或者用户的library或者Photo。创建完Asset对象之后，你所需要的所有信息不回立马就可用。一旦你有一个movie asset，你可以从它里面抽取静态图片，转码成其它格式，或者将其内容剪切。 新建一个Asset对象使用一个URL，就可创建出一个Asset，使用AVURLAsset。最简单的就是从一个文件中创建一个Asset： NSURL *url = &amp;lt;#A">
+<meta name="keywords" content="Objective-C">
 <meta property="og:type" content="article">
-<meta property="og:title" content="怎样用好Value Type?">
-<meta property="og:url" content="https://mikefighting.github.io/2017/08/02/wwdc-better-app-with-value-type/index.html">
+<meta property="og:title" content="AVFoundation--使用Asset">
+<meta property="og:url" content="https://mikefighting.github.io/2017/08/04/avfoundation-asset/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="Swift–怎样用好Value Type? 为什么要用Value Type?首先我们要说明为什么我们需要Value Type。因为我们通常使用的Reference Type不能满足我们的需求，并且容易出Bug，什么是Reference Type?Reference Type就是我们常说的Class，我们不是用的很好吗？我们举两个例子来看看例一：但是现在又一种需求：进入用于信息页面编辑页面，如果用户">
+<meta property="og:description" content="Asset可能来自于文件，或者用户的library或者Photo。创建完Asset对象之后，你所需要的所有信息不回立马就可用。一旦你有一个movie asset，你可以从它里面抽取静态图片，转码成其它格式，或者将其内容剪切。 新建一个Asset对象使用一个URL，就可创建出一个Asset，使用AVURLAsset。最简单的就是从一个文件中创建一个Asset： NSURL *url = &amp;lt;#A">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-6b88775e60bbef0f.png">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-fb29f1978b1a0b66.png">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-f574f73819356261.png">
-<meta property="og:updated_time" content="2017-08-02T10:47:58.000Z">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-7454ffe396927bff.png">
+<meta property="og:updated_time" content="2017-08-24T10:06:47.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="怎样用好Value Type?">
-<meta name="twitter:description" content="Swift–怎样用好Value Type? 为什么要用Value Type?首先我们要说明为什么我们需要Value Type。因为我们通常使用的Reference Type不能满足我们的需求，并且容易出Bug，什么是Reference Type?Reference Type就是我们常说的Class，我们不是用的很好吗？我们举两个例子来看看例一：但是现在又一种需求：进入用于信息页面编辑页面，如果用户">
-<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-6b88775e60bbef0f.png">
+<meta name="twitter:title" content="AVFoundation--使用Asset">
+<meta name="twitter:description" content="Asset可能来自于文件，或者用户的library或者Photo。创建完Asset对象之后，你所需要的所有信息不回立马就可用。一旦你有一个movie asset，你可以从它里面抽取静态图片，转码成其它格式，或者将其内容剪切。 新建一个Asset对象使用一个URL，就可创建出一个Asset，使用AVURLAsset。最简单的就是从一个文件中创建一个Asset： NSURL *url = &amp;lt;#A">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-7454ffe396927bff.png">
 
 
 
@@ -142,13 +140,13 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/2017/08/02/wwdc-better-app-with-value-type/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/08/04/avfoundation-asset/"/>
 
 
 
 
 
-  <title>怎样用好Value Type? | 击水湘江</title>
+  <title>AVFoundation--使用Asset | 击水湘江</title>
   
 
 
@@ -311,7 +309,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/02/wwdc-better-app-with-value-type/">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/04/avfoundation-asset/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
@@ -328,7 +326,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">怎样用好Value Type?</h1>
+          <h1 class="post-title" itemprop="name headline">AVFoundation--使用Asset</h1>
         
 
         <div class="post-meta">
@@ -340,8 +338,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-02T16:37:56+08:00">
-                2017-08-02
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-04T23:38:03+08:00">
+                2017-08-04
               </time>
             
 
@@ -375,162 +373,188 @@
       
 
       
-        <h1 id="Swift–怎样用好Value-Type"><a href="#Swift–怎样用好Value-Type" class="headerlink" title="Swift–怎样用好Value Type?"></a>Swift–怎样用好Value Type?</h1><p><img src="http://upload-images.jianshu.io/upload_images/1513759-6b88775e60bbef0f.png" alt="Value Type"></p>
-<h2 id="为什么要用Value-Type"><a href="#为什么要用Value-Type" class="headerlink" title="为什么要用Value Type?"></a>为什么要用Value Type?</h2><p>首先我们要说明为什么我们需要<code>Value Type</code>。因为我们通常使用的<code>Reference Type</code>不能满足我们的需求，并且容易出Bug，什么是<code>Reference Type</code>?<br>Reference Type就是我们常说的Class，我们不是用的很好吗？我们举两个例子来看看<br>例一：但是现在又一种需求：进入用于信息页面编辑页面，如果用户的信息改变了，并且没有点击保存，这时如果点击导航栏的退出，要给用户提醒”您编辑了信息，确定不保存退出吗？”，这时为了保存进入编辑页面的信息，我们一般这样做</p>
-<ol>
-<li>增加一个originInfo的property。</li>
-<li>在ViewDidLoad的时候赋值：self.originInfo = passedInfo;（这个passedInfo从上个页面传来）</li>
-<li>在点击退出的时候对比passedInfo和self.originInfo是否相等，如果不相等则提醒用户，如果相等则返回。<br>这时你会发现一个bug，这两个对象永远都是相同的，为什么？</li>
-</ol>
-<p>例二：我们要从商品列表中进入商品编辑页面，这时，我们点击了编辑，将<code>goodModel</code>传到第二个页面，在第二个页面操作完之后，用户没有保存信息，返回了，这时你也可能会发现，你列表中的商品信息改变了。</p>
-<p>例三：Cell复用造成的布局混乱。<br>上述两种情景是<code>Reference Type</code>，也就是说他们的都指向了堆上的相同对象，这种类型对对象的公用造成了一系列的bug。并且这种bug很难被发现，并且往往也不是必现的。<br>怎样解决呢？<br>这时我们就需要Copy原来的instance，在OC中我们需要遵守NSCopying，或者NSMutableCopying协议，因为这些，然后实现相应的协议，例如：</p>
-<pre><code class="Objective-C">@interface HYLocationModel : NSObject&lt;NSMutableCopying&gt;
-// cityDic{@&quot;name&quot;:@&quot;&quot;,@&quot;id&quot;:@&quot;&quot;}
-@property (nonatomic, strong) NSDictionary *cityDic; //City
-@property (nonatomic, strong) NSDictionary *areaDic; //
-@property (nonatomic, strong) NSDictionary *districtDic;
+        <p>Asset可能来自于文件，或者用户的library或者Photo。创建完Asset对象之后，你所需要的所有信息不回立马就可用。一旦你有一个movie asset，你可以从它里面抽取静态图片，转码成其它格式，或者将其内容剪切。</p>
+<h2 id="新建一个Asset对象"><a href="#新建一个Asset对象" class="headerlink" title="新建一个Asset对象"></a>新建一个Asset对象</h2><p>使用一个URL，就可创建出一个Asset，使用AVURLAsset。最简单的就是从一个文件中创建一个Asset：</p>
+<pre><code class="objc"><span class="built_in">NSURL</span> *url = &lt;<span class="meta">#A URL that identifies an audiovisual asset such as a movie file#&gt;;</span>
+<span class="built_in">AVURLAsset</span> *anAsset = [[<span class="built_in">AVURLAsset</span> alloc] initWithURL:url options:<span class="literal">nil</span>];
+</code></pre>
+<p>最后的<code>options</code>参数是一个字典。唯一的key是<code>AVURLAssetPreferPreciseDurationAndTimingKey</code>它相应的Value是一个布尔值(包含在NSValue对象里)，它表明了是否这个Asset应该用来指明一个精确的持续时间提供一个精确地随机获取(provide precise random access)。<br>但是获取精确的持续时间需要提前处理很多东西。使用粗略的持续时间通常是更快捷的操作，并且这对回播来说已经足够了。因此</p>
+<ul>
+<li>如果你只需要播放这个Asset，那么要么传nil，要么传一个子字典，其key为<code>AVURLAssetPreferPreciseDurationAndTimingKey</code>，它相应的值为NO（NSValue对象）。</li>
+<li>如果你要将该Asset进行视频合成(<code>AVMutableComposition</code>)，那么通常你需要一个精确的<code>random access</code>。将这个字典的Value值传YES(用NSValue对象)。</li>
+</ul>
+<p>创建方式如下所示：</p>
+<pre><code class="objc"><span class="built_in">NSURL</span> *url = &lt;<span class="meta">#A URL that identifies an audiovisual asset such as a movie file#&gt;; </span>
+<span class="built_in">NSDictionary</span> *options = @{ <span class="built_in">AVURLAssetPreferPreciseDurationAndTimingKey</span> :
+   @YES };
+<span class="built_in">AVURLAsset</span> *anAssetToUseInAComposition = [[<span class="built_in">AVURLAsset</span> alloc]
+  initWithURL:url options:options];
+</code></pre>
+<h2 id="获取用户的Asset"><a href="#获取用户的Asset" class="headerlink" title="获取用户的Asset"></a>获取用户的Asset</h2><p>为了获取iPod library或者相册，你首先需要得到这个Asset的URL。</p>
+<ul>
+<li>为了获取iPod Library，你需要创建一个MPMediaQuery对象来找到你需要的item，然后用<code>MPMediaItemPropertyAssetURL</code>来获取其URL。</li>
+<li>为了获取相册的Asset，你需要使用<code>ALAssetsLibrary</code>。</li>
+</ul>
+<p>下面这个例子说明了怎样获取展示在相册中的第一个视频：</p>
+<pre><code class="objc">ALAssetsLibrary *library = [[ALAssetsLibrary alloc]init];
+ <span class="comment">// Enumerate just the photos and videos group by using ALAssetsGroupSavedPhotos.</span>
+ [library enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, <span class="built_in">BOOL</span> *stop) {
 
-@end
-@implementation HYLocationModel
-- (id)mutableCopyWithZone:(NSZone *)zone {
+     <span class="comment">// Within the group enumeration block, filter to enumerate just videos.</span>
+     [group setAssetsFilter:[ALAssetsFilter allVideos]];
+     [group enumerateAssetsAtIndexes:[<span class="built_in">NSIndexSet</span> indexSetWithIndex:<span class="number">0</span>] options:<span class="number">0</span> usingBlock:^(ALAsset *result, <span class="built_in">NSUInteger</span> index, <span class="built_in">BOOL</span> *stop) {
 
-    HYLocationModel *locationModel = [[HYLocationModel alloc]init];
-    locationModel.cityDic = self.cityDic;
-    locationModel.areaDic = self.areaDic;
-    locationModel.districtDic = self.districtDic;
-    return locationModel;
-}
-@end
-</code></pre>
-<p>这样我们就可以Copy对象了，将Copy的对象赋值给self.originInfo，就可以解决上述的bug。<br>但是这会消耗性能，因为需要在堆里开辟内存空间。NSCopying协议在OC中很常见，比如NSString，NSArray，NSDictionary等都遵守NSCopying协议。其中NSDictionary的Key，默认是实现了NSCopying协议的，因为在给NSDictionary赋值的时候，系统默认是Copy了它的Key，因为如果不Copy它的Key，如果你给字典赋值之后改变了这个Key，那么它将会使整个NSDictionary混乱，出现意想不到的Bug。当然这种Copy也会消耗性能。</p>
-<h2 id="不可变对象是否可以解决上述问题呢？"><a href="#不可变对象是否可以解决上述问题呢？" class="headerlink" title="不可变对象是否可以解决上述问题呢？"></a>不可变对象是否可以解决上述问题呢？</h2><p>在函数式编程中，我们会使用不可变的<code>Reference Type</code>来消除其可变所带来的问题，想象下如果你做数学题题目A中的X值被题目B改变了，那么会有怎样的结果？<br>在Swift中，我们可以使用let来使其不可变，但是这种不可变的数据结构有以下弊端：</p>
-<ol>
-<li>可能导致很恶心的接口（见下文）。</li>
-<li>不能有效地和机器模型相匹配(因为我们的寄存器，我们的Cache，Memory，Storage都是可变状态的)。</li>
-</ol>
-<p>比如下面的代码</p>
-<pre><code class="Swift"><span class="comment">// With mutability </span>
-home.oven.temperature.fahrenheit += <span class="number">10.0</span>
+         <span class="keyword">if</span> (result) {
 
-<span class="comment">//Without mutability </span> <span class="keyword">let</span> temp = home.oven.temperature home.oven.temperature = <span class="type">Temperature</span>(fahrenheit: temp.fahrenheit + <span class="number">10.0</span>)
+             ALAssetRepresentation *represention = [result defaultRepresentation];
+             <span class="built_in">NSURL</span> *url = [represention url];
+             <span class="comment">// Do something interesting with the AV asset.</span>
+             <span class="built_in">AVAsset</span> *avAsset = [<span class="built_in">AVURLAsset</span> URLAssetWithURL:url options:<span class="literal">nil</span>];
+
+
+         }
+
+     }];
+
+ } failureBlock:^(<span class="built_in">NSError</span> *error) {
+
+     <span class="comment">// Typically you should handle an error more gracefully than this.</span>
+     <span class="built_in">NSLog</span>(<span class="string">@"No groups"</span>);
+
+ }];
 </code></pre>
-<p>在上面的例子中，我们把Temperature类的某个属性改成了<code>let</code>，那么如果我们要更改这个数值，我们就需要在堆上开辟内存空间然后创建一个新的Temperature，最后更换掉整个Temperature类。<br>Cocoa[Touch]中有很多的不可变类比如：NSDate，NSURL，UIImage，NSNumber等<br>这更加安全了（不需要使用Copy），也不必担心接下来的程序会改变这个数值。</p>
-<pre><code class="Objective-C">NSArray&lt;NSString *&gt; *array = [NSArray arrayWithObject: NSHomeDirectory()];
-NSString *component;  while ((component = getNextSubdir()) { 
-     array = [array arrayByAddingObject: component]; } 
-     url = [NSURL fileURLWithPathComponents: array];
+<p>这里需要引入<code>#import &lt;AssetsLibrary/AssetsLibrary.h&gt;</code>。</p>
+<h2 id="准备Asset来用"><a href="#准备Asset来用" class="headerlink" title="准备Asset来用"></a>准备Asset来用</h2><p>初始化一个Asset(或者Track)并不意味着你立即就可以使用所有的信息。它还需要时间来计算这个Asset的时长(比如：一个MP3文件可能会包含一些总结信息)。你可以遵守<code>AVAsynchronousKeyValueLoading</code>协议来异步获取其结果，这样可以不用阻塞主线程（AVSeet和AVAssetTrack都遵守<code>AVAsynchronousKeyValueLoading</code>协议）。可以使用<code>statusOfValueForKey:error:</code>来测试是否某个某个属性的值被正常加载了。首次加载的时候，它所有属性的值是<code>AVKeyValueStatusUnknown</code>。使用<code>loadValuesAsynchronouslyForKeys:completionHandler:</code>，可以加载一个或者多个属性的值。由于网络原因或者加载被取消，所以需要一直准备加载。</p>
+<pre><code class="objc">ALAssetRepresentation *represention = [result defaultRepresentation];
+   <span class="built_in">NSURL</span> *url = [represention url];
+   <span class="comment">// Do something interesting with the AV asset.</span>
+   <span class="built_in">AVAsset</span> *avAsset = [<span class="built_in">AVURLAsset</span> URLAssetWithURL:url options:<span class="literal">nil</span>];
+   <span class="built_in">NSArray</span> *keys = @[<span class="string">@"duration"</span>];
+   [avAsset loadValuesAsynchronouslyForKeys:keys completionHandler:^{
+
+       <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;
+       <span class="built_in">AVKeyValueStatus</span> tracksStatus = [avAsset statusOfValueForKey:<span class="string">@"duration"</span> error:&amp;error];
+
+       <span class="keyword">switch</span> (tracksStatus) {
+           <span class="keyword">case</span> <span class="built_in">AVKeyValueStatusLoaded</span>:
+
+               [<span class="keyword">self</span> updateUserInterfaceForDuration];
+               <span class="keyword">break</span>;
+           <span class="keyword">case</span> <span class="built_in">AVKeyValueStatusFailed</span>:
+
+               [<span class="keyword">self</span> reportError:error forAsset:asset];
+               <span class="keyword">break</span>;
+           <span class="keyword">case</span> <span class="built_in">AVKeyValueStatusCancelled</span>:
+               <span class="comment">// Do whatever is appropriate for cancelation.</span>
+               <span class="keyword">break</span>;
+       }
+
+   }];
 </code></pre>
-<h2 id="Value-Type将怎样解决这种问题呢？"><a href="#Value-Type将怎样解决这种问题呢？" class="headerlink" title="Value Type将怎样解决这种问题呢？"></a>Value Type将怎样解决这种问题呢？</h2><p>Swift中的所有基础类型都是Value Type的，像：Int，Double，String …<br>Swift中所有的Collection都是Value Type的，像：Array，Set，Dictianry…<br>Swift中的<code>Tuples，Struct，Enums</code>如果只包含Value Types那么他们自身也是Value Type的。<br>Value Type要是完全可以直接比较的，可以直接使用<code>==</code>，<strong>自定义的Value Type并且其必须要遵守<code>Equable</code>协议，覆盖<code>==</code>方法才可以使用的</strong>。</p>
-<pre><code class="Swift"><span class="keyword">var</span> a: [<span class="type">Int</span>] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]
-<span class="keyword">var</span> b: [<span class="type">Int</span>] = [<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>].sorted(by:&lt;)
-<span class="built_in">assert</span>(a == b) <span class="comment">// true</span>
-</code></pre>
-<p>如果是自身的定义的Struct，那么需要遵守<code>Equable</code>协议，并且覆盖<code>==</code>方法来实现。比如：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">Temperature</span>: <span class="title">Equatable</span> </span>{
-  <span class="keyword">var</span> celsius: <span class="type">Double</span> = <span class="number">0</span>
-  <span class="keyword">var</span> fahrenheit: <span class="type">Double</span> {
-    <span class="keyword">get</span> { <span class="keyword">return</span> celsius * <span class="number">9</span> / <span class="number">5</span> + <span class="number">32</span> }
-    <span class="keyword">set</span> { celsius = (newValue - <span class="number">32</span>) * <span class="number">5</span> / <span class="number">9</span> }
- }
+<p>如果想准备一个asset来回播，那么还需要加载它的<code>tracks</code>属性。</p>
+<h2 id="从视频中获取静态图片"><a href="#从视频中获取静态图片" class="headerlink" title="从视频中获取静态图片"></a>从视频中获取静态图片</h2><p>如果想要从asset中得到了一静态的图片，例如缩略图，你需要使用<code>AVAssetImageGenerator</code>对象。使用asset初始化一个generator。尽管在初始化的时候asset不会处理不可视的track，但是初始化还是可能会失败的，这就需要在必要的时候检查是否asset有track中包含有可视化的，使用<code>tracksWithMediaCharacteristic</code>方法：</p>
+<pre><code class="objc"><span class="built_in">AVAsset</span> anAsset = &lt;<span class="meta">#Get an asset#&gt;;</span>
+<span class="keyword">if</span> ([[anAsset tracksWithMediaType:<span class="built_in">AVMediaTypeVideo</span>] count] &gt; <span class="number">0</span>) {
+    <span class="built_in">AVAssetImageGenerator</span> *imageGenerator =
+        [<span class="built_in">AVAssetImageGenerator</span> assetImageGeneratorWithAsset:anAsset];
+    <span class="comment">// Implementation continues...</span>
 }
-<span class="function"><span class="keyword">func</span> ==<span class="params">(lhs: Temperature, rhs: Temperature)</span></span> -&gt; <span class="type">Bool</span> {
-  <span class="keyword">return</span> lhs.celsius == rhs.celsius
+</code></pre>
+<p>可以对图片生成器的不同方面做不同的配置，例如可以使用maximumSize来指明其最大的尺度，使用<code>apertureMode</code>来指明孔径的模式。然后你就可以在给定的时间点来产生一张或者多张图片。<code>必须要强引用这个图片生成器否则，其会被释放掉。</code></p>
+<h2 id="产生单独的一张图片"><a href="#产生单独的一张图片" class="headerlink" title="产生单独的一张图片"></a>产生单独的一张图片</h2><p>使用<code>copyCGImageAtTime:actualTime:error:</code>来产生在特定时间点的图片。AVFoundation框架可能不会在你请求的时候立即产生出一张图片，因此你可以给第二个参数传递一个指针，指向一个CMTime，该指针包含了图片实际产生的时间。</p>
+<pre><code class="objc"><span class="built_in">AVAsset</span> *myAsset = &lt;<span class="meta">#An asset#&gt;];</span>
+<span class="built_in">AVAssetImageGenerator</span> *imageGenerator = [[<span class="built_in">AVAssetImageGenerator</span> alloc]
+initWithAsset:myAsset];
+Float64 durationSeconds = <span class="built_in">CMTimeGetSeconds</span>([myAsset duration]);
+<span class="built_in">CMTime</span> midpoint = <span class="built_in">CMTimeMakeWithSeconds</span>(durationSeconds/<span class="number">2.0</span>, <span class="number">600</span>);
+<span class="built_in">NSError</span> *error;
+<span class="built_in">CMTime</span> actualTime;
+<span class="built_in">CGImageRef</span> halfWayImage = [imageGenerator copyCGImageAtTime:midpoint
+actualTime:&amp;actualTime error:&amp;error];
+<span class="keyword">if</span> (halfWayImage != <span class="literal">NULL</span>) {
+<span class="built_in">NSString</span> *actualTimeString = (<span class="built_in">NSString</span> *)<span class="built_in">CMTimeCopyDescription</span>(<span class="literal">NULL</span>, actualTime); 
+    <span class="built_in">NSString</span> *requestedTimeString = (<span class="built_in">NSString</span> *)<span class="built_in">CMTimeCopyDescription</span>(<span class="literal">NULL</span>,
+midpoint);
+    <span class="built_in">NSLog</span>(<span class="string">@"Got halfWayImage: Asked for %@, got %@"</span>, requestedTimeString,
+actualTimeString);
+    <span class="comment">// Do something interesting with the image.</span>
+    <span class="built_in">CGImageRelease</span>(halfWayImage);
 }
 </code></pre>
-<p>使用Value Type不用担心竞争条件。也就是不用担心资源抢夺，加锁等。看下面的代码：</p>
-<pre><code class="Swift"><span class="keyword">var</span> numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]
-scheduler.processNumbersAsynchronously(numbers) <span class="comment">//异步处理numbers</span>
-<span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span>..&lt;numbers.<span class="built_in">count</span> { numbers[i] = numbers[i] * i }
-scheduler.processNumbersAsynchronously(numbers) <span class="comment">//异步处理numbers</span>
-</code></pre>
-<p>在Reference Type中这个<code>numbers</code>将会发生资源抢夺，但在Swift中是Value Type的，在执行<code>for i in 0..&lt;numbers.count { numbers[i] = numbers[i] * i }</code>的时候会发生Copy操作，所以不会发生资源抢夺。也就是说每次将Value Type赋值给其它的Value Type的时候会发生拷贝（逻辑拷贝）操作，但是这种Copy消耗的时间很微小，并且系统会将Copy推迟到写操作执行的时候，这就是Copy on Write。<em>在Swift中可以利用Protocol将Struct等ValueType封装，类似于OOP中的多态</em></p>
-<h2 id="Swift中的Value-Type和Reference-Type混用会怎样呢？"><a href="#Swift中的Value-Type和Reference-Type混用会怎样呢？" class="headerlink" title="Swift中的Value Type和Reference Type混用会怎样呢？"></a>Swift中的Value Type和Reference Type混用会怎样呢？</h2><p>我们来看Structh中含有结构体的情况：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">ButtonWrapper</span> </span>{
-   <span class="keyword">var</span> button: <span class="type">Button</span>
-}
-</code></pre>
-<p>在这种情况下，复制ButtonWrapper的时候将会共享button这个Reference Type。这就违背了我们上文所说的Value Type在重新赋值的时候拷贝（深拷贝，和原来的Struct没有关系）。怎样才可以做到这一点呢？比如下面的</p>
-<h3 id="Value-Type-中含有不可变的Reference-Type"><a href="#Value-Type-中含有不可变的Reference-Type" class="headerlink" title="Value Type 中含有不可变的Reference Type"></a>Value Type 中含有不可变的Reference Type</h3><pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">Image</span>: <span class="title">Drawable</span> </span>{
-  <span class="keyword">var</span> topLeft:<span class="type">CGPoint</span>
-  <span class="keyword">var</span> image: <span class="type">UIImage</span>
-}
-<span class="keyword">var</span> image = <span class="type">Image</span>(topLeft:<span class="type">CGPoint</span>(x:<span class="number">0</span>,y:<span class="number">0</span>),image:<span class="type">UIImage</span>.<span class="keyword">init</span>(named: <span class="string">"someImage.png"</span>))
-<span class="keyword">var</span> image2 = image
-</code></pre>
-<p>这时image和image2将会公用一个UIImage：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-fb29f1978b1a0b66.png" alt="ValueType Contains Reference Type"><br>在实现<code>Equatable</code>协议的时候，我们这么做：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">extension</span> <span class="title">Image</span>: <span class="title">Equatable</span> </span>{   }
-<span class="function"><span class="keyword">func</span> == <span class="params">(<span class="keyword">left</span>:Iamge, <span class="keyword">right</span>:Image)</span></span> -&gt; <span class="type">Bool</span> {
- <span class="keyword">return</span> <span class="keyword">left</span>.topLeft == <span class="keyword">right</span>.topLeft &amp;&amp; <span class="keyword">left</span>.image === <span class="keyword">right</span>.image
-}
-</code></pre>
-<p>但是由于UIImage是不可变的，所以我们不必担心image2的image对象的改变会影响到image的image对象。<br><em>注：上面<code>===</code>表示引用相同，但是不表示其指向<code>Image</code>是相同的，如果要表示其相同，需要使用<code>==</code>操作。</em></p>
-<h3 id="Value-Type-中含有可变的Reference-Type"><a href="#Value-Type-中含有可变的Reference-Type" class="headerlink" title="Value Type 中含有可变的Reference Type"></a>Value Type 中含有可变的Reference Type</h3><p>下面我们来看一个可变的Reference Type。</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">BezierPath</span>: <span class="title">Drawable</span> </span>{
-  <span class="keyword">var</span> path = <span class="type">UIBezierPath</span>()
-  <span class="keyword">var</span> isEmpty: <span class="type">Bool</span> {
-    <span class="keyword">return</span> path.empty
+<h3 id="产生一系列的图片"><a href="#产生一系列的图片" class="headerlink" title="产生一系列的图片"></a>产生一系列的图片</h3><p>为了产生一系列的图片，你应该调用图片生成器的<code>generateCGImagesAsynchronouslyForTimes:completionHandler:</code>方法，第一个参数是一个包含NSValue对象的数组，NSValue对象是由<code>CMTime</code>生成的，它指明了你需要生成的图片所在的时间点。第二个参数是每个图片生成之后的回调。其中包含的字段包括</p>
+<ul>
+<li>图片</li>
+<li>请求图片的时间和图片生成的真实时间</li>
+<li>失败时候错误信息的error对象</li>
+</ul>
+<p>在实现block的过程中，需要检测结果来决定图片是否生成了。除此之外：<strong>在生成图片之前要一直强引用这个图片生成器。</strong></p>
+<pre><code class="objc"><span class="built_in">AVAsset</span> *myAsset = <span class="literal">nil</span>;
+<span class="keyword">self</span>.imageGenerator = [<span class="built_in">AVAssetImageGenerator</span> assetImageGeneratorWithAsset:myAsset]; 
+Float64 durationSeconds = <span class="built_in">CMTimeGetSeconds</span>([myAsset duration]);
+<span class="built_in">CMTime</span> firstThird = <span class="built_in">CMTimeMakeWithSeconds</span>(durationSeconds/<span class="number">3.0</span>, <span class="number">600</span>);
+<span class="built_in">CMTime</span> secondThird = <span class="built_in">CMTimeMakeWithSeconds</span>(durationSeconds*<span class="number">2.0</span>/<span class="number">3.0</span>, <span class="number">600</span>);
+<span class="built_in">CMTime</span> end = <span class="built_in">CMTimeMakeWithSeconds</span>(durationSeconds, <span class="number">600</span>);
+<span class="built_in">NSArray</span> *times = @[ <span class="built_in">NSValue</span> valueWithCMTime:kCMTimeZero],
+                    [<span class="built_in">NSValue</span> valueWithCMTime:firstThird], 
+                    [<span class="built_in">NSValue</span> valueWithCMTime:secondThird],
+                    [<span class="built_in">NSValue</span> valueWithCMTime:end]];
+[imageGenerator generateCGImagesAsynchronouslyForTimes:times completionHandler:^(<span class="built_in">CMTime</span> requestedTime, <span class="built_in">CGImageRef</span> image, <span class="built_in">CMTime</span> actualTime,
+<span class="built_in">AVAssetImageGeneratorResult</span> result, <span class="built_in">NSError</span> *error) {
+<span class="built_in">NSString</span> *requestedTimeString = (<span class="built_in">NSString</span> *) <span class="built_in">CFBridgingRelease</span>(<span class="built_in">CMTimeCopyDescription</span>(<span class="literal">NULL</span>, requestedTime));
+<span class="built_in">NSString</span> *actualTimeString = (<span class="built_in">NSString</span> *)
+                      <span class="built_in">CFBridgingRelease</span>(<span class="built_in">CMTimeCopyDescription</span>(<span class="literal">NULL</span>, actualTime));
+ <span class="built_in">NSLog</span>(<span class="string">@"Requested: %@; actual %@"</span>, requestedTimeString, actualTimeString);
+
+<span class="keyword">if</span> (result == <span class="built_in">AVAssetImageGeneratorSucceeded</span>) {
+    <span class="comment">// Do something interesting with the image.</span>
 } 
-  <span class="comment">// **注意这种写法是错误的**</span>
-  <span class="function"><span class="keyword">func</span> <span class="title">addLineToPoint</span><span class="params">(point: CGPoint)</span></span> {
-    path.addLineToPoint(point)
-} }
+<span class="keyword">if</span> (result == <span class="built_in">AVAssetImageGeneratorFailed</span>) { <span class="built_in">NSLog</span>(<span class="string">@"Failed with error: %@"</span>, [error localizedDescription]); 
+}
+<span class="keyword">if</span> (result == <span class="built_in">AVAssetImageGeneratorCancelled</span>) {
+    <span class="built_in">NSLog</span>(<span class="string">@"Canceled"</span>);
+}
+}];
 </code></pre>
-<p>其内存结构是这样的：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-f574f73819356261.png" alt="Value Contains Reference Type"></p>
-<p>这时如果我们如果执行下面的代码</p>
-<pre><code class="Swift"><span class="keyword">var</span> bezierPath1 = bezierPath0
-</code></pre>
-<p>就会发现意想不到的Bug，因为你对bezierPath1的任何改动都将会显示到bezierPath0上。<br>怎样解决这样的问题呢？这时我们需要使用<strong>Copy On Write</strong></p>
-<blockquote>
-<p>对Value Type中的Reference Type做改动将会破坏Value Type的”完全独立”特性。<br>所以我们必须将可变的Reference Type和不可变的操作分开<br>不可变操作总是安全的<br>可变操作必须首先Copy</p>
-</blockquote>
-<p>怎样做到Copy On Write呢？我们需要给BezierPath中加入如下代码：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">BezierPath</span>: <span class="title">Drawable</span> </span>{ 
-<span class="keyword">private</span> <span class="keyword">var</span> _path = <span class="type">UIBezierPath</span>()  <span class="keyword">var</span> pathForReading: <span class="type">UIBezierPath</span> { 
-<span class="keyword">return</span> _path 
-}  <span class="keyword">var</span> pathForWriting: <span class="type">UIBezierPath</span> {
-    <span class="keyword">mutating</span> <span class="keyword">get</span> {      _path = _path.copy() <span class="keyword">as</span>! <span class="type">UIBezierPath</span> 
-    <span class="keyword">return</span> _path 
-} } 
+<p>如果想要在中途终止图片序列的生成，可以调用<code>cancelAllCGImageGeneration</code>方法</p>
+<h3 id="视频的裁剪和转码"><a href="#视频的裁剪和转码" class="headerlink" title="视频的裁剪和转码"></a>视频的裁剪和转码</h3><p>使用<code>AVAssetExportSession</code>对象，可以将视频从一种格式到另一种格式进行转码，并且可以裁剪视频。一个export session是一个控制器对象，它管理着一个asset的异步输出。你可以将想要输出的asset以及输出的用来表明输出选项的<code>preset</code>来初始化一个<code>session</code>。然后你可以配置这个输出的session来指明输入的URL，以及文件格式，以及其它设置的一些可选配置，如metadata，以及是否输出需要被优化。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-7454ffe396927bff.png" alt="视频转码"><br>可以使用<code>exportPresetsCompatibleWithAsset:</code>来检测你是否可以输出一种给定的<code>asset</code>，如下所示</p>
+<pre><code class="objc"><span class="built_in">AVAsset</span> *anAsset = &lt;<span class="meta">#Get an asset#&gt;;</span>
+<span class="built_in">NSArray</span> *compatiblePresets = [<span class="built_in">AVAssetExportSession</span>
+exportPresetsCompatibleWithAsset:anAsset];
+<span class="keyword">if</span> ([compatiblePresets containsObject:<span class="built_in">AVAssetExportPresetLowQuality</span>]) {
+    <span class="built_in">AVAssetExportSession</span> *exportSession = [[<span class="built_in">AVAssetExportSession</span> alloc]
+        initWithAsset:anAsset presetName:<span class="built_in">AVAssetExportPresetLowQuality</span>];
+    <span class="comment">// Implementation continues.</span>
 }
 </code></pre>
-<p>这样我们就可以将上述的错误代码改为：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">extension</span> <span class="title">BezierPath</span> </span>{ 
-<span class="keyword">var</span> isEmpty: <span class="type">Bool</span> {
-<span class="keyword">return</span> pathForReading.empty 
-} 
- <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">addLineToPoint</span><span class="params">(point: CGPoint)</span></span> {
-    pathForWriting.addLineToPoint(point)
-  }
-}
+<p>你可以通过提供输出的URL(该URL必须是一个文件的URL)来配置这个session，<code>AVAssetExportSession</code>可以根据输出的<code>URL</code>的路径扩展，来推断需要输出的文件类型；然而也可以通过使用<code>outputFileType</code>直接进行配置。你也可以指明一些其它的属性，比如时间范围，输出长度的限制，是否输出的文件需要被优化来作为网络使用，以及一个视频的合成。下面的例子说明了如何使用<code>timeRange</code>属性来裁剪视频：</p>
+<pre><code class="objc">exportSession.outputURL = &lt;<span class="meta">#A file URL#&gt;;</span>
+exportSession.outputFileType = <span class="built_in">AVFileTypeQuickTimeMovie</span>;
+<span class="built_in">CMTime</span> start = <span class="built_in">CMTimeMakeWithSeconds</span>(<span class="number">1.0</span>, <span class="number">600</span>);
+<span class="built_in">CMTime</span> duration = <span class="built_in">CMTimeMakeWithSeconds</span>(<span class="number">3.0</span>, <span class="number">600</span>);
+<span class="built_in">CMTimeRange</span> range = <span class="built_in">CMTimeRangeMake</span>(start, duration);
+exportSession.timeRange = range;
 </code></pre>
-<p>这样，我们在执行：</p>
-<pre><code class="Swift"><span class="keyword">var</span> path = <span class="type">BezierPath</span>()
-<span class="keyword">var</span> path2 = path
-<span class="keyword">if</span> path.empty { <span class="built_in">print</span>(<span class="string">"Path is empty"</span>) }
-<span class="keyword">var</span> path2 = path
-path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10</span>, y: <span class="number">20</span>))
-path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">100</span>, y: <span class="number">125</span>))
+<p>调用<code>exportAsynchronouslyWithCompletionHandler:</code>方法可以用来创建一个新的文件。当输出操作结束的时候这个文成的block将会被回调。如果你要处理这个回调，那么你需要检测这个seesion的<code>status</code>值来确定是否这次输出是成功的，失败的，或者是被取消的。</p>
+<pre><code class="objc">[exportSession exportAsynchronouslyWithCompletionHandler:^{
+          <span class="keyword">switch</span> ([exportSession status]) {
+              <span class="keyword">case</span> <span class="built_in">AVAssetExportSessionStatusFailed</span>:
+                  <span class="built_in">NSLog</span>(<span class="string">@"Export failed: %@"</span>, [[exportSession error]
+  localizedDescription]);
+                  <span class="keyword">break</span>;
+              <span class="keyword">case</span> <span class="built_in">AVAssetExportSessionStatusCancelled</span>:
+                  <span class="built_in">NSLog</span>(<span class="string">@"Export canceled"</span>);
+                  <span class="keyword">break</span>;
+              <span class="keyword">default</span>:
+<span class="keyword">break</span>; } 
+}];
 </code></pre>
-<p>这段代码的时候就会在addLineToPoint的时候执行Copy，这就不会出现改动path而影响path2的现象了。<br>但是还有一个问题，每次执行addLineToPoint的时候都需要执行Copy操作，有时候如果这个对象只有一个引用那么就不需要这种操作，所以我们可以利用<code>isUniquelyReferencedNonObjC()</code>方法来判断时候需要Copy,如果返回true，说明只有一个对象在用，就不必Copy，如果返回false，说明很多对象在用，这个时候就需要执行Copy操作了。<br>用法如下：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">MyWrapper</span> </span>{
-  <span class="keyword">var</span> _object: <span class="type">SomeSwiftObject</span>
-  <span class="keyword">var</span> objectForWriting: <span class="type">SomeSwiftObject</span> {
-    <span class="keyword">mutating</span> <span class="keyword">get</span> {
-     <span class="keyword">if</span> !<span class="built_in">isUniquelyReferencedNonObjC</span>(&amp;_object)) {
-        _object = _object.copy()
-     }
-     <span class="keyword">return</span> _object
-    }
-} }
-</code></pre>
-<blockquote>
-<p>注：</p>
-<ol>
-<li>需要标示记忆过程的时候，比如实现撤销操作，需要恢复之前数值的时候。（备忘录模式）</li>
-<li>比如需要对新的变化做特殊处理的时候，因为我们已经记忆了之前的过程，只需要对最新的Value Type改变，比如：本博客中的第一张图片，如果衣服颜色改变了，那么就只改变衣服颜色的那几个方格的值即可。</li>
-</ol>
-</blockquote>
-<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://developer.apple.com/videos/play/wwdc2015/414/" target="_blank" rel="external">https://developer.apple.com/videos/play/wwdc2015/414/</a></p>
+<p>通过调用session的<code>cancelExport</code>方法，可以取消某次输出。<br>如果你试图往一个已经存在的文件中重复写入，或者往应用的沙盒之外的其它地方写文件，那么将会造成输出文件失败。下面的情况也会造成输出失败：</p>
+<ul>
+<li>电话呼入</li>
+<li>你的应用推到了后台，同时另一个应用也开始执行回播</li>
+</ul>
+<p>这种情况下，你需要提醒用户输出失败，以便其可以重新输出。</p>
 
       
     </div>
@@ -560,7 +584,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
       
         <div class="post-tags">
           
-            <a href="/tags/WWDC/" rel="tag"># WWDC</a>
+            <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
           
         </div>
       
@@ -573,8 +597,8 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/08/01/Why-Swift-IS-swift/" rel="next" title="为什么Swift比OC快？">
-                <i class="fa fa-chevron-left"></i> 为什么Swift比OC快？
+              <a href="/2017/08/04/avfoundation-introduction/" rel="next" title="AVFoundation--简介">
+                <i class="fa fa-chevron-left"></i> AVFoundation--简介
               </a>
             
           </div>
@@ -583,8 +607,8 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/08/04/intermedia-swift/" rel="prev" title="Swift中级">
-                Swift中级 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/08/05/avfoundation-play/" rel="prev" title="AVFoundation--视频播放">
+                AVFoundation--视频播放 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -706,7 +730,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Swift–怎样用好Value-Type"><span class="nav-number">1.</span> <span class="nav-text">Swift–怎样用好Value Type?</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要用Value-Type"><span class="nav-number">1.1.</span> <span class="nav-text">为什么要用Value Type?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不可变对象是否可以解决上述问题呢？"><span class="nav-number">1.2.</span> <span class="nav-text">不可变对象是否可以解决上述问题呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Value-Type将怎样解决这种问题呢？"><span class="nav-number">1.3.</span> <span class="nav-text">Value Type将怎样解决这种问题呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Swift中的Value-Type和Reference-Type混用会怎样呢？"><span class="nav-number">1.4.</span> <span class="nav-text">Swift中的Value Type和Reference Type混用会怎样呢？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Value-Type-中含有不可变的Reference-Type"><span class="nav-number">1.4.1.</span> <span class="nav-text">Value Type 中含有不可变的Reference Type</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Value-Type-中含有可变的Reference-Type"><span class="nav-number">1.4.2.</span> <span class="nav-text">Value Type 中含有可变的Reference Type</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">1.4.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#新建一个Asset对象"><span class="nav-number">1.</span> <span class="nav-text">新建一个Asset对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取用户的Asset"><span class="nav-number">2.</span> <span class="nav-text">获取用户的Asset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准备Asset来用"><span class="nav-number">3.</span> <span class="nav-text">准备Asset来用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从视频中获取静态图片"><span class="nav-number">4.</span> <span class="nav-text">从视频中获取静态图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#产生单独的一张图片"><span class="nav-number">5.</span> <span class="nav-text">产生单独的一张图片</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#产生一系列的图片"><span class="nav-number">5.1.</span> <span class="nav-text">产生一系列的图片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#视频的裁剪和转码"><span class="nav-number">5.2.</span> <span class="nav-text">视频的裁剪和转码</span></a></li></ol></li></ol></div>
             
 
           </div>
