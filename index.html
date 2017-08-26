@@ -307,6 +307,143 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/26/why-java-popular/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/26/why-java-popular/" itemprop="url">Java为什么会流行？</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-26T09:17:48+08:00">
+                2017-08-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>下面是TIOBE对计算机语言流行度的最新排名：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-d7123c8e5701f435.png" alt="Language Rate"></p>
+<p>我们可以看到Java名列第一，并且Java一直排名很靠前。为什么Java会如此流行呢？要了解Java为什么这么流行，我们先从它的起源说起。</p>
+<h3 id="Java诞生的前奏"><a href="#Java诞生的前奏" class="headerlink" title="Java诞生的前奏"></a>Java诞生的前奏</h3><p>计算机业内一般认为：B语言导致了C语言的诞生，C语言演变出了C++，而C++会被Java语言所打败。是什么导致了Java的诞生？想要解决这个问题，我们先来看看Java的前辈们。</p>
+<h4 id="C语言的诞生"><a href="#C语言的诞生" class="headerlink" title="C语言的诞生"></a>C语言的诞生</h4><p>C语言的产生是人们追求结构化、高效率、高级语言的结果，它可以替代汇编进行开发，它的出现改变了人们之前的编程方法和思路。</p>
+<p>C语言的出现解决了之前语言的各种不足，比如：FORTRAN高效但不适用于编写系统程序。BASIC虽然容易学习，但是功能不够强大。汇编高效，但是学习成本很大，且很难调试。</p>
+<p>另外，C语言之前的语言没有考虑结构化设计。它们大量使用<code>GOTO</code>语句来对程序进行控制。这样做的结果是<strong>程序极其混乱</strong>，各种跳转和条件分支交织在一起极大地影响了程序的可读性。人们解决该问题的愿望非常强烈，且日益迫切。20世界70年代初，计算机革命开始，人们对于软件的需求日益增加，使用当时的语言开发软件已经无法满足需求。人们在此期间进行了很多的尝试，但是没有发明出更好的语言。直到一个新机遇的到来：<strong>计算机硬件资源的富余</strong>。由于计算机硬件的增多，程序员可以随意的使用计算机，随意进行各种尝试，这就给了他们开发自己工具的机会。后来Ken Thompson发明了B语言，B语言演化到了C语言。1989年美国国家标准化组织制定了C语言的标准，C语言被正式标准化。C语言是由程序员对编程实践的总结而发明出来的，它能够解决早期语言的种种缺陷。</p>
+<h4 id="C-的诞生"><a href="#C-的诞生" class="headerlink" title="C++的诞生"></a>C++的诞生</h4><p>C语言被用的好好的，为何出现了C++呢？原因是C语言太复杂了。当一个工程项目达到一定规模之后，使用结构化编程方法，编程人员就无法对它的复杂性进行有效管理。20世纪80年代初期，许多工程项目的复杂性都超过了结构化方法的极限。为了解决这个问题，面向对象诞生了。面向对象的特性：继承，封装，多态是用来帮助组织复杂程序的编程方法。因此出现了C++，C++的产生是基于C的，它包含了C的所有特征，属性和优点。</p>
+<h4 id="Java出现的时机到了"><a href="#Java出现的时机到了" class="headerlink" title="Java出现的时机到了"></a>Java出现的时机到了</h4><p>在20世纪80年代末到90年代初，使用面向对象的C++语言占主导地位。然而，推动计算机语言进化的力量正在酝酿。万维网（WWW）和Internet在随后的几年达到了临界状态，这就促成了编程的另一场革命。</p>
+<h3 id="Java诞生"><a href="#Java诞生" class="headerlink" title="Java诞生"></a>Java诞生</h3><p>由于嵌入式系统的发展，人们对一种独立于平台的语言更加渴望，这种语言可以嵌入微波炉，遥控器等各种家用电器设备的软件。用作控制器芯片的CPU是多种多样的，但是C和C++只能对特定目标进行编译。比如某个CPU要编译C++代码，那么就要创建一个针对该CPU的C++编译器，而创建编译器是一项耗时耗长，耗资大的工作。为了解决这个问题，Gosling和其他人一直在开发一种可移植，跨平台的语言。该语言能够生成运行于不同环境，不同CPU芯片上的代码。经过不懈的努力，在1991年被James Gosling，Patrick Naughton，Chris Warth，Ed Frank和Mike Sheridan发明出来。第一版花了18个月。刚开始叫Oak，于1995年更名为Java。</p>
+<h3 id="Java流行"><a href="#Java流行" class="headerlink" title="Java流行"></a>Java流行</h3><p>在万维网（WWW）出现之前Java处于有用、摸摸无闻的用于电子消费品编程的状态。然而由于万维网的出现，Java被推到了计算机语言的设计的最前沿，<strong>因为万维网也需要可移植的程序。</strong></p>
+<p>因特网是由不同的、分布式的系统组成，其中包含各种类型的计算机，操作系统和CPU。尽管许多类型的平台都可以与因特网连接，但是用户仍然希望他们能够运行同样的程序。</p>
+<p>1993年，Java设计小组的成员发现解决嵌入式控制器可移植性的方法，也可以用来解决因特网的代码的可移植性问题。也就是Java不仅可以用来解决小范围的问题，也可以用来解决大范围的问题。这样他们将Java的重心由电子消费品，转移到Internet编程上。</p>
+<h3 id="Java对Internet为什么重要"><a href="#Java对Internet为什么重要" class="headerlink" title="Java对Internet为什么重要"></a>Java对Internet为什么重要</h3><p>在网路中，在服务器和个人计算机间传递的信息有两大对象：被动的信息和动态的、主动运行的程序。比如阅读电子邮件是被动的数据，被服务器用来正确的显示服务器传递数据的程序是动态的。这中动态性是好的，但是其安全性和可移植行有严重的缺陷。在Java产生以前，赛百空间有一半的对象实体无法进入网络世界，是Java为它们打开了便利之门，而且在这个过程中定义了一种全新的程序形式:applet(小应用程序)。 </p>
+<h4 id="Java小应用程序"><a href="#Java小应用程序" class="headerlink" title="Java小应用程序"></a>Java小应用程序</h4><p>Java可以用来生成两类程序：应用程序（Application）和小应用程序(Java applet)。应用程序不必说，小应用程序是可以再Internet中传输并在兼容Java的Web浏览器中运行的应用程序。小应用程序实际上就是小型的Java程序，它能够像图像文件、声音文件和视频片段那样通过网络动态下载。小程序的特点是，它是动态的智能的程序，可以对用户的输入作出反应，并变化。</p>
+<h4 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h4><p>每次当你下载一个程序的时候，你都要冒着被病毒入侵的危险。Java出现之前，很多用户不经常下载可执行的程序文件。即使下载了，在运行它之前也要进行病毒检查。经管如此，很多用户还是担心他们的系统被病毒感染，除此之外，有些恶意程序可以搜索你计算机本地文件系统内容来收集你的私人信息，比如信用卡号码、银行账号和密码等。Java在网络程序和你的计算机之间提供了一道防火墙，消除了用户的顾虑。这道防火墙就是Java运行环境。Java程序被限制在了运行环境中，不允许它访问计算机的其他部分。</p>
+<h4 id="可移植性"><a href="#可移植性" class="headerlink" title="可移植性"></a>可移植性</h4><p>链接到Internet上的计算机和操作系统不尽相同，要使它们都能动态地下载同一个程序，就需要有能够生成可移植性执行代码的方法。这个方法就是：Java编译器的输出并不是可执行的代码，而是字节码（bytecode）。字节码是一套设计用来在Java运行时环境下执行的高度优化的指令集，该Java运行时系统成为Java虚拟机（JavaVirtual Machine, JVM）。在标准形式下，JVM就是一个字节码解释器。只要某个平台安装了Java虚拟机，它就可以解释Java代码。当然对Java程序进行解释也有助于它的安全性。因为每个Java程序的运行都在Java虚拟机的控制之下，Java虚拟机可以包含这个程序，并且不让它在系统之外产生副作用。</p>
+<h4 id="Java虚拟机的增强"><a href="#Java虚拟机的增强" class="headerlink" title="Java虚拟机的增强"></a>Java虚拟机的增强</h4><p>尽管Java被设计为解释执行的程序，但是这没有妨碍它将动态字节码编译为本机代码。SUN公司在Java 2发行版中提供了一个字节码编译器–JIT(Just In Time)。它可以根据需要，一部分一部分地将字节码实时编译为可执行代码。它不能将整个Java程序一次性全部编译为可执行的代码，因为Java要执行各种检查，而这些检查只有在运行时才执行。这种编译执行的方法使性能得到较大的提高。</p>
+<p>经过上面的探讨我们发现，推动计算机语言发展的因素有两个：</p>
+<blockquote>
+<ul>
+<li>适应正在变化的环境和需求</li>
+<li>实现编程艺术的完善和提高</li>
+</ul>
+</blockquote>
+<p>Java之所以流行主要因为万维网的发展和其自身安全性和可移植性的特点。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/24/avfoundation-capture/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1948,7 +2085,7 @@ Use `openssl rand -base64 32` to generate a random string.
                 <span class="keyword">throw</span> <span class="type">Abort</span>.badRequest
             }
             <span class="keyword">let</span> validInput = <span class="keyword">try</span> input.tested(by: <span class="type">OnlyAlphanumeric</span>())
-            <span class="keyword">return</span> <span class="string">"validated:\(validInput)"</span>
+            <span class="keyword">return</span> <span class="string">"validated:<span class="subst">\(validInput)</span>"</span>
 }
 </code></pre>
 <p>我们运行程序，然后在PostMan中输入<a href="http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：" target="_blank" rel="external">http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：</a></p>
@@ -1962,7 +2099,7 @@ Use `openssl rand -base64 32` to generate a random string.
                 <span class="keyword">throw</span> <span class="type">Abort</span>.badRequest
             }
             <span class="keyword">let</span> validaInput = <span class="keyword">try</span> input.tested(by: <span class="type">EmailValidator</span>())
-            <span class="keyword">return</span> <span class="string">"validated:\(validaInput)"</span>
+            <span class="keyword">return</span> <span class="string">"validated:<span class="subst">\(validaInput)</span>"</span>
     }
 </code></pre>
 <p>然后我们输入URL：<a href="http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：" target="_blank" rel="external">http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：</a></p>
@@ -2021,7 +2158,7 @@ Use `openssl rand -base64 32` to generate a random string.
 
     <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">validate</span><span class="params">(<span class="number">_</span> input: T)</span></span> <span class="keyword">throws</span> {
         <span class="keyword">guard</span> input == expectation <span class="keyword">else</span> {
-            <span class="keyword">throw</span> error(<span class="string">"\(input) does not equal expectation \(expectation)"</span>)
+            <span class="keyword">throw</span> error(<span class="string">"<span class="subst">\(input)</span> does not equal expectation <span class="subst">\(expectation)</span>"</span>)
         }
     }
 }
@@ -2183,7 +2320,7 @@ newLongDescription longDescription: <span class="type">String</span>) { ... }
 </code></pre>
 <p>这样我们的<code>Boards</code>类就遵守了<code>Pullable</code>协议，当我们来检查某个对象是否遵守了某个协议时，我们可以这样做：</p>
 <pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">performPull</span><span class="params">(object: Thing)</span></span> { <span class="keyword">if</span> <span class="keyword">let</span> pullableObject = object <span class="keyword">as</span> <span class="type">Pullable</span> { pullableObject.pull()    }<span class="keyword">else</span>{ 
-     <span class="built_in">print</span>(<span class="string">"You are not sure how to print a \(object.name)."</span>)
+     <span class="built_in">print</span>(<span class="string">"You are not sure how to print a <span class="subst">\(object.name)</span>."</span>)
    } 
 }
 </code></pre>
@@ -2222,17 +2359,17 @@ newLongDescription longDescription: <span class="type">String</span>) { ... }
 <h2 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h2><p> 比如以下三个方法，其参数的形式是一样的，但是其参数类型不同，我们想把它变成一个函数，这时候我们最常想到的做法就是使用<code>Any</code>来表示任何类型的参数和任何类型的返回值。</p>
 <pre><code class="Swift"><span class="comment">// 之前的三个函数</span>
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: String)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
 }
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Int)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
 }
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Float)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
 } 
 <span class="comment">// 变为一个函数</span>
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Any)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
 }
 </code></pre>
 <p>但是这有个问题，在我们要调用返回值的某个方法时候编译器会报错，因为我们的返回值<code>Any</code>并没有所调用的方法，也就是说我们需要一次强转，强转在代码层面是很难看的，也很麻烦，这时候我们就可以使用泛型来解决这个问题，如果我们使用了泛型，那么编译器会将输入的参数和输出的参数给我们推断出来，这样就不必强转了。并且当编译器可以推断出来是那种type的时候它会给我们做各种优化。</p>
@@ -2570,299 +2707,6 @@ intStack.push(<span class="number">42</span>)
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/04/avfoundation-asset/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/04/avfoundation-asset/" itemprop="url">AVFoundation--使用Asset</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-04T23:38:03+08:00">
-                2017-08-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Asset可能来自于文件，或者用户的library或者Photo。创建完Asset对象之后，你所需要的所有信息不回立马就可用。一旦你有一个movie asset，你可以从它里面抽取静态图片，转码成其它格式，或者将其内容剪切。</p>
-<h2 id="新建一个Asset对象"><a href="#新建一个Asset对象" class="headerlink" title="新建一个Asset对象"></a>新建一个Asset对象</h2><p>使用一个URL，就可创建出一个Asset，使用AVURLAsset。最简单的就是从一个文件中创建一个Asset：</p>
-<pre><code class="objc"><span class="built_in">NSURL</span> *url = &lt;<span class="meta">#A URL that identifies an audiovisual asset such as a movie file#&gt;;</span>
-<span class="built_in">AVURLAsset</span> *anAsset = [[<span class="built_in">AVURLAsset</span> alloc] initWithURL:url options:<span class="literal">nil</span>];
-</code></pre>
-<p>最后的<code>options</code>参数是一个字典。唯一的key是<code>AVURLAssetPreferPreciseDurationAndTimingKey</code>它相应的Value是一个布尔值(包含在NSValue对象里)，它表明了是否这个Asset应该用来指明一个精确的持续时间提供一个精确地随机获取(provide precise random access)。<br>但是获取精确的持续时间需要提前处理很多东西。使用粗略的持续时间通常是更快捷的操作，并且这对回播来说已经足够了。因此</p>
-<ul>
-<li>如果你只需要播放这个Asset，那么要么传nil，要么传一个子字典，其key为<code>AVURLAssetPreferPreciseDurationAndTimingKey</code>，它相应的值为NO（NSValue对象）。</li>
-<li>如果你要将该Asset进行视频合成(<code>AVMutableComposition</code>)，那么通常你需要一个精确的<code>random access</code>。将这个字典的Value值传YES(用NSValue对象)。</li>
-</ul>
-<p>创建方式如下所示：</p>
-<pre><code class="objc"><span class="built_in">NSURL</span> *url = &lt;<span class="meta">#A URL that identifies an audiovisual asset such as a movie file#&gt;; </span>
-<span class="built_in">NSDictionary</span> *options = @{ <span class="built_in">AVURLAssetPreferPreciseDurationAndTimingKey</span> :
-   @YES };
-<span class="built_in">AVURLAsset</span> *anAssetToUseInAComposition = [[<span class="built_in">AVURLAsset</span> alloc]
-  initWithURL:url options:options];
-</code></pre>
-<h2 id="获取用户的Asset"><a href="#获取用户的Asset" class="headerlink" title="获取用户的Asset"></a>获取用户的Asset</h2><p>为了获取iPod library或者相册，你首先需要得到这个Asset的URL。</p>
-<ul>
-<li>为了获取iPod Library，你需要创建一个MPMediaQuery对象来找到你需要的item，然后用<code>MPMediaItemPropertyAssetURL</code>来获取其URL。</li>
-<li>为了获取相册的Asset，你需要使用<code>ALAssetsLibrary</code>。</li>
-</ul>
-<p>下面这个例子说明了怎样获取展示在相册中的第一个视频：</p>
-<pre><code class="objc">ALAssetsLibrary *library = [[ALAssetsLibrary alloc]init];
- <span class="comment">// Enumerate just the photos and videos group by using ALAssetsGroupSavedPhotos.</span>
- [library enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, <span class="built_in">BOOL</span> *stop) {
-
-     <span class="comment">// Within the group enumeration block, filter to enumerate just videos.</span>
-     [group setAssetsFilter:[ALAssetsFilter allVideos]];
-     [group enumerateAssetsAtIndexes:[<span class="built_in">NSIndexSet</span> indexSetWithIndex:<span class="number">0</span>] options:<span class="number">0</span> usingBlock:^(ALAsset *result, <span class="built_in">NSUInteger</span> index, <span class="built_in">BOOL</span> *stop) {
-
-         <span class="keyword">if</span> (result) {
-
-             ALAssetRepresentation *represention = [result defaultRepresentation];
-             <span class="built_in">NSURL</span> *url = [represention url];
-             <span class="comment">// Do something interesting with the AV asset.</span>
-             <span class="built_in">AVAsset</span> *avAsset = [<span class="built_in">AVURLAsset</span> URLAssetWithURL:url options:<span class="literal">nil</span>];
-
-
-         }
-
-     }];
-
- } failureBlock:^(<span class="built_in">NSError</span> *error) {
-
-     <span class="comment">// Typically you should handle an error more gracefully than this.</span>
-     <span class="built_in">NSLog</span>(<span class="string">@"No groups"</span>);
-
- }];
-</code></pre>
-<p>这里需要引入<code>#import &lt;AssetsLibrary/AssetsLibrary.h&gt;</code>。</p>
-<h2 id="准备Asset来用"><a href="#准备Asset来用" class="headerlink" title="准备Asset来用"></a>准备Asset来用</h2><p>初始化一个Asset(或者Track)并不意味着你立即就可以使用所有的信息。它还需要时间来计算这个Asset的时长(比如：一个MP3文件可能会包含一些总结信息)。你可以遵守<code>AVAsynchronousKeyValueLoading</code>协议来异步获取其结果，这样可以不用阻塞主线程（AVSeet和AVAssetTrack都遵守<code>AVAsynchronousKeyValueLoading</code>协议）。可以使用<code>statusOfValueForKey:error:</code>来测试是否某个某个属性的值被正常加载了。首次加载的时候，它所有属性的值是<code>AVKeyValueStatusUnknown</code>。使用<code>loadValuesAsynchronouslyForKeys:completionHandler:</code>，可以加载一个或者多个属性的值。由于网络原因或者加载被取消，所以需要一直准备加载。</p>
-<pre><code class="objc">ALAssetRepresentation *represention = [result defaultRepresentation];
-   <span class="built_in">NSURL</span> *url = [represention url];
-   <span class="comment">// Do something interesting with the AV asset.</span>
-   <span class="built_in">AVAsset</span> *avAsset = [<span class="built_in">AVURLAsset</span> URLAssetWithURL:url options:<span class="literal">nil</span>];
-   <span class="built_in">NSArray</span> *keys = @[<span class="string">@"duration"</span>];
-   [avAsset loadValuesAsynchronouslyForKeys:keys completionHandler:^{
-
-       <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;
-       <span class="built_in">AVKeyValueStatus</span> tracksStatus = [avAsset statusOfValueForKey:<span class="string">@"duration"</span> error:&amp;error];
-
-       <span class="keyword">switch</span> (tracksStatus) {
-           <span class="keyword">case</span> <span class="built_in">AVKeyValueStatusLoaded</span>:
-
-               [<span class="keyword">self</span> updateUserInterfaceForDuration];
-               <span class="keyword">break</span>;
-           <span class="keyword">case</span> <span class="built_in">AVKeyValueStatusFailed</span>:
-
-               [<span class="keyword">self</span> reportError:error forAsset:asset];
-               <span class="keyword">break</span>;
-           <span class="keyword">case</span> <span class="built_in">AVKeyValueStatusCancelled</span>:
-               <span class="comment">// Do whatever is appropriate for cancelation.</span>
-               <span class="keyword">break</span>;
-       }
-
-   }];
-</code></pre>
-<p>如果想准备一个asset来回播，那么还需要加载它的<code>tracks</code>属性。</p>
-<h2 id="从视频中获取静态图片"><a href="#从视频中获取静态图片" class="headerlink" title="从视频中获取静态图片"></a>从视频中获取静态图片</h2><p>如果想要从asset中得到了一静态的图片，例如缩略图，你需要使用<code>AVAssetImageGenerator</code>对象。使用asset初始化一个generator。尽管在初始化的时候asset不会处理不可视的track，但是初始化还是可能会失败的，这就需要在必要的时候检查是否asset有track中包含有可视化的，使用<code>tracksWithMediaCharacteristic</code>方法：</p>
-<pre><code class="objc"><span class="built_in">AVAsset</span> anAsset = &lt;<span class="meta">#Get an asset#&gt;;</span>
-<span class="keyword">if</span> ([[anAsset tracksWithMediaType:<span class="built_in">AVMediaTypeVideo</span>] count] &gt; <span class="number">0</span>) {
-    <span class="built_in">AVAssetImageGenerator</span> *imageGenerator =
-        [<span class="built_in">AVAssetImageGenerator</span> assetImageGeneratorWithAsset:anAsset];
-    <span class="comment">// Implementation continues...</span>
-}
-</code></pre>
-<p>可以对图片生成器的不同方面做不同的配置，例如可以使用maximumSize来指明其最大的尺度，使用<code>apertureMode</code>来指明孔径的模式。然后你就可以在给定的时间点来产生一张或者多张图片。<code>必须要强引用这个图片生成器否则，其会被释放掉。</code></p>
-<h2 id="产生单独的一张图片"><a href="#产生单独的一张图片" class="headerlink" title="产生单独的一张图片"></a>产生单独的一张图片</h2><p>使用<code>copyCGImageAtTime:actualTime:error:</code>来产生在特定时间点的图片。AVFoundation框架可能不会在你请求的时候立即产生出一张图片，因此你可以给第二个参数传递一个指针，指向一个CMTime，该指针包含了图片实际产生的时间。</p>
-<pre><code class="objc"><span class="built_in">AVAsset</span> *myAsset = &lt;<span class="meta">#An asset#&gt;];</span>
-<span class="built_in">AVAssetImageGenerator</span> *imageGenerator = [[<span class="built_in">AVAssetImageGenerator</span> alloc]
-initWithAsset:myAsset];
-Float64 durationSeconds = <span class="built_in">CMTimeGetSeconds</span>([myAsset duration]);
-<span class="built_in">CMTime</span> midpoint = <span class="built_in">CMTimeMakeWithSeconds</span>(durationSeconds/<span class="number">2.0</span>, <span class="number">600</span>);
-<span class="built_in">NSError</span> *error;
-<span class="built_in">CMTime</span> actualTime;
-<span class="built_in">CGImageRef</span> halfWayImage = [imageGenerator copyCGImageAtTime:midpoint
-actualTime:&amp;actualTime error:&amp;error];
-<span class="keyword">if</span> (halfWayImage != <span class="literal">NULL</span>) {
-<span class="built_in">NSString</span> *actualTimeString = (<span class="built_in">NSString</span> *)<span class="built_in">CMTimeCopyDescription</span>(<span class="literal">NULL</span>, actualTime); 
-    <span class="built_in">NSString</span> *requestedTimeString = (<span class="built_in">NSString</span> *)<span class="built_in">CMTimeCopyDescription</span>(<span class="literal">NULL</span>,
-midpoint);
-    <span class="built_in">NSLog</span>(<span class="string">@"Got halfWayImage: Asked for %@, got %@"</span>, requestedTimeString,
-actualTimeString);
-    <span class="comment">// Do something interesting with the image.</span>
-    <span class="built_in">CGImageRelease</span>(halfWayImage);
-}
-</code></pre>
-<h3 id="产生一系列的图片"><a href="#产生一系列的图片" class="headerlink" title="产生一系列的图片"></a>产生一系列的图片</h3><p>为了产生一系列的图片，你应该调用图片生成器的<code>generateCGImagesAsynchronouslyForTimes:completionHandler:</code>方法，第一个参数是一个包含NSValue对象的数组，NSValue对象是由<code>CMTime</code>生成的，它指明了你需要生成的图片所在的时间点。第二个参数是每个图片生成之后的回调。其中包含的字段包括</p>
-<ul>
-<li>图片</li>
-<li>请求图片的时间和图片生成的真实时间</li>
-<li>失败时候错误信息的error对象</li>
-</ul>
-<p>在实现block的过程中，需要检测结果来决定图片是否生成了。除此之外：<strong>在生成图片之前要一直强引用这个图片生成器。</strong></p>
-<pre><code class="objc"><span class="built_in">AVAsset</span> *myAsset = <span class="literal">nil</span>;
-<span class="keyword">self</span>.imageGenerator = [<span class="built_in">AVAssetImageGenerator</span> assetImageGeneratorWithAsset:myAsset]; 
-Float64 durationSeconds = <span class="built_in">CMTimeGetSeconds</span>([myAsset duration]);
-<span class="built_in">CMTime</span> firstThird = <span class="built_in">CMTimeMakeWithSeconds</span>(durationSeconds/<span class="number">3.0</span>, <span class="number">600</span>);
-<span class="built_in">CMTime</span> secondThird = <span class="built_in">CMTimeMakeWithSeconds</span>(durationSeconds*<span class="number">2.0</span>/<span class="number">3.0</span>, <span class="number">600</span>);
-<span class="built_in">CMTime</span> end = <span class="built_in">CMTimeMakeWithSeconds</span>(durationSeconds, <span class="number">600</span>);
-<span class="built_in">NSArray</span> *times = @[ <span class="built_in">NSValue</span> valueWithCMTime:kCMTimeZero],
-                    [<span class="built_in">NSValue</span> valueWithCMTime:firstThird], 
-                    [<span class="built_in">NSValue</span> valueWithCMTime:secondThird],
-                    [<span class="built_in">NSValue</span> valueWithCMTime:end]];
-[imageGenerator generateCGImagesAsynchronouslyForTimes:times completionHandler:^(<span class="built_in">CMTime</span> requestedTime, <span class="built_in">CGImageRef</span> image, <span class="built_in">CMTime</span> actualTime,
-<span class="built_in">AVAssetImageGeneratorResult</span> result, <span class="built_in">NSError</span> *error) {
-<span class="built_in">NSString</span> *requestedTimeString = (<span class="built_in">NSString</span> *) <span class="built_in">CFBridgingRelease</span>(<span class="built_in">CMTimeCopyDescription</span>(<span class="literal">NULL</span>, requestedTime));
-<span class="built_in">NSString</span> *actualTimeString = (<span class="built_in">NSString</span> *)
-                      <span class="built_in">CFBridgingRelease</span>(<span class="built_in">CMTimeCopyDescription</span>(<span class="literal">NULL</span>, actualTime));
- <span class="built_in">NSLog</span>(<span class="string">@"Requested: %@; actual %@"</span>, requestedTimeString, actualTimeString);
-
-<span class="keyword">if</span> (result == <span class="built_in">AVAssetImageGeneratorSucceeded</span>) {
-    <span class="comment">// Do something interesting with the image.</span>
-} 
-<span class="keyword">if</span> (result == <span class="built_in">AVAssetImageGeneratorFailed</span>) { <span class="built_in">NSLog</span>(<span class="string">@"Failed with error: %@"</span>, [error localizedDescription]); 
-}
-<span class="keyword">if</span> (result == <span class="built_in">AVAssetImageGeneratorCancelled</span>) {
-    <span class="built_in">NSLog</span>(<span class="string">@"Canceled"</span>);
-}
-}];
-</code></pre>
-<p>如果想要在中途终止图片序列的生成，可以调用<code>cancelAllCGImageGeneration</code>方法</p>
-<h3 id="视频的裁剪和转码"><a href="#视频的裁剪和转码" class="headerlink" title="视频的裁剪和转码"></a>视频的裁剪和转码</h3><p>使用<code>AVAssetExportSession</code>对象，可以将视频从一种格式到另一种格式进行转码，并且可以裁剪视频。一个export session是一个控制器对象，它管理着一个asset的异步输出。你可以将想要输出的asset以及输出的用来表明输出选项的<code>preset</code>来初始化一个<code>session</code>。然后你可以配置这个输出的session来指明输入的URL，以及文件格式，以及其它设置的一些可选配置，如metadata，以及是否输出需要被优化。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-7454ffe396927bff.png" alt="视频转码"><br>可以使用<code>exportPresetsCompatibleWithAsset:</code>来检测你是否可以输出一种给定的<code>asset</code>，如下所示</p>
-<pre><code class="objc"><span class="built_in">AVAsset</span> *anAsset = &lt;<span class="meta">#Get an asset#&gt;;</span>
-<span class="built_in">NSArray</span> *compatiblePresets = [<span class="built_in">AVAssetExportSession</span>
-exportPresetsCompatibleWithAsset:anAsset];
-<span class="keyword">if</span> ([compatiblePresets containsObject:<span class="built_in">AVAssetExportPresetLowQuality</span>]) {
-    <span class="built_in">AVAssetExportSession</span> *exportSession = [[<span class="built_in">AVAssetExportSession</span> alloc]
-        initWithAsset:anAsset presetName:<span class="built_in">AVAssetExportPresetLowQuality</span>];
-    <span class="comment">// Implementation continues.</span>
-}
-</code></pre>
-<p>你可以通过提供输出的URL(该URL必须是一个文件的URL)来配置这个session，<code>AVAssetExportSession</code>可以根据输出的<code>URL</code>的路径扩展，来推断需要输出的文件类型；然而也可以通过使用<code>outputFileType</code>直接进行配置。你也可以指明一些其它的属性，比如时间范围，输出长度的限制，是否输出的文件需要被优化来作为网络使用，以及一个视频的合成。下面的例子说明了如何使用<code>timeRange</code>属性来裁剪视频：</p>
-<pre><code class="objc">exportSession.outputURL = &lt;<span class="meta">#A file URL#&gt;;</span>
-exportSession.outputFileType = <span class="built_in">AVFileTypeQuickTimeMovie</span>;
-<span class="built_in">CMTime</span> start = <span class="built_in">CMTimeMakeWithSeconds</span>(<span class="number">1.0</span>, <span class="number">600</span>);
-<span class="built_in">CMTime</span> duration = <span class="built_in">CMTimeMakeWithSeconds</span>(<span class="number">3.0</span>, <span class="number">600</span>);
-<span class="built_in">CMTimeRange</span> range = <span class="built_in">CMTimeRangeMake</span>(start, duration);
-exportSession.timeRange = range;
-</code></pre>
-<p>调用<code>exportAsynchronouslyWithCompletionHandler:</code>方法可以用来创建一个新的文件。当输出操作结束的时候这个文成的block将会被回调。如果你要处理这个回调，那么你需要检测这个seesion的<code>status</code>值来确定是否这次输出是成功的，失败的，或者是被取消的。</p>
-<pre><code class="objc">[exportSession exportAsynchronouslyWithCompletionHandler:^{
-          <span class="keyword">switch</span> ([exportSession status]) {
-              <span class="keyword">case</span> <span class="built_in">AVAssetExportSessionStatusFailed</span>:
-                  <span class="built_in">NSLog</span>(<span class="string">@"Export failed: %@"</span>, [[exportSession error]
-  localizedDescription]);
-                  <span class="keyword">break</span>;
-              <span class="keyword">case</span> <span class="built_in">AVAssetExportSessionStatusCancelled</span>:
-                  <span class="built_in">NSLog</span>(<span class="string">@"Export canceled"</span>);
-                  <span class="keyword">break</span>;
-              <span class="keyword">default</span>:
-<span class="keyword">break</span>; } 
-}];
-</code></pre>
-<p>通过调用session的<code>cancelExport</code>方法，可以取消某次输出。<br>如果你试图往一个已经存在的文件中重复写入，或者往应用的沙盒之外的其它地方写文件，那么将会造成输出文件失败。下面的情况也会造成输出失败：</p>
-<ul>
-<li>电话呼入</li>
-<li>你的应用推到了后台，同时另一个应用也开始执行回播</li>
-</ul>
-<p>这种情况下，你需要提醒用户输出失败，以便其可以重新输出。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2913,7 +2757,7 @@ exportSession.timeRange = range;
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">20</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -2926,7 +2770,7 @@ exportSession.timeRange = range;
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>
