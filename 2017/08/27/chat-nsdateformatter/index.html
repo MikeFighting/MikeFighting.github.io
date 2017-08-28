@@ -99,18 +99,18 @@
 
 
 
-<meta name="description" content="实例对比之所以要聊DateFormatter是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期： 1234567891011121314151617181920212223242526272829p">
+<meta name="description" content="性能对比之所以要聊DateFormatter是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期： 1234567891011121314151617181920212223242526272829p">
 <meta name="keywords" content="Objective-C">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何优雅地使用DateFormatter？">
 <meta property="og:url" content="https://mikefighting.github.io/2017/08/27/chat-nsdateformatter/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="实例对比之所以要聊DateFormatter是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期： 1234567891011121314151617181920212223242526272829p">
+<meta property="og:description" content="性能对比之所以要聊DateFormatter是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期： 1234567891011121314151617181920212223242526272829p">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-08-27T09:06:06.000Z">
+<meta property="og:updated_time" content="2017-08-28T02:40:03.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何优雅地使用DateFormatter？">
-<meta name="twitter:description" content="实例对比之所以要聊DateFormatter是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期： 1234567891011121314151617181920212223242526272829p">
+<meta name="twitter:description" content="性能对比之所以要聊DateFormatter是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期： 1234567891011121314151617181920212223242526272829p">
 
 
 
@@ -371,7 +371,7 @@
       
 
       
-        <h2 id="实例对比"><a href="#实例对比" class="headerlink" title="实例对比"></a>实例对比</h2><p>之所以要聊<code>DateFormatter</code>是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期：</p>
+        <h2 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h2><p>之所以要聊<code>DateFormatter</code>是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithMultipleInstantiation</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">    </div><div class="line">        <span class="keyword">var</span> dateStrings:[<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">            df.dateStyle = .medium</div><div class="line">            df.timeStyle = .full</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithSingleInstance</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">    </div><div class="line">        <span class="keyword">var</span> dateStrings: [<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">        df.dateStyle = .medium</div><div class="line">        df.timeStyle = .full</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))   </div><div class="line">        &#125;   </div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>然后我们调用这两个方法：</p>
 <pre><code class="swift"><span class="built_in">print</span>(<span class="string">"testWithMultipleInstantiation--<span class="subst">\(testWithMultipleInstantiation()</span>)"</span>)
@@ -416,9 +416,9 @@ testWithSingleInstance--<span class="number">0.742719032976311</span>
 <li>为每一种日期类型创建一种DateFormatter并且不改变其<code>dateStyle</code>和<code>timeStyle</code>等属性是性能最优的</li>
 </ol>
 </blockquote>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>通过上面的结论，我们发现如果对DateFormatter做成单例，那么就必须保证每个DateFormatter的格式是相同的，因为改变DateFormatter的格式也是很消耗性能的。我们要做多个单例，每种单例是一种formatter，然后分别使用吗？显然太过于麻烦。<strong>我们可以使用缓存策略，将每种格式的DateFormatter缓存一份，下次如果有相同格式的Formatter，直接从缓存中取就可以了，这就避免了多次创建和多次改变格式的问题。</strong>为了解决这个问题，我使用NSCache做了一个DateFormatter的缓存池：<a href="https://github.com/MikeFighting/MFDateFormatterPool" target="_blank" rel="external">MFDateFormatterPool</a>，已经上传到了GitHub上，有OC和Swift两个版本，可以下载并直接使用，如有问题可以联系我。</p>
-<p><em>注：NSDateFormatter在IOS7之前是非线程安全的，多线程可能引起崩溃，</em></p>
-<h3 id="延伸阅读："><a href="#延伸阅读：" class="headerlink" title="延伸阅读："></a>延伸阅读：</h3><p><a href="https://www.raywenderlich.com/31166/25-ios-app-performance-tips-tricks#reuseobjects" target="_blank" rel="external">https://www.raywenderlich.com/31166/25-ios-app-performance-tips-tricks#reuseobjects</a><br><a href="http://www.chibicode.org/?p=41" target="_blank" rel="external">http://www.chibicode.org/?p=41</a><br><a href="https://github.com/DougFischer/DFDateFormatterFactory" target="_blank" rel="external">https://github.com/DougFischer/DFDateFormatterFactory</a><br><a href="https://stackoverflow.com/questions/18195051/crash-in-nsdateformatter-setdateformat-method" target="_blank" rel="external">https://stackoverflow.com/questions/18195051/crash-in-nsdateformatter-setdateformat-method</a></p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>通过上面的结论，我们发现如果对DateFormatter做成单例，那么就必须保证每个DateFormatter的格式是相同的，因为改变DateFormatter的格式也是很消耗性能的。我们要做多个单例，每种单例是一种formatter，然后分别使用吗？显然太过于麻烦。<strong>我们可以使用缓存策略，将每种格式的DateFormatter缓存一份，下次如果有相同格式的Formatter，直接从缓存中取就可以了，这就避免了多次创建和多次改变格式的问题。</strong>为了解决这个问题，我使用NSCache做了一个DateFormatter的缓存池：<a href="https://github.com/MikeFighting/MFDateFormatterPool" target="_blank" rel="external">MFDateFormatterPool</a>，已经上传到了GitHub上，分为OC和Swift两个版本，如有问题可以联系我（Swift版稍后会加上）。</p>
+<p><em>其它：NSDateFormatter在IOS7之前是非线程安全的，多线程可能引起崩溃，</em></p>
+<h3 id="延伸阅读："><a href="#延伸阅读：" class="headerlink" title="延伸阅读："></a>延伸阅读：</h3><p><a href="https://www.raywenderlich.com/31166/25-ios-app-performance-tips-tricks#reuseobjects" target="_blank" rel="external">https://www.raywenderlich.com/31166/25-ios-app-performance-tips-tricks#reuseobjects</a><br><a href="http://www.chibicode.org/?p=41" target="_blank" rel="external">http://www.chibicode.org/?p=41</a><br><a href="https://stackoverflow.com/questions/18195051/crash-in-nsdateformatter-setdateformat-method" target="_blank" rel="external">https://stackoverflow.com/questions/18195051/crash-in-nsdateformatter-setdateformat-method</a></p>
 
       
     </div>
@@ -590,7 +590,7 @@ testWithSingleInstance--<span class="number">0.742719032976311</span>
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#实例对比"><span class="nav-number">1.</span> <span class="nav-text">实例对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#延伸阅读："><span class="nav-number">2.1.</span> <span class="nav-text">延伸阅读：</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#性能对比"><span class="nav-number">1.</span> <span class="nav-text">性能对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#延伸阅读："><span class="nav-number">2.1.</span> <span class="nav-text">延伸阅读：</span></a></li></ol></li></ol></div>
             
 
           </div>
