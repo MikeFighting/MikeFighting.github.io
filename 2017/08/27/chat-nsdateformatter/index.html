@@ -83,7 +83,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Swift," />
+  <meta name="keywords" content="Objective-C," />
 
 
 
@@ -99,18 +99,18 @@
 
 
 
-<meta name="description" content="Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，Swift将很多在运行时才可以确定的信息，在编译期就决定了。这就让Swift更加快速。方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（S">
-<meta name="keywords" content="Swift">
+<meta name="description" content="实例对比之所以要聊DateFormatter是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期： 1234567891011121314151617181920212223242526272829p">
+<meta name="keywords" content="Objective-C">
 <meta property="og:type" content="article">
-<meta property="og:title" content="为什么Swift比OC快？">
-<meta property="og:url" content="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/index.html">
+<meta property="og:title" content="如何优雅地使用DateFormatter？">
+<meta property="og:url" content="https://mikefighting.github.io/2017/08/27/chat-nsdateformatter/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，Swift将很多在运行时才可以确定的信息，在编译期就决定了。这就让Swift更加快速。方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（S">
+<meta property="og:description" content="实例对比之所以要聊DateFormatter是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期： 1234567891011121314151617181920212223242526272829p">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-08-04T15:04:28.000Z">
+<meta property="og:updated_time" content="2017-08-27T09:06:06.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="为什么Swift比OC快？">
-<meta name="twitter:description" content="Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，Swift将很多在运行时才可以确定的信息，在编译期就决定了。这就让Swift更加快速。方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（S">
+<meta name="twitter:title" content="如何优雅地使用DateFormatter？">
+<meta name="twitter:description" content="实例对比之所以要聊DateFormatter是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期： 1234567891011121314151617181920212223242526272829p">
 
 
 
@@ -138,13 +138,13 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/08/27/chat-nsdateformatter/"/>
 
 
 
 
 
-  <title>为什么Swift比OC快？ | 击水湘江</title>
+  <title>如何优雅地使用DateFormatter？ | 击水湘江</title>
   
 
 
@@ -307,7 +307,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/27/chat-nsdateformatter/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
@@ -324,7 +324,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">为什么Swift比OC快？</h1>
+          <h1 class="post-title" itemprop="name headline">如何优雅地使用DateFormatter？</h1>
         
 
         <div class="post-meta">
@@ -336,8 +336,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-01T19:34:23+08:00">
-                2017-08-01
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-27T09:48:45+08:00">
+                2017-08-27
               </time>
             
 
@@ -371,23 +371,54 @@
       
 
       
-        <p>Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，<strong>Swift将很多在运行时才可以确定的信息，在编译期就决定了</strong>。这就让Swift更加快速。<br>方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（Static Dispatch），如果调度发生在运行时，那么我们称它为动态调度（Dynamic Dispatch）。静态调度往往要比动态调度要快。那么问题来了，为什么我们需要动态调度呢？全部用静态调度不就得了？<br>问题就在于我们很多时候我们需要用到多态，看看下面这段非常简单的代码<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">eat</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"animal eat"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"animal sleep"</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span>: <span class="title">Animal</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"dog sleep"</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rabbit</span>: <span class="title">Animal</span> </span>&#123;</div><div class="line">    </div><div class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">eat</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"rabbit sleep"</span>);</div><div class="line">    &#125;</div><div class="line">   <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"rabbit sleep"</span>)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> animal:<span class="type">Animal</span>?</div><div class="line"><span class="keyword">var</span> somThingTrue = <span class="literal">false</span></div><div class="line"><span class="comment">//执行很多业务逻辑</span></div><div class="line"><span class="keyword">if</span> somThingTrue &#123;</div><div class="line">    animal = <span class="type">Rabbit</span>()</div><div class="line">    </div><div class="line">&#125;<span class="keyword">else</span>&#123;</div><div class="line"></div><div class="line">    animal = <span class="type">Dog</span>()</div><div class="line">&#125;</div><div class="line">animal?.eat()</div></pre></td></tr></table></figure></p>
-<p>上面的代码中<code>animal?.eat()</code>就不能够在编译期确定，因为其中需要很多的业务逻辑(比如根据用户的不同，或者网络请求结果的不同)来确定就究竟创建出来的对象是Rabbit还是Dog，也就无法最终确定要调用那个对象的eat()方法。相似的代码在OC中是怎样执行的呢？在OC中编译器会将这个方法翻译成<code>objc_msgSend(target,@selector(eat),nil)</code>这个方法，然后到了运行时，会分为以下几步进行调用：</p>
+        <h2 id="实例对比"><a href="#实例对比" class="headerlink" title="实例对比"></a>实例对比</h2><p>之所以要聊<code>DateFormatter</code>是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithMultipleInstantiation</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">    </div><div class="line">        <span class="keyword">var</span> dateStrings:[<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">            df.dateStyle = .medium</div><div class="line">            df.timeStyle = .full</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithSingleInstance</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">    </div><div class="line">        <span class="keyword">var</span> dateStrings: [<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">        df.dateStyle = .medium</div><div class="line">        df.timeStyle = .full</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))   </div><div class="line">        &#125;   </div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后我们调用这两个方法：</p>
+<pre><code class="swift"><span class="built_in">print</span>(<span class="string">"testWithMultipleInstantiation--<span class="subst">\(testWithMultipleInstantiation()</span>)"</span>)
+<span class="built_in">print</span>(<span class="string">"testWithSingleInstance--<span class="subst">\(testWithSingleInstance()</span>)"</span>)
+</code></pre>
+<p>打印结果是：</p>
+<pre><code class="swift">testWithMultipleInstantiation--<span class="number">7.83139349098201</span>
+testWithSingleInstance--<span class="number">0.742719032976311</span>
+</code></pre>
+<p>从中可以明显看到创建<code>DateFormatter</code>是很消耗性能的，多次创建DateFormatter比单次创建大约要慢9倍。如果我们要用DateFormatter，那么尽量创建一次，然后多次使用。</p>
+<p>然后我们再做进一步的实验：创建一次<code>DateFormatter</code>，但是改变这个NSDateFormatter的<code>dateStyle</code>和<code>timeStyle</code>。</p>
+<pre><code class="swift"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithSingleInstanceChangeFormatter</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> {
+
+        <span class="keyword">var</span> dateStrings: [<span class="type">String</span>] = []
+        dateStrings.reserveCapacity(<span class="number">100000</span>)
+        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()
+        <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()
+        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> {
+
+            df.dateStyle = .medium
+            df.timeStyle = .full
+            df.dateStyle = .full
+            df.timeStyle = .medium
+            dateStrings.append(df.string(from: <span class="type">Date</span>()))
+        }
+
+        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()
+        <span class="keyword">return</span> endTime - startTime
+    }
+</code></pre>
+<p>然后调用这个方法：</p>
+<pre><code class="swift"><span class="built_in">print</span>(<span class="string">"ChangeFormatter--<span class="subst">\(testWithSingleInstanceChangeFormatter()</span>)"</span>)
+</code></pre>
+<p>这时输出的结果是：</p>
+<pre><code class="swift"><span class="type">ChangeFormatter</span>--<span class="number">5.77827541399165</span>
+</code></pre>
+<p>从中我们可以看到，其对性能的消耗和多次创建DateFormatter相差并不多。最后我们得到这样一个结论：</p>
+<blockquote>
 <ol>
-<li>找到方法target中isa对应的Class（如果是类方法要到其metaClass中找）。</li>
-<li>从其中的<code>struct objc_method_list **methodLists</code>找到对应的方法实现。</li>
-<li>如果没有找到就到superClass的<code>methodLists</code>中找。</li>
+<li>每次使用DateFormatter时都新建是最消耗性能的</li>
+<li>创建一个DateFormatter然后改变其<code>dateStyle</code>和<code>timeStyle</code>等和1中的性能消耗差不多</li>
+<li>为每一种日期类型创建一种DateFormatter并且不改变其<code>dateStyle</code>和<code>timeStyle</code>等属性是性能最优的</li>
 </ol>
-<p>如果在Swift中，它是怎样做方法调度的呢？</p>
-<ol>
-<li>找到target对应的class</li>
-<li><p>从class的V-Table中的那得到函数的实现<br>Swift中的类会创建一个V-Table，这个Table是一个数组，其中存放的是函数指针。子类会按照父类V-Table中函数的存放，如果子类没有覆盖某个方法，那么就会拷贝父类方法的地址，如上面的例子会得到下面的V-Table。</p>
-<h2 id="Animal"><a href="#Animal" class="headerlink" title=" Animal"></a> Animal</h2><p> Index0 eat 0x0001<br> Index1 sleep 0x0004</p>
-<h2 id="Dog"><a href="#Dog" class="headerlink" title=" Dog"></a> Dog</h2><p> Index0 eat 0x0001 (copied)<br> Index1 sleep 0x0008 (overrideen)</p>
-<h2 id="Rabbit"><a href="#Rabbit" class="headerlink" title=" Rabbit"></a> Rabbit</h2><p> Index0 eat 0x0002 (overrideen)<br> Index1 sleep 0x0003 (overrideen)</p>
-<p>可以注意到Dog因为没有覆盖父类的<code>eat</code>方法，所以其copy了父类的<code>0x0010</code>指针。因为Swift是Type Safe的，所以在调用它的时候它不会变成<code>Robot</code>或者其它的类（如果不能通过编译），所以无论是调用上面结构中的Animal，Dog，还是Rabbit类，它都是调用相同的Index，得到对应的方法实现。<strong>将函数指针和Index所做的映射在编译期就确定了，这就大大减少了运行时的工作量，提高了运行速度。</strong>所以在运行时它没有必要知道是哪个类型的实例调用了这个方法，只需要找到相应的V-Table即可，至于是其中的哪个Index已经在编译期确定了，没必要再去查找Index的值。<br>然而Swift的方法调度不仅仅是动态方法调度，还有很多静态方法调度。<br><strong>如果我们将某个方法标记为final或者private，或者我们不用类，而使用结构体，枚举，这时就不需要动态调度，只需要静态调度即可，这样速度会更快。</strong></p>
-</li>
-</ol>
+</blockquote>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>通过上面的结论，我们发现如果对DateFormatter做成单例，那么就必须保证每个DateFormatter的格式是相同的，因为改变DateFormatter的格式也是很消耗性能的。我们要做多个单例，每种单例是一种formatter，然后分别使用吗？显然太过于麻烦。<strong>我们可以使用缓存策略，将每种格式的DateFormatter缓存一份，下次如果有相同格式的Formatter，直接从缓存中取就可以了，这就避免了多次创建和多次改变格式的问题。</strong>为了解决这个问题，我使用NSCache做了一个DateFormatter的缓存池：<a href="https://github.com/MikeFighting/MFDateFormatterPool" target="_blank" rel="external">MFDateFormatterPool</a>，已经上传到了GitHub上，有OC和Swift两个版本，可以下载并直接使用，如有问题可以联系我。</p>
+<p><em>注：NSDateFormatter在IOS7之前是非线程安全的，多线程可能引起崩溃，</em></p>
+<h3 id="延伸阅读："><a href="#延伸阅读：" class="headerlink" title="延伸阅读："></a>延伸阅读：</h3><p><a href="https://www.raywenderlich.com/31166/25-ios-app-performance-tips-tricks#reuseobjects" target="_blank" rel="external">https://www.raywenderlich.com/31166/25-ios-app-performance-tips-tricks#reuseobjects</a><br><a href="http://www.chibicode.org/?p=41" target="_blank" rel="external">http://www.chibicode.org/?p=41</a><br><a href="https://github.com/DougFischer/DFDateFormatterFactory" target="_blank" rel="external">https://github.com/DougFischer/DFDateFormatterFactory</a><br><a href="https://stackoverflow.com/questions/18195051/crash-in-nsdateformatter-setdateformat-method" target="_blank" rel="external">https://stackoverflow.com/questions/18195051/crash-in-nsdateformatter-setdateformat-method</a></p>
 
       
     </div>
@@ -417,7 +448,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Swift/" rel="tag"># Swift</a>
+            <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
           
         </div>
       
@@ -430,8 +461,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/07/30/wwdc-understand-swift-performance/" rel="next" title="理解Swift的性能">
-                <i class="fa fa-chevron-left"></i> 理解Swift的性能
+              <a href="/2017/08/26/why-java-popular/" rel="next" title="Java为什么会流行？">
+                <i class="fa fa-chevron-left"></i> Java为什么会流行？
               </a>
             
           </div>
@@ -439,10 +470,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/08/02/wwdc-better-app-with-value-type/" rel="prev" title="怎样用好Value Type?">
-                怎样用好Value Type? <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -563,7 +590,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Animal"><span class="nav-number">1.</span> <span class="nav-text"> Animal</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dog"><span class="nav-number">2.</span> <span class="nav-text"> Dog</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rabbit"><span class="nav-number">3.</span> <span class="nav-text"> Rabbit</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#实例对比"><span class="nav-number">1.</span> <span class="nav-text">实例对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#延伸阅读："><span class="nav-number">2.1.</span> <span class="nav-text">延伸阅读：</span></a></li></ol></li></ol></div>
             
 
           </div>
