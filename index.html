@@ -385,7 +385,7 @@
 <pre><code class="swift">testWithMultipleInstantiation--<span class="number">7.83139349098201</span>
 testWithSingleInstance--<span class="number">0.742719032976311</span>
 </code></pre>
-<p>从中可以明显看到创建<code>DateFormatter</code>是很消耗性能的，多次创建DateFormatter比单次创建大约要慢9倍。如果我们要用DateFormatter，那么尽量创建一次，然后多次使用。</p>
+<p>从中可以明显看到创建<code>DateFormatter</code>是很消耗性能的，多次创建DateFormatter比单次创建大约要慢11倍。如果我们要用DateFormatter，那么尽量创建一次，然后多次使用。</p>
 <p>然后我们再做进一步的实验：创建一次<code>DateFormatter</code>，但是改变这个NSDateFormatter的<code>dateStyle</code>和<code>timeStyle</code>。</p>
 <pre><code class="swift"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithSingleInstanceChangeFormatter</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> {
 
