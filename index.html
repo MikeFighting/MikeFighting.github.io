@@ -307,6 +307,127 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/04/wwdc-understand-foundation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/04/wwdc-understand-foundation/" itemprop="url">理解Foundation框架</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-04T10:13:00+08:00">
+                2017-09-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文源于对WWDC：UnderStanding Foundation的总结。</p>
+<h2 id="什么是Foundation"><a href="#什么是Foundation" class="headerlink" title="什么是Foundation?"></a>什么是Foundation?</h2><ul>
+<li>Foundation提供了构建基础类的框架<ul>
+<li>所有应用都是用的基础类型</li>
+<li>它们供软件的更高层来组合使用</li>
+</ul>
+</li>
+</ul>
+<h2 id="Dictionry"><a href="#Dictionry" class="headerlink" title="Dictionry"></a>Dictionry</h2><p>Dictionary中提供了<code>objectEnumerator</code>和<code>keyEnumerator</code>两个方法，可以直接取到<code>key</code>或者<code>value</code>的Enumerator，然后就直接可以用while循环了。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSEnumerator</span> *e = [dictionary keyEnumerator];</div><div class="line"></div><div class="line"><span class="keyword">while</span>(<span class="keyword">id</span> key = [e nextObject])&#123;</div><div class="line"></div><div class="line"> <span class="keyword">id</span> value = [e objectForKey:key];</div><div class="line"> ....</div><div class="line">&#125;</div><div class="line">```   </div><div class="line"></div><div class="line"><span class="meta">### Fast Enumeration </span></div><div class="line"></div><div class="line">如果想获取某个Dictionary中的key，那么直接用Fast Enumeration就可以：</div><div class="line"></div><div class="line">```objc</div><div class="line">    <span class="built_in">NSDictionary</span> *someDic = @&#123;<span class="string">@"key"</span>:<span class="string">@"value"</span>&#125;;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">id</span> key <span class="keyword">in</span> someDic) &#123;</div><div class="line">      </div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"key:%@"</span>,key);   </div><div class="line">    &#125;</div><div class="line">```   </div><div class="line"></div><div class="line">如果想要获取Key及其对应的Value，那么直接是用Block就可以：</div><div class="line"></div><div class="line">```objc</div><div class="line">    [someDic enumerateKeysAndObjectsUsingBlock:^(<span class="keyword">id</span>  _Nonnull key, <span class="keyword">id</span>  _Nonnull obj, <span class="built_in">BOOL</span> * _Nonnull stop) &#123;</div><div class="line">        </div><div class="line">    &#125;];</div><div class="line">```   </div><div class="line"></div><div class="line"><span class="meta">### NSArray排序</span></div><div class="line"></div><div class="line">对一个<span class="built_in">NSArray</span>进行排序，有以下几种方法：</div><div class="line"></div><div class="line"><span class="number">1.</span> C function</div><div class="line"><span class="number">2.</span> Objective-C method</div><div class="line"><span class="number">3.</span> <span class="built_in">NSSortDescriptor</span></div><div class="line"><span class="number">4.</span> Blocks</div><div class="line"></div><div class="line">使用Bock遍历数组的方法：</div><div class="line"></div><div class="line">```objc</div><div class="line"><span class="built_in">NSMutableArray</span> *names = [<span class="built_in">NSMutableArray</span> arrayWithObjects:<span class="string">@"11"</span>,<span class="string">@"22"</span>, <span class="literal">nil</span>];</div><div class="line">    [names sortUsingComparator:^<span class="built_in">NSComparisonResult</span>(<span class="keyword">id</span>  _Nonnull obj1, <span class="keyword">id</span>  _Nonnull obj2) &#123;</div><div class="line">        <span class="built_in">NSComparisonResult</span> result;</div><div class="line">        <span class="built_in">NSUInteger</span> lLen = [obj1 length], rLen = [obj2 length];</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> (lLen &lt; rLen) &#123;</div><div class="line">            result = <span class="built_in">NSOrderedAscending</span>;</div><div class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> (lLen &gt; rLen)&#123;   </div><div class="line">            result = <span class="built_in">NSOrderedDescending</span>;</div><div class="line">        &#125;<span class="keyword">else</span>&#123;</div><div class="line">            result = <span class="built_in">NSOrderedSame</span>;</div><div class="line">        &#125;        </div><div class="line">        <span class="keyword">return</span> result;</div><div class="line">    &#125;];</div><div class="line">```    </div><div class="line"></div><div class="line"><span class="meta">### Collection的过滤</span></div><div class="line"></div><div class="line">**遍历一个Collection的同时再改变它，会引发异常。**</div><div class="line">Collection的过滤步骤：</div><div class="line"></div><div class="line"><span class="number">1.</span> 将要筛选的Collection改为可变类型的</div><div class="line"><span class="number">2.</span> 筛选出需要移除的项</div><div class="line"><span class="number">3.</span> 调用可变类型的响应方法进行移除</div><div class="line"></div><div class="line">```objc</div><div class="line">    <span class="built_in">NSMutableArray</span> *files = [<span class="built_in">NSMutableArray</span> arrayWithObjects:<span class="string">@"file0"</span>,<span class="string">@"file1"</span>, <span class="literal">nil</span>]; <span class="comment">// array of NSString objcects;</span></div><div class="line">    <span class="built_in">NSIndexSet</span> *toRemove = [files indexesOfObjectsPassingTest:^<span class="built_in">BOOL</span>(<span class="keyword">id</span>  _Nonnull obj, <span class="built_in">NSUInteger</span> idx, <span class="built_in">BOOL</span> * _Nonnull stop) &#123;</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> ([obj hasPrefix:<span class="string">@"."</span>]) &#123;<span class="keyword">return</span> <span class="literal">YES</span>;&#125;</div><div class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</div><div class="line">        </div><div class="line">    &#125;];</div><div class="line">    [files removeObjectsAtIndexes:toRemove];</div><div class="line">```    </div><div class="line"></div><div class="line"><span class="meta">### Collection更多的特性</span></div><div class="line"></div><div class="line">* 查找</div><div class="line">* 对每个元素都调用某个方法</div><div class="line">* `<span class="built_in">NSArray</span>`：切开和串联</div><div class="line">* <span class="built_in">NSSet</span>：交集，合并和子集</div><div class="line"></div><div class="line"><span class="meta">## Strings</span></div><div class="line"></div><div class="line">String其实是一个Unicode字符集的数组，你可以将它看做非透明的容器。对它的常用方法有：</div><div class="line"></div><div class="line">* 比较</div><div class="line">* 查找</div><div class="line">* 转换编码</div><div class="line"></div><div class="line"><span class="meta">### 字符串比较的方法：</span></div><div class="line"></div><div class="line">```objc</div><div class="line">- (<span class="built_in">NSComparisonResult</span>)compare:(<span class="built_in">NSString</span> *)string; <span class="comment">// 1</span></div><div class="line">- (<span class="built_in">NSComparisonResult</span>)localizedStandardCompare:(<span class="built_in">NSString</span> *)string <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_6, <span class="number">4</span>_0); <span class="comment">// 2</span></div><div class="line">- (<span class="built_in">NSComparisonResult</span>)localizedCompare:(<span class="built_in">NSString</span> *)string; <span class="comment">// 3</span></div><div class="line">- (<span class="built_in">NSComparisonResult</span>)localizedCaseInsensitiveCompare:(<span class="built_in">NSString</span> *)string; <span class="comment">// 4</span></div><div class="line">- (<span class="built_in">NSComparisonResult</span>)compare:(<span class="built_in">NSString</span> *)string options: (<span class="built_in">NSStringCompareOptions</span>)mask range:(<span class="built_in">NSRange</span>)rangeOfReceiverToCompare locale:(<span class="keyword">nullable</span> <span class="keyword">id</span>)locale; <span class="comment">// 5</span></div><div class="line">```      </div><div class="line"></div><div class="line">第二个方法和第三个方法是对那些做了本地化的字符串进行比对。第四个可以对字符串的一部分进行比较，并且可以指定是否是大小写敏感等。如果数组中有字符串需要排序，那么我们可以用到上文中提到的，让数组中的元素分别调用其自身的方法。</div><div class="line"></div><div class="line">```objc</div><div class="line">    <span class="built_in">NSArray</span> *strings = [<span class="built_in">NSArray</span> arrayWithObjects:<span class="string">@"Larry"</span>,<span class="string">@"Curly"</span>,<span class="string">@"Moe"</span>, <span class="literal">nil</span>];</div><div class="line">    <span class="built_in">NSArray</span> *sortedArray = [strings sortedArrayUsingSelector:<span class="keyword">@selector</span>(localizedCompare:)];</div><div class="line">```    </div><div class="line"></div><div class="line"><span class="meta">### 字符串查找</span></div><div class="line"></div><div class="line">字符串查找的方法如下：</div><div class="line"></div><div class="line">```objc</div><div class="line">- (<span class="built_in">NSRange</span>)rangeOfString:(<span class="built_in">NSString</span> *)searchString;</div><div class="line">- (<span class="built_in">NSRange</span>)rangeOfString:(<span class="built_in">NSString</span> *)searchString options:(<span class="built_in">NSStringCompareOptions</span>)mask range:(<span class="built_in">NSRange</span>)rangeOfReceiverToSearch locale:(<span class="keyword">nullable</span> <span class="built_in">NSLocale</span> *)locale <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_5, <span class="number">2</span>_0);</div><div class="line">```        </div><div class="line"></div><div class="line">*注：如果有特殊字符，比如`Ó`，那么它在数组中是`O`，`´`两个分开存储，是占两个存储单位的，所以它自身rang的length是<span class="number">2</span>。</div><div class="line"></div><div class="line">字符串的查找中还支持正则表达式：</div><div class="line"></div><div class="line">```objc</div><div class="line">    <span class="built_in">NSString</span> *str = <span class="string">@"Going going gone!"</span>;</div><div class="line">    <span class="built_in">NSRange</span> found = [str rangeOfString:<span class="string">@"go(\\w*)"</span></div><div class="line">                               options:<span class="built_in">NSRegularExpressionSearch</span></div><div class="line">                                 range:<span class="built_in">NSMakeRange</span>(<span class="number">0</span>, str.length)];</div><div class="line">```   </div><div class="line"></div><div class="line">这样我们就可以得到found的值：found.location = <span class="number">6</span>, found.length = <span class="number">5</span>;</div><div class="line"></div><div class="line"><span class="meta">### 字符串编码</span></div><div class="line"></div><div class="line">字符串和Data之间编码的相互转换：</div><div class="line"></div><div class="line">```objc</div><div class="line">    <span class="built_in">NSData</span> *someData = [<span class="built_in">NSData</span> dataWithContentsOfFile:<span class="string">@""</span>];</div><div class="line">    <span class="built_in">NSString</span> *inString = [[<span class="built_in">NSString</span> alloc]initWithData:someData encoding:<span class="built_in">NSUTF8StringEncoding</span>];</div><div class="line">    <span class="built_in">NSString</span> *outString = <span class="string">@"For Windows"</span>;</div><div class="line">    <span class="built_in">NSData</span> *converted = [outString dataUsingEncoding:<span class="built_in">NSUTF16StringEncoding</span>];</div><div class="line">```   </div><div class="line"></div><div class="line">如果要将某个和文件系统相独立的字符串表示成文件系统调用时所指定的字符串表示，可以使用：</div><div class="line"></div><div class="line">```objc</div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> *fileName = [outString fileSystemRepresentation];</div><div class="line">```   </div><div class="line"></div><div class="line">将它表示成一个C类型的字符串，这个字符串在outString销毁的时候也跟着自动销毁。</div><div class="line"></div><div class="line">更多的特性：</div><div class="line"></div><div class="line">* 打印格式</div><div class="line">* 遍历逐个子字符串遍历，逐行遍历，逐段遍历</div><div class="line">* 替换某个子字符串</div><div class="line">* 路径补全</div><div class="line"></div><div class="line"><span class="meta">### NSDateFormatter：</span></div><div class="line"></div><div class="line">如果不想将一个`<span class="built_in">NSDate</span>`转换成字符串的时候出现时间，那么可以将`timeStyle`设置为：`<span class="built_in">NSDateFormatterNoStyle</span>`。</div><div class="line"></div><div class="line">```objc</div><div class="line">    <span class="built_in">NSDateFormatter</span> *fmt = [[<span class="built_in">NSDateFormatter</span> alloc]init];</div><div class="line">    [fmt setTimeStyle:<span class="built_in">NSDateFormatterNoStyle</span>];</div><div class="line">    [fmt setDateStyle:<span class="built_in">NSDateFormatterLongStyle</span>];</div><div class="line">```   </div><div class="line"></div><div class="line"><span class="meta">### Dates和Formatter小结</span></div><div class="line"></div><div class="line">* 将<span class="built_in">NSDate</span>和<span class="built_in">NSCalendar</span>混合使用来计算时间</div><div class="line">* 当展现日期和数字的时候使用foramtter</div><div class="line"></div><div class="line"><span class="meta">## 数据持久化</span></div><div class="line"></div><div class="line"><span class="meta">### 将数据以Plist的形式存储</span></div><div class="line"></div><div class="line">将数据转换成Plist：</div><div class="line"></div><div class="line">```objc</div><div class="line">    <span class="built_in">NSDictionary</span> *colors = [<span class="built_in">NSDictionary</span> dictionaryWithObjectsAndKeys:<span class="string">@"Verde"</span>,<span class="string">@"Green"</span>,<span class="string">@"Rojo"</span>,<span class="string">@"Red"</span>,<span class="string">@"Amarillo"</span>,<span class="string">@"Yellow"</span>, <span class="literal">nil</span>];</div><div class="line">    <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;</div><div class="line">    <span class="built_in">NSData</span> *plist = [<span class="built_in">NSPropertyListSerialization</span> dataWithPropertyList:colors format:<span class="built_in">NSPropertyListXMLFormat_v1_0</span> options:<span class="number">0</span> error:&amp;error];</div><div class="line">    <span class="keyword">if</span> (!plist) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"本地化失败"</span>);</div><div class="line">    &#125;</div><div class="line">    [plist writeToFile:<span class="string">@"filePath"</span> atomically:<span class="literal">YES</span>];</div><div class="line">```    </div><div class="line"></div><div class="line">将Plist转化成<span class="built_in">NSData</span>：</div><div class="line"></div><div class="line">```objc</div><div class="line">    <span class="built_in">NSData</span> *readData = [<span class="built_in">NSData</span> dataWithContentsOfURL:urlOfFile];</div><div class="line">    <span class="built_in">NSDictionary</span> *newColors = [<span class="built_in">NSPropertyListSerialization</span> propertyListWithData:readData options:<span class="number">0</span> format:<span class="literal">nil</span> error:&amp;error];</div><div class="line">```  </div><div class="line"></div><div class="line"><span class="meta">### NSFileManager</span></div><div class="line"></div><div class="line"><span class="built_in">NSFileManager</span>支持文件的复制，移动，链接，删除等。</div><div class="line"></div><div class="line">```objc</div><div class="line">    <span class="built_in">NSFileManager</span> *mgr = [[<span class="built_in">NSFileManager</span> alloc]init];</div><div class="line">    <span class="built_in">BOOL</span> res;</div><div class="line">    res = [mgr copyItemAtURL:src toURL:des error:&amp;error];</div><div class="line">    res = [mgr moveItemAtURL:src toURL:des error:&amp;error];</div><div class="line">    res = [mgr linkItemAtURL:src toURL:des error:&amp;error];</div><div class="line">    res = [mgr removeItemAtURL:src error:&amp;error];</div><div class="line">```    </div><div class="line"></div><div class="line">`linkItemAtURL`就是创建一个硬链接，硬链接就是给一个已经存在的文件重新创建另外一个名字，如果原来文件被删除了，那么硬链接的名字就会失效了。</div><div class="line"></div><div class="line"><span class="built_in">NSFileManager</span>还可以遍历某个目录下所有的内容：</div><div class="line"></div><div class="line">```objc</div><div class="line">    <span class="built_in">NSArray</span> *stuff = [mgr contentsOfDirectoryAtURL:dirURL includingPropertiesForKeys:[<span class="built_in">NSArray</span> array] options:<span class="number">0</span> error:&amp;error];</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/27/chat-nsdateformatter/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2358,383 +2479,6 @@ Use `openssl rand -base64 32` to generate a random string.
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/07/wwdc-advanced-swift/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/07/wwdc-advanced-swift/" itemprop="url">Swift进阶</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-07T22:29:53+08:00">
-                2017-08-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文是对<a href="https://developer.apple.com/videos/play/wwdc2014/404/" target="_blank" rel="external">WWDC2014–AdvancedSwift的总结</a></p>
-<h2 id="改变参数名"><a href="#改变参数名" class="headerlink" title="改变参数名"></a>改变参数名</h2><p>比如我们要改变Thing对象的参数名：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">Thing</span> </span>{
-<span class="keyword">init</span>(location: <span class="type">Thing</span>?, name:<span class="type">String</span>,
-     longDescription: <span class="type">String</span>){ ... }
-}
-</code></pre>
-<p>如果我们不想用默认的<code>Thing.init(location:Beijing, name:&quot;wall&quot;,longDescription:&quot;An amazing city&quot;)</code>这种方式进行初始化，我们可以在参数前面添加<code>label</code>的形式：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">Thing</span> </span>{
-  <span class="keyword">init</span>(newLocation location: <span class="type">Thing</span>?, newName name: <span class="type">String</span>,
-newLongDescription longDescription: <span class="type">String</span>) { ... }
-}
-</code></pre>
-<p>这样我们就可以使用<code>Thing.init(newLocation:Beijing, newName:&quot;wall&quot;,newLongDescription:&quot;An amazing city&quot;)</code>这种参数来进行初始化。</p>
-<h2 id="匿名参数"><a href="#匿名参数" class="headerlink" title="匿名参数"></a>匿名参数</h2><p>比如下面的例子，我们不需要字典中的value，那么我们就只需要遍历其<code>key</code>即可。</p>
-<pre><code class="Swift"><span class="keyword">for</span> (key,<span class="number">_</span>) <span class="keyword">in</span> dictionary {
- <span class="built_in">print</span>(\(key))
-}
-</code></pre>
-<p>在这个例子中，我们使用下划线<code>_</code>来进行你匿名操作，略过了我们不关心的value值，而只输出了<code>key</code>的值。</p>
-<p>在上面<code>Thing</code>的例子中，如果我们要移除其参数名称，那么我们可以将<code>label</code>变为下划线，这样我们在调用的时候就不必写参数名了。</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">Thing</span> </span>{
-  <span class="keyword">init</span>(<span class="number">_</span> location: <span class="type">Thing</span>?, <span class="number">_</span> name: <span class="type">String</span>,
-
-   <span class="number">_</span> longDescription: <span class="type">String</span>) { ... }
-}
-</code></pre>
-<p>这样我们就可以使用<code>Thing.init(Beijing, &quot;wall&quot;,&quot;An amazing city&quot;)</code>来初始化了。</p>
-<h2 id="Protocol"><a href="#Protocol" class="headerlink" title="Protocol"></a>Protocol</h2><p>如果我们要给上面的<code>Thing</code>对象添加一个方法<code>performPull</code>来执行其是否可以被拉动的方法。</p>
-<pre><code class="Swift">        <span class="comment">// The parser will call this. func performPull(object: Thing) </span>
-{ <span class="keyword">if</span> <span class="comment">/* object is   pullable */</span> {      <span class="comment">/* pull it */</span> }<span class="keyword">else</span>{      <span class="comment">/* complain */</span>   } }
-</code></pre>
-<p>这时我们可以添加一个Protocol：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">protocol</span> <span class="title">Pullable</span> </span>{
-  <span class="function"><span class="keyword">func</span> <span class="title">pull</span><span class="params">()</span></span>
-} 
-<span class="class"><span class="keyword">class</span> <span class="title">Boards</span>: <span class="title">Thing</span>, <span class="title">Pullable</span> </span>{
-<span class="function"><span class="keyword">func</span> <span class="title">pull</span><span class="params">()</span></span> {
-....
-}
-}
-</code></pre>
-<p>这样我们的<code>Boards</code>类就遵守了<code>Pullable</code>协议，当我们来检查某个对象是否遵守了某个协议时，我们可以这样做：</p>
-<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">performPull</span><span class="params">(object: Thing)</span></span> { <span class="keyword">if</span> <span class="keyword">let</span> pullableObject = object <span class="keyword">as</span> <span class="type">Pullable</span> { pullableObject.pull()    }<span class="keyword">else</span>{ 
-     <span class="built_in">print</span>(<span class="string">"You are not sure how to print a <span class="subst">\(object.name)</span>."</span>)
-   } 
-}
-</code></pre>
-<h3 id="对象转String"><a href="#对象转String" class="headerlink" title="对象转String"></a>对象转String</h3><p>如果我们要打印某个对象，并且需要打印出其中的有效信息，那么我们要像OC中实现<code>description</code>方法一样，来遵守<code>CustomStringConvertible</code>协议并且实现其中的<code>description</code>方法。<br>还有很多类似的方法</p>
-<table>
-<thead>
-<tr>
-<th>Protocol</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ExpressibleByStringLiteral</td>
-<td>“abc”</td>
-</tr>
-<tr>
-<td>ExpressibleByArrayLiteral</td>
-<td>[ a, b, c ]</td>
-</tr>
-<tr>
-<td>ExpressibleByDictionaryLiteral</td>
-<td>[a: x, b: y]</td>
-</tr>
-<tr>
-<td>Sequence</td>
-<td>for x in sequence</td>
-</tr>
-<tr>
-<td>CustomStringConvertible</td>
-<td>“(convertible)”</td>
-</tr>
-</tbody>
-</table>
-<p>同样，如果我们要对某个对象使用下表，那么我们要<code>subscript</code>。怎样对某个类使用下表呢？</p>
-<h2 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h2><p> 比如以下三个方法，其参数的形式是一样的，但是其参数类型不同，我们想把它变成一个函数，这时候我们最常想到的做法就是使用<code>Any</code>来表示任何类型的参数和任何类型的返回值。</p>
-<pre><code class="Swift"><span class="comment">// 之前的三个函数</span>
-<span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: String)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
-}
-<span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Int)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
-}
-<span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Float)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
-} 
-<span class="comment">// 变为一个函数</span>
-<span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Any)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
-}
-</code></pre>
-<p>但是这有个问题，在我们要调用返回值的某个方法时候编译器会报错，因为我们的返回值<code>Any</code>并没有所调用的方法，也就是说我们需要一次强转，强转在代码层面是很难看的，也很麻烦，这时候我们就可以使用泛型来解决这个问题，如果我们使用了泛型，那么编译器会将输入的参数和输出的参数给我们推断出来，这样就不必强转了。并且当编译器可以推断出来是那种type的时候它会给我们做各种优化。</p>
-<p>泛型在Swift中很常见，比如：<br>Array<t>以及Dictionary<k,v>：是范型的结构体<br>Optional<t>：范型枚举<br>我们也可以创建自己的泛型类</t></k,v></t></p>
-<h3 id="Type间的关系"><a href="#Type间的关系" class="headerlink" title="Type间的关系"></a>Type间的关系</h3><p>比如我们要转换两个变量的值，我们可以调用下面的方法：</p>
-<pre><code class="Swift"> // Exchange the values of x and y
-func swap&lt;T&gt;(inout x: T, inout y: T) { 
-let tmp = x     x = y     y = tmp 
-} 
-var studentCount = 42
-var teacherCount = 7
-swap(&amp;studentCount, &amp;teacherCount) // OK
-var schoolName = “Homestead High School"
-swap(&amp;studentCount, &amp;schoolName) // error: 'Int' is not identical to 'String'
-</code></pre>
-<p>有了这样的编译器提示，这样我们就可以保证了输入的两种类型是相同的，这样就会更加<strong>安全</strong>，代码也会少很多bug。</p>
-<h3 id="对泛型进行Protocol限制"><a href="#对泛型进行Protocol限制" class="headerlink" title="对泛型进行Protocol限制"></a>对泛型进行Protocol限制</h3><p>我们可以给泛型加上限制，让它遵守某些协议，比如：</p>
-<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">indexOf</span>&lt;T&gt;<span class="params">(sought: T, inArray array: T[])</span></span> -&gt; <span class="type">Int</span>? {
-  <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span>..array.<span class="built_in">count</span> {
-    <span class="keyword">if</span> array[i] == sought { <span class="comment">// error: could not find an overload for '==' that accepts the supplied arguments </span>
-      <span class="keyword">return</span> i
-} } 
-<span class="keyword">return</span> <span class="literal">nil</span> }
-</code></pre>
-<p>这是编译不通过的，因为编译器不知道我们的<code>T</code>是否遵守了<code>Equatable</code>协议，如果我们将其变为<code>func indexOf&lt;T:Equatable&gt;(Sought: T, inArray array: T[]) -&gt; Int?</code>就可以编译通过了。</p>
-<h3 id="实现Equatable协议"><a href="#实现Equatable协议" class="headerlink" title="实现Equatable协议"></a>实现Equatable协议</h3><p>Enum，Class以及Struct都可以实现协议，比如我们有如下的Struct，实现Equatable协议如下：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">Temperature</span> : <span class="title">Equatable</span> </span>{ 
-  <span class="keyword">let</span> value: <span class="type">Int</span> = <span class="number">0</span>
-}
-
-<span class="function"><span class="keyword">func</span> == <span class="params">(lhs: Temperature, rhs: Temperature)</span></span> -&gt; <span class="type">Bool</span> {
-  <span class="keyword">return</span> lhs.value == rhs.value
-}
-</code></pre>
-<p>当我们实现了<code>Equatable</code>，那么对于<code>!=</code>这种操作，Swift在底层就会自动帮我们实现。</p>
-<h2 id="斐波那契数列的例子"><a href="#斐波那契数列的例子" class="headerlink" title="斐波那契数列的例子"></a>斐波那契数列的例子</h2><p>什么是菲波那切数列？数列的前两个数相加等于后面的一个数。 <code>0, 1, 1, 2, 3, 5, 8, 13, 21, ...</code><br>我们创建一个菲波那切数列的函数：</p>
-<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">fibonacci</span><span class="params">(n: Int)</span></span> -&gt; <span class="type">Double</span> {
-  <span class="keyword">return</span> n &lt; <span class="number">2</span> ? <span class="type">Double</span>(n) : fibonacci(n - <span class="number">1</span>) + fibonacci(n - <span class="number">2</span>)
-}
-</code></pre>
-<p>这个函数的返回值仍然是一个函数，它是一个递归调用的函数，这个函数的效率极低。当你在Playground中实验的时候就会卡的不行。如果调用<code>fibonacci(44)</code>估计要十几秒的时间。原因就是它需要一个调用一个树状结构，我们用<code>fibonacci(5)</code>做个图示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-1d9abd75b75e42ea.png" alt="fibonacci(n:5)"></p>
-<p>在图中我们发现fib(1)，fib(2)等函数被持续的调用，我们如果可以把这个已经计算过的数值存下来，那么以后不是就就可以直接计算了呢？这样不就可以极大的提高计算的速度。这样我们就只计算下面带星号的函数即可：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-12e6e8ab9ae865d9.png" alt="valuable func"></p>
-<p>这时最先想到的就是用一个全局的字典手动来存储这个数值，实现方法如下：</p>
-<pre><code class="Swift"><span class="keyword">var</span> fibonacciMemo = <span class="type">Dictionary</span>&lt;<span class="type">Int</span>, <span class="type">Double</span>&gt;() <span class="comment">// implementation detail </span> <span class="comment">// Return the nth fibonacci number: 0, 1, 1, 2, 3, 5, 8, 13, 21, ...</span> <span class="function"><span class="keyword">func</span> <span class="title">fibonacci</span><span class="params">(n: Int)</span></span> -&gt; <span class="type">Double</span> { 
-  <span class="keyword">if</span> <span class="keyword">let</span> result = fibonacciMemo[n] {
-    <span class="keyword">return</span> result
-  }
-  <span class="keyword">let</span> result = n &lt; <span class="number">2</span> ? <span class="type">Double</span>(n) : fibonacci(n - <span class="number">1</span>) + fibonacci(n - <span class="number">2</span>)
-  fibonacciMemo[n] = result
-  <span class="keyword">return</span> result
-} 
-
-<span class="comment">// 1.61803399...</span>
-<span class="keyword">let</span> phi = fibonacci(<span class="number">45</span>) / fibonacci(<span class="number">44</span>) <span class="comment">//0.1 seconds = 100x speedup</span>
-</code></pre>
-<p>这样一来，我们之前计算<code>fibonacci(44)</code>中十几秒的计算时间一下子缩短到了0.1秒，缩减了100倍。<br>如果这样做的话，我们以后每次用到这个方法就都需要写一个字典，每次把这个计算过程过一遍，并且更重要的是它不具备通用型，如果我要放进去字符串，那就不起作用了。下面我们写一个通用的函数来解决这种需要保留中间数值，并且不需要额外的全局变量<code>fibonacciMemo</code>就可以解决问题的方法。先看一个不递归时候的函数：</p>
-<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">memoize</span>&lt;T: Hashable, U&gt;<span class="params">(work: @escaping <span class="params">(T)</span></span></span>-&gt;<span class="type">U</span>) -&gt; (<span class="type">T</span>)-&gt;<span class="type">U</span> {
-
-    <span class="keyword">var</span> memo = <span class="type">Dictionary</span>&lt;<span class="type">T</span>, <span class="type">U</span>&gt;()
-    <span class="keyword">return</span> { x <span class="keyword">in</span>
-        <span class="keyword">if</span> <span class="keyword">let</span> q = memo[x] { <span class="keyword">return</span> q }
-        <span class="keyword">let</span> r = work(x)
-        memo[x] = r
-        <span class="keyword">return</span> r
-    }
-}
-</code></pre>
-<p>然后再来一个可以递归的方法：</p>
-<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">memoize</span>&lt;T: Hashable, U&gt;<span class="params">(work: @escaping <span class="params">(<span class="params">(T)</span></span></span></span>-&gt;<span class="type">U</span>, <span class="type">T</span>) -&gt; <span class="type">U</span>) -&gt; (<span class="type">T</span>)-&gt;<span class="type">U</span> {
-    <span class="keyword">var</span> memo = <span class="type">Dictionary</span>&lt;<span class="type">T</span>, <span class="type">U</span>&gt;()
-    <span class="function"><span class="keyword">func</span> <span class="title">wrap</span><span class="params">(x: T)</span></span>-&gt;<span class="type">U</span> {
-        <span class="keyword">if</span> <span class="keyword">let</span> q = memo[x] { <span class="keyword">return</span> q }
-        <span class="keyword">let</span> r = work(wrap, x)
-        memo[x] = r
-        <span class="keyword">return</span> r
-    }
-    <span class="keyword">return</span> wrap
-}
-</code></pre>
-<p>这两个函数包含了swift中的很多高级语法：</p>
-<ul>
-<li>强大的编译器推断匹配,比如你调用：</li>
-</ul>
-<pre><code class="Swift">     <span class="keyword">let</span> fibonacci = memoize {
-    (n: <span class="type">Int</span>) <span class="keyword">in</span>
-    <span class="type">String</span>(n)
-}
-</code></pre>
-<p>那么上面泛型中的<code>T</code>就会被推断成<code>Int</code>，而<code>U</code>怎会被推断成<code>String</code>。</p>
-<ul>
-<li>尾随闭包，比如调用<code>let fibonacci = memoize {...}</code>的时候。</li>
-<li>更通用，更安全，性能更高的泛型函数。</li>
-</ul>
-<p>关于这个函数，有人专门写了一篇博客来说明:<a href="https://medium.com/@mvxlr/swift-memoize-walk-through-c5224a558194" target="_blank" rel="external">https://medium.com/@mvxlr/swift-memoize-walk-through-c5224a558194</a></p>
-<h2 id="泛型结构体的一个例子"><a href="#泛型结构体的一个例子" class="headerlink" title="泛型结构体的一个例子"></a>泛型结构体的一个例子</h2><pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">StringStack</span> </span>{
-  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(x: String)</span></span> {
-items += x } 
-  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">String</span> {
-    <span class="keyword">return</span> items.removeLast()
-} 
-  <span class="keyword">var</span> items: <span class="type">String</span>[]
-}
-</code></pre>
-<p>这里我们创建了一个字符串的栈，如果我们要变为泛型，则需要：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">Stack</span>&lt;<span class="title">T</span>&gt; </span>{
-  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(x: T)</span></span> {
-items += x } 
-  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">T</span> {
-    <span class="keyword">return</span> items.removeLast()
-} 
-  <span class="keyword">var</span> items: <span class="type">T</span>[]
-}
-</code></pre>
-<p>这样我们就可以往里面放任何数据类型了：</p>
-<pre><code class="Swift"><span class="keyword">var</span> intStack = <span class="type">Stack</span>&lt;<span class="type">Int</span>&gt;()
-intStack.push(<span class="number">42</span>)
-</code></pre>
-<p>但是当我们需要对这个Stack做<code>for in</code>操作时候，却得到了下面的错误提示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-9d39a23bddecaefd.png" alt="for_in_error"><br>这时候我们需要理解下，什么是<code>Sequence</code>，当Swift给我们做<code>for in</code>操作的时候在底层给我们做了什么？</p>
-<pre><code class="Swift"><span class="comment">// 我们代码</span>
- <span class="keyword">for</span> x <span class="keyword">in</span> someSequence {
-  ...
- }
-<span class="comment">// Swift翻译后的代码</span>
-<span class="keyword">var</span> __g = someSequence.generate()
-<span class="keyword">while</span> <span class="keyword">let</span> x = __g.next(){
-...
-}
-</code></pre>
-<p>从上面可以看到，首先我们的<code>someSequence</code>需要关联一个<code>generate</code>，并且这个<code>generate</code>需要实现一个<code>next</code>方法，这样我们就可以对这个结构体做<code>for in</code>操作了。<br>我们先看这个<code>generate()</code>，它是一个结构体，其遵守<code>Generator</code>（<code>protocol</code>)。</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">protocol</span> <span class="title">Generator</span> </span>{
- <span class="keyword">typealias</span> <span class="type">Element</span>
- <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">Element</span> ?
-}
-</code></pre>
-<p>然后我们创建一个遵守<code>Generator</code>的结构体：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">StackGenerator</span>&lt;<span class="title">T</span>&gt; : <span class="title">Generator</span> </span>{
-  <span class="keyword">typealias</span> <span class="type">Element</span> = <span class="type">T</span>
-  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">T</span>? {
-    <span class="keyword">if</span> items.isEmpty { <span class="keyword">return</span> <span class="literal">nil</span> }
-    <span class="keyword">let</span> ret = items[<span class="number">0</span>]
-    items = items[<span class="number">1</span>..items.<span class="built_in">count</span>]
-    <span class="keyword">return</span> ret
-} 
-  <span class="keyword">var</span> items: <span class="type">Slice</span>&lt;<span class="type">T</span>&gt;
-}
-</code></pre>
-<p>那么什么是<code>Sequence</code>呢？它也是一个<code>protocol</code></p>
-<pre><code class="Swift"> <span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>{
-  <span class="keyword">typealias</span> <span class="type">GeneratorType</span> : <span class="type">Generator</span>
-  <span class="function"><span class="keyword">func</span> <span class="title">generate</span><span class="params">()</span></span> -&gt; <span class="type">GeneratorType</span>
-}
-</code></pre>
-<p>它关联了一个<code>Generator</code>，然后我们让新建的<code>Stack</code>遵守这个<code>Sequence</code>协议：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">extension</span> <span class="title">Stack</span> : <span class="title">Sequence</span> </span>{
-  <span class="function"><span class="keyword">func</span> <span class="title">generate</span><span class="params">()</span></span> -&gt; <span class="type">StackGenerator</span>&lt;<span class="type">T</span>&gt; {
-    <span class="keyword">return</span> <span class="type">StackGenerator</span>( items[<span class="number">0</span>..itemCount] )
-  }
-}
-</code></pre>
-<p>这样就可以对<code>Stack</code>做<code>for in</code>操作了。</p>
-<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">peekStack</span><span class="params">(s: Stack&lt;T&gt;)</span></span> {
-  <span class="keyword">for</span> x <span class="keyword">in</span> s { <span class="built_in">println</span>(x) }
-}
-</code></pre>
-<p>关于<code>Sequence</code>和<code>Generator</code>的详细说明，请看我的另外一篇博客<a href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/">Swift中Collection的Protocol</a></p>
-<h3 id="执行效率"><a href="#执行效率" class="headerlink" title="执行效率"></a>执行效率</h3><p>Swift是静态编译，很小的runtime。写好的代码传到设备上之后不需要再重新编译，只需要等着运行即可。Swift中的编译器，相比于C，C++，Objective-C的Clang，做了一步优化：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-3cb2500863892632.png" alt="SwiftComplier"><br>除此之外，Swift会在编译时候做以下几点</p>
-<ul>
-<li>全局分析App</li>
-<li>使用Struct不会对Runtime的性能造成影响</li>
-<li>Int，Float等很多标准库都是Struct的</li>
-</ul>
-<p>Swift还有去虚拟化的特点，它可以让再运行期确定的事情放到了编译期，这样就会更快了，详细内容可以参考我的另外一篇博客<a href="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/">为什么Swift比OC快</a></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2785,7 +2529,7 @@ intStack.push(<span class="number">42</span>)
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-count">22</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>

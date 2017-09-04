@@ -307,6 +307,213 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/26/VaporBasicUse/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/26/VaporBasicUse/" itemprop="url">Vapor的安装和部署</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-26T20:26:22+08:00">
+                2017-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><img src="http://upload-images.jianshu.io/upload_images/1513759-fcef541624cb576e.png" alt="Vapor"><br>在Swift后端框架中，Vapor是比较常用的，它发展迅速，语法简洁，社区活跃，现将其在Mac上的简单的使用流程做以介绍。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="一、安装最新版的Xcode"><a href="#一、安装最新版的Xcode" class="headerlink" title="一、安装最新版的Xcode"></a>一、安装最新版的Xcode</h3><p>Xcode是免费的可以直接在App Store中直接下载。下载完之后需要打开Xcode来完成安装，这可能需要等一段时间。<br><img src="http://upload-images.jianshu.io/upload_images/1513759-63e932cd79cf7564.png" alt="安装Xcode"></p>
+<h3 id="二、验证Swif是否安装"><a href="#二、验证Swif是否安装" class="headerlink" title="二、验证Swif是否安装"></a>二、验证Swif是否安装</h3><p>通过执行<code>eval &quot;$(curl -sL check.vapor.sh)&quot;</code>来第二次确定安装是否成功。</p>
+<h3 id="三、安装Vapor"><a href="#三、安装Vapor" class="headerlink" title="三、安装Vapor"></a>三、安装Vapor</h3><p>确定Swift成功安装之后我们来安装Vapor toolbox，这其中包含了Vapor的所有依赖以及创建项目时好用的CLI。</p>
+<h4 id="安装Homebrew"><a href="#安装Homebrew" class="headerlink" title="安装Homebrew"></a>安装Homebrew</h4><p>Homebrew在安装OpenSSL，MySQL，Postgres，Redis，SQLite等依赖的时候极其有用，没有的时候执行如下命令安装：</p>
+<pre><code>/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
+</code></pre><h4 id="安装Homebrew-Tap"><a href="#安装Homebrew-Tap" class="headerlink" title="安装Homebrew Tap"></a>安装Homebrew Tap</h4><p>Vapor的Homebrew Tap可以让你安装Vapor的所有包。执行如下命令安装</p>
+<pre><code class="bash">brew tap vapor/homebrew-tap
+brew update
+</code></pre>
+<h4 id="安装Vapor"><a href="#安装Vapor" class="headerlink" title="安装Vapor"></a>安装Vapor</h4><p>执行如下命令安装</p>
+<pre><code class="bash">brew install vapor
+</code></pre>
+<p>安装完成之后会出现如下图案：</p>
+<h2 id="新建项目"><a href="#新建项目" class="headerlink" title="新建项目"></a>新建项目</h2><h3 id="新建"><a href="#新建" class="headerlink" title="新建"></a>新建</h3><p>接下来我们用api模板（toolbox提供了web,api等各种模板）来创建一个Hello的项目。执行如下指令</p>
+<pre><code class="bash">vapor new Hello --template=api
+</code></pre>
+<p>然后我们执行<code>tree</code>指令就可以看到如下的目录结构：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-bb8633f9c5a20c04.png" alt="Vapor 目录结构"><br>如果出现<code>Command not found</code>不能执行请安装tree软件</p>
+<pre><code class="bash">brew install tree
+</code></pre>
+<p>我们打开如下的目录找到<code>Routes.swift</code>文件。在Build方法中我们看到：</p>
+<pre><code class="Swift"><span class="keyword">get</span>(<span class="string">"plaintext"</span>) { req <span class="keyword">in</span>
+
+<span class="keyword">return</span> <span class="string">"Hello, world!"</span>
+}
+</code></pre>
+<p>上述表示执行get方法，闭包返回请求结果。</p>
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><p>确保你所在的是项目的根目录执行如下指令来编译：</p>
+<pre><code class="bash">vapor build
+</code></pre>
+<p>执行完毕之后将会看到</p>
+<pre><code>Building Project [Done]
+</code></pre><h3 id="发布状态编译"><a href="#发布状态编译" class="headerlink" title="发布状态编译"></a>发布状态编译</h3><p>在发布状态编译会提升其性能，执行如下指令：</p>
+<pre><code class="bash">vapor build --release
+</code></pre>
+<h2 id="启动本地服务"><a href="#启动本地服务" class="headerlink" title="启动本地服务"></a>启动本地服务</h2><p>执行如下指令来启动服务</p>
+<pre><code class="bash">vapor run serve
+</code></pre>
+<p>然后你会看到如下信息：</p>
+<pre><code class="bash">Server starting....
+</code></pre>
+<p>然后就可以在浏览器中执行<code>localhost:8080/plaintext</code>来看到刚才的<code>Hello, World</code>了。</p>
+<h3 id="生成Xcode项目"><a href="#生成Xcode项目" class="headerlink" title="生成Xcode项目"></a>生成Xcode项目</h3><p>我们刚才做的启动等操作都是通过终端来的，我们也可以使用Xcode来完成，要使用Xcode来执行，我们需要首先创建一个*.xcodeproj文件，执行如下指令来创建：</p>
+<pre><code class="bash">vapor xcode
+</code></pre>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>完成上述操作之后你就可以在本地访问自己的服务了，但怎样才能部署到远程，生成自己的链接来访问呢？我们使用Heroku，来完成，Heroku的免费版完全可以满足我们日常练习的需求，并且其简单快捷的Git操作指令一定会让你爱不释手。</p>
+<h3 id="创建Heroku账户"><a href="#创建Heroku账户" class="headerlink" title="创建Heroku账户"></a>创建Heroku账户</h3><p>请在<a href="https://devcenter.heroku.com/" target="_blank" rel="external">Heroku官网</a>创建自己的账号。</p>
+<p>注意要记住自己的邮箱和密码，因为一会儿需要在终端进行登录。</p>
+<h3 id="安装Heroku-CLI"><a href="#安装Heroku-CLI" class="headerlink" title="安装Heroku CLI"></a>安装Heroku CLI</h3><p>Heroku CLI用来创建、管理Heroku上apps的命令行工具。执行如下指令来完成安装：</p>
+<pre><code class="bash">brew install heroku
+</code></pre>
+<p>安装完成之后执行如下指令来登录，输入邮箱和密码来登录：</p>
+<pre><code>heroku login
+Enter your Heroku credentials.
+Email: adam@example.com
+Password (typing will be hidden):
+Authentication successful.
+</code></pre><h3 id="创建程序"><a href="#创建程序" class="headerlink" title="创建程序"></a>创建程序</h3><p>进入你要部署的App，比如上文的Hello项目，然后执行：</p>
+<pre><code class="bash"><span class="variable">$cd</span> Hello
+<span class="variable">$git</span> init
+<span class="variable">$git</span> add.
+<span class="variable">$git</span> commit -m <span class="string">"add hello app"</span>
+</code></pre>
+<p>然后在Heroku中创建一个app，以便其接收你的代码，执行<code>heroku apps:creat [NAME]</code>指令其中名字必须以字母开头，字呢个包含小写字母，数字和连字符，并且其在heroku的所有程序中必须是唯一的。如果出现：</p>
+<pre><code class="bash">Creating app... <span class="keyword">done</span>, ⬢ young-island-91962
+         https://young-island-91962.herokuapp.com/ | https://git.heroku.com/young-island-91962.git
+</code></pre>
+<p>这说明执行成功了。<br>执行<code>git remote -v</code>，就会出现远程git的URL了</p>
+<pre><code>heroku    https://git.heroku.com/young-island-91962.git (fetch)
+heroku    https://git.heroku.com/young-island-91962.git (push)
+</code></pre><p>然后执行</p>
+<pre><code class="bash">heroku create
+Creating falling-wind-1624... <span class="keyword">done</span>, stack is cedar-14
+http://falling-wind-1624.herokuapp.com/ | https://git.heroku.com/falling-wind-1624.git
+Git remote heroku added
+</code></pre>
+<h3 id="注意坑"><a href="#注意坑" class="headerlink" title="注意坑"></a>注意坑</h3><p>然后执行<code>git push heroku master</code><br>这时会报错：</p>
+<pre><code class="bash">No default language could be detected <span class="keyword">for</span> this app.
+          remote: HINT: This occurs when Heroku cannot detect the buildpack to use <span class="keyword">for</span> this application automatically.
+</code></pre>
+<p>这说明heroku官方没有swift的<code>buildpack</code>，所以我们要自己添加</p>
+<pre><code>heroku create --buildpack https://github.com/kylef/heroku-buildpack-swift.git
+heroku buildpacks:set https://github.com/kylef/heroku-buildpack-swift.git
+</code></pre><p>最后在执行push的时候还会报错：</p>
+<p><code>error at=error code=H10 desc=&quot;App crashed&quot; method=GET path=&quot;/plaintext&quot;</code>，这时需要修改<code>Procfile</code>文件，<code>Procfile</code>需要放到项目的根目录里，内容如下：</p>
+<pre><code class="bash">web: Run --env=production --workdir=./ --config:servers.default.port=<span class="variable">$PORT</span>
+</code></pre>
+<p>这样就可以执行Git的push指令进行部署了：</p>
+<pre><code class="bash">git push heroku master
+</code></pre>
+<p>随后的操作就变得像平时提交项目一样简单。</p>
+<pre><code class="bash">git commit -m <span class="string">"change something"</span> -a
+git push heroku master
+</code></pre>
+<p>这样一个项目就部署成功了。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/22/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -463,7 +670,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-count">22</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
