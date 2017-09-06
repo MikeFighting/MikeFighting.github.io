@@ -307,6 +307,313 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/06/google-the-clean-code-talks-inheritance/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/06/google-the-clean-code-talks-inheritance/" itemprop="url">代码整洁之道-继承，多态和测试</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-06T07:50:00+08:00">
+                2017-09-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="代码整洁的讨论，条件和多态"><a href="#代码整洁的讨论，条件和多态" class="headerlink" title="代码整洁的讨论，条件和多态"></a>代码整洁的讨论，条件和多态</h3><p><img src="http://upload-images.jianshu.io/upload_images/1513759-0ac66a6395d8b9ff.png" alt="Conclusion"></p>
+<p>条件和多态是怎样影响测试的？</p>
+<ol>
+<li>大多数的if可以被多态所取代</li>
+</ol>
+<p>为什么要取代ifs</p>
+<ol>
+<li>没有if的代码更容易阅读</li>
+<li>没有if的代码更容易测试</li>
+<li>多态更容易维护：容易扩展</li>
+</ol>
+<p>什么时候使用多态：</p>
+<ol>
+<li>如果一个对象基于其不同的状态，而表现不一样</li>
+<li>如果你要在不同的地方来检测这种条件</li>
+</ol>
+<p>对于基本数据类型，我们使用<code>&gt;,&lt;,==,!=</code>来做比较。我们要避免使用<code>if</code>。</p>
+<p>尽量不适用if<br>不要返回null（使用null之后不能够Dispatch这个错误）,而是返回一个Null对象，比如一个空的list<br>不要返回error代码，而是抛出异常</p>
+<h3 id="尽量少用继承"><a href="#尽量少用继承" class="headerlink" title="尽量少用继承"></a>尽量少用继承</h3><p>多态需要使用继承<br>小心继承的层级太深</p>
+<h3 id="将条件用多态替代"><a href="#将条件用多态替代" class="headerlink" title="将条件用多态替代"></a>将条件用多态替代</h3><p>你有一个条件，该条件是基于某个对象的类型来选择不同的行为。</p>
+<p>将这些条件的判断一到一个子类的覆盖方法中。然后将原来的的方变成一个抽象方法。<br>我们用下面的例子：</p>
+<pre><code class="java"><span class="function"><span class="keyword">double</span> <span class="title">getSpeed</span><span class="params">()</span> </span>{
+
+  <span class="keyword">switch</span> (_type) {
+
+   <span class="keyword">case</span> ENROPEAN:
+        <span class="keyword">return</span> getBaseSpeed();
+
+   <span class="keyword">case</span> AFRICAN:
+        <span class="keyword">return</span> getBaseSpeed() - getLoadFactor() * _numberOfCoconuts;
+
+   <span class="keyword">case</span> NORWEGIAN_BLUE:
+        <span class="keyword">return</span> (_isNailed) ? <span class="number">0</span> : getBaseSpeed(_voltage);
+  }
+
+  <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Should be unreachable"</span>);
+}
+</code></pre>
+<p>比如我们有一个<code>1+ 2 * 3</code>的表达式，如果用树来表示应该是这样的： </p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-44f337f613e5c3f2.png" alt="1 + 2 * 3"></p>
+<p>这时候大多情况下我们会写下面的的代码：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-4efa0dbac30dd19d.png" alt="Implement"></p>
+<p>那么大多数情况下会出问题，比如：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-3ee95ff9e5c8dd78.png" alt="Evaluate UML"></p>
+<p>从中我们可以看到叶子节点的左右分支都是null，上文已经提到null是很不好的。比如叶子节点我们需要的只是数值，没有function，没有left和right数值。</p>
+<p>那么怎么办呢？我们需要将原来的Node创建两个子类，一个ValueNode，一个OpNode。UML图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-e32bbbf0adf5e116.png" alt="SubClass UML"></p>
+<p>创建子类之后：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-92adea90f4f9f44d.png" alt="Node Subclass"></p>
+<p>Java只针对某个类编译。</p>
+<p>这样最终我们的UML图是这样的：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-d12731bff0df6db3.png" alt="ValueNode"></p>
+<p>用多态替代switch case。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-8e09c9eb66adc448.png" alt="多态UML"></p>
+<p>然后系统的操作类变为：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-f3b681a924bba620.png" alt="Operation Class"></p>
+<p>然后我们再创建两个<code>OpNode</code>的子类：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-d6699abc050608e6.png" alt="OpNodeSubClass"></p>
+<p>然后我们有了除去Operation字段的UML图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-1ebf2e28e6c0c310.png" alt="NoOperationUML"></p>
+<h2 id="进一步探讨"><a href="#进一步探讨" class="headerlink" title="进一步探讨"></a>进一步探讨</h2><p>定义一个<code>toString()</code>方法来打印表达式的前缀，并且在适当的时候加上括号。<br>添加一些新的数学操作：添加方程，阶乘，算法，三角学。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p> 多态的结局方案通常来说是更好的，因为；</p>
+<ul>
+<li>新功能的添加不需要改动原来的代码</li>
+<li>每个操都被放到一个单独的文件中了，这样易于测试和理解，并且易于扩展</li>
+</ul>
+<p>多用多态而不是条件语句：</p>
+<ul>
+<li><strong>switch</strong>语句就意味着你应该使用多态</li>
+<li><strong>if</strong>更加很精妙，但是有时候一个<strong>if</strong>仅仅是一个<strong>if</strong></li>
+</ul>
+<h3 id="重复条件"><a href="#重复条件" class="headerlink" title="重复条件"></a>重复条件</h3><pre><code class="java"><span class="class"><span class="keyword">class</span> <span class="title">Update</span> </span>{
+    execute (){
+    <span class="keyword">if</span> (FLAG_i18n_ENABLED) {
+
+       <span class="comment">// DO A;</span>
+    }<span class="keyword">else</span> {
+       <span class="comment">// DO B;</span>
+     }
+   }
+}
+</code></pre>
+<p>但是后来又有了相似的代码：</p>
+<pre><code class="java"><span class="class"><span class="keyword">class</span> <span class="title">Update</span> </span>{
+   render (){
+    <span class="keyword">if</span> (FLAG_i18n_ENABLED) {
+
+       <span class="comment">// Render A;</span>
+    }<span class="keyword">else</span> {
+       <span class="comment">// Render B;</span>
+     }
+   }
+}
+</code></pre>
+<p>在测试的时候，我们还需要写两套代码，比如：</p>
+<pre><code class="java"><span class="keyword">void</span> testExecuteDoA {
+    FLAG_i18n_ENABLED = <span class="keyword">true</span>;
+    Update u = <span class="keyword">new</span> Update();
+    u.execute();
+    assertX();
+}
+<span class="keyword">void</span> testExecuteDoB {
+  FLAG_i18n_ENABLED = <span class="keyword">false</span>;
+  Update u = <span class="keyword">new</span> Update();
+  u.execute();
+  assertX();
+}
+</code></pre>
+<p>应该怎样做才好呢？我们应该经条件语句用多态来替代：</p>
+<p><em>你有一种条件，这种条件会基于某个对象的类型类选择不同的行为。</em><br>将判断条件一到一个子类的覆盖方法中。将原来类的方法变成抽象方法。</p>
+<pre><code class="java">
+<span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Update</span> </span>{
+ <span class="comment">//...</span>
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">I18NUpdate</span> <span class="keyword">extends</span> <span class="title">Update</span> </span>{
+   execute() {
+    <span class="comment">// Do A;</span>
+   }
+   render() {
+   <span class="comment">// Render A;</span>
+   }
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">NoNI18NUpdate</span> <span class="keyword">extends</span> <span class="title">Update</span> </span>{
+  execute() {
+   <span class="comment">// Do B;</span>
+  }
+  render() {
+   <span class="comment">// Render A;</span>
+  }
+}
+</code></pre>
+<p>测试的时候我们就方便多了：</p>
+<pre><code class="java"><span class="keyword">void</span> testExecuteDoA {
+   Update u = <span class="keyword">new</span> MyI18NUpdate();
+   u.execute();
+   assertX();
+}
+
+<span class="keyword">void</span> testExecuteDoB {
+   Update u = <span class="keyword">new</span> MyNonI18NUpdate();
+   u.execute();
+   assertX();
+}
+</code></pre>
+<p><strong>if</strong>s去哪里了？</p>
+<pre><code class="java"><span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> </span>{
+  Consumer(Update u){...}
+}
+</code></pre>
+<p>两种方式：</p>
+<p>第一种方式：</p>
+<p>对象的堆砌</p>
+<ul>
+<li>业务逻辑</li>
+<li>有趣的东西</li>
+<li>目的是建造逻辑，主要的抽象</li>
+<li>假如需要很多的合作者</li>
+</ul>
+<p>第二种方式：</p>
+<p>构造方法的堆砌</p>
+<ul>
+<li>工厂</li>
+<li>建造者</li>
+<li>Provier<t></t></li>
+<li>目的是建造对象表</li>
+<li>创建和提供合作者（依赖注入）</li>
+</ul>
+<p>将创建某个具体对象的操作放到工厂方法中去性能会更高，因为我们只需要判断一次就可以对这个对象做一系列的操作。而之前，我们需要尽心一系列的判断。将If else放到工厂中还有一个好处就是便于测试和调试Bug，因为尽管我们有if else，但是这是在创建对象的过程中，具体的业务逻辑我们是放到了子类中去做的，而经常出错的地方往往是业务逻辑，而不是创建对象的过程。举个例子：</p>
+<pre><code class="java"><span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> </span>{
+  Consumer(Update u){...}
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">Factory</span> </span>{
+  <span class="function">Consumer <span class="title">build</span><span class="params">()</span> </span>{
+    Update u = FLAG_i18n_ENABLED ? <span class="keyword">new</span> I18NUpdate()
+                                 : <span class="keyword">new</span> NonI18NUpdate();
+    <span class="keyword">return</span> <span class="keyword">new</span> Consumer(u);
+  }
+}
+</code></pre>
+<p>使用依赖注入：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-d44fe1f5cbe6fe8f.png" alt="Injection"></p>
+<p>这样做的好处是：</p>
+<ol>
+<li>所有的判断条件都被放到了一个地方</li>
+<li>没有很多的重复代码</li>
+<li>将责任分离，将全局状态分离</li>
+</ol>
+<h2 id="总结优势"><a href="#总结优势" class="headerlink" title="总结优势"></a>总结优势</h2><ol>
+<li>公用代码放到了一个地方</li>
+<li>很容易独立测试和平行测试</li>
+<li>关注子类让它更加明白不同点在哪里</li>
+</ol>
+<p>什么时候用继承？</p>
+<p>不同的状态产生不同的行为<br>不同的地方有平行的条件</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/05/chat-if-else/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -377,23 +684,23 @@
           
             <p>if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。</p>
 <h3 id="为什么太多的if-else不好？"><a href="#为什么太多的if-else不好？" class="headerlink" title="为什么太多的if else不好？"></a>为什么太多的if else不好？</h3><p>我们先看一个例子：</p>
-<pre><code class="java">   <span class="meta">@Synchronized</span> <span class="function">fun <span class="title">findSubscribeMethods</span><span class="params">(subscriber: Any)</span> </span>{
-    var clazz: Class&lt;*&gt;? = subscriber.<span class="function">javaClass
-    <span class="title">while</span> <span class="params">(clazz != <span class="keyword">null</span> &amp;&amp; !isSystemClass(clazz.name)</span>) </span>{
-        val allMethods = clazz.<span class="function">declaredMethods
-        <span class="title">for</span> <span class="params">(method in allMethods)</span> </span>{
-            val annotation = method.getAnnotation(Subscriber::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)
-            <span class="title">if</span> (<span class="title">annotation</span> !</span>= <span class="keyword">null</span>) {
+<pre><code class="swift">   @<span class="type">Synchronized</span> fun findSubscribeMethods(subscriber: <span class="type">Any</span>) {
+    <span class="keyword">var</span> clazz: <span class="type">Class</span>&lt;*&gt;? = subscriber.swiftClass
+    <span class="keyword">while</span> (clazz != null &amp;&amp; !isSystemClass(clazz.name)) {
+        val allMethods = clazz.declaredMethods
+        <span class="keyword">for</span> (method <span class="keyword">in</span> allMethods) {
+            val annotation = method.getAnnotation(<span class="type">Subscriber</span>::<span class="class"><span class="keyword">class</span>.<span class="title">swift</span>)
+            <span class="title">if</span> (<span class="title">annotation</span> != <span class="title">null</span>) </span>{
                 <span class="comment">// 获取方法参数</span>
                 val paramsTypeClass = method.parameterTypes
                 <span class="comment">// 订阅函数只支持一个参数</span>
-                <span class="keyword">if</span> (paramsTypeClass != <span class="keyword">null</span> &amp;&amp; paramsTypeClass.size == <span class="number">1</span>) {
+                <span class="keyword">if</span> (paramsTypeClass != null &amp;&amp; paramsTypeClass.size == <span class="number">1</span>) {
                     val paramsEvent = paramsTypeClass[<span class="number">0</span>]
                     <span class="keyword">if</span> (isImplementIEvent(paramsEvent)) {
-                        method.isAccessible = <span class="keyword">true</span>
-                        <span class="meta">@Suppress</span>(<span class="string">"UNCHECKED_CAST"</span>)
-                        val eventType = EventType(paramsEvent as Class&lt;IEvent&gt;, annotation.tag)
-                        val subscription = Subscription(WeakReference(subscriber), method, annotation.mode)
+                        method.isAccessible = <span class="literal">true</span>
+                        @<span class="type">Suppress</span>(<span class="string">"UNCHECKED_CAST"</span>)
+                        val eventType = <span class="type">EventType</span>(paramsEvent <span class="keyword">as</span> <span class="type">Class</span>&lt;<span class="type">IEvent</span>&gt;, annotation.tag)
+                        val subscription = <span class="type">Subscription</span>(<span class="type">WeakReference</span>(subscriber), method, annotation.mode)
                         subscribe(eventType, subscription)
                     }
                 }
@@ -404,7 +711,7 @@
 }
 </code></pre>
 <p>这个方法里面仅仅嵌套了三层if。但是一眼看过去就会感觉很不爽，再看一个例子：</p>
-<pre><code class="java"><span class="keyword">if</span>(isSkipPPUForQA &amp;&amp; StringUtils.isNotBlank(request.getParameter(<span class="string">"userId"</span>))){
+<pre><code class="swift"><span class="keyword">if</span>(isSkipPPUForQA &amp;&amp; <span class="type">StringUtils</span>.isNotBlank(request.getParameter(<span class="string">"userId"</span>))){
     <span class="keyword">super</span>.doFilter(request, response, chain);
 }<span class="keyword">else</span> {
     <span class="keyword">try</span> {
@@ -412,56 +719,156 @@
             <span class="keyword">super</span>.doFilter(request, response, chain);
         }<span class="keyword">else</span>{
             <span class="keyword">if</span>(!filterReqUrl(request)) {
-                <span class="keyword">long</span> ppuUserId = PassportService.passportService.getLoginUserId(RemoteValid.SAPCE_ONE_HOUR, request, response);
+                long ppuUserId = <span class="type">PassportService</span>.passportService.getLoginUserId(<span class="type">RemoteValid</span>.<span class="type">SAPCE_ONE_HOUR</span>, request, response);
                 <span class="keyword">if</span> (ppuUserId &lt; <span class="number">2</span>) {
-                    response.getWriter().write(<span class="keyword">this</span>.generateResponse(AppResultStateEnum.PPU_UNVALID.getCodeStr(), <span class="string">"登录认证信息已过期，请重新登录"</span>));
-                    log.error(<span class="string">"ppu返回的userId:"</span> + ppuUserId + <span class="string">",ppu过期,ppu="</span> + PPUCookieUtil.getPpuCookie(request) + <span class="string">",url="</span> + request.getRequestURI());
+                    response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">PPU_UNVALID</span>.getCodeStr(), <span class="string">"登录认证信息已过期，请重新登录"</span>));
+                    log.error(<span class="string">"ppu返回的userId:"</span> + ppuUserId + <span class="string">",ppu过期,ppu="</span> + <span class="type">PPUCookieUtil</span>.getPpuCookie(request) + <span class="string">",url="</span> + request.getRequestURI());
                     log.error(<span class="string">"imei="</span> + request.getParameter(<span class="string">"imei"</span>) + <span class="string">",version="</span> + request.getParameter(<span class="string">"version"</span>) + <span class="string">",platform="</span> + request.getParameter(<span class="string">"platform"</span>));
                 } <span class="keyword">else</span> {
-                    <span class="keyword">boolean</span> flag = isTouchSingleDeviceLimitWithoutLogin(ppuUserId, request);
+                    boolean flag = isTouchSingleDeviceLimitWithoutLogin(ppuUserId, request);
                     <span class="keyword">if</span> (flag) {
-                        String singleDeviceLoginContent = configComp.getValueByConfigTable(ConfigEnum.APP_SINGLE_DEVICE_LOGIN_CONTENT);
-                        <span class="keyword">boolean</span> isH5 = <span class="string">"1"</span>.equals(request.getParameter(<span class="string">"isH5"</span>));
+                        <span class="type">String</span> singleDeviceLoginContent = configComp.getValueByConfigTable(<span class="type">ConfigEnum</span>.<span class="type">APP_SINGLE_DEVICE_LOGIN_CONTENT</span>);
+                        boolean isH5 = <span class="string">"1"</span>.equals(request.getParameter(<span class="string">"isH5"</span>));
                         <span class="keyword">if</span>(isH5){
-                            String jsAjaxHeader = request.getHeader(<span class="string">"X-Requested-With"</span>);
-                            <span class="keyword">if</span>(<span class="string">"XMLHttpRequest"</span>.equals(jsAjaxHeader)){response.getWriter().write(<span class="keyword">this</span>.generateResponse(AppResultStateEnum.SINGLE_DEVICE_LOGIN.getCodeStr(), singleDeviceLoginContent));
+                            <span class="type">String</span> jsAjaxHeader = request.getHeader(<span class="string">"X-Requested-With"</span>);
+                            <span class="keyword">if</span>(<span class="string">"XMLHttpRequest"</span>.equals(jsAjaxHeader)){response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">SINGLE_DEVICE_LOGIN</span>.getCodeStr(), singleDeviceLoginContent));
                             }<span class="keyword">else</span> {
                              renderSingleDeviceHtml(response,<span class="string">"/single_device_error"</span>);
                             }
                         }<span class="keyword">else</span> {
-                            response.getWriter().write(<span class="keyword">this</span>.generateResponse(AppResultStateEnum.SINGLE_DEVICE_LOGIN.getCodeStr(), singleDeviceLoginContent));
+                            response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">SINGLE_DEVICE_LOGIN</span>.getCodeStr(), singleDeviceLoginContent));
                         }
                         log.error(<span class="string">"触发单设备登录限制,userId="</span> + ppuUserId + <span class="string">" , imei="</span> + request.getParameter(<span class="string">"imei"</span>) + <span class="string">" , platform="</span> + request.getParameter(<span class="string">"platform"</span>));
                     } <span class="keyword">else</span> {
-                        request.addParameter(<span class="string">"userId"</span>, <span class="keyword">new</span> String[]{ppuUserId + <span class="string">""</span>});
+                        request.addParameter(<span class="string">"userId"</span>, new <span class="type">String</span>[]{ppuUserId + <span class="string">""</span>});
                         <span class="keyword">super</span>.doFilter(request, response, chain);
                     }
                 }
             }
         }
-    } <span class="keyword">catch</span> (Exception e) {
+    } <span class="keyword">catch</span> (<span class="type">Exception</span> e) {
         logger.error(<span class="string">"业务处理异常,url="</span>+request.getRequestURI(),e);
     }
 }
 </code></pre>
 <p>这个方法中嵌套了七层的if else。<br>那么究竟在代码中写很多的if else有哪些弊端呢？</p>
 <ul>
-<li><strong>难扩展</strong>：如果再有更多情况的时候，我们需要在原来的地方写更多的if…else if条件。也就是说你需要去改动原来的代码，然后重新编译，重新部署，这是很浪费时间的。并且这违背了面向对象中的<strong>开放封闭原则</strong>：对扩展开放，对修改封闭。</li>
+<li><strong>僵化</strong>：如果再有更多情况的时候，我们需要在原来的地方写更多的if…else if条件。也就是说你需要去改动原来的代码，然后重新编译，重新部署，这是很浪费时间的。并且这违背了面向对象中的<strong>开放封闭原则</strong>：对扩展开放，对修改封闭。同时由于这个类需要处理各种业务，职责太多，所以也违背了<strong>职责单一原则。</strong></li>
 <li><strong>效率低下</strong>：很多系统的类，比如<code>HashMaps</code>，<code>Properties</code>等，都非常注意基于数据的条件判断。</li>
-<li><strong>难以阅读</strong>：像这种层层If else嵌套的情况，如果其他人需要来看，并且维护这份代码，由于难阅读，他们会感觉吃力。试想下，如果段代码很长，一个屏看不完，那肯定是维护的灾难。</li>
-<li><strong>难维护</strong>：If else不像switch case，它的每个分支都和其它分支有关系，如果需求变更，在修改某个分支之前要看懂其它所有分支，确保不会对其它分支造成影响。</li>
+<li><strong>难以阅读</strong>：像这种层层if else嵌套的情况，如果其他人需要来看，并且维护这份代码，由于难阅读，他们会感觉吃力。试想下，如果段代码很长，一个屏看不完，那肯定是维护的灾难。</li>
+<li><strong>难维护</strong>：if else不像switch case，它的每个分支都和其它分支有关系，如果需求变更，在修改某个分支之前要看懂其它所有分支，确保不会对其它分支造成影响。</li>
 <li><strong>难调试</strong>：很多if else，调试过程中需要一步步跟进，会影响调试效率。</li>
+<li><strong>难测试</strong>：每次我们写测试用例的Case，针对每个有很多if else的方法，我们要对每个分支都写一个测试，这样下来这个测试用例将会变得非常长。</li>
 </ul>
-<p>怎样解决：</p>
-<h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><h2 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h2><h2 id="工厂方法"><a href="#工厂方法" class="headerlink" title="工厂方法"></a>工厂方法</h2><h2 id="责任链模式"><a href="#责任链模式" class="headerlink" title="责任链模式"></a>责任链模式</h2><h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
+<p>那么我们怎样来解决这种情况，因为遇到不同的情况需要用不同的解决方案，我们逐个来分析：</p>
+<h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><p><strong>如果我们有几个判断条件是平级if，那么我们可以使用命令模式来解决这种问题。</strong>比如我们现在有如下的if else：</p>
+<pre><code class="swift"><span class="keyword">if</span> (value.equals(<span class="string">"A"</span>)) { doCommandA() }
+<span class="keyword">else</span> <span class="keyword">if</span> (value.equals(<span class="string">"B"</span>)) { doCommandB() } 
+<span class="keyword">else</span> <span class="keyword">if</span> etc.
+</code></pre>
+<p>我们可以使用命令模式来解决，先创建一个接口：</p>
+<pre><code class="swift"><span class="keyword">public</span> interface <span class="type">Command</span> {
+     void exec();
+}
+</code></pre>
+<p>然后<code>CommandA</code>和<code>CommandB</code>类实现这个接口：</p>
+<pre><code class="swift"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommandA</span>() <span class="title">implements</span> <span class="title">Command</span> </span>{
+
+     void exec() {
+          <span class="comment">// ... </span>
+     }
+}
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommandB</span>() <span class="title">implements</span> <span class="title">Command</span> </span>{
+
+     void exec() {
+          <span class="comment">// ...</span>
+     }
+}
+</code></pre>
+<p>然后创建一个<code>Map&lt;String,Command&gt;</code>,并且往其中添加Command实例：</p>
+<pre><code class="swift">commandMap.put(<span class="string">"A"</span>, new <span class="type">CommandA</span>());
+commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB</span>());
+</code></pre>
+<p>然后所有的<strong>if/else if</strong>，就都会变成：</p>
+<pre><code class="swift">commandMap.<span class="keyword">get</span>(value).exec();
+</code></pre>
+<p>如果某个Command有任何的改变只需要改动某个具体的类即可，如果有新加的Command，那么只需要添加响应的Command即可。如果不知道这是命令模式，请参考相关资料。</p>
+<h2 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h2><p>如果我们if之后的代码格式是一样的，比如：</p>
+<pre><code class="swift"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>{
+    <span class="keyword">public</span> double calculateInsurance(double income) {
+        <span class="keyword">if</span> (income &lt;= <span class="number">10000</span>) {
+            <span class="keyword">return</span> income*<span class="number">0.365</span>;
+        } <span class="keyword">else</span> <span class="keyword">if</span> (income &lt;= <span class="number">30000</span>) {
+            <span class="keyword">return</span> (income-<span class="number">10000</span>)*<span class="number">0.2</span>+<span class="number">35600</span>;
+        } <span class="keyword">else</span> <span class="keyword">if</span> (income &lt;= <span class="number">60000</span>) {
+            <span class="keyword">return</span> (income-<span class="number">30000</span>)*<span class="number">0.1</span>+<span class="number">76500</span>;
+        } <span class="keyword">else</span> {
+            <span class="keyword">return</span> (income-<span class="number">60000</span>)*<span class="number">0.02</span>+<span class="number">105600</span>;
+        }
+
+    }
+}
+</code></pre>
+<p>那么我们就可以将每个if分支中的代码单独分离到各个类中，然后再抽出一个父类，这样我们每个条件分支中就不会有很多代码了：</p>
+<pre><code class="swift"><span class="keyword">public</span> abstract <span class="class"><span class="keyword">class</span> <span class="title">InsuranceStrategy</span> </span>{
+    <span class="keyword">public</span> double calculateInsuranceVeryHigh(double income) {
+        <span class="keyword">return</span> (income - getAdjustment()) * getWeight() + getConstant();
+    }
+
+    <span class="keyword">public</span> abstract int getConstant();
+    <span class="keyword">public</span> abstract double getWeight();
+    <span class="keyword">public</span> abstract int getAdjustment();
+}
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InsuranceStrategyMedium</span> <span class="title">extends</span> <span class="title">InsuranceStrategy</span> </span>{
+    @<span class="type">Override</span>
+    <span class="keyword">public</span> int getConstant() {
+        <span class="keyword">return</span> <span class="number">35600</span>;
+    }
+
+    @<span class="type">Override</span>
+    <span class="keyword">public</span> double getWeight() {
+        <span class="keyword">return</span> <span class="number">0.2</span>;
+    }
+
+    @<span class="type">Override</span>
+    <span class="keyword">public</span> int getAdjustment() {
+        <span class="keyword">return</span> <span class="number">10000</span>;
+    }
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>{
+    <span class="keyword">private</span> <span class="type">InsuranceStrategy</span> strategy;
+    <span class="keyword">public</span> double calculateInsurance(double income) {
+        <span class="keyword">if</span> (income &lt;= <span class="number">10000</span>) {
+            strategy = new <span class="type">InsuranceStrategyLow</span>();
+            <span class="keyword">return</span> strategy.calculate(income);
+        } <span class="keyword">else</span> <span class="keyword">if</span> (income &lt;= <span class="number">30000</span>) {
+            strategy = new <span class="type">InsuranceStrategyMedium</span>();
+            <span class="keyword">return</span> strategy.calculate(income);
+        } <span class="keyword">else</span> <span class="keyword">if</span> (income &lt;= <span class="number">60000</span>) {
+            strategy = new <span class="type">InsuranceStrategyHigh</span>();
+            <span class="keyword">return</span> strategy.calculate(income);
+        } <span class="keyword">else</span> {
+            strategy = new <span class="type">InsuranceStrategyVeryHigh</span>();
+            <span class="keyword">return</span> strategy.calculate(income);
+        }
+    }
+}
+</code></pre>
+<h2 id="工厂方法"><a href="#工厂方法" class="headerlink" title="工厂方法"></a>工厂方法</h2><h2 id="责任链模式"><a href="#责任链模式" class="headerlink" title="责任链模式"></a>责任链模式</h2><h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><blockquote>
+<p>小结：其实上述的每种方式都是利用多态来解决分支带来的僵化。</p>
+</blockquote>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
 <li><a href="https://stackoverflow.com/questions/10175805/how-to-avoid-a-lot-of-if-else-conditions" target="_blank" rel="external">https://stackoverflow.com/questions/10175805/how-to-avoid-a-lot-of-if-else-conditions</a></li>
 <li><a href="https://stackoverflow.com/questions/271526/avoiding-null-statements?rq=1" target="_blank" rel="external">https://stackoverflow.com/questions/271526/avoiding-null-statements?rq=1</a></li>
 <li><a href="https://stackoverflow.com/questions/14136721/converting-many-if-else-statements-to-a-cleaner-approach" target="_blank" rel="external">https://stackoverflow.com/questions/14136721/converting-many-if-else-statements-to-a-cleaner-approach</a></li>
 <li><a href="https://www.youtube.com/watch?v=4F72VULWFvc" target="_blank" rel="external">https://www.youtube.com/watch?v=4F72VULWFvc</a></li>
 <li><a href="https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements" target="_blank" rel="external">https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements</a></li>
-<li><a href="https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-java/1199677#1199677" target="_blank" rel="external">https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-java/1199677#1199677</a></li>
+<li><a href="https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-swift/1199677#1199677" target="_blank" rel="external">https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-swift/1199677#1199677</a></li>
+<li><a href="https://industriallogic.com/xp/refactoring/conditionalWithStrategy.html" target="_blank" rel="external">https://industriallogic.com/xp/refactoring/conditionalWithStrategy.html</a></li>
 </ol>
-<p>how to avoid too many if else in java</p>
+<p>how to avoid too many if else in swift</p>
 
           
         
@@ -2415,206 +2822,6 @@ composedLayout.layout(<span class="keyword">in</span>: rect)
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/11/vapor-prepare-data-base/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/11/vapor-prepare-data-base/" itemprop="url">Swift后端Vapor安装数据库</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-11T09:52:02+08:00">
-                2017-08-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><img src="http://upload-images.jianshu.io/upload_images/1513759-b14c0ae08140a1d3.png" alt="MySQL"></p>
-<p>Vapor中使用<code>Fluent</code>作为数据库的驱动，它现在可支持的数据库类型有：MySQL，SQL lite，MongoDB，PostgreSQL。因为MySQL用得较多，我们先来学习它。</p>
-<h2 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h2><h3 id="安装MySQL-Provider"><a href="#安装MySQL-Provider" class="headerlink" title="安装MySQL-Provider"></a>安装<code>MySQL-Provider</code></h3><p>在<code>Package.swift</code>文件中加入</p>
-<pre><code>.Package(url: &quot;https://github.com/vapor/mysql-provider.git&quot;, majorVersion: 2)
-</code></pre><p>然后执行执行<code>vapor clean</code>和<code>rm -rf .build Package.pins</code>，最后执行<code>vapor update</code>和<code>vapor build</code>。<br>安装完MySql之后报错<code>mysql/mysql.h file not found</code>以及<code>Could not build Objective-C module CMySQL</code>，这时因为MySql数据库需要更新，执行下面的指令</p>
-<pre><code>brew update &amp;&amp; brew install mysql vapor/tap/cmysql pkg-config
-</code></pre><p>然后再执行<code>vapor xcode</code>就可以运行成功了。</p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="在Droplet中添加驱动"><a href="#在Droplet中添加驱动" class="headerlink" title="在Droplet中添加驱动"></a>在Droplet中添加驱动</h3><p>我们要往<code>Config</code>对象中添加相应的<code>Provider</code>，如下所示</p>
-<pre><code class="Swift"><span class="keyword">import</span> MySQLProvider
-<span class="keyword">let</span> config = <span class="keyword">try</span> <span class="type">Config</span>()
-<span class="keyword">try</span> config.addProvider(<span class="type">MySQLProvider</span>.<span class="type">Provider</span>.<span class="keyword">self</span>)
-<span class="keyword">let</span> drop = <span class="keyword">try</span> <span class="type">Droplet</span>(config)
-</code></pre>
-<h3 id="配置Fluent"><a href="#配置Fluent" class="headerlink" title="配置Fluent"></a>配置Fluent</h3><p>在<code>fluent.json</code>文件中加入如下的配置</p>
-<pre><code>{
-    &quot;//&quot;: &quot;The underlying database technology to use.&quot;,
-    &quot;//&quot;: &quot;memory: SQLite in-memory DB.&quot;,
-    &quot;//&quot;: &quot;sqlite: Persisted SQLite DB (configure with sqlite.json)&quot;,
-    &quot;//&quot;: &quot;Other drivers are available through Vapor providers&quot;,
-    &quot;//&quot;: &quot;https://github.com/search?q=topic:vapor-provider+topic:database&quot;,
-    &quot;driver&quot;: &quot;mysql&quot;,
-}
-</code></pre><h3 id="配置MySQL"><a href="#配置MySQL" class="headerlink" title="配置MySQL"></a>配置MySQL</h3><p>在Config文件夹下面新建文件<code>mysql.json</code>，并添加如下内容</p>
-<pre><code>{
-    &quot;hostname&quot;: &quot;localhost&quot;,
-    &quot;user&quot;: &quot;root&quot;,
-    &quot;password&quot;: &quot;yourPassword&quot;,
-    &quot;database&quot;: &quot;yourDatabase&quot;
-    &quot;poort&quot;: &quot;3306&quot;
-}      
-</code></pre><p>也可以将证书作为url传入MySQL。</p>
-<pre><code>{
-&quot;url&quot;: &quot;http://root:password@172.0.0.1/hello&quot;
-}
-</code></pre><h3 id="多份读取（Read-Replicas）"><a href="#多份读取（Read-Replicas）" class="headerlink" title="多份读取（Read Replicas）"></a>多份读取（Read Replicas）</h3><p>多份读取可以通过配置hostname或者是<code>readReplicas</code>接口数组来进行配置。在mysql.josn中加入：</p>
-<pre><code>{
-   {
-    &quot;master&quot;: &quot;master.mysql.foo.com&quot;,
-    &quot;readReplicas&quot;: [&quot;read01.mysql.foo.com&quot;, &quot;read02.mysql.foo.com&quot;],
-    &quot;user&quot;: &quot;root&quot;,
-    &quot;password&quot;: &quot;password&quot;,
-    &quot;database&quot;: &quot;hello&quot;
-   }
-}
-</code></pre><p><em>Tip:也可以将readReplicas用字符串表示，多个字符串用逗号分隔开。</em></p>
-<h3 id="驱动"><a href="#驱动" class="headerlink" title="驱动"></a>驱动</h3><p>你可以在Routes中得到<code>MySQL Driver</code>（前提是在你自己的MySQL数据库中创建了<code>your_table</code>)表。</p>
-<pre><code class="Swift"><span class="keyword">import</span> MySQLProvider
-<span class="keyword">get</span>(<span class="string">"mysql"</span>) { req <span class="keyword">in</span>
-
-           <span class="keyword">let</span> mysqlDriver = <span class="keyword">try</span> <span class="keyword">self</span>.mysql()
-           <span class="keyword">let</span> user = <span class="keyword">try</span> mysqlDriver.raw(<span class="string">"SELECT * FROM your_table"</span>)
-           <span class="keyword">let</span> reusltJon = <span class="keyword">try</span> <span class="type">JSON</span>(node: user)
-           <span class="keyword">return</span> reusltJon
-
-       }
-</code></pre>
-<p>然后在浏览器中输入<code>http://localhost:8080/mysql</code>，如果看到输出了相应的JSON传就证明安装成功了。</p>
-<h3 id="配置缓存"><a href="#配置缓存" class="headerlink" title="配置缓存"></a>配置缓存</h3><p>在<code>Config/droplet.json</code>里面可以配置<code>fluent</code>缓存，这里<code>fluent</code>缓存走的是<code>mysql</code>：</p>
-<pre><code class="Swift">{
- <span class="string">"driver"</span>: <span class="string">"fluent"</span>
-}
-</code></pre>
-<p>下次，当启动Droplet的时候，如果出现：</p>
-<pre><code class="bash">Database prepared
-</code></pre>
-<p>就说明安装成功了。</p>
-<h2 id="帮助"><a href="#帮助" class="headerlink" title="帮助"></a>帮助</h2><ol>
-<li>如果运行出现 </li>
-</ol>
-<pre><code class="bash">The current <span class="built_in">hash</span> key <span class="string">"0000000000000000"</span> is not secure.
-Update hash.key <span class="keyword">in</span> Config/crypto.json before using <span class="keyword">in</span> production.
-Use `openssl rand -base64 &lt;length&gt;` to generate a random string.
-The current cipher key <span class="string">"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="</span> is not secure.
-Update cipher.key <span class="keyword">in</span> Config/crypto.json before using <span class="keyword">in</span> production.
-Use `openssl rand -base64 32` to generate a random string.
-</code></pre>
-<p>这说明我们需要运行<code>openssl rand -base64 &lt;length&gt;</code>，以及<code>openssl rand -base64 32</code>来产生新的hash key和cipher key，并且将原来的数值替换掉。</p>
-<ol>
-<li>MySql更改密码：</li>
-</ol>
-<p>请参考：</p>
-<ol>
-<li><a href="https://stackoverflow.com/questions/2101694/mysql-how-to-set-root-password-to-null" target="_blank" rel="external">https://stackoverflow.com/questions/2101694/mysql-how-to-set-root-password-to-null</a> </li>
-<li><a href="https://stackoverflow.com/questions/30692812/mysql-user-db-does-not-have-password-columns-installing-mysql-on-osx" target="_blank" rel="external">https://stackoverflow.com/questions/30692812/mysql-user-db-does-not-have-password-columns-installing-mysql-on-osx</a></li>
-<li><a href="https://sraji.wordpress.com/2011/08/10/how-to-reset-mysql-root-password/" target="_blank" rel="external">https://sraji.wordpress.com/2011/08/10/how-to-reset-mysql-root-password/</a></li>
-<li><a href="https://stackoverflow.com/questions/9624774/after-mysql-install-via-brew-i-get-the-error-the-server-quit-without-updating" target="_blank" rel="external">https://stackoverflow.com/questions/9624774/after-mysql-install-via-brew-i-get-the-error-the-server-quit-without-updating</a></li>
-<li><a href="https://stackoverflow.com/questions/9624774/after-mysql-install-via-brew-i-get-the-error-the-server-quit-without-updating/9704993#comment16367803_9704993" target="_blank" rel="external">https://stackoverflow.com/questions/9624774/after-mysql-install-via-brew-i-get-the-error-the-server-quit-without-updating/9704993#comment16367803_9704993</a></li>
-</ol>
-<p>需要注意的是：<em><code>sudo mysqld_safe --skip-grant-tables</code>执行完之后，要重新打开一个终端执行</em>。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2665,7 +2872,7 @@ Use `openssl rand -base64 32` to generate a random string.
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -2678,7 +2885,7 @@ Use `openssl rand -base64 32` to generate a random string.
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>

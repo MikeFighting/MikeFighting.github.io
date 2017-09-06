@@ -107,7 +107,7 @@
 <meta property="og:site_name" content="击水湘江">
 <meta property="og:description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    @Synchronized fun findSubscribeMethods(subscriber: Any) {">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-09-05T12:05:04.000Z">
+<meta property="og:updated_time" content="2017-09-06T06:28:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="聊聊if else">
 <meta name="twitter:description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    @Synchronized fun findSubscribeMethods(subscriber: Any) {">
@@ -373,23 +373,23 @@
       
         <p>if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。</p>
 <h3 id="为什么太多的if-else不好？"><a href="#为什么太多的if-else不好？" class="headerlink" title="为什么太多的if else不好？"></a>为什么太多的if else不好？</h3><p>我们先看一个例子：</p>
-<pre><code class="java">   <span class="meta">@Synchronized</span> <span class="function">fun <span class="title">findSubscribeMethods</span><span class="params">(subscriber: Any)</span> </span>{
-    var clazz: Class&lt;*&gt;? = subscriber.<span class="function">javaClass
-    <span class="title">while</span> <span class="params">(clazz != <span class="keyword">null</span> &amp;&amp; !isSystemClass(clazz.name)</span>) </span>{
-        val allMethods = clazz.<span class="function">declaredMethods
-        <span class="title">for</span> <span class="params">(method in allMethods)</span> </span>{
-            val annotation = method.getAnnotation(Subscriber::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)
-            <span class="title">if</span> (<span class="title">annotation</span> !</span>= <span class="keyword">null</span>) {
+<pre><code class="swift">   @<span class="type">Synchronized</span> fun findSubscribeMethods(subscriber: <span class="type">Any</span>) {
+    <span class="keyword">var</span> clazz: <span class="type">Class</span>&lt;*&gt;? = subscriber.swiftClass
+    <span class="keyword">while</span> (clazz != null &amp;&amp; !isSystemClass(clazz.name)) {
+        val allMethods = clazz.declaredMethods
+        <span class="keyword">for</span> (method <span class="keyword">in</span> allMethods) {
+            val annotation = method.getAnnotation(<span class="type">Subscriber</span>::<span class="class"><span class="keyword">class</span>.<span class="title">swift</span>)
+            <span class="title">if</span> (<span class="title">annotation</span> != <span class="title">null</span>) </span>{
                 <span class="comment">// 获取方法参数</span>
                 val paramsTypeClass = method.parameterTypes
                 <span class="comment">// 订阅函数只支持一个参数</span>
-                <span class="keyword">if</span> (paramsTypeClass != <span class="keyword">null</span> &amp;&amp; paramsTypeClass.size == <span class="number">1</span>) {
+                <span class="keyword">if</span> (paramsTypeClass != null &amp;&amp; paramsTypeClass.size == <span class="number">1</span>) {
                     val paramsEvent = paramsTypeClass[<span class="number">0</span>]
                     <span class="keyword">if</span> (isImplementIEvent(paramsEvent)) {
-                        method.isAccessible = <span class="keyword">true</span>
-                        <span class="meta">@Suppress</span>(<span class="string">"UNCHECKED_CAST"</span>)
-                        val eventType = EventType(paramsEvent as Class&lt;IEvent&gt;, annotation.tag)
-                        val subscription = Subscription(WeakReference(subscriber), method, annotation.mode)
+                        method.isAccessible = <span class="literal">true</span>
+                        @<span class="type">Suppress</span>(<span class="string">"UNCHECKED_CAST"</span>)
+                        val eventType = <span class="type">EventType</span>(paramsEvent <span class="keyword">as</span> <span class="type">Class</span>&lt;<span class="type">IEvent</span>&gt;, annotation.tag)
+                        val subscription = <span class="type">Subscription</span>(<span class="type">WeakReference</span>(subscriber), method, annotation.mode)
                         subscribe(eventType, subscription)
                     }
                 }
@@ -400,7 +400,7 @@
 }
 </code></pre>
 <p>这个方法里面仅仅嵌套了三层if。但是一眼看过去就会感觉很不爽，再看一个例子：</p>
-<pre><code class="java"><span class="keyword">if</span>(isSkipPPUForQA &amp;&amp; StringUtils.isNotBlank(request.getParameter(<span class="string">"userId"</span>))){
+<pre><code class="swift"><span class="keyword">if</span>(isSkipPPUForQA &amp;&amp; <span class="type">StringUtils</span>.isNotBlank(request.getParameter(<span class="string">"userId"</span>))){
     <span class="keyword">super</span>.doFilter(request, response, chain);
 }<span class="keyword">else</span> {
     <span class="keyword">try</span> {
@@ -408,56 +408,156 @@
             <span class="keyword">super</span>.doFilter(request, response, chain);
         }<span class="keyword">else</span>{
             <span class="keyword">if</span>(!filterReqUrl(request)) {
-                <span class="keyword">long</span> ppuUserId = PassportService.passportService.getLoginUserId(RemoteValid.SAPCE_ONE_HOUR, request, response);
+                long ppuUserId = <span class="type">PassportService</span>.passportService.getLoginUserId(<span class="type">RemoteValid</span>.<span class="type">SAPCE_ONE_HOUR</span>, request, response);
                 <span class="keyword">if</span> (ppuUserId &lt; <span class="number">2</span>) {
-                    response.getWriter().write(<span class="keyword">this</span>.generateResponse(AppResultStateEnum.PPU_UNVALID.getCodeStr(), <span class="string">"登录认证信息已过期，请重新登录"</span>));
-                    log.error(<span class="string">"ppu返回的userId:"</span> + ppuUserId + <span class="string">",ppu过期,ppu="</span> + PPUCookieUtil.getPpuCookie(request) + <span class="string">",url="</span> + request.getRequestURI());
+                    response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">PPU_UNVALID</span>.getCodeStr(), <span class="string">"登录认证信息已过期，请重新登录"</span>));
+                    log.error(<span class="string">"ppu返回的userId:"</span> + ppuUserId + <span class="string">",ppu过期,ppu="</span> + <span class="type">PPUCookieUtil</span>.getPpuCookie(request) + <span class="string">",url="</span> + request.getRequestURI());
                     log.error(<span class="string">"imei="</span> + request.getParameter(<span class="string">"imei"</span>) + <span class="string">",version="</span> + request.getParameter(<span class="string">"version"</span>) + <span class="string">",platform="</span> + request.getParameter(<span class="string">"platform"</span>));
                 } <span class="keyword">else</span> {
-                    <span class="keyword">boolean</span> flag = isTouchSingleDeviceLimitWithoutLogin(ppuUserId, request);
+                    boolean flag = isTouchSingleDeviceLimitWithoutLogin(ppuUserId, request);
                     <span class="keyword">if</span> (flag) {
-                        String singleDeviceLoginContent = configComp.getValueByConfigTable(ConfigEnum.APP_SINGLE_DEVICE_LOGIN_CONTENT);
-                        <span class="keyword">boolean</span> isH5 = <span class="string">"1"</span>.equals(request.getParameter(<span class="string">"isH5"</span>));
+                        <span class="type">String</span> singleDeviceLoginContent = configComp.getValueByConfigTable(<span class="type">ConfigEnum</span>.<span class="type">APP_SINGLE_DEVICE_LOGIN_CONTENT</span>);
+                        boolean isH5 = <span class="string">"1"</span>.equals(request.getParameter(<span class="string">"isH5"</span>));
                         <span class="keyword">if</span>(isH5){
-                            String jsAjaxHeader = request.getHeader(<span class="string">"X-Requested-With"</span>);
-                            <span class="keyword">if</span>(<span class="string">"XMLHttpRequest"</span>.equals(jsAjaxHeader)){response.getWriter().write(<span class="keyword">this</span>.generateResponse(AppResultStateEnum.SINGLE_DEVICE_LOGIN.getCodeStr(), singleDeviceLoginContent));
+                            <span class="type">String</span> jsAjaxHeader = request.getHeader(<span class="string">"X-Requested-With"</span>);
+                            <span class="keyword">if</span>(<span class="string">"XMLHttpRequest"</span>.equals(jsAjaxHeader)){response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">SINGLE_DEVICE_LOGIN</span>.getCodeStr(), singleDeviceLoginContent));
                             }<span class="keyword">else</span> {
                              renderSingleDeviceHtml(response,<span class="string">"/single_device_error"</span>);
                             }
                         }<span class="keyword">else</span> {
-                            response.getWriter().write(<span class="keyword">this</span>.generateResponse(AppResultStateEnum.SINGLE_DEVICE_LOGIN.getCodeStr(), singleDeviceLoginContent));
+                            response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">SINGLE_DEVICE_LOGIN</span>.getCodeStr(), singleDeviceLoginContent));
                         }
                         log.error(<span class="string">"触发单设备登录限制,userId="</span> + ppuUserId + <span class="string">" , imei="</span> + request.getParameter(<span class="string">"imei"</span>) + <span class="string">" , platform="</span> + request.getParameter(<span class="string">"platform"</span>));
                     } <span class="keyword">else</span> {
-                        request.addParameter(<span class="string">"userId"</span>, <span class="keyword">new</span> String[]{ppuUserId + <span class="string">""</span>});
+                        request.addParameter(<span class="string">"userId"</span>, new <span class="type">String</span>[]{ppuUserId + <span class="string">""</span>});
                         <span class="keyword">super</span>.doFilter(request, response, chain);
                     }
                 }
             }
         }
-    } <span class="keyword">catch</span> (Exception e) {
+    } <span class="keyword">catch</span> (<span class="type">Exception</span> e) {
         logger.error(<span class="string">"业务处理异常,url="</span>+request.getRequestURI(),e);
     }
 }
 </code></pre>
 <p>这个方法中嵌套了七层的if else。<br>那么究竟在代码中写很多的if else有哪些弊端呢？</p>
 <ul>
-<li><strong>难扩展</strong>：如果再有更多情况的时候，我们需要在原来的地方写更多的if…else if条件。也就是说你需要去改动原来的代码，然后重新编译，重新部署，这是很浪费时间的。并且这违背了面向对象中的<strong>开放封闭原则</strong>：对扩展开放，对修改封闭。</li>
+<li><strong>僵化</strong>：如果再有更多情况的时候，我们需要在原来的地方写更多的if…else if条件。也就是说你需要去改动原来的代码，然后重新编译，重新部署，这是很浪费时间的。并且这违背了面向对象中的<strong>开放封闭原则</strong>：对扩展开放，对修改封闭。同时由于这个类需要处理各种业务，职责太多，所以也违背了<strong>职责单一原则。</strong></li>
 <li><strong>效率低下</strong>：很多系统的类，比如<code>HashMaps</code>，<code>Properties</code>等，都非常注意基于数据的条件判断。</li>
-<li><strong>难以阅读</strong>：像这种层层If else嵌套的情况，如果其他人需要来看，并且维护这份代码，由于难阅读，他们会感觉吃力。试想下，如果段代码很长，一个屏看不完，那肯定是维护的灾难。</li>
-<li><strong>难维护</strong>：If else不像switch case，它的每个分支都和其它分支有关系，如果需求变更，在修改某个分支之前要看懂其它所有分支，确保不会对其它分支造成影响。</li>
+<li><strong>难以阅读</strong>：像这种层层if else嵌套的情况，如果其他人需要来看，并且维护这份代码，由于难阅读，他们会感觉吃力。试想下，如果段代码很长，一个屏看不完，那肯定是维护的灾难。</li>
+<li><strong>难维护</strong>：if else不像switch case，它的每个分支都和其它分支有关系，如果需求变更，在修改某个分支之前要看懂其它所有分支，确保不会对其它分支造成影响。</li>
 <li><strong>难调试</strong>：很多if else，调试过程中需要一步步跟进，会影响调试效率。</li>
+<li><strong>难测试</strong>：每次我们写测试用例的Case，针对每个有很多if else的方法，我们要对每个分支都写一个测试，这样下来这个测试用例将会变得非常长。</li>
 </ul>
-<p>怎样解决：</p>
-<h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><h2 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h2><h2 id="工厂方法"><a href="#工厂方法" class="headerlink" title="工厂方法"></a>工厂方法</h2><h2 id="责任链模式"><a href="#责任链模式" class="headerlink" title="责任链模式"></a>责任链模式</h2><h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
+<p>那么我们怎样来解决这种情况，因为遇到不同的情况需要用不同的解决方案，我们逐个来分析：</p>
+<h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><p><strong>如果我们有几个判断条件是平级if，那么我们可以使用命令模式来解决这种问题。</strong>比如我们现在有如下的if else：</p>
+<pre><code class="swift"><span class="keyword">if</span> (value.equals(<span class="string">"A"</span>)) { doCommandA() }
+<span class="keyword">else</span> <span class="keyword">if</span> (value.equals(<span class="string">"B"</span>)) { doCommandB() } 
+<span class="keyword">else</span> <span class="keyword">if</span> etc.
+</code></pre>
+<p>我们可以使用命令模式来解决，先创建一个接口：</p>
+<pre><code class="swift"><span class="keyword">public</span> interface <span class="type">Command</span> {
+     void exec();
+}
+</code></pre>
+<p>然后<code>CommandA</code>和<code>CommandB</code>类实现这个接口：</p>
+<pre><code class="swift"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommandA</span>() <span class="title">implements</span> <span class="title">Command</span> </span>{
+
+     void exec() {
+          <span class="comment">// ... </span>
+     }
+}
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommandB</span>() <span class="title">implements</span> <span class="title">Command</span> </span>{
+
+     void exec() {
+          <span class="comment">// ...</span>
+     }
+}
+</code></pre>
+<p>然后创建一个<code>Map&lt;String,Command&gt;</code>,并且往其中添加Command实例：</p>
+<pre><code class="swift">commandMap.put(<span class="string">"A"</span>, new <span class="type">CommandA</span>());
+commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB</span>());
+</code></pre>
+<p>然后所有的<strong>if/else if</strong>，就都会变成：</p>
+<pre><code class="swift">commandMap.<span class="keyword">get</span>(value).exec();
+</code></pre>
+<p>如果某个Command有任何的改变只需要改动某个具体的类即可，如果有新加的Command，那么只需要添加响应的Command即可。如果不知道这是命令模式，请参考相关资料。</p>
+<h2 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h2><p>如果我们if之后的代码格式是一样的，比如：</p>
+<pre><code class="swift"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>{
+    <span class="keyword">public</span> double calculateInsurance(double income) {
+        <span class="keyword">if</span> (income &lt;= <span class="number">10000</span>) {
+            <span class="keyword">return</span> income*<span class="number">0.365</span>;
+        } <span class="keyword">else</span> <span class="keyword">if</span> (income &lt;= <span class="number">30000</span>) {
+            <span class="keyword">return</span> (income-<span class="number">10000</span>)*<span class="number">0.2</span>+<span class="number">35600</span>;
+        } <span class="keyword">else</span> <span class="keyword">if</span> (income &lt;= <span class="number">60000</span>) {
+            <span class="keyword">return</span> (income-<span class="number">30000</span>)*<span class="number">0.1</span>+<span class="number">76500</span>;
+        } <span class="keyword">else</span> {
+            <span class="keyword">return</span> (income-<span class="number">60000</span>)*<span class="number">0.02</span>+<span class="number">105600</span>;
+        }
+
+    }
+}
+</code></pre>
+<p>那么我们就可以将每个if分支中的代码单独分离到各个类中，然后再抽出一个父类，这样我们每个条件分支中就不会有很多代码了：</p>
+<pre><code class="swift"><span class="keyword">public</span> abstract <span class="class"><span class="keyword">class</span> <span class="title">InsuranceStrategy</span> </span>{
+    <span class="keyword">public</span> double calculateInsuranceVeryHigh(double income) {
+        <span class="keyword">return</span> (income - getAdjustment()) * getWeight() + getConstant();
+    }
+
+    <span class="keyword">public</span> abstract int getConstant();
+    <span class="keyword">public</span> abstract double getWeight();
+    <span class="keyword">public</span> abstract int getAdjustment();
+}
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InsuranceStrategyMedium</span> <span class="title">extends</span> <span class="title">InsuranceStrategy</span> </span>{
+    @<span class="type">Override</span>
+    <span class="keyword">public</span> int getConstant() {
+        <span class="keyword">return</span> <span class="number">35600</span>;
+    }
+
+    @<span class="type">Override</span>
+    <span class="keyword">public</span> double getWeight() {
+        <span class="keyword">return</span> <span class="number">0.2</span>;
+    }
+
+    @<span class="type">Override</span>
+    <span class="keyword">public</span> int getAdjustment() {
+        <span class="keyword">return</span> <span class="number">10000</span>;
+    }
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>{
+    <span class="keyword">private</span> <span class="type">InsuranceStrategy</span> strategy;
+    <span class="keyword">public</span> double calculateInsurance(double income) {
+        <span class="keyword">if</span> (income &lt;= <span class="number">10000</span>) {
+            strategy = new <span class="type">InsuranceStrategyLow</span>();
+            <span class="keyword">return</span> strategy.calculate(income);
+        } <span class="keyword">else</span> <span class="keyword">if</span> (income &lt;= <span class="number">30000</span>) {
+            strategy = new <span class="type">InsuranceStrategyMedium</span>();
+            <span class="keyword">return</span> strategy.calculate(income);
+        } <span class="keyword">else</span> <span class="keyword">if</span> (income &lt;= <span class="number">60000</span>) {
+            strategy = new <span class="type">InsuranceStrategyHigh</span>();
+            <span class="keyword">return</span> strategy.calculate(income);
+        } <span class="keyword">else</span> {
+            strategy = new <span class="type">InsuranceStrategyVeryHigh</span>();
+            <span class="keyword">return</span> strategy.calculate(income);
+        }
+    }
+}
+</code></pre>
+<h2 id="工厂方法"><a href="#工厂方法" class="headerlink" title="工厂方法"></a>工厂方法</h2><h2 id="责任链模式"><a href="#责任链模式" class="headerlink" title="责任链模式"></a>责任链模式</h2><h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><blockquote>
+<p>小结：其实上述的每种方式都是利用多态来解决分支带来的僵化。</p>
+</blockquote>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
 <li><a href="https://stackoverflow.com/questions/10175805/how-to-avoid-a-lot-of-if-else-conditions" target="_blank" rel="external">https://stackoverflow.com/questions/10175805/how-to-avoid-a-lot-of-if-else-conditions</a></li>
 <li><a href="https://stackoverflow.com/questions/271526/avoiding-null-statements?rq=1" target="_blank" rel="external">https://stackoverflow.com/questions/271526/avoiding-null-statements?rq=1</a></li>
 <li><a href="https://stackoverflow.com/questions/14136721/converting-many-if-else-statements-to-a-cleaner-approach" target="_blank" rel="external">https://stackoverflow.com/questions/14136721/converting-many-if-else-statements-to-a-cleaner-approach</a></li>
 <li><a href="https://www.youtube.com/watch?v=4F72VULWFvc" target="_blank" rel="external">https://www.youtube.com/watch?v=4F72VULWFvc</a></li>
 <li><a href="https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements" target="_blank" rel="external">https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements</a></li>
-<li><a href="https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-java/1199677#1199677" target="_blank" rel="external">https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-java/1199677#1199677</a></li>
+<li><a href="https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-swift/1199677#1199677" target="_blank" rel="external">https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-swift/1199677#1199677</a></li>
+<li><a href="https://industriallogic.com/xp/refactoring/conditionalWithStrategy.html" target="_blank" rel="external">https://industriallogic.com/xp/refactoring/conditionalWithStrategy.html</a></li>
 </ol>
-<p>how to avoid too many if else in java</p>
+<p>how to avoid too many if else in swift</p>
 
       
     </div>
@@ -509,6 +609,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/06/google-the-clean-code-talks-inheritance/" rel="prev" title="代码整洁之道-继承，多态和测试">
+                代码整洁之道-继承，多态和测试 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -581,7 +685,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -594,7 +698,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>
@@ -629,7 +733,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么太多的if-else不好？"><span class="nav-number">1.</span> <span class="nav-text">为什么太多的if else不好？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令模式"><span class="nav-number"></span> <span class="nav-text">命令模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#策略模式"><span class="nav-number"></span> <span class="nav-text">策略模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂方法"><span class="nav-number"></span> <span class="nav-text">工厂方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#责任链模式"><span class="nav-number"></span> <span class="nav-text">责任链模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">1.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么太多的if-else不好？"><span class="nav-number">1.</span> <span class="nav-text">为什么太多的if else不好？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令模式"><span class="nav-number"></span> <span class="nav-text">命令模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#策略模式"><span class="nav-number"></span> <span class="nav-text">策略模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂方法"><span class="nav-number"></span> <span class="nav-text">工厂方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#责任链模式"><span class="nav-number"></span> <span class="nav-text">责任链模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多态"><span class="nav-number"></span> <span class="nav-text">多态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">1.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>
