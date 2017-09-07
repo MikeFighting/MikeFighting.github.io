@@ -107,7 +107,7 @@
 <meta property="og:site_name" content="击水湘江">
 <meta property="og:description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    @Synchronized fun findSubscribeMethods(subscriber: Any) {">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-09-06T06:28:04.000Z">
+<meta property="og:updated_time" content="2017-09-07T01:58:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="聊聊if else">
 <meta name="twitter:description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    @Synchronized fun findSubscribeMethods(subscriber: Any) {">
@@ -440,17 +440,26 @@
     }
 }
 </code></pre>
-<p>这个方法中嵌套了七层的if else。<br>那么究竟在代码中写很多的if else有哪些弊端呢？</p>
+<p>第一，这个方法中嵌套了七层的if else，层次太多。第二这个方法太长。嵌套层次过多和方法过长都是Bad Smell。那么究竟很多的if else有哪些弊端呢？</p>
 <ul>
-<li><strong>僵化</strong>：如果再有更多情况的时候，我们需要在原来的地方写更多的if…else if条件。也就是说你需要去改动原来的代码，然后重新编译，重新部署，这是很浪费时间的。并且这违背了面向对象中的<strong>开放封闭原则</strong>：对扩展开放，对修改封闭。同时由于这个类需要处理各种业务，职责太多，所以也违背了<strong>职责单一原则。</strong></li>
-<li><strong>效率低下</strong>：很多系统的类，比如<code>HashMaps</code>，<code>Properties</code>等，都非常注意基于数据的条件判断。</li>
-<li><strong>难以阅读</strong>：像这种层层if else嵌套的情况，如果其他人需要来看，并且维护这份代码，由于难阅读，他们会感觉吃力。试想下，如果段代码很长，一个屏看不完，那肯定是维护的灾难。</li>
-<li><strong>难维护</strong>：if else不像switch case，它的每个分支都和其它分支有关系，如果需求变更，在修改某个分支之前要看懂其它所有分支，确保不会对其它分支造成影响。</li>
-<li><strong>难调试</strong>：很多if else，调试过程中需要一步步跟进，会影响调试效率。</li>
-<li><strong>难测试</strong>：每次我们写测试用例的Case，针对每个有很多if else的方法，我们要对每个分支都写一个测试，这样下来这个测试用例将会变得非常长。</li>
+<li><p><strong>僵化</strong>：如果再有更多情况的时候，我们需要在原来的地方写更多的if…else if条件。也就是说你需要去改动原来的代码，然后重新编译，重新部署，这是很浪费时间的。并且这违背了面向对象中的<strong>开放封闭原则</strong>：对扩展开放，对修改封闭。同时由于这个类需要处理各种业务，职责太多，所以也违背了<strong>职责单一原则。</strong></p>
+</li>
+<li><p><strong>效率低下</strong>：很多系统的类，比如<code>HashMaps</code>，<code>Properties</code>等，都非常注意基于数据的条件判断。</p>
+</li>
+<li><p><strong>难阅读</strong>：像这种层层if else嵌套的情况，如果其他人需要来看，并且维护这份代码，由于难阅读，他们会感觉吃力。试想下，如果段代码很长，一个屏看不完，那肯定是维护的灾难。</p>
+</li>
+<li><p><strong>难维护</strong>：if else不像switch case，它的每个分支都和其它分支有关系，如果需求变更，在修改某个分支之前要看懂其它所有分支，确保不会对其它分支造成影响。</p>
+</li>
+<li><p><strong>难调试</strong>：很多if else，调试过程中需要一步步跟进，会影响调试效率。</p>
+</li>
+<li><p><strong>难测试</strong>：每次我们写测试用例的Case，针对每个有很多if else的方法，我们要对每个分支都写一个测试，这样下来这个测试用例将会变得非常长。</p>
+</li>
 </ul>
+<blockquote>
+<p>在任何面向对象语言中，都需要考虑移除分支控制逻辑（<code>if</code>以及<code>switch</code>，<code>case</code>）。移除的常用做法是将这些控制逻辑的方法移到一个类中。 <a href="https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements" target="_blank" rel="external">Quora,Simon Hayes</a></p>
+</blockquote>
 <p>那么我们怎样来解决这种情况，因为遇到不同的情况需要用不同的解决方案，我们逐个来分析：</p>
-<h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><p><strong>如果我们有几个判断条件是平级if，那么我们可以使用命令模式来解决这种问题。</strong>比如我们现在有如下的if else：</p>
+<h2 id="平行类的if-else处理方式–命令模式"><a href="#平行类的if-else处理方式–命令模式" class="headerlink" title="平行类的if else处理方式–命令模式"></a>平行类的if else处理方式–命令模式</h2><p><strong>如果我们有几个判断条件是平级if，那么我们可以使用命令模式来解决这种问题。</strong>比如我们现在有如下的if else：</p>
 <pre><code class="swift"><span class="keyword">if</span> (value.equals(<span class="string">"A"</span>)) { doCommandA() }
 <span class="keyword">else</span> <span class="keyword">if</span> (value.equals(<span class="string">"B"</span>)) { doCommandB() } 
 <span class="keyword">else</span> <span class="keyword">if</span> etc.
@@ -482,7 +491,7 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
 <pre><code class="swift">commandMap.<span class="keyword">get</span>(value).exec();
 </code></pre>
 <p>如果某个Command有任何的改变只需要改动某个具体的类即可，如果有新加的Command，那么只需要添加响应的Command即可。如果不知道这是命令模式，请参考相关资料。</p>
-<h2 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h2><p>如果我们if之后的代码格式是一样的，比如：</p>
+<h2 id="处理方式相似的if-else解决方式–策略模式"><a href="#处理方式相似的if-else解决方式–策略模式" class="headerlink" title="处理方式相似的if else解决方式–策略模式"></a>处理方式相似的if else解决方式–策略模式</h2><p>如果我们if之后的代码格式是一样的，比如：</p>
 <pre><code class="swift"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>{
     <span class="keyword">public</span> double calculateInsurance(double income) {
         <span class="keyword">if</span> (income &lt;= <span class="number">10000</span>) {
@@ -545,8 +554,103 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
     }
 }
 </code></pre>
-<h2 id="工厂方法"><a href="#工厂方法" class="headerlink" title="工厂方法"></a>工厂方法</h2><h2 id="责任链模式"><a href="#责任链模式" class="headerlink" title="责任链模式"></a>责任链模式</h2><h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><blockquote>
-<p>小结：其实上述的每种方式都是利用多态来解决分支带来的僵化。</p>
+<h2 id="区间类的if-else解决方案–责任链模式"><a href="#区间类的if-else解决方案–责任链模式" class="headerlink" title="区间类的if else解决方案–责任链模式"></a>区间类的if else解决方案–责任链模式</h2><p>如果客户端的if条件中表示的是范围，比如：</p>
+<pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>{
+
+    <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span> </span>{
+
+        Request request = <span class="keyword">new</span> Request();
+        request.addSalaryAmount = <span class="number">9999</span>;
+        <span class="keyword">if</span> (request.addSalaryAmount &lt;= <span class="number">100</span>){
+            DivisionManager divisionManager = <span class="keyword">new</span> DivisionManager();
+            divisionManager.accept();
+        }<span class="keyword">else</span> <span class="keyword">if</span> (request.addSalaryAmount &lt;= <span class="number">1000</span>){
+            Chief chief = <span class="keyword">new</span> Chief();
+            chief.accept();
+        }<span class="keyword">else</span> <span class="keyword">if</span> (request.addSalaryAmount &lt;= <span class="number">10000</span>){
+            GeneralManager generalManager  = <span class="keyword">new</span> GeneralManager();
+            generalManager.accept();
+        }<span class="keyword">else</span> {
+            System.out.println(<span class="string">"金额太大没人能批准"</span>);
+        }
+    }
+}
+</code></pre>
+<p>比如上面这个例子，不同的条件分支是让不同的对象来处理这种条件。并且以后可能Request对象会添加其他的请求属性，比如offWork（请假），并且这种请求属性同样需要<code>DivisionManager</code>，<code>Chief</code>，<code>GeneralManager</code>。然而其中的处理顺序变了，并不是现在的请求等级。可能是先由<code>Chief</code>处理，再有<code>GeneralManager</code>处理，最后有<code>DivisionManager</code>来处理，那怎么办呢？难道还要写一套if else吗？<br>这时候我们就可以用责任链模式来将这一长串if else嵌套进每一个对象中去，我们可以这样做：</p>
+<pre><code class="java"><span class="class"><span class="keyword">interface</span> <span class="title">ManagerCommand</span></span>{
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span></span>;
+}
+
+<span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">CommManager</span> <span class="keyword">implements</span> <span class="title">ManagerCommand</span> </span>{
+    <span class="keyword">public</span> CommManager superior;
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSuperior</span><span class="params">(CommManager superior)</span> </span>{
+        <span class="keyword">this</span>.superior = superior;
+    }
+}
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DivisionManager</span> <span class="keyword">extends</span> <span class="title">CommManager</span> </span>{
+
+    <span class="meta">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span> </span>{
+
+        <span class="keyword">if</span> (requestAmount&lt;<span class="number">100</span>){
+
+            System.out.println(<span class="string">"部门经理批准"</span>);
+
+        }<span class="keyword">else</span> <span class="keyword">if</span> ( <span class="keyword">this</span>.superior != <span class="keyword">null</span>){
+
+            <span class="keyword">this</span>.superior.accept(requestAmount);
+        }
+    }
+}
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chief</span> <span class="keyword">extends</span> <span class="title">CommManager</span></span>{
+
+
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span>  <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span>  </span>{
+
+        <span class="keyword">if</span> (requestAmount &lt; <span class="number">1000</span>){
+        System.out.println(<span class="string">"总监同意"</span>);
+        }<span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.superior != <span class="keyword">null</span>){
+
+            <span class="keyword">this</span>.superior.accept(requestAmount);
+        }
+    }
+}
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GeneralManager</span> <span class="keyword">extends</span> <span class="title">CommManager</span></span>{
+
+    <span class="meta">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span> </span>{
+
+        <span class="keyword">if</span> (requestAmount&lt;<span class="number">10000</span>){
+            System.out.println(<span class="string">"总经理批准"</span>);
+
+        }<span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.superior != <span class="keyword">null</span>){
+
+            <span class="keyword">this</span>.superior.accept(requestAmount);
+        }
+    }
+}
+</code></pre>
+<p>最后在Client端调用的时候，我们可以这样写：</p>
+<pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>{
+
+    <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span> </span>{
+
+        Request request = <span class="keyword">new</span> Request();
+        request.addSalaryAmount = <span class="number">999</span>;
+        DivisionManager divisionManager = <span class="keyword">new</span> DivisionManager();
+        Chief chief = <span class="keyword">new</span> Chief();
+        GeneralManager generalManager = <span class="keyword">new</span> GeneralManager();
+        divisionManager.setSuperior(chief);
+        chief.setSuperior(generalManager);
+        divisionManager.accept(request.addSalaryAmount);
+    }
+}
+</code></pre>
+<p>这种写法的好处是：<strong>将条件和处理某种条件的对象解耦，每个处理条件的对象都不知道其他对象，我们可以随时地增加或者修改处理一个请求的结构。这增加了给对象指派职责的灵活性</strong>。</p>
+<blockquote>
+<p>小结：其实上述的每种方式都是利用<strong>多态</strong>来解决分支带来的僵化，<a href="https://www.youtube.com/watch?v=4F72VULWFvc" target="_blank" rel="external">谷歌有一个视频对这个问题阐述的非常好</a>。</p>
 </blockquote>
 <h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
 <li><a href="https://stackoverflow.com/questions/10175805/how-to-avoid-a-lot-of-if-else-conditions" target="_blank" rel="external">https://stackoverflow.com/questions/10175805/how-to-avoid-a-lot-of-if-else-conditions</a></li>
@@ -556,8 +660,9 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
 <li><a href="https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements" target="_blank" rel="external">https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements</a></li>
 <li><a href="https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-swift/1199677#1199677" target="_blank" rel="external">https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-swift/1199677#1199677</a></li>
 <li><a href="https://industriallogic.com/xp/refactoring/conditionalWithStrategy.html" target="_blank" rel="external">https://industriallogic.com/xp/refactoring/conditionalWithStrategy.html</a></li>
+<li>大话设计模式</li>
+<li>重构改善既有代码的设计</li>
 </ol>
-<p>how to avoid too many if else in swift</p>
 
       
     </div>
@@ -733,7 +838,7 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么太多的if-else不好？"><span class="nav-number">1.</span> <span class="nav-text">为什么太多的if else不好？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令模式"><span class="nav-number"></span> <span class="nav-text">命令模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#策略模式"><span class="nav-number"></span> <span class="nav-text">策略模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂方法"><span class="nav-number"></span> <span class="nav-text">工厂方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#责任链模式"><span class="nav-number"></span> <span class="nav-text">责任链模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多态"><span class="nav-number"></span> <span class="nav-text">多态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">1.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么太多的if-else不好？"><span class="nav-number">1.</span> <span class="nav-text">为什么太多的if else不好？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#平行类的if-else处理方式–命令模式"><span class="nav-number"></span> <span class="nav-text">平行类的if else处理方式–命令模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理方式相似的if-else解决方式–策略模式"><span class="nav-number"></span> <span class="nav-text">处理方式相似的if else解决方式–策略模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#区间类的if-else解决方案–责任链模式"><span class="nav-number"></span> <span class="nav-text">区间类的if else解决方案–责任链模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">1.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>
