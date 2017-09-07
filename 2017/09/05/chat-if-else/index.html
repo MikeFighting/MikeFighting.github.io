@@ -107,7 +107,7 @@
 <meta property="og:site_name" content="击水湘江">
 <meta property="og:description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    @Synchronized fun findSubscribeMethods(subscriber: Any) {">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-09-07T01:58:39.000Z">
+<meta property="og:updated_time" content="2017-09-07T02:02:58.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="聊聊if else">
 <meta name="twitter:description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    @Synchronized fun findSubscribeMethods(subscriber: Any) {">
@@ -372,7 +372,7 @@
 
       
         <p>if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。</p>
-<h3 id="为什么太多的if-else不好？"><a href="#为什么太多的if-else不好？" class="headerlink" title="为什么太多的if else不好？"></a>为什么太多的if else不好？</h3><p>我们先看一个例子：</p>
+<h2 id="为什么太多的if-else不好？"><a href="#为什么太多的if-else不好？" class="headerlink" title="为什么太多的if else不好？"></a>为什么太多的if else不好？</h2><p>我们先看一个例子：</p>
 <pre><code class="swift">   @<span class="type">Synchronized</span> fun findSubscribeMethods(subscriber: <span class="type">Any</span>) {
     <span class="keyword">var</span> clazz: <span class="type">Class</span>&lt;*&gt;? = subscriber.swiftClass
     <span class="keyword">while</span> (clazz != null &amp;&amp; !isSystemClass(clazz.name)) {
@@ -459,7 +459,7 @@
 <p>在任何面向对象语言中，都需要考虑移除分支控制逻辑（<code>if</code>以及<code>switch</code>，<code>case</code>）。移除的常用做法是将这些控制逻辑的方法移到一个类中。 <a href="https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements" target="_blank" rel="external">Quora,Simon Hayes</a></p>
 </blockquote>
 <p>那么我们怎样来解决这种情况，因为遇到不同的情况需要用不同的解决方案，我们逐个来分析：</p>
-<h2 id="平行类的if-else处理方式–命令模式"><a href="#平行类的if-else处理方式–命令模式" class="headerlink" title="平行类的if else处理方式–命令模式"></a>平行类的if else处理方式–命令模式</h2><p><strong>如果我们有几个判断条件是平级if，那么我们可以使用命令模式来解决这种问题。</strong>比如我们现在有如下的if else：</p>
+<h2 id="平行类的if-else处理方式"><a href="#平行类的if-else处理方式" class="headerlink" title="平行类的if else处理方式"></a>平行类的if else处理方式</h2><p><strong>如果我们有几个判断条件是平级if，那么我们可以使用命令模式来解决这种问题。</strong>比如我们现在有如下的if else：</p>
 <pre><code class="swift"><span class="keyword">if</span> (value.equals(<span class="string">"A"</span>)) { doCommandA() }
 <span class="keyword">else</span> <span class="keyword">if</span> (value.equals(<span class="string">"B"</span>)) { doCommandB() } 
 <span class="keyword">else</span> <span class="keyword">if</span> etc.
@@ -491,7 +491,7 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
 <pre><code class="swift">commandMap.<span class="keyword">get</span>(value).exec();
 </code></pre>
 <p>如果某个Command有任何的改变只需要改动某个具体的类即可，如果有新加的Command，那么只需要添加响应的Command即可。如果不知道这是命令模式，请参考相关资料。</p>
-<h2 id="处理方式相似的if-else解决方式–策略模式"><a href="#处理方式相似的if-else解决方式–策略模式" class="headerlink" title="处理方式相似的if else解决方式–策略模式"></a>处理方式相似的if else解决方式–策略模式</h2><p>如果我们if之后的代码格式是一样的，比如：</p>
+<h2 id="处理方式相似的if-else"><a href="#处理方式相似的if-else" class="headerlink" title="处理方式相似的if else"></a>处理方式相似的if else</h2><p>如果我们if之后的代码格式是一样的，比如：</p>
 <pre><code class="swift"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>{
     <span class="keyword">public</span> double calculateInsurance(double income) {
         <span class="keyword">if</span> (income &lt;= <span class="number">10000</span>) {
@@ -554,7 +554,7 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
     }
 }
 </code></pre>
-<h2 id="区间类的if-else解决方案–责任链模式"><a href="#区间类的if-else解决方案–责任链模式" class="headerlink" title="区间类的if else解决方案–责任链模式"></a>区间类的if else解决方案–责任链模式</h2><p>如果客户端的if条件中表示的是范围，比如：</p>
+<h2 id="区间类的if-else"><a href="#区间类的if-else" class="headerlink" title="区间类的if else"></a>区间类的if else</h2><p>如果客户端的if条件中表示的是范围，比如：</p>
 <pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>{
 
     <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span> </span>{
@@ -838,7 +838,7 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么太多的if-else不好？"><span class="nav-number">1.</span> <span class="nav-text">为什么太多的if else不好？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#平行类的if-else处理方式–命令模式"><span class="nav-number"></span> <span class="nav-text">平行类的if else处理方式–命令模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理方式相似的if-else解决方式–策略模式"><span class="nav-number"></span> <span class="nav-text">处理方式相似的if else解决方式–策略模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#区间类的if-else解决方案–责任链模式"><span class="nav-number"></span> <span class="nav-text">区间类的if else解决方案–责任链模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">1.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么太多的if-else不好？"><span class="nav-number">1.</span> <span class="nav-text">为什么太多的if else不好？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#平行类的if-else处理方式"><span class="nav-number">2.</span> <span class="nav-text">平行类的if else处理方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理方式相似的if-else"><span class="nav-number">3.</span> <span class="nav-text">处理方式相似的if else</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#区间类的if-else"><span class="nav-number">4.</span> <span class="nav-text">区间类的if else</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">4.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
             
 
           </div>
