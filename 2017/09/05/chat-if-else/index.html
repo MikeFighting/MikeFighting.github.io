@@ -99,18 +99,20 @@
 
 
 
-<meta name="description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    @Synchronized fun findSubscribeMethods(subscriber: Any) {">
+<meta name="description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    public void OnMessage(Push.PushMessage pushMessage) {     t">
 <meta name="keywords" content="Others">
 <meta property="og:type" content="article">
 <meta property="og:title" content="聊聊if else">
 <meta property="og:url" content="https://mikefighting.github.io/2017/09/05/chat-if-else/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    @Synchronized fun findSubscribeMethods(subscriber: Any) {">
+<meta property="og:description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    public void OnMessage(Push.PushMessage pushMessage) {     t">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-09-07T05:04:19.000Z">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-12027b6db51d7301.png">
+<meta property="og:updated_time" content="2017-09-07T09:21:56.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="聊聊if else">
-<meta name="twitter:description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    @Synchronized fun findSubscribeMethods(subscriber: Any) {">
+<meta name="twitter:description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    public void OnMessage(Push.PushMessage pushMessage) {     t">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-12027b6db51d7301.png">
 
 
 
@@ -371,35 +373,61 @@
       
 
       
-        <p>if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。</p>
+        <p><img src="http://upload-images.jianshu.io/upload_images/1513759-12027b6db51d7301.png" alt="if else"><br>if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。</p>
 <h2 id="为什么太多的if-else不好？"><a href="#为什么太多的if-else不好？" class="headerlink" title="为什么太多的if else不好？"></a>为什么太多的if else不好？</h2><p>我们先看一个例子：</p>
-<pre><code class="swift">   @<span class="type">Synchronized</span> fun findSubscribeMethods(subscriber: <span class="type">Any</span>) {
-    <span class="keyword">var</span> clazz: <span class="type">Class</span>&lt;*&gt;? = subscriber.swiftClass
-    <span class="keyword">while</span> (clazz != null &amp;&amp; !isSystemClass(clazz.name)) {
-        val allMethods = clazz.declaredMethods
-        <span class="keyword">for</span> (method <span class="keyword">in</span> allMethods) {
-            val annotation = method.getAnnotation(<span class="type">Subscriber</span>::<span class="class"><span class="keyword">class</span>.<span class="title">swift</span>)
-            <span class="title">if</span> (<span class="title">annotation</span> != <span class="title">null</span>) </span>{
-                <span class="comment">// 获取方法参数</span>
-                val paramsTypeClass = method.parameterTypes
-                <span class="comment">// 订阅函数只支持一个参数</span>
-                <span class="keyword">if</span> (paramsTypeClass != null &amp;&amp; paramsTypeClass.size == <span class="number">1</span>) {
-                    val paramsEvent = paramsTypeClass[<span class="number">0</span>]
-                    <span class="keyword">if</span> (isImplementIEvent(paramsEvent)) {
-                        method.isAccessible = <span class="literal">true</span>
-                        @<span class="type">Suppress</span>(<span class="string">"UNCHECKED_CAST"</span>)
-                        val eventType = <span class="type">EventType</span>(paramsEvent <span class="keyword">as</span> <span class="type">Class</span>&lt;<span class="type">IEvent</span>&gt;, annotation.tag)
-                        val subscription = <span class="type">Subscription</span>(<span class="type">WeakReference</span>(subscriber), method, annotation.mode)
-                        subscribe(eventType, subscription)
+<pre><code class="swift">   <span class="keyword">public</span> void <span class="type">OnMessage</span>(<span class="type">Push</span>.<span class="type">PushMessage</span> pushMessage) {
+    <span class="keyword">try</span> {
+        <span class="type">String</span> message = pushMessage.messageContent;
+        <span class="type">Log</span>.v(<span class="string">"keyes"</span>, <span class="string">"pushMessage = "</span> + message);
+        <span class="keyword">if</span> (message != null) {
+            <span class="type">JsonObject</span> data = new <span class="type">JsonParser</span>().parse(message).getAsJsonObject();
+            <span class="keyword">if</span> (data.<span class="keyword">get</span>(<span class="string">"type"</span>) != null) {
+                <span class="type">String</span> type = data.<span class="keyword">get</span>(<span class="string">"type"</span>).getAsString();
+                <span class="keyword">if</span> (<span class="string">"100"</span>.equals(type)) {<span class="comment">//XX消息</span>
+                    <span class="type">EventBus</span>.getDefault().post(new <span class="type">GrabActionEvent</span>());
+                    <span class="type">PopBean</span> bean = <span class="type">PushUtils</span>.dealPushMessage(mContext, message);
+                    <span class="type">IDealWithPush</span> dealWithPush = <span class="type">AppStateUtils</span>.getAppState(mContext);
+                    dealWithPush.dealPush(mContext, bean);
+                } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"106"</span>.equals(type)) {<span class="comment">// </span>
+                    <span class="type">String</span> nick = data.<span class="keyword">get</span>(<span class="string">"nick"</span>).getAsString();
+                    <span class="type">WPushNotify</span>.notification(<span class="number">106</span>, nick, <span class="string">"正在访问您的信息，请立即回复"</span>);
+                } <span class="keyword">else</span> {
+                    <span class="type">Gson</span> temp = new <span class="type">Gson</span>();
+                    <span class="keyword">final</span> <span class="type">SystemNotification</span> bean = temp.fromJson(pushMessage.messageContent, <span class="type">SystemNotification</span>.<span class="keyword">class</span>);
+                    <span class="keyword">if</span> (bean.getType() == <span class="number">103</span>) {
+                        <span class="comment">//应用在后台，不需要刷新UI,通知栏提示新消息</span>
+                        <span class="keyword">if</span> (!<span class="type">AppInfoUtils</span>.isRunningForeground(<span class="type">HyApplication</span>.getApplication())) {
+                            <span class="type">WPushNotify</span>.notification(bean);
+                        }
+                        saveDataToDB(bean);
+                        <span class="type">EventBus</span>.getDefault().post(bean);
+                    } <span class="keyword">else</span> <span class="keyword">if</span> (bean.getType() == <span class="number">104</span>) {
+                        <span class="type">List</span>&lt;<span class="type">Activity</span>&gt; list = <span class="type">HyApplication</span>.getInstance().getActivityList();
+                        <span class="keyword">if</span> (list != null &amp;&amp; list.size() &gt; <span class="number">0</span>) {
+                            <span class="type">Activity</span> activity = list.<span class="keyword">get</span>(list.size() - <span class="number">1</span>);
+                            <span class="keyword">if</span> (!<span class="type">TextUtils</span>.isEmpty(bean.getDescribe())) {
+                                new <span class="type">LogoutDialog</span>(activity, bean.getDescribe());
+                            } <span class="keyword">else</span> {
+                                new <span class="type">LogoutDialog</span>(activity, activity.getString(<span class="type">R</span>.string.force_exit));
+                            }
+                        }
+                    } <span class="keyword">else</span> <span class="keyword">if</span> (bean.getType() == <span class="number">108</span>) {<span class="comment">//沉默用户唤醒</span>
+                        <span class="type">String</span> title = bean.getTitle();
+                        <span class="type">String</span> describe = bean.getDescribe();
+                        <span class="type">WPushNotify</span>.notification(<span class="number">108</span>, title, describe);
                     }
                 }
             }
         }
-        clazz = clazz.superclass
+    } <span class="keyword">catch</span> (<span class="type">Exception</span> e) {
+        <span class="type">LogUtils</span>.e(<span class="string">"push"</span>, e.getMessage());
     }
+
+    <span class="type">Log</span>.i(<span class="string">"song"</span>, pushMessage.messageContent);
+
 }
 </code></pre>
-<p>这个方法里面仅仅嵌套了三层if。但是一眼看过去就会感觉很不爽，再看一个例子：</p>
+<p>这个方法里面仅仅嵌套了好多层if else，看上去会比较复杂难懂，再看一个例子：</p>
 <pre><code class="swift"><span class="keyword">if</span>(isSkipPPUForQA &amp;&amp; <span class="type">StringUtils</span>.isNotBlank(request.getParameter(<span class="string">"userId"</span>))){
     <span class="keyword">super</span>.doFilter(request, response, chain);
 }<span class="keyword">else</span> {
@@ -410,7 +438,7 @@
             <span class="keyword">if</span>(!filterReqUrl(request)) {
                 long ppuUserId = <span class="type">PassportService</span>.passportService.getLoginUserId(<span class="type">RemoteValid</span>.<span class="type">SAPCE_ONE_HOUR</span>, request, response);
                 <span class="keyword">if</span> (ppuUserId &lt; <span class="number">2</span>) {
-                    response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">PPU_UNVALID</span>.getCodeStr(), <span class="string">"登录认证信息已过期，请重新登录"</span>));
+response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">PPU_UNVALID</span>.getCodeStr(), <span class="string">"登录认证信息已过期，请重新登录"</span>));
                     log.error(<span class="string">"ppu返回的userId:"</span> + ppuUserId + <span class="string">",ppu过期,ppu="</span> + <span class="type">PPUCookieUtil</span>.getPpuCookie(request) + <span class="string">",url="</span> + request.getRequestURI());
                     log.error(<span class="string">"imei="</span> + request.getParameter(<span class="string">"imei"</span>) + <span class="string">",version="</span> + request.getParameter(<span class="string">"version"</span>) + <span class="string">",platform="</span> + request.getParameter(<span class="string">"platform"</span>));
                 } <span class="keyword">else</span> {
@@ -427,7 +455,7 @@
                         }<span class="keyword">else</span> {
                             response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">SINGLE_DEVICE_LOGIN</span>.getCodeStr(), singleDeviceLoginContent));
                         }
-                        log.error(<span class="string">"触发单设备登录限制,userId="</span> + ppuUserId + <span class="string">" , imei="</span> + request.getParameter(<span class="string">"imei"</span>) + <span class="string">" , platform="</span> + request.getParameter(<span class="string">"platform"</span>));
+                        log.error(<span class="string">"触发单设备登录限制错误"</span>);
                     } <span class="keyword">else</span> {
                         request.addParameter(<span class="string">"userId"</span>, new <span class="type">String</span>[]{ppuUserId + <span class="string">""</span>});
                         <span class="keyword">super</span>.doFilter(request, response, chain);
@@ -436,7 +464,7 @@
             }
         }
     } <span class="keyword">catch</span> (<span class="type">Exception</span> e) {
-        logger.error(<span class="string">"业务处理异常,url="</span>+request.getRequestURI(),e);
+        logger.error(<span class="string">"业务处理异常,url="</span>,e);
     }
 }
 </code></pre>
@@ -459,12 +487,13 @@
 <p>在任何面向对象语言中，都需要考虑移除分支控制逻辑（<code>if</code>以及<code>switch</code>，<code>case</code>）。移除的常用做法是将这些控制逻辑的方法移到一个类中。 <a href="https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements" target="_blank" rel="external">Quora,Simon Hayes</a></p>
 </blockquote>
 <p>那么我们怎样来解决这种情况，因为遇到不同的情况需要用不同的解决方案，我们逐个来分析：</p>
+<h2 id="常见的嵌套类if-else处理方式"><a href="#常见的嵌套类if-else处理方式" class="headerlink" title="常见的嵌套类if else处理方式"></a>常见的嵌套类if else处理方式</h2><p>比如第一个if else的例子，通常</p>
 <h2 id="平行类的if-else处理方式"><a href="#平行类的if-else处理方式" class="headerlink" title="平行类的if else处理方式"></a>平行类的if else处理方式</h2><p><strong>如果我们有几个判断条件是平级if，那么我们可以使用命令模式来解决这种问题。</strong>比如我们现在有如下的if else：</p>
 <pre><code class="swift"><span class="keyword">if</span> (value.equals(<span class="string">"A"</span>)) { doCommandA() }
 <span class="keyword">else</span> <span class="keyword">if</span> (value.equals(<span class="string">"B"</span>)) { doCommandB() } 
 <span class="keyword">else</span> <span class="keyword">if</span> etc.
 </code></pre>
-<p>我们可以使用命令模式来解决，先创建一个接口：</p>
+<p>这时，我们可以使用<strong>命令模式</strong>来解决，先创建一个接口：</p>
 <pre><code class="swift"><span class="keyword">public</span> interface <span class="type">Command</span> {
      void exec();
 }
@@ -490,20 +519,19 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
 <p>然后所有的<strong>if/else if</strong>，就都会变成：</p>
 <pre><code class="swift">commandMap.<span class="keyword">get</span>(value).exec();
 </code></pre>
-<p>如果某个Command有任何的改变只需要改动某个具体的类即可，如果有新加的Command，那么只需要添加响应的Command即可。如果不知道这是命令模式，请参考相关资料。</p>
-<h2 id="处理方式相似的if-else"><a href="#处理方式相似的if-else" class="headerlink" title="处理方式相似的if else"></a>处理方式相似的if else</h2><p>如果我们if之后的代码处理的业务逻辑很相似，比如：</p>
+<p>如果某个Command有任何的改变只需要改动某个具体的类即可，如果有新加的Command，那么只需要添加响应的Command即可。命令模式就是加了一个<strong>中间件：命令容器</strong>(就是这里的Map，根据情况可能会是List或者其它)来实现解耦。</p>
+<h2 id="复杂处理算法的if-else"><a href="#复杂处理算法的if-else" class="headerlink" title="复杂处理算法的if else"></a>复杂处理算法的if else</h2><p>如果我们if之后的代码处理的业务逻辑很相似，并且这种处理算法可能会经常变动，比如：</p>
 <pre><code class="swift"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>{
-    <span class="keyword">public</span> double calculateInsurance(double income) {
-        <span class="keyword">if</span> (income &lt;= <span class="number">10000</span>) {
+    <span class="keyword">public</span> double calculateInsurance(double income, <span class="type">InputType</span> type) {
+        <span class="keyword">if</span> (type == smallType) {
             <span class="keyword">return</span> income*<span class="number">0.365</span>;
-        } <span class="keyword">else</span> <span class="keyword">if</span> (income &lt;= <span class="number">30000</span>) {
+        } <span class="keyword">else</span> <span class="keyword">if</span> (type == mediumType) {
             <span class="keyword">return</span> (income-<span class="number">10000</span>)*<span class="number">0.2</span>+<span class="number">35600</span>;
-        } <span class="keyword">else</span> <span class="keyword">if</span> (income &lt;= <span class="number">60000</span>) {
+        } <span class="keyword">else</span> <span class="keyword">if</span> (type == bigType) {
             <span class="keyword">return</span> (income-<span class="number">30000</span>)*<span class="number">0.1</span>+<span class="number">76500</span>;
         } <span class="keyword">else</span> {
             <span class="keyword">return</span> (income-<span class="number">60000</span>)*<span class="number">0.02</span>+<span class="number">105600</span>;
         }
-
     }
 }
 </code></pre>
@@ -535,24 +563,23 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
 <span class="comment">/*InsuranceStrategyLow和InsuranceStrategyHigh的处理方式相似，此处略去*/</span>
 <span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>{
     <span class="keyword">private</span> <span class="type">InsuranceStrategy</span> strategy;
-    <span class="keyword">public</span> double calculateInsurance(double income) {
-        <span class="keyword">if</span> (income &lt;= <span class="number">10000</span>) {
+    <span class="keyword">public</span> double calculateInsurance(double income, <span class="type">InputType</span> type) {
+        <span class="keyword">if</span> (type == smallType) {
             strategy = new <span class="type">InsuranceStrategyLow</span>();
-            <span class="keyword">return</span> strategy.calculate(income);
-        } <span class="keyword">else</span> <span class="keyword">if</span> (income &lt;= <span class="number">30000</span>) {
+        } <span class="keyword">else</span> <span class="keyword">if</span> (type == mediumType) {
             strategy = new <span class="type">InsuranceStrategyMedium</span>();
-            <span class="keyword">return</span> strategy.calculate(income);
-        } <span class="keyword">else</span> <span class="keyword">if</span> (income &lt;= <span class="number">60000</span>) {
+        } <span class="keyword">else</span> <span class="keyword">if</span> (type == bigType) {
             strategy = new <span class="type">InsuranceStrategyHigh</span>();
-            <span class="keyword">return</span> strategy.calculate(income);
         } <span class="keyword">else</span> {
             strategy = new <span class="type">InsuranceStrategyVeryHigh</span>();
-            <span class="keyword">return</span> strategy.calculate(income);
         }
+
+        <span class="keyword">return</span> strategy.calculate(income);
     }
 }
 </code></pre>
-<h2 id="区间类的if-else"><a href="#区间类的if-else" class="headerlink" title="区间类的if else"></a>区间类的if else</h2><p>如果客户端的if条件中表示的是范围，比如：</p>
+<p>这样最终不还是有if else吗？是的，最终还是有if else，但是if else的逻辑变得非常清晰，只是用于创建一个新的类。并且我们将经常变化的算法部分封装到了子类中，如果某个子类中的算法变了，只需要变动某个子类（<strong>封装变化</strong>），然后重新编译就可以了，不需要将整个项目重新编译，部署。</p>
+<h2 id="区间类的if-else"><a href="#区间类的if-else" class="headerlink" title="区间类的if else"></a>区间类的if else</h2><p>如果客户端的if条件表示的是不同的范围，然后根据不同范围来选择不同的对象来处理，比如：</p>
 <pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>{
 
     <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span> </span>{
@@ -574,7 +601,7 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
     }
 }
 </code></pre>
-<p>比如上面这个例子，不同的条件分支是让不同的对象来处理这种条件。并且以后可能Request对象会添加其他的请求属性，比如offWork（请假），并且这种请求属性同样需要<code>DivisionManager</code>，<code>Chief</code>，<code>GeneralManager</code>。然而其中的处理顺序变了，并不是现在的请求等级。可能是先由<code>Chief</code>处理，再有<code>GeneralManager</code>处理，最后有<code>DivisionManager</code>来处理，那怎么办呢？难道还要写一套if else吗？<br>这时候我们就可以用责任链模式来将这一长串if else嵌套进每一个对象中去，我们可以这样做：</p>
+<p>上面这个例子中，不同的条件分支是让不同的对象来处理这种条件。并且以后可能Request对象会添加其他的请求属性，比如offWork（请假），并且这种请求属性同样需要<code>DivisionManager</code>，<code>Chief</code>，<code>GeneralManager</code>。然而其中的处理顺序变了，并不是现在的请求等级。可能是先由<code>Chief</code>处理，再有<code>GeneralManager</code>处理，最后有<code>DivisionManager</code>来处理，那怎么办呢？难道还要写一套if else吗？<br>这时候我们就可以用责任链模式来将这一长串if else嵌套进每一个对象中去，我们可以这样做：</p>
 <pre><code class="java"><span class="class"><span class="keyword">interface</span> <span class="title">ManagerCommand</span></span>{
     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span></span>;
 }
@@ -592,11 +619,8 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span> </span>{
 
         <span class="keyword">if</span> (requestAmount&lt;<span class="number">100</span>){
-
             System.out.println(<span class="string">"部门经理批准"</span>);
-
         }<span class="keyword">else</span> <span class="keyword">if</span> ( <span class="keyword">this</span>.superior != <span class="keyword">null</span>){
-
             <span class="keyword">this</span>.superior.accept(requestAmount);
         }
     }
@@ -604,13 +628,10 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
 
 <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chief</span> <span class="keyword">extends</span> <span class="title">CommManager</span></span>{
 
-
     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span>  <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span>  </span>{
-
         <span class="keyword">if</span> (requestAmount &lt; <span class="number">1000</span>){
         System.out.println(<span class="string">"总监同意"</span>);
         }<span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.superior != <span class="keyword">null</span>){
-
             <span class="keyword">this</span>.superior.accept(requestAmount);
         }
     }
@@ -622,9 +643,7 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
 
         <span class="keyword">if</span> (requestAmount&lt;<span class="number">10000</span>){
             System.out.println(<span class="string">"总经理批准"</span>);
-
         }<span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.superior != <span class="keyword">null</span>){
-
             <span class="keyword">this</span>.superior.accept(requestAmount);
         }
     }
@@ -788,7 +807,7 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-count">27</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -836,7 +855,7 @@ commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB<
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么太多的if-else不好？"><span class="nav-number">1.</span> <span class="nav-text">为什么太多的if else不好？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#平行类的if-else处理方式"><span class="nav-number">2.</span> <span class="nav-text">平行类的if else处理方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理方式相似的if-else"><span class="nav-number">3.</span> <span class="nav-text">处理方式相似的if else</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#区间类的if-else"><span class="nav-number">4.</span> <span class="nav-text">区间类的if else</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么太多的if-else不好？"><span class="nav-number">1.</span> <span class="nav-text">为什么太多的if else不好？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见的嵌套类if-else处理方式"><span class="nav-number">2.</span> <span class="nav-text">常见的嵌套类if else处理方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#平行类的if-else处理方式"><span class="nav-number">3.</span> <span class="nav-text">平行类的if else处理方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#复杂处理算法的if-else"><span class="nav-number">4.</span> <span class="nav-text">复杂处理算法的if else</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#区间类的if-else"><span class="nav-number">5.</span> <span class="nav-text">区间类的if else</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>

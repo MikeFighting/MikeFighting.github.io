@@ -99,19 +99,19 @@
 
 
 
-<meta name="description" content="Asset可能来自于文件，或者用户的library或者Photo。创建完Asset对象之后，你所需要的所有信息不回立马就可用。一旦你有一个movie asset，你可以从它里面抽取静态图片，转码成其它格式，或者将其内容剪切。 新建一个Asset对象使用一个URL，就可创建出一个Asset，使用AVURLAsset。最简单的就是从一个文件中创建一个Asset： NSURL *url = &amp;lt;#A">
+<meta name="description" content="Asset可能来自于文件，或者用户的library或者Photo。创建完Asset对象之后，你所需要的所有信息不回立马就可用。一旦你有一个movie asset，你可以从它里面抽取静态图片，转码成其它格式，或者将其内容剪切。 新建一个Asset对象使用一个URL，就可创建出一个Asset，使用AVURLAsset。最简单的就是从一个文件中创建一个Asset： 12NSURL *url = &amp;lt;">
 <meta name="keywords" content="Objective-C">
 <meta property="og:type" content="article">
 <meta property="og:title" content="AVFoundation--使用Asset">
 <meta property="og:url" content="https://mikefighting.github.io/2017/08/04/avfoundation-asset/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="Asset可能来自于文件，或者用户的library或者Photo。创建完Asset对象之后，你所需要的所有信息不回立马就可用。一旦你有一个movie asset，你可以从它里面抽取静态图片，转码成其它格式，或者将其内容剪切。 新建一个Asset对象使用一个URL，就可创建出一个Asset，使用AVURLAsset。最简单的就是从一个文件中创建一个Asset： NSURL *url = &amp;lt;#A">
+<meta property="og:description" content="Asset可能来自于文件，或者用户的library或者Photo。创建完Asset对象之后，你所需要的所有信息不回立马就可用。一旦你有一个movie asset，你可以从它里面抽取静态图片，转码成其它格式，或者将其内容剪切。 新建一个Asset对象使用一个URL，就可创建出一个Asset，使用AVURLAsset。最简单的就是从一个文件中创建一个Asset： 12NSURL *url = &amp;lt;">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-7454ffe396927bff.png">
-<meta property="og:updated_time" content="2017-08-24T10:06:47.000Z">
+<meta property="og:updated_time" content="2017-09-10T13:21:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AVFoundation--使用Asset">
-<meta name="twitter:description" content="Asset可能来自于文件，或者用户的library或者Photo。创建完Asset对象之后，你所需要的所有信息不回立马就可用。一旦你有一个movie asset，你可以从它里面抽取静态图片，转码成其它格式，或者将其内容剪切。 新建一个Asset对象使用一个URL，就可创建出一个Asset，使用AVURLAsset。最简单的就是从一个文件中创建一个Asset： NSURL *url = &amp;lt;#A">
+<meta name="twitter:description" content="Asset可能来自于文件，或者用户的library或者Photo。创建完Asset对象之后，你所需要的所有信息不回立马就可用。一旦你有一个movie asset，你可以从它里面抽取静态图片，转码成其它格式，或者将其内容剪切。 新建一个Asset对象使用一个URL，就可创建出一个Asset，使用AVURLAsset。最简单的就是从一个文件中创建一个Asset： 12NSURL *url = &amp;lt;">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-7454ffe396927bff.png">
 
 
@@ -375,119 +375,37 @@
       
         <p>Asset可能来自于文件，或者用户的library或者Photo。创建完Asset对象之后，你所需要的所有信息不回立马就可用。一旦你有一个movie asset，你可以从它里面抽取静态图片，转码成其它格式，或者将其内容剪切。</p>
 <h2 id="新建一个Asset对象"><a href="#新建一个Asset对象" class="headerlink" title="新建一个Asset对象"></a>新建一个Asset对象</h2><p>使用一个URL，就可创建出一个Asset，使用AVURLAsset。最简单的就是从一个文件中创建一个Asset：</p>
-<pre><code class="objc"><span class="built_in">NSURL</span> *url = &lt;<span class="meta">#A URL that identifies an audiovisual asset such as a movie file#&gt;;</span>
-<span class="built_in">AVURLAsset</span> *anAsset = [[<span class="built_in">AVURLAsset</span> alloc] initWithURL:url options:<span class="literal">nil</span>];
-</code></pre>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSURL</span> *url = &lt;<span class="meta">#A URL that identifies an audiovisual asset such as a movie file#&gt;;</span></div><div class="line"><span class="built_in">AVURLAsset</span> *anAsset = [[<span class="built_in">AVURLAsset</span> alloc] initWithURL:url options:<span class="literal">nil</span>];</div></pre></td></tr></table></figure>
 <p>最后的<code>options</code>参数是一个字典。唯一的key是<code>AVURLAssetPreferPreciseDurationAndTimingKey</code>它相应的Value是一个布尔值(包含在NSValue对象里)，它表明了是否这个Asset应该用来指明一个精确的持续时间提供一个精确地随机获取(provide precise random access)。<br>但是获取精确的持续时间需要提前处理很多东西。使用粗略的持续时间通常是更快捷的操作，并且这对回播来说已经足够了。因此</p>
 <ul>
 <li>如果你只需要播放这个Asset，那么要么传nil，要么传一个子字典，其key为<code>AVURLAssetPreferPreciseDurationAndTimingKey</code>，它相应的值为NO（NSValue对象）。</li>
 <li>如果你要将该Asset进行视频合成(<code>AVMutableComposition</code>)，那么通常你需要一个精确的<code>random access</code>。将这个字典的Value值传YES(用NSValue对象)。</li>
 </ul>
 <p>创建方式如下所示：</p>
-<pre><code class="objc"><span class="built_in">NSURL</span> *url = &lt;<span class="meta">#A URL that identifies an audiovisual asset such as a movie file#&gt;; </span>
-<span class="built_in">NSDictionary</span> *options = @{ <span class="built_in">AVURLAssetPreferPreciseDurationAndTimingKey</span> :
-   @YES };
-<span class="built_in">AVURLAsset</span> *anAssetToUseInAComposition = [[<span class="built_in">AVURLAsset</span> alloc]
-  initWithURL:url options:options];
-</code></pre>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSURL</span> *url = &lt;<span class="meta">#A URL that identifies an audiovisual asset such as a movie file#&gt;; </span></div><div class="line"><span class="built_in">NSDictionary</span> *options = @&#123; <span class="built_in">AVURLAssetPreferPreciseDurationAndTimingKey</span> :</div><div class="line">   @YES &#125;;</div><div class="line"><span class="built_in">AVURLAsset</span> *anAssetToUseInAComposition = [[<span class="built_in">AVURLAsset</span> alloc]</div><div class="line">  initWithURL:url options:options];</div></pre></td></tr></table></figure>
 <h2 id="获取用户的Asset"><a href="#获取用户的Asset" class="headerlink" title="获取用户的Asset"></a>获取用户的Asset</h2><p>为了获取iPod library或者相册，你首先需要得到这个Asset的URL。</p>
 <ul>
 <li>为了获取iPod Library，你需要创建一个MPMediaQuery对象来找到你需要的item，然后用<code>MPMediaItemPropertyAssetURL</code>来获取其URL。</li>
 <li>为了获取相册的Asset，你需要使用<code>ALAssetsLibrary</code>。</li>
 </ul>
 <p>下面这个例子说明了怎样获取展示在相册中的第一个视频：</p>
-<pre><code class="objc">ALAssetsLibrary *library = [[ALAssetsLibrary alloc]init];
- <span class="comment">// Enumerate just the photos and videos group by using ALAssetsGroupSavedPhotos.</span>
- [library enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, <span class="built_in">BOOL</span> *stop) {
-
-     <span class="comment">// Within the group enumeration block, filter to enumerate just videos.</span>
-     [group setAssetsFilter:[ALAssetsFilter allVideos]];
-     [group enumerateAssetsAtIndexes:[<span class="built_in">NSIndexSet</span> indexSetWithIndex:<span class="number">0</span>] options:<span class="number">0</span> usingBlock:^(ALAsset *result, <span class="built_in">NSUInteger</span> index, <span class="built_in">BOOL</span> *stop) {
-
-         <span class="keyword">if</span> (result) {
-
-             ALAssetRepresentation *represention = [result defaultRepresentation];
-             <span class="built_in">NSURL</span> *url = [represention url];
-             <span class="comment">// Do something interesting with the AV asset.</span>
-             <span class="built_in">AVAsset</span> *avAsset = [<span class="built_in">AVURLAsset</span> URLAssetWithURL:url options:<span class="literal">nil</span>];
-
-
-         }
-
-     }];
-
- } failureBlock:^(<span class="built_in">NSError</span> *error) {
-
-     <span class="comment">// Typically you should handle an error more gracefully than this.</span>
-     <span class="built_in">NSLog</span>(<span class="string">@"No groups"</span>);
-
- }];
-</code></pre>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">ALAssetsLibrary *library = [[ALAssetsLibrary alloc]init];</div><div class="line"> <span class="comment">// Enumerate just the photos and videos group by using ALAssetsGroupSavedPhotos.</span></div><div class="line"> [library enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, <span class="built_in">BOOL</span> *stop) &#123;</div><div class="line">     </div><div class="line">     <span class="comment">// Within the group enumeration block, filter to enumerate just videos.</span></div><div class="line">     [group setAssetsFilter:[ALAssetsFilter allVideos]];</div><div class="line">     [group enumerateAssetsAtIndexes:[<span class="built_in">NSIndexSet</span> indexSetWithIndex:<span class="number">0</span>] options:<span class="number">0</span> usingBlock:^(ALAsset *result, <span class="built_in">NSUInteger</span> index, <span class="built_in">BOOL</span> *stop) &#123;</div><div class="line">         </div><div class="line">         <span class="keyword">if</span> (result) &#123;</div><div class="line">             </div><div class="line">             ALAssetRepresentation *represention = [result defaultRepresentation];</div><div class="line">             <span class="built_in">NSURL</span> *url = [represention url];</div><div class="line">             <span class="comment">// Do something interesting with the AV asset.</span></div><div class="line">             <span class="built_in">AVAsset</span> *avAsset = [<span class="built_in">AVURLAsset</span> URLAssetWithURL:url options:<span class="literal">nil</span>];</div><div class="line">             </div><div class="line">             </div><div class="line">         &#125;</div><div class="line">         </div><div class="line">     &#125;];</div><div class="line">     </div><div class="line"> &#125; failureBlock:^(<span class="built_in">NSError</span> *error) &#123;</div><div class="line">     </div><div class="line">     <span class="comment">// Typically you should handle an error more gracefully than this.</span></div><div class="line">     <span class="built_in">NSLog</span>(<span class="string">@"No groups"</span>);</div><div class="line">     </div><div class="line"> &#125;];</div></pre></td></tr></table></figure>
 <p>这里需要引入<code>#import &lt;AssetsLibrary/AssetsLibrary.h&gt;</code>。</p>
 <h2 id="准备Asset来用"><a href="#准备Asset来用" class="headerlink" title="准备Asset来用"></a>准备Asset来用</h2><p>初始化一个Asset(或者Track)并不意味着你立即就可以使用所有的信息。它还需要时间来计算这个Asset的时长(比如：一个MP3文件可能会包含一些总结信息)。你可以遵守<code>AVAsynchronousKeyValueLoading</code>协议来异步获取其结果，这样可以不用阻塞主线程（AVSeet和AVAssetTrack都遵守<code>AVAsynchronousKeyValueLoading</code>协议）。可以使用<code>statusOfValueForKey:error:</code>来测试是否某个某个属性的值被正常加载了。首次加载的时候，它所有属性的值是<code>AVKeyValueStatusUnknown</code>。使用<code>loadValuesAsynchronouslyForKeys:completionHandler:</code>，可以加载一个或者多个属性的值。由于网络原因或者加载被取消，所以需要一直准备加载。</p>
-<pre><code class="objc">ALAssetRepresentation *represention = [result defaultRepresentation];
-   <span class="built_in">NSURL</span> *url = [represention url];
-   <span class="comment">// Do something interesting with the AV asset.</span>
-   <span class="built_in">AVAsset</span> *avAsset = [<span class="built_in">AVURLAsset</span> URLAssetWithURL:url options:<span class="literal">nil</span>];
-   <span class="built_in">NSArray</span> *keys = @[<span class="string">@"duration"</span>];
-   [avAsset loadValuesAsynchronouslyForKeys:keys completionHandler:^{
-
-       <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;
-       <span class="built_in">AVKeyValueStatus</span> tracksStatus = [avAsset statusOfValueForKey:<span class="string">@"duration"</span> error:&amp;error];
-
-       <span class="keyword">switch</span> (tracksStatus) {
-           <span class="keyword">case</span> <span class="built_in">AVKeyValueStatusLoaded</span>:
-
-               [<span class="keyword">self</span> updateUserInterfaceForDuration];
-               <span class="keyword">break</span>;
-           <span class="keyword">case</span> <span class="built_in">AVKeyValueStatusFailed</span>:
-
-               [<span class="keyword">self</span> reportError:error forAsset:asset];
-               <span class="keyword">break</span>;
-           <span class="keyword">case</span> <span class="built_in">AVKeyValueStatusCancelled</span>:
-               <span class="comment">// Do whatever is appropriate for cancelation.</span>
-               <span class="keyword">break</span>;
-       }
-
-   }];
-</code></pre>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">ALAssetRepresentation *represention = [result defaultRepresentation];</div><div class="line">   <span class="built_in">NSURL</span> *url = [represention url];</div><div class="line">   <span class="comment">// Do something interesting with the AV asset.</span></div><div class="line">   <span class="built_in">AVAsset</span> *avAsset = [<span class="built_in">AVURLAsset</span> URLAssetWithURL:url options:<span class="literal">nil</span>];</div><div class="line">   <span class="built_in">NSArray</span> *keys = @[<span class="string">@"duration"</span>];</div><div class="line">   [avAsset loadValuesAsynchronouslyForKeys:keys completionHandler:^&#123;</div><div class="line">      </div><div class="line">       <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;</div><div class="line">       <span class="built_in">AVKeyValueStatus</span> tracksStatus = [avAsset statusOfValueForKey:<span class="string">@"duration"</span> error:&amp;error];</div><div class="line">       </div><div class="line">       <span class="keyword">switch</span> (tracksStatus) &#123;</div><div class="line">           <span class="keyword">case</span> <span class="built_in">AVKeyValueStatusLoaded</span>:</div><div class="line">               </div><div class="line">               [<span class="keyword">self</span> updateUserInterfaceForDuration];</div><div class="line">               <span class="keyword">break</span>;</div><div class="line">           <span class="keyword">case</span> <span class="built_in">AVKeyValueStatusFailed</span>:</div><div class="line">               </div><div class="line">               [<span class="keyword">self</span> reportError:error forAsset:asset];</div><div class="line">               <span class="keyword">break</span>;</div><div class="line">           <span class="keyword">case</span> <span class="built_in">AVKeyValueStatusCancelled</span>:</div><div class="line">               <span class="comment">// Do whatever is appropriate for cancelation.</span></div><div class="line">               <span class="keyword">break</span>;</div><div class="line">       &#125;</div><div class="line">       </div><div class="line">   &#125;];</div></pre></td></tr></table></figure>
 <p>如果想准备一个asset来回播，那么还需要加载它的<code>tracks</code>属性。</p>
 <h2 id="从视频中获取静态图片"><a href="#从视频中获取静态图片" class="headerlink" title="从视频中获取静态图片"></a>从视频中获取静态图片</h2><p>如果想要从asset中得到了一静态的图片，例如缩略图，你需要使用<code>AVAssetImageGenerator</code>对象。使用asset初始化一个generator。尽管在初始化的时候asset不会处理不可视的track，但是初始化还是可能会失败的，这就需要在必要的时候检查是否asset有track中包含有可视化的，使用<code>tracksWithMediaCharacteristic</code>方法：</p>
-<pre><code class="objc"><span class="built_in">AVAsset</span> anAsset = &lt;<span class="meta">#Get an asset#&gt;;</span>
-<span class="keyword">if</span> ([[anAsset tracksWithMediaType:<span class="built_in">AVMediaTypeVideo</span>] count] &gt; <span class="number">0</span>) {
-    <span class="built_in">AVAssetImageGenerator</span> *imageGenerator =
-        [<span class="built_in">AVAssetImageGenerator</span> assetImageGeneratorWithAsset:anAsset];
-    <span class="comment">// Implementation continues...</span>
-}
-</code></pre>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">AVAsset</span> anAsset = &lt;<span class="meta">#Get an asset#&gt;;</span></div><div class="line"><span class="keyword">if</span> ([[anAsset tracksWithMediaType:<span class="built_in">AVMediaTypeVideo</span>] count] &gt; <span class="number">0</span>) &#123;</div><div class="line">    <span class="built_in">AVAssetImageGenerator</span> *imageGenerator =</div><div class="line">        [<span class="built_in">AVAssetImageGenerator</span> assetImageGeneratorWithAsset:anAsset];</div><div class="line">    <span class="comment">// Implementation continues...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>可以对图片生成器的不同方面做不同的配置，例如可以使用maximumSize来指明其最大的尺度，使用<code>apertureMode</code>来指明孔径的模式。然后你就可以在给定的时间点来产生一张或者多张图片。<code>必须要强引用这个图片生成器否则，其会被释放掉。</code></p>
 <h2 id="产生单独的一张图片"><a href="#产生单独的一张图片" class="headerlink" title="产生单独的一张图片"></a>产生单独的一张图片</h2><p>使用<code>copyCGImageAtTime:actualTime:error:</code>来产生在特定时间点的图片。AVFoundation框架可能不会在你请求的时候立即产生出一张图片，因此你可以给第二个参数传递一个指针，指向一个CMTime，该指针包含了图片实际产生的时间。</p>
-<pre><code class="objc"><span class="built_in">AVAsset</span> *myAsset = &lt;<span class="meta">#An asset#&gt;];</span>
-<span class="built_in">AVAssetImageGenerator</span> *imageGenerator = [[<span class="built_in">AVAssetImageGenerator</span> alloc]
-initWithAsset:myAsset];
-Float64 durationSeconds = <span class="built_in">CMTimeGetSeconds</span>([myAsset duration]);
-<span class="built_in">CMTime</span> midpoint = <span class="built_in">CMTimeMakeWithSeconds</span>(durationSeconds/<span class="number">2.0</span>, <span class="number">600</span>);
-<span class="built_in">NSError</span> *error;
-<span class="built_in">CMTime</span> actualTime;
-<span class="built_in">CGImageRef</span> halfWayImage = [imageGenerator copyCGImageAtTime:midpoint
-actualTime:&amp;actualTime error:&amp;error];
-<span class="keyword">if</span> (halfWayImage != <span class="literal">NULL</span>) {
-<span class="built_in">NSString</span> *actualTimeString = (<span class="built_in">NSString</span> *)<span class="built_in">CMTimeCopyDescription</span>(<span class="literal">NULL</span>, actualTime); 
-    <span class="built_in">NSString</span> *requestedTimeString = (<span class="built_in">NSString</span> *)<span class="built_in">CMTimeCopyDescription</span>(<span class="literal">NULL</span>,
-midpoint);
-    <span class="built_in">NSLog</span>(<span class="string">@"Got halfWayImage: Asked for %@, got %@"</span>, requestedTimeString,
-actualTimeString);
-    <span class="comment">// Do something interesting with the image.</span>
-    <span class="built_in">CGImageRelease</span>(halfWayImage);
-}
-</code></pre>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">AVAsset</span> *myAsset = &lt;<span class="meta">#An asset#&gt;];</span></div><div class="line"><span class="built_in">AVAssetImageGenerator</span> *imageGenerator = [[<span class="built_in">AVAssetImageGenerator</span> alloc]</div><div class="line">initWithAsset:myAsset];</div><div class="line">Float64 durationSeconds = <span class="built_in">CMTimeGetSeconds</span>([myAsset duration]);</div><div class="line"><span class="built_in">CMTime</span> midpoint = <span class="built_in">CMTimeMakeWithSeconds</span>(durationSeconds/<span class="number">2.0</span>, <span class="number">600</span>);</div><div class="line"><span class="built_in">NSError</span> *error;</div><div class="line"><span class="built_in">CMTime</span> actualTime;</div><div class="line"><span class="built_in">CGImageRef</span> halfWayImage = [imageGenerator copyCGImageAtTime:midpoint</div><div class="line">actualTime:&amp;actualTime error:&amp;error];</div><div class="line"><span class="keyword">if</span> (halfWayImage != <span class="literal">NULL</span>) &#123;</div><div class="line"><span class="built_in">NSString</span> *actualTimeString = (<span class="built_in">NSString</span> *)<span class="built_in">CMTimeCopyDescription</span>(<span class="literal">NULL</span>, actualTime); </div><div class="line">    <span class="built_in">NSString</span> *requestedTimeString = (<span class="built_in">NSString</span> *)<span class="built_in">CMTimeCopyDescription</span>(<span class="literal">NULL</span>,</div><div class="line">midpoint);</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Got halfWayImage: Asked for %@, got %@"</span>, requestedTimeString,</div><div class="line">actualTimeString);</div><div class="line">    <span class="comment">// Do something interesting with the image.</span></div><div class="line">    <span class="built_in">CGImageRelease</span>(halfWayImage);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h3 id="产生一系列的图片"><a href="#产生一系列的图片" class="headerlink" title="产生一系列的图片"></a>产生一系列的图片</h3><p>为了产生一系列的图片，你应该调用图片生成器的<code>generateCGImagesAsynchronouslyForTimes:completionHandler:</code>方法，第一个参数是一个包含NSValue对象的数组，NSValue对象是由<code>CMTime</code>生成的，它指明了你需要生成的图片所在的时间点。第二个参数是每个图片生成之后的回调。其中包含的字段包括</p>
 <ul>
 <li>图片</li>
 <li>请求图片的时间和图片生成的真实时间</li>
 <li>失败时候错误信息的error对象</li>
 </ul>
-<p>在实现block的过程中，需要检测结果来决定图片是否生成了。除此之外：<strong>在生成图片之前要一直强引用这个图片生成器。</strong></p>
+<p>在实现block的过程中，需要检测结果来决定图片是否生成了。除此之外：<strong>在生成图片之前要一直强引用这个图片生成器</strong>。</p>
 <pre><code class="objc"><span class="built_in">AVAsset</span> *myAsset = <span class="literal">nil</span>;
 <span class="keyword">self</span>.imageGenerator = [<span class="built_in">AVAssetImageGenerator</span> assetImageGeneratorWithAsset:myAsset]; 
 Float64 durationSeconds = <span class="built_in">CMTimeGetSeconds</span>([myAsset duration]);
@@ -515,7 +433,7 @@ Float64 durationSeconds = <span class="built_in">CMTimeGetSeconds</span>([myAsse
 }
 }];
 </code></pre>
-<p>如果想要在中途终止图片序列的生成，可以调用<code>cancelAllCGImageGeneration</code>方法</p>
+<p>如果想要在中途终止图片序列的生成，可以调用<code>cancelAllCGImageGeneration</code>方法。</p>
 <h3 id="视频的裁剪和转码"><a href="#视频的裁剪和转码" class="headerlink" title="视频的裁剪和转码"></a>视频的裁剪和转码</h3><p>使用<code>AVAssetExportSession</code>对象，可以将视频从一种格式到另一种格式进行转码，并且可以裁剪视频。一个export session是一个控制器对象，它管理着一个asset的异步输出。你可以将想要输出的asset以及输出的用来表明输出选项的<code>preset</code>来初始化一个<code>session</code>。然后你可以配置这个输出的session来指明输入的URL，以及文件格式，以及其它设置的一些可选配置，如metadata，以及是否输出需要被优化。</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/1513759-7454ffe396927bff.png" alt="视频转码"><br>可以使用<code>exportPresetsCompatibleWithAsset:</code>来检测你是否可以输出一种给定的<code>asset</code>，如下所示</p>
 <pre><code class="objc"><span class="built_in">AVAsset</span> *anAsset = &lt;<span class="meta">#Get an asset#&gt;;</span>
@@ -682,7 +600,7 @@ exportSession.timeRange = range;
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-count">27</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>

@@ -307,6 +307,529 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/02/wwdc-better-app-with-value-type/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/02/wwdc-better-app-with-value-type/" itemprop="url">怎样用好Value Type?</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-02T16:37:56+08:00">
+                2017-08-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Swift–怎样用好Value-Type"><a href="#Swift–怎样用好Value-Type" class="headerlink" title="Swift–怎样用好Value Type?"></a>Swift–怎样用好Value Type?</h1><p><img src="http://upload-images.jianshu.io/upload_images/1513759-6b88775e60bbef0f.png" alt="Value Type"></p>
+<h2 id="为什么要用Value-Type"><a href="#为什么要用Value-Type" class="headerlink" title="为什么要用Value Type?"></a>为什么要用Value Type?</h2><p>首先我们要说明为什么我们需要<code>Value Type</code>。因为我们通常使用的<code>Reference Type</code>不能满足我们的需求，并且容易出Bug，什么是<code>Reference Type</code>?<br>Reference Type就是我们常说的Class，我们不是用的很好吗？我们举两个例子来看看<br>例一：但是现在又一种需求：进入用于信息页面编辑页面，如果用户的信息改变了，并且没有点击保存，这时如果点击导航栏的退出，要给用户提醒”您编辑了信息，确定不保存退出吗？”，这时为了保存进入编辑页面的信息，我们一般这样做</p>
+<ol>
+<li>增加一个originInfo的property。</li>
+<li>在ViewDidLoad的时候赋值：self.originInfo = passedInfo;（这个passedInfo从上个页面传来）</li>
+<li>在点击退出的时候对比passedInfo和self.originInfo是否相等，如果不相等则提醒用户，如果相等则返回。<br>这时你会发现一个bug，这两个对象永远都是相同的，为什么？</li>
+</ol>
+<p>例二：我们要从商品列表中进入商品编辑页面，这时，我们点击了编辑，将<code>goodModel</code>传到第二个页面，在第二个页面操作完之后，用户没有保存信息，返回了，这时你也可能会发现，你列表中的商品信息改变了。</p>
+<p>例三：Cell复用造成的布局混乱。<br>上述两种情景是<code>Reference Type</code>，也就是说他们的都指向了堆上的相同对象，这种类型对对象的公用造成了一系列的bug。并且这种bug很难被发现，并且往往也不是必现的。<br>怎样解决呢？<br>这时我们就需要Copy原来的instance，在OC中我们需要遵守NSCopying，或者NSMutableCopying协议，因为这些，然后实现相应的协议，例如：</p>
+<pre><code class="Objective-C">@interface HYLocationModel : NSObject&lt;NSMutableCopying&gt;
+// cityDic{@&quot;name&quot;:@&quot;&quot;,@&quot;id&quot;:@&quot;&quot;}
+@property (nonatomic, strong) NSDictionary *cityDic; //City
+@property (nonatomic, strong) NSDictionary *areaDic; //
+@property (nonatomic, strong) NSDictionary *districtDic;
+
+@end
+@implementation HYLocationModel
+- (id)mutableCopyWithZone:(NSZone *)zone {
+
+    HYLocationModel *locationModel = [[HYLocationModel alloc]init];
+    locationModel.cityDic = self.cityDic;
+    locationModel.areaDic = self.areaDic;
+    locationModel.districtDic = self.districtDic;
+    return locationModel;
+}
+@end
+</code></pre>
+<p>这样我们就可以Copy对象了，将Copy的对象赋值给self.originInfo，就可以解决上述的bug。<br>但是这会消耗性能，因为需要在堆里开辟内存空间。NSCopying协议在OC中很常见，比如NSString，NSArray，NSDictionary等都遵守NSCopying协议。其中NSDictionary的Key，默认是实现了NSCopying协议的，因为在给NSDictionary赋值的时候，系统默认是Copy了它的Key，因为如果不Copy它的Key，如果你给字典赋值之后改变了这个Key，那么它将会使整个NSDictionary混乱，出现意想不到的Bug。当然这种Copy也会消耗性能。</p>
+<h2 id="不可变对象是否可以解决上述问题呢？"><a href="#不可变对象是否可以解决上述问题呢？" class="headerlink" title="不可变对象是否可以解决上述问题呢？"></a>不可变对象是否可以解决上述问题呢？</h2><p>在函数式编程中，我们会使用不可变的<code>Reference Type</code>来消除其可变所带来的问题，想象下如果你做数学题题目A中的X值被题目B改变了，那么会有怎样的结果？<br>在Swift中，我们可以使用let来使其不可变，但是这种不可变的数据结构有以下弊端：</p>
+<ol>
+<li>可能导致很恶心的接口（见下文）。</li>
+<li>不能有效地和机器模型相匹配(因为我们的寄存器，我们的Cache，Memory，Storage都是可变状态的)。</li>
+</ol>
+<p>比如下面的代码</p>
+<pre><code class="Swift"><span class="comment">// With mutability </span>
+home.oven.temperature.fahrenheit += <span class="number">10.0</span>
+
+<span class="comment">//Without mutability </span> <span class="keyword">let</span> temp = home.oven.temperature home.oven.temperature = <span class="type">Temperature</span>(fahrenheit: temp.fahrenheit + <span class="number">10.0</span>)
+</code></pre>
+<p>在上面的例子中，我们把Temperature类的某个属性改成了<code>let</code>，那么如果我们要更改这个数值，我们就需要在堆上开辟内存空间然后创建一个新的Temperature，最后更换掉整个Temperature类。<br>Cocoa[Touch]中有很多的不可变类比如：NSDate，NSURL，UIImage，NSNumber等<br>这更加安全了（不需要使用Copy），也不必担心接下来的程序会改变这个数值。</p>
+<pre><code class="Objective-C">NSArray&lt;NSString *&gt; *array = [NSArray arrayWithObject: NSHomeDirectory()];
+NSString *component;  while ((component = getNextSubdir()) { 
+     array = [array arrayByAddingObject: component]; } 
+     url = [NSURL fileURLWithPathComponents: array];
+</code></pre>
+<h2 id="Value-Type将怎样解决这种问题呢？"><a href="#Value-Type将怎样解决这种问题呢？" class="headerlink" title="Value Type将怎样解决这种问题呢？"></a>Value Type将怎样解决这种问题呢？</h2><p>Swift中的所有基础类型都是Value Type的，像：Int，Double，String …<br>Swift中所有的Collection都是Value Type的，像：Array，Set，Dictianry…<br>Swift中的<code>Tuples，Struct，Enums</code>如果只包含Value Types那么他们自身也是Value Type的。<br>Value Type要是完全可以直接比较的，可以直接使用<code>==</code>，<strong>自定义的Value Type并且其必须要遵守<code>Equable</code>协议，覆盖<code>==</code>方法才可以使用的</strong>。</p>
+<pre><code class="Swift"><span class="keyword">var</span> a: [<span class="type">Int</span>] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]
+<span class="keyword">var</span> b: [<span class="type">Int</span>] = [<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>].sorted(by:&lt;)
+<span class="built_in">assert</span>(a == b) <span class="comment">// true</span>
+</code></pre>
+<p>如果是自身的定义的Struct，那么需要遵守<code>Equable</code>协议，并且覆盖<code>==</code>方法来实现。比如：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">Temperature</span>: <span class="title">Equatable</span> </span>{
+  <span class="keyword">var</span> celsius: <span class="type">Double</span> = <span class="number">0</span>
+  <span class="keyword">var</span> fahrenheit: <span class="type">Double</span> {
+    <span class="keyword">get</span> { <span class="keyword">return</span> celsius * <span class="number">9</span> / <span class="number">5</span> + <span class="number">32</span> }
+    <span class="keyword">set</span> { celsius = (newValue - <span class="number">32</span>) * <span class="number">5</span> / <span class="number">9</span> }
+ }
+}
+<span class="function"><span class="keyword">func</span> ==<span class="params">(lhs: Temperature, rhs: Temperature)</span></span> -&gt; <span class="type">Bool</span> {
+  <span class="keyword">return</span> lhs.celsius == rhs.celsius
+}
+</code></pre>
+<p>使用Value Type不用担心竞争条件。也就是不用担心资源抢夺，加锁等。看下面的代码：</p>
+<pre><code class="Swift"><span class="keyword">var</span> numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]
+scheduler.processNumbersAsynchronously(numbers) <span class="comment">//异步处理numbers</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span>..&lt;numbers.<span class="built_in">count</span> { numbers[i] = numbers[i] * i }
+scheduler.processNumbersAsynchronously(numbers) <span class="comment">//异步处理numbers</span>
+</code></pre>
+<p>在Reference Type中这个<code>numbers</code>将会发生资源抢夺，但在Swift中是Value Type的，在执行<code>for i in 0..&lt;numbers.count { numbers[i] = numbers[i] * i }</code>的时候会发生Copy操作，所以不会发生资源抢夺。也就是说每次将Value Type赋值给其它的Value Type的时候会发生拷贝（逻辑拷贝）操作，但是这种Copy消耗的时间很微小，并且系统会将Copy推迟到写操作执行的时候，这就是Copy on Write。<em>在Swift中可以利用Protocol将Struct等ValueType封装，类似于OOP中的多态</em></p>
+<h2 id="Swift中的Value-Type和Reference-Type混用会怎样呢？"><a href="#Swift中的Value-Type和Reference-Type混用会怎样呢？" class="headerlink" title="Swift中的Value Type和Reference Type混用会怎样呢？"></a>Swift中的Value Type和Reference Type混用会怎样呢？</h2><p>我们来看Structh中含有结构体的情况：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">ButtonWrapper</span> </span>{
+   <span class="keyword">var</span> button: <span class="type">Button</span>
+}
+</code></pre>
+<p>在这种情况下，复制ButtonWrapper的时候将会共享button这个Reference Type。这就违背了我们上文所说的Value Type在重新赋值的时候拷贝（深拷贝，和原来的Struct没有关系）。怎样才可以做到这一点呢？比如下面的</p>
+<h3 id="Value-Type-中含有不可变的Reference-Type"><a href="#Value-Type-中含有不可变的Reference-Type" class="headerlink" title="Value Type 中含有不可变的Reference Type"></a>Value Type 中含有不可变的Reference Type</h3><pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">Image</span>: <span class="title">Drawable</span> </span>{
+  <span class="keyword">var</span> topLeft:<span class="type">CGPoint</span>
+  <span class="keyword">var</span> image: <span class="type">UIImage</span>
+}
+<span class="keyword">var</span> image = <span class="type">Image</span>(topLeft:<span class="type">CGPoint</span>(x:<span class="number">0</span>,y:<span class="number">0</span>),image:<span class="type">UIImage</span>.<span class="keyword">init</span>(named: <span class="string">"someImage.png"</span>))
+<span class="keyword">var</span> image2 = image
+</code></pre>
+<p>这时image和image2将会公用一个UIImage：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-fb29f1978b1a0b66.png" alt="ValueType Contains Reference Type"><br>在实现<code>Equatable</code>协议的时候，我们这么做：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">extension</span> <span class="title">Image</span>: <span class="title">Equatable</span> </span>{   }
+<span class="function"><span class="keyword">func</span> == <span class="params">(<span class="keyword">left</span>:Iamge, <span class="keyword">right</span>:Image)</span></span> -&gt; <span class="type">Bool</span> {
+ <span class="keyword">return</span> <span class="keyword">left</span>.topLeft == <span class="keyword">right</span>.topLeft &amp;&amp; <span class="keyword">left</span>.image === <span class="keyword">right</span>.image
+}
+</code></pre>
+<p>但是由于UIImage是不可变的，所以我们不必担心image2的image对象的改变会影响到image的image对象。<br><em>注：上面<code>===</code>表示引用相同，但是不表示其指向<code>Image</code>是相同的，如果要表示其相同，需要使用<code>==</code>操作。</em></p>
+<h3 id="Value-Type-中含有可变的Reference-Type"><a href="#Value-Type-中含有可变的Reference-Type" class="headerlink" title="Value Type 中含有可变的Reference Type"></a>Value Type 中含有可变的Reference Type</h3><p>下面我们来看一个可变的Reference Type。</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">BezierPath</span>: <span class="title">Drawable</span> </span>{
+  <span class="keyword">var</span> path = <span class="type">UIBezierPath</span>()
+  <span class="keyword">var</span> isEmpty: <span class="type">Bool</span> {
+    <span class="keyword">return</span> path.empty
+} 
+  <span class="comment">// **注意这种写法是错误的**</span>
+  <span class="function"><span class="keyword">func</span> <span class="title">addLineToPoint</span><span class="params">(point: CGPoint)</span></span> {
+    path.addLineToPoint(point)
+} }
+</code></pre>
+<p>其内存结构是这样的：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-f574f73819356261.png" alt="Value Contains Reference Type"></p>
+<p>这时如果我们如果执行下面的代码</p>
+<pre><code class="Swift"><span class="keyword">var</span> bezierPath1 = bezierPath0
+</code></pre>
+<p>就会发现意想不到的Bug，因为你对bezierPath1的任何改动都将会显示到bezierPath0上。<br>怎样解决这样的问题呢？这时我们需要使用<strong>Copy On Write</strong></p>
+<blockquote>
+<p>对Value Type中的Reference Type做改动将会破坏Value Type的”完全独立”特性。<br>所以我们必须将可变的Reference Type和不可变的操作分开<br>不可变操作总是安全的<br>可变操作必须首先Copy</p>
+</blockquote>
+<p>怎样做到Copy On Write呢？我们需要给BezierPath中加入如下代码：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">BezierPath</span>: <span class="title">Drawable</span> </span>{ 
+<span class="keyword">private</span> <span class="keyword">var</span> _path = <span class="type">UIBezierPath</span>()  <span class="keyword">var</span> pathForReading: <span class="type">UIBezierPath</span> { 
+<span class="keyword">return</span> _path 
+}  <span class="keyword">var</span> pathForWriting: <span class="type">UIBezierPath</span> {
+    <span class="keyword">mutating</span> <span class="keyword">get</span> {      _path = _path.copy() <span class="keyword">as</span>! <span class="type">UIBezierPath</span> 
+    <span class="keyword">return</span> _path 
+} } 
+}
+</code></pre>
+<p>这样我们就可以将上述的错误代码改为：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">extension</span> <span class="title">BezierPath</span> </span>{ 
+<span class="keyword">var</span> isEmpty: <span class="type">Bool</span> {
+<span class="keyword">return</span> pathForReading.empty 
+} 
+ <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">addLineToPoint</span><span class="params">(point: CGPoint)</span></span> {
+    pathForWriting.addLineToPoint(point)
+  }
+}
+</code></pre>
+<p>这样，我们在执行：</p>
+<pre><code class="Swift"><span class="keyword">var</span> path = <span class="type">BezierPath</span>()
+<span class="keyword">var</span> path2 = path
+<span class="keyword">if</span> path.empty { <span class="built_in">print</span>(<span class="string">"Path is empty"</span>) }
+<span class="keyword">var</span> path2 = path
+path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10</span>, y: <span class="number">20</span>))
+path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">100</span>, y: <span class="number">125</span>))
+</code></pre>
+<p>这段代码的时候就会在addLineToPoint的时候执行Copy，这就不会出现改动path而影响path2的现象了。<br>但是还有一个问题，每次执行addLineToPoint的时候都需要执行Copy操作，有时候如果这个对象只有一个引用那么就不需要这种操作，所以我们可以利用<code>isUniquelyReferencedNonObjC()</code>方法来判断时候需要Copy,如果返回true，说明只有一个对象在用，就不必Copy，如果返回false，说明很多对象在用，这个时候就需要执行Copy操作了。<br>用法如下：</p>
+<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">MyWrapper</span> </span>{
+  <span class="keyword">var</span> _object: <span class="type">SomeSwiftObject</span>
+  <span class="keyword">var</span> objectForWriting: <span class="type">SomeSwiftObject</span> {
+    <span class="keyword">mutating</span> <span class="keyword">get</span> {
+     <span class="keyword">if</span> !<span class="built_in">isUniquelyReferencedNonObjC</span>(&amp;_object)) {
+        _object = _object.copy()
+     }
+     <span class="keyword">return</span> _object
+    }
+} }
+</code></pre>
+<blockquote>
+<p>注：</p>
+<ol>
+<li>需要标示记忆过程的时候，比如实现撤销操作，需要恢复之前数值的时候。（备忘录模式）</li>
+<li>比如需要对新的变化做特殊处理的时候，因为我们已经记忆了之前的过程，只需要对最新的Value Type改变，比如：本博客中的第一张图片，如果衣服颜色改变了，那么就只改变衣服颜色的那几个方格的值即可。</li>
+</ol>
+</blockquote>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://developer.apple.com/videos/play/wwdc2015/414/" target="_blank" rel="external">https://developer.apple.com/videos/play/wwdc2015/414/</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/01/Why-Swift-IS-swift/" itemprop="url">为什么Swift比OC快？</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-01T19:34:23+08:00">
+                2017-08-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，<strong>Swift将很多在运行时才可以确定的信息，在编译期就决定了</strong>。这就让Swift更加快速。<br>方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（Static Dispatch），如果调度发生在运行时，那么我们称它为动态调度（Dynamic Dispatch）。静态调度往往要比动态调度要快。那么问题来了，为什么我们需要动态调度呢？全部用静态调度不就得了？<br>问题就在于我们很多时候我们需要用到多态，看看下面这段非常简单的代码<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">eat</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"animal eat"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"animal sleep"</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span>: <span class="title">Animal</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"dog sleep"</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rabbit</span>: <span class="title">Animal</span> </span>&#123;</div><div class="line">    </div><div class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">eat</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"rabbit sleep"</span>);</div><div class="line">    &#125;</div><div class="line">   <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"rabbit sleep"</span>)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> animal:<span class="type">Animal</span>?</div><div class="line"><span class="keyword">var</span> somThingTrue = <span class="literal">false</span></div><div class="line"><span class="comment">//执行很多业务逻辑</span></div><div class="line"><span class="keyword">if</span> somThingTrue &#123;</div><div class="line">    animal = <span class="type">Rabbit</span>()</div><div class="line">    </div><div class="line">&#125;<span class="keyword">else</span>&#123;</div><div class="line"></div><div class="line">    animal = <span class="type">Dog</span>()</div><div class="line">&#125;</div><div class="line">animal?.eat()</div></pre></td></tr></table></figure></p>
+<p>上面的代码中<code>animal?.eat()</code>就不能够在编译期确定，因为其中需要很多的业务逻辑(比如根据用户的不同，或者网络请求结果的不同)来确定就究竟创建出来的对象是Rabbit还是Dog，也就无法最终确定要调用那个对象的eat()方法。相似的代码在OC中是怎样执行的呢？在OC中编译器会将这个方法翻译成<code>objc_msgSend(target,@selector(eat),nil)</code>这个方法，然后到了运行时，会分为以下几步进行调用：</p>
+<ol>
+<li>找到方法target中isa对应的Class（如果是类方法要到其metaClass中找）。</li>
+<li>从其中的<code>struct objc_method_list **methodLists</code>找到对应的方法实现。</li>
+<li>如果没有找到就到superClass的<code>methodLists</code>中找。</li>
+</ol>
+<p>如果在Swift中，它是怎样做方法调度的呢？</p>
+<ol>
+<li>找到target对应的class</li>
+<li><p>从class的V-Table中的那得到函数的实现<br>Swift中的类会创建一个V-Table，这个Table是一个数组，其中存放的是函数指针。子类会按照父类V-Table中函数的存放，如果子类没有覆盖某个方法，那么就会拷贝父类方法的地址，如上面的例子会得到下面的V-Table。</p>
+<h2 id="Animal"><a href="#Animal" class="headerlink" title=" Animal"></a> Animal</h2><p> Index0 eat 0x0001<br> Index1 sleep 0x0004</p>
+<h2 id="Dog"><a href="#Dog" class="headerlink" title=" Dog"></a> Dog</h2><p> Index0 eat 0x0001 (copied)<br> Index1 sleep 0x0008 (overrideen)</p>
+<h2 id="Rabbit"><a href="#Rabbit" class="headerlink" title=" Rabbit"></a> Rabbit</h2><p> Index0 eat 0x0002 (overrideen)<br> Index1 sleep 0x0003 (overrideen)</p>
+<p>可以注意到Dog因为没有覆盖父类的<code>eat</code>方法，所以其copy了父类的<code>0x0010</code>指针。因为Swift是Type Safe的，所以在调用它的时候它不会变成<code>Robot</code>或者其它的类（如果不能通过编译），所以无论是调用上面结构中的Animal，Dog，还是Rabbit类，它都是调用相同的Index，得到对应的方法实现。<strong>将函数指针和Index所做的映射在编译期就确定了，这就大大减少了运行时的工作量，提高了运行速度。</strong>所以在运行时它没有必要知道是哪个类型的实例调用了这个方法，只需要找到相应的V-Table即可，至于是其中的哪个Index已经在编译期确定了，没必要再去查找Index的值。<br>然而Swift的方法调度不仅仅是动态方法调度，还有很多静态方法调度。<br><strong>如果我们将某个方法标记为final或者private，或者我们不用类，而使用结构体，枚举，这时就不需要动态调度，只需要静态调度即可，这样速度会更快。</strong></p>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/30/wwdc-understand-swift-performance/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/30/wwdc-understand-swift-performance/" itemprop="url">理解Swift的性能</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-30T13:26:43+08:00">
+                2017-07-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>草稿：</strong><br>本博客主要来源于WWDC2016-416，UnderStanding Swift Performance。<br>Swift性能指标：</p>
+<ol>
+<li>Stack VS Heap</li>
+<li>Reference Count</li>
+<li>Method Dispatch中Static多还是Dynamic多<br>栈上的操作更加高效，降低栈指针来创建，增加栈指针来释放栈。<br>堆上可以存放高级数据结构，但是堆的操作效率是更低的，因为每次开辟堆空间都需要寻找空闲的内存块。在消除的时候需要重新插入一个内存块。除此之外，Class等存在堆上的对象，需要开辟我们看不到的空间，这些空间是需要消耗内存的。<br>引用计数的不断操作会降低性能。所以要尽可能少的创建Class。<br>在Struct中包含Class是会降低性能的，我们要尽量减少这种情况的出现，比如在使用纯字符串的时候，我们可以使用Enum，或者其它的值类型来替代。<br>如果Struct中包含Class对象，那么在CopyStruct的时候也会拷贝其引用计数，包含的Class越多，就需要操作更多的retain和release方法方法。<br>Swift在调用一个函数的时候，我们需要跳到对应的方法实现。<br>Static 调度：如果在编译时期就可以确定某个方法的实现的话，就可以直接跳转到相应的方法的。并且是inline方法。既然静态调度这么好，为什么还需要Dynamic Dispatch呢？因为我们需要执行各种业务逻辑，需要根据具体的场景来决定究竟调用那个方法，我们需要使用多态。<br>对于类，那么编译器会增加一个指针来存储来指向那个类的Type信息，并且存到静态区。在执行函数调用时，编译器会到该类型对应的虚拟方法表（VTable）中找到相应的方法实现。将类标记为<code>final</code>时，其方法的调用将变为静态派发。在不需要动态派发的时候，我们应该尽量使用静态派发。</li>
+</ol>
+<p>怎样是用<code>Struct</code>写多态呢？Protocol类型的变量是怎样被存储，被拷贝，以及方法调度是怎样工作的呢？<br>Static Dispatches VS Dynamic Dispatch<br>Static方法：可以在编译时确定需要调用的方法实现，在运行时，可以直接调用并且可以做<code>inline</code>优化。<br>Dynamic方法：需要在运行时在表中找到对应的方法的实现。并且会妨碍inlining及其它的性能优化。当我们利用了多态之后，我们就难以确定这个方法究竟是调用那个方法，也就是说必须在运行时去确定到底要执行那个方法的实现。<br>Swift中Protocol Type的多态，由于没有继承，所以就没有了<code>V-Table</code>方式的调度。Swift使用了一种Protocol Witness Table的技术来调度Protocol Type的方法，这个表格的入口和该Type的实现先链接，因此找到这个表格就找到了方法的实现，那么我们怎样找到这个Table呢？，注意数组中的数值都有相同的offset，因此Swift使用Existential Container来封装protocol type，它的前三个字（两个字节称为一个字）是valueBuffer，小数据，例如两个word的Point可以存储，但是大于三个字时候，swift将会开辟一个堆空间，并且将这个控件的地址存储在Existential Container里面。<br>Swift让value Type，比如Strut和protocol一起获得了动态调度行为，实现了动态多态。<br>Copy on write：Swift自己提供了Copy on Write的机制，但是如果我们自己写了结构体，并且结构体比较重，还有其它的引用类型，在Copy结构体的时候，我们同时需要Copy这个对象，所以在Write的时候，我们需要判断这个引用类型的引用计数，然后做相应的改变。<br>因此Existential Container需要处理不同的数据类型，这是怎样实现的呢？这需要另外一个基于表的机制–Value Witness Table，程序中的每一个type都有一个这样的表，它包含以下几部分：<br>allocate:<br>copy:<br>destruct:<br>deallocate:<br>Whole Model优化可以让同一个模块中的不同文件都可以同时优化。<br>Type不会在运行时改变。</p>
+<p>Generics-Small Value<br>如果使用泛型，那么每次函数的调用就只能产生一个call context，并且call context中的类型是一定的，这里Swift不会使用Existential container，它可以直接传递value witness table和 protocol witness table</p>
+<ol>
+<li>没有比必要开辟堆空间，没有在堆上进行操作，所以不需要考虑线程安全，无需对线程进行加锁。</li>
+<li>没有引用计数，操作引用计数也需要是线程安全的，因为引用计数操作极其频繁，所以其性能消耗会逐渐增多，并且不是可以忽略的。</li>
+<li>通过Protocol Witness Table进行动态调度以实现多态<br>Generics-Large Value</li>
+<li>使用indirect storage 来开辟堆空间</li>
+<li>如果包含引用类型的话会有引用计数</li>
+<li>通过Protocol Witness Table进行动态调度实现多态</li>
+</ol>
+<p>总结：<br>尽可能少的使用dynamic runtime，选择合适的抽象。这样编译器可以做错误检查，并且可以做优化，提升代码执行速度。<br>Class类型：identity或者OOP类型的多态。<br>结构体&amp;枚举类型：值语义。<br>Protocol types：动态多态。<br>泛型和值语义相结合可以实现静态多态。<br>使用indirect Storage来处理大数值。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -377,7 +900,7 @@
           
             <h2 id="Sequences"><a href="#Sequences" class="headerlink" title="Sequences"></a>Sequences</h2><p><code>Sequence</code>协议位于系统架构的底层，其定义是<br>   <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>&#123;</div><div class="line">   </div><div class="line"> associatedtype <span class="type">Iterator</span>: <span class="type">IteratorProtocol</span></div><div class="line"> <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span>-&gt; <span class="type">Iterator</span></div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h2 id="Iterators"><a href="#Iterators" class="headerlink" title="Iterators"></a>Iterators</h2><pre><code><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">IteratorProtocol</span></span>&#123;</div><div class="line">associatedtype <span class="type">Element</span></div><div class="line"><span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span>-&gt; <span class="type">Element</span>?</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</div><div class="line">   <span class="keyword">let</span> string:<span class="type">String</span></div><div class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></div><div class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</div><div class="line">       <span class="keyword">self</span>.string = string</div><div class="line">       offset = string.startIndex</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></div><div class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String</span>? &#123;</div><div class="line"></div><div class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</div><div class="line">       offset = string.index(after: offset)</div><div class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</div><div class="line">       <span class="keyword">return</span> offSetString;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</div><div class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</div><div class="line">    <span class="built_in">print</span>(content)</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> string: <span class="type">String</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</div><div class="line">       </div><div class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</div><div class="line">       </div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"for in<span class="subst">\(<span class="keyword">prefix</span>)</span>"</span>)</div><div class="line">   &#125;</div><div class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</div></pre></td></tr></table></figure></p>
+</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</div><div class="line">   <span class="keyword">let</span> string:<span class="type">String</span></div><div class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></div><div class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</div><div class="line">       <span class="keyword">self</span>.string = string</div><div class="line">       offset = string.startIndex</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></div><div class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String</span>? &#123;</div><div class="line"></div><div class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</div><div class="line">       offset = string.index(after: offset)</div><div class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</div><div class="line">       <span class="keyword">return</span> offSetString;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</div><div class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</div><div class="line">    <span class="built_in">print</span>(content)</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> string: <span class="type">String</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</div><div class="line">       </div><div class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</div><div class="line">       </div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"for in\(prefix)"</span>)</div><div class="line">   &#125;</div><div class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</div></pre></td></tr></table></figure></p>
 <p>如上所示，我么要想对一个Type实现for in 操作，需要两步：</p>
 <ol>
 <li>创建一个遍历器：让其遵守<code>IteratorProtocol</code>协议</li>
@@ -973,7 +1496,7 @@ git push heroku master
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-count">27</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>

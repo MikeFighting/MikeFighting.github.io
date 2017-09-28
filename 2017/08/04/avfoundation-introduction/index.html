@@ -108,7 +108,7 @@
 <meta property="og:description" content="AVFoundation是很多处理基于时间的音视频文件的框架之一。你可以用它来检查，创建，编辑或者对媒体文件重编码。可以从设备中得到输入流，以及在实时捕捉和播放的时候对视频进行处理。   如果你仅仅需要播放视频，在IOS上你可以使用Media Player框架中的MPMoviePlayerController或者MPMoviePlayerViewController，如果是基于Web的视频，那么你">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-d41cc62c5bec457a.png">
-<meta property="og:updated_time" content="2017-08-24T02:21:32.000Z">
+<meta property="og:updated_time" content="2017-09-10T13:52:24.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AVFoundation--简介">
 <meta name="twitter:description" content="AVFoundation是很多处理基于时间的音视频文件的框架之一。你可以用它来检查，创建，编辑或者对媒体文件重编码。可以从设备中得到输入流，以及在实时捕捉和播放的时候对视频进行处理。   如果你仅仅需要播放视频，在IOS上你可以使用Media Player框架中的MPMoviePlayerController或者MPMoviePlayerViewController，如果是基于Web的视频，那么你">
@@ -398,10 +398,7 @@
 <li>需要自己明确指定类和方法所在线程的话会在响应的线程中年触发通知</li>
 </ul>
 <p>如果要开发多线程的应用，那么你应该使用<code>isMainThread</code>或者<code>[[NSThread currentThread] isEqual:&lt;#A stored thread reference#&gt;]</code>来提前测试是否该线程是你期望的要执行的线程。如果要跨线程，你可能需要如下方法</p>
-<pre><code class="Objective-C">performSelectorOnMainThread:withObject:waitUntilDone: 
-performSelector:onThread:withObject:waitUntilDone:modes:
-dispatch_async
-</code></pre>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">performSelectorOnMainThread:withObject:waitUntilDone: </div><div class="line">performSelector:onThread:withObject:waitUntilDone:modes:</div><div class="line"><span class="built_in">dispatch_async</span></div></pre></td></tr></table></figure>
 <p>为了更好的开发AVFoundation，你需要具备如下前提知识：</p>
 <ul>
 <li>全面理解基础的Cocoa开发工具及技术</li>
@@ -536,7 +533,7 @@ dispatch_async
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-count">27</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
