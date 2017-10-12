@@ -83,7 +83,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Others," />
+  <meta name="keywords" content="Notes," />
 
 
 
@@ -99,21 +99,21 @@
 
 
 
-<meta name="description" content="补码我们先来看一个有趣的例子：  在这里我们定义了一个signed char类型的数据，将其赋值为128，然后系统给我们一个警告，意思就是说它隐式地将数值给转换成了-128，这究竟是为什么呢？ 其实在计算机中数值都是以补码的形式存储的：  正数的补码是其自身，负数的补码是其对应的正数的反码加1。  我们先看一下-42在计算机中是如何表示的：它是先将其对象的正数42，0010 1010然后取反110">
-<meta name="keywords" content="Others">
+<meta name="description" content="线性表的定义：零个或者多个具有相同的特性的数据元素的有限序列。注意这里的连续不是指存储地址上的连续而是指存取逻辑上的连续。从线性表的存储结构上可以将线性表分为顺序存储和链式存储两种形式。在实际中常以栈，队列，字符串等特殊的形式来使用。 顺序存储结构线性表的顺序存储结构是指用一段连续的存储单元依次存储线性表中的元素。它的存储形式如下：  这种存储结构的存储位置很容易被计算出来，比如要计算下标为i元素">
+<meta name="keywords" content="Notes">
 <meta property="og:type" content="article">
-<meta property="og:title" content="计算机基础">
-<meta property="og:url" content="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/index.html">
+<meta property="og:title" content="线性表">
+<meta property="og:url" content="https://mikefighting.github.io/2017/10/12/data-structure-linear-list/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="补码我们先来看一个有趣的例子：  在这里我们定义了一个signed char类型的数据，将其赋值为128，然后系统给我们一个警告，意思就是说它隐式地将数值给转换成了-128，这究竟是为什么呢？ 其实在计算机中数值都是以补码的形式存储的：  正数的补码是其自身，负数的补码是其对应的正数的反码加1。  我们先看一下-42在计算机中是如何表示的：它是先将其对象的正数42，0010 1010然后取反110">
+<meta property="og:description" content="线性表的定义：零个或者多个具有相同的特性的数据元素的有限序列。注意这里的连续不是指存储地址上的连续而是指存取逻辑上的连续。从线性表的存储结构上可以将线性表分为顺序存储和链式存储两种形式。在实际中常以栈，队列，字符串等特殊的形式来使用。 顺序存储结构线性表的顺序存储结构是指用一段连续的存储单元依次存储线性表中的元素。它的存储形式如下：  这种存储结构的存储位置很容易被计算出来，比如要计算下标为i元素">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-f48d5ace81b3d0cb.png">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-d236d51fa77178ad.png">
-<meta property="og:updated_time" content="2017-09-10T23:39:40.000Z">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-17638d16cc8b3161.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-c333242edadd24c3.png">
+<meta property="og:updated_time" content="2017-10-12T02:27:17.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="计算机基础">
-<meta name="twitter:description" content="补码我们先来看一个有趣的例子：  在这里我们定义了一个signed char类型的数据，将其赋值为128，然后系统给我们一个警告，意思就是说它隐式地将数值给转换成了-128，这究竟是为什么呢？ 其实在计算机中数值都是以补码的形式存储的：  正数的补码是其自身，负数的补码是其对应的正数的反码加1。  我们先看一下-42在计算机中是如何表示的：它是先将其对象的正数42，0010 1010然后取反110">
-<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-f48d5ace81b3d0cb.png">
+<meta name="twitter:title" content="线性表">
+<meta name="twitter:description" content="线性表的定义：零个或者多个具有相同的特性的数据元素的有限序列。注意这里的连续不是指存储地址上的连续而是指存取逻辑上的连续。从线性表的存储结构上可以将线性表分为顺序存储和链式存储两种形式。在实际中常以栈，队列，字符串等特殊的形式来使用。 顺序存储结构线性表的顺序存储结构是指用一段连续的存储单元依次存储线性表中的元素。它的存储形式如下：  这种存储结构的存储位置很容易被计算出来，比如要计算下标为i元素">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-17638d16cc8b3161.png">
 
 
 
@@ -141,13 +141,13 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/10/12/data-structure-linear-list/"/>
 
 
 
 
 
-  <title>计算机基础 | 击水湘江</title>
+  <title>线性表 | 击水湘江</title>
   
 
 
@@ -310,7 +310,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/10/12/data-structure-linear-list/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
@@ -327,7 +327,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">计算机基础</h1>
+          <h1 class="post-title" itemprop="name headline">线性表</h1>
         
 
         <div class="post-meta">
@@ -339,8 +339,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-10T10:10:40+08:00">
-                2017-09-10
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-10-12T09:36:56+08:00">
+                2017-10-12
               </time>
             
 
@@ -374,18 +374,13 @@
       
 
       
-        <h3 id="补码"><a href="#补码" class="headerlink" title="补码"></a>补码</h3><p>我们先来看一个有趣的例子：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-f48d5ace81b3d0cb.png" alt="溢出128"></p>
-<p>在这里我们定义了一个<code>signed char</code>类型的数据，将其赋值为128，然后系统给我们一个警告，意思就是说它隐式地将数值给转换成了<strong>-128</strong>，这究竟是为什么呢？</p>
-<p>其实在计算机中数值都是以补码的形式存储的：</p>
-<blockquote>
-<p>正数的补码是其自身，负数的补码是其对应的正数的反码加1。</p>
-</blockquote>
-<p>我们先看一下-42在计算机中是如何表示的：<br>它是先将其对象的正数42，0010 1010然后取反1101 0101，然后再加1，得到1101 0110。</p>
-<p>我们知道signed char是占八位的。其存储范围是：0000 0000到1111 1111。那么128的补码还是128，其二进制表示为：1000 0000。但是这里有个问题，因为其类型是有符号的，所以最高位是符号位，也就是说这个数不能用来表示128了，那么它表示多少呢？我们就要看看它是谁的补码就是好了。我们先将<code>1000 0000</code>取反，然后的到<code>0111 1111</code>，加一得到<code>1000 0000</code>，再乘以-1,得到-128。如果不太明白，我我们可以将128变大，变成129：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-d236d51fa77178ad.png" alt="溢出129"></p>
-<p>129为整数，其补码是其自身，1000 0001，又因为其最高位是符号位，所以其表示的是一个负数，它表示多少呢？先将其取反<code>0111 1110</code>，然后+1得到<code>0111 1111</code>，这时127，最后乘以-1得到-127。</p>
-<h3 id="switch语句为什么比if-else快？"><a href="#switch语句为什么比if-else快？" class="headerlink" title="switch语句为什么比if else快？"></a>switch语句为什么比if else快？</h3><p>因为编译器在编译switch语句的时候会检查每个case常量，并且会创建出一个”跳转表”，这个表用来在表达式的基础上选择执行路径，其时间复杂度是O(1)，而if else的时间复杂度是O(n)，所以switch case要比if else快很多。</p>
-
+        <p><img src="http://upload-images.jianshu.io/upload_images/1513759-17638d16cc8b3161.png" alt="LinearList"><br><strong>线性表的定义：零个或者多个具有相同的特性的数据元素的有限序列。</strong>注意这里的连续不是指存储地址上的连续而是指存取逻辑上的连续。从线性表的存储结构上可以将线性表分为顺序存储和链式存储两种形式。在实际中常以<em>栈，队列，字符串</em>等特殊的形式来使用。</p>
+<h2 id="顺序存储结构"><a href="#顺序存储结构" class="headerlink" title="顺序存储结构"></a>顺序存储结构</h2><p>线性表的顺序存储结构是指用一段连续的存储单元依次存储线性表中的元素。它的存储形式如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-c333242edadd24c3.png" alt="线性表的顺序存储"></p>
+<p>这种存储结构的存储位置很容易被计算出来，比如要计算下标为i元素的位置，这时候只需要利用下面的公式即可：</p>
+<p>LOC(a<sub>i</sub>) = LOC(a<sub>1</sub>) + (i - 1) * c</p>
+<p>其中c是每个元素所占存储单元的个数。所以根据大O阶记法，这个时间复杂度是O(1)(这种时间复杂度为1的存储结构称为随机存取结构或者直接存取结构);</p>
+<h3 id="顺序存储结构的优缺点"><a href="#顺序存储结构的优缺点" class="headerlink" title="顺序存储结构的优缺点"></a>顺序存储结构的优缺点</h3><h2 id="链式存储结构"><a href="#链式存储结构" class="headerlink" title="链式存储结构"></a>链式存储结构</h2><h3 id="链式存储结构的优缺点"><a href="#链式存储结构的优缺点" class="headerlink" title="链式存储结构的优缺点"></a>链式存储结构的优缺点</h3><h2 id="静态链表"><a href="#静态链表" class="headerlink" title="静态链表"></a>静态链表</h2><h2 id="循环链表"><a href="#循环链表" class="headerlink" title="循环链表"></a>循环链表</h2><h2 id="双向链表"><a href="#双向链表" class="headerlink" title="双向链表"></a>双向链表</h2>
       
     </div>
 
@@ -414,7 +409,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Others/" rel="tag"># Others</a>
+            <a href="/tags/Notes/" rel="tag"># Notes</a>
           
         </div>
       
@@ -427,8 +422,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/09/08/chat-uitableView/" rel="next" title="聊聊UITableView">
-                <i class="fa fa-chevron-left"></i> 聊聊UITableView
+              <a href="/2017/09/27/servlet-introduce/" rel="next" title="Servlet简介">
+                <i class="fa fa-chevron-left"></i> Servlet简介
               </a>
             
           </div>
@@ -436,10 +431,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/09/10/java-detials/" rel="prev" title="可能被遗漏的Java细节">
-                可能被遗漏的Java细节 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -560,7 +551,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#补码"><span class="nav-number">1.</span> <span class="nav-text">补码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#switch语句为什么比if-else快？"><span class="nav-number">2.</span> <span class="nav-text">switch语句为什么比if else快？</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序存储结构"><span class="nav-number">1.</span> <span class="nav-text">顺序存储结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序存储结构的优缺点"><span class="nav-number">1.1.</span> <span class="nav-text">顺序存储结构的优缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链式存储结构"><span class="nav-number">2.</span> <span class="nav-text">链式存储结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#链式存储结构的优缺点"><span class="nav-number">2.1.</span> <span class="nav-text">链式存储结构的优缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#静态链表"><span class="nav-number">3.</span> <span class="nav-text">静态链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#循环链表"><span class="nav-number">4.</span> <span class="nav-text">循环链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#双向链表"><span class="nav-number">5.</span> <span class="nav-text">双向链表</span></a></li></ol></div>
             
 
           </div>

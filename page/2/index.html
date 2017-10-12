@@ -307,6 +307,535 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/24/avfoundation-capture/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/24/avfoundation-capture/" itemprop="url">AVFoundation--媒体捕获</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-24T10:27:12+08:00">
+                2017-08-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>为了管理设备(比如摄像头或者麦克风)捕获的信息，你需要组合一些对象来代表输入和输出，并且使用<code>AVCaptureSession</code>对象来调节它们之间的数据。你最少需要如下步骤：</p>
+<ul>
+<li><code>AVCaptureDevice</code>对象来代表输入设备，比如：摄像头或者麦克风</li>
+<li>具体的<code>AVCaptureInput</code>子类实例来配置输入设备的<code>port</code></li>
+<li>具体<code>AVCaptureOutput</code>子类实例来输入一个视频文件或者静态图片</li>
+<li>一个<code>AVCaptureSession</code>实例来协调输入到输入的数据流</li>
+</ul>
+<p>为了给用户预览正在录制的视频，你可以使用<code>AVCaptureVideoPreviewLayer</code>实例来实现。你可以通过一个单一的session来配置各种输入输出：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-c534307e74f3784f.png" alt="session work"></p>
+<p>对于很多应用来说，这就已经够用了。然而对于某些操作来说，比如，你要检测音频频道的power level，你需要考虑某个输入设备的各种端口，以及这些端口是怎样和输出相连接的。<br>捕获输入和捕获输入之间的关联可以用<code>AVCaptureConnection</code>对象来表示。捕获输入（<code>AVCaptureInput</code>实例）有一到多个输入端口（<code>AVCaptureInputPort</code>实例）。捕获输出（<code>AVCaptureOutPut</code>实例）可以接受一到多个数据源（比如，一个<code>AVCaptureMovieFileOutput</code>对象可以接收视频或音频数据）。</p>
+<p>当你往一个session中加入一个输入或者一个输出的时候，这个session可以形成针对所有捕获输入端口和捕获输出的连接。一个捕获输入和捕获输出之间的连接可以被一个<code>AVCaptureConnection</code>对象来表示。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-5fc693a0e896e075.png" alt="Capture Connection"></p>
+<p>对于指定的输入或者输出，你可以使用一个capture connection来使能或者关闭其数据流。你也可以使用connection来检测一个音频频道的平均及最高的power level。</p>
+<p><em>注：媒体捕获不支持同时捕获IOS设备的前置和后置摄像头。</em></p>
+<h2 id="使用捕获Session来调节数据流"><a href="#使用捕获Session来调节数据流" class="headerlink" title="使用捕获Session来调节数据流"></a>使用捕获Session来调节数据流</h2><p>一个<code>AVCaptureSessin</code>对象是你用来管理数据捕获的关键调节对象。你可以使用一个实例来调节视频音频输入到输出的数据。你可以给这个session添加捕获设备，然后通过调用session的<code>startRuning</code>方法来开始这个数据流，并且通过调用<code>stopRunning</code>方法来结束数据流。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">AVCaptureSession</span> *session = [[<span class="built_in">AVCaptureSession</span> alloc] init];</div><div class="line"><span class="comment">// Add inputs and outputs.</span></div><div class="line">[session startRunning];</div></pre></td></tr></table></figure>
+<h3 id="配置Session"><a href="#配置Session" class="headerlink" title="配置Session"></a>配置Session</h3><p>使用<code>preset</code>来对session配置你所喜欢的图片质量和分辨率。一个preset是一个常量，它表明了很多种可选配置方案中的一种；在某些情况下实际的配置和具体的设备是相关的。<br><img src="http://upload-images.jianshu.io/upload_images/1513759-7fb0bd8bbe4ae251.png" alt="prest"></p>
+<p>如果你要对针对某个屏幕大小做配置，你需要在设置前检测其是否支持：</p>
+<pre><code>if ([session canSetSessionPreset:AVCaptureSessionPreset1280x720]) {
+    session.sessionPreset = AVCaptureSessionPreset1280x720;
+} else { 
+    // Handle the failure.
+}
+</code></pre><p>如果你要使用preset，以便在一个更加细粒度得调整session的参数，或者你要对一个执行中的session做某些改动，那么你需要你需要将你的方法添加在<code>beginConfiguration</code>和<code>commitConfiguration</code>方法中间。<code>beginConfiguration</code>和<code>commitConfiguration</code>可以确保设备的改变作为一组，最小的能见度或者状态的不兼容行。在调用<code>beginConfiguration</code>之后，你可以添加或者移除输出，改变<code>sessionPreset</code>属性，或者单独配置捕捉输入属性。只有在触发了<code>commitConfiguration</code>之后所有的改变才会生效，并且这些改变将会同时生效。</p>
+<pre><code class="objc">session beginConfiguration];
+<span class="comment">// Remove an existing capture device.</span>
+<span class="comment">// Add a new capture device.</span>
+<span class="comment">// Reset the preset.</span>
+[session commitConfiguration];
+</code></pre>
+<h3 id="检测Capture-Session的状态"><a href="#检测Capture-Session的状态" class="headerlink" title="检测Capture Session的状态"></a>检测Capture Session的状态</h3><p>Capture session会在它开始，停止运行或者被打断的时候发出通知，你可以观察这些通知一遍被告知。你可以通过注册<code>AVCaptureSessionRuntimeErrorNotification</code>来观察一个运行时错误。你也可以通过查询session的<code>running</code>属性来判断其是否正在运行，以及其<code>interrupted</code>属性来判断其是否被打断了。除此之外，<code>running</code>属性和<code>interrupted</code>属性都支持KVO，这个会在主线程中被触发。</p>
+<h2 id="AVCaptureDevice对象代表一个输入设备"><a href="#AVCaptureDevice对象代表一个输入设备" class="headerlink" title="AVCaptureDevice对象代表一个输入设备"></a>AVCaptureDevice对象代表一个输入设备</h2><p>一个<code>AVCaptureDevice</code>对象时对一个物理捕获设备的抽象，该对象可以给<code>AVCaptureSession</code>对象提供输入数据（比如，音频或者视频）。每个对象代表了一种输入设备，比如两个视频输入（前置后置摄像头），一个音频输入（麦克风）。<br>你可以通过使用<code>AVCaptureDevice</code>类方法<code>devices</code>和<code>devicesWithMediaType</code>来找出当前可用的捕获设备。并且，如果有必要的话你可以找出某个iPhone，iPad或者iPod所提供的特性。尽管如此，可用设备的列表是可以变化的。当前的输入设备可能变得不可用（如果它们被另外的应用所使用），新的输入设备变得可用（如果它们被另外的设备所放弃）。你可以注册<code>AVCaptureDeviceWasConnectedNotification</code>和<code>AVCaptureDeviceWasDisconnectedNotification</code>通知，以便在可用设备变化时候被通知到。你可以使用一个capture input来讲一个输入设备添加到<code>capture session</code>中。</p>
+<h2 id="设备属性"><a href="#设备属性" class="headerlink" title="设备属性"></a>设备属性</h2><p>你可以查询某个设备的不同属性。使用<code>hasMediaType:</code>和<code>supportsAVCaptureSessionPreset:</code>方法，你可以检测某个设备是否提供某种媒体类型或者支持一种给定的capture session preset。为了给用户提供有用的信息，你可以找出捕获设备的位置(它在检测单元的前面还是后面)，以及它本地化后的名字。如果你要给用户展示一个捕获列表来让其选择，那么这种方式是很有用的。</p>
+<p>下图展示了后置（AVCaptureDevicePositionBack）和前置（AVCaptureDevicePositionFront）摄像头。<br><img src="http://upload-images.jianshu.io/upload_images/1513759-b1a87fc70f2f3de3.png" alt="front and back facing camera position"></p>
+<p>下面的例子遍历了所有的可用设备并且打印出它们的名字（对于视频设备来说，还有它们的位置）。</p>
+<pre><code class="objc"><span class="built_in">NSArray</span> *devices = [<span class="built_in">AVCaptureDevice</span> devices];
+  <span class="keyword">for</span> (<span class="built_in">AVCaptureDevice</span> *device <span class="keyword">in</span> devices) {
+      <span class="built_in">NSLog</span>(<span class="string">@"Device name: %@"</span>, [device localizedName]);
+      <span class="keyword">if</span> ([device hasMediaType:<span class="built_in">AVMediaTypeVideo</span>]) {
+          <span class="keyword">if</span> ([device position] == <span class="built_in">AVCaptureDevicePositionBack</span>) {
+              <span class="built_in">NSLog</span>(<span class="string">@"Device position : back"</span>);
+
+} <span class="keyword">else</span> { 
+<span class="built_in">NSLog</span>(<span class="string">@"Device position : front"</span>);
+          }
+} }
+</code></pre>
+<p>除此之外，你可以找出设备的模型ID以及其唯一标示。</p>
+<h3 id="设备捕获设置"><a href="#设备捕获设置" class="headerlink" title="设备捕获设置"></a>设备捕获设置</h3><p>不同的设备有不同的功能，比如，某些设备支持聚焦和flash模式，某些可以支持聚焦到某个兴趣点。<br>下面的代码段展说明了怎样找到有手电筒模式的视频输入设备，并且它支持一个给定的capture session preset：</p>
+<pre><code class="objc"><span class="built_in">NSArray</span> *devices = [<span class="built_in">AVCaptureDevice</span> devicesWithMediaType:<span class="built_in">AVMediaTypeVideo</span>];
+<span class="built_in">NSMutableArray</span> *torchDevices = [[<span class="built_in">NSMutableArray</span> alloc] init];
+<span class="keyword">for</span> (<span class="built_in">AVCaptureDevice</span> *device <span class="keyword">in</span> devices) {
+    [<span class="keyword">if</span> ([device hasTorch] &amp;&amp;
+         [device supportsAVCaptureSessionPreset:<span class="built_in">AVCaptureSessionPreset640x480</span>]) {
+        [torchDevices addObject:device];
+} }
+</code></pre>
+<p>如果你发现很多设备满足你的标准，那么你可以让用户从中选择他们喜欢的来使用。为了给用户描述这个设备，你可以使用它的<code>localizedName</code>属性。<br>你可以用相似的方式来使用不同的特性。指明一种特定的模式方法是固定的，并且你可以查看设备是否支持某种特定模式。在某些情况下，你可以观察一个属性以便属性改变时候得到通知。任何情况下，在某种特定的特性下更改模式前要锁住设备，这在下文的<code>配置设备</code>小结中会有提及。</p>
+<p><em>注：聚焦兴趣点和曝光兴趣点是彼此独立的，它们分别是focus mode和exposure mode。</em></p>
+<h4 id="聚焦模式"><a href="#聚焦模式" class="headerlink" title="聚焦模式"></a>聚焦模式</h4><p>有三种聚焦模式：</p>
+<ul>
+<li><code>AVCaptureFocusModeLocked</code>：聚焦位置是固定的。当你想在锁住聚焦的情况下，让用户来组成场景那么这是很有用的。</li>
+<li><code>AVCaptureFocusModeAutoFocus</code>：摄像头做一次扫描聚焦，然后返回到被锁住的状态。如果你想聚焦选中某个特定的物体，并且对那个物体保持聚焦（尽管那个物体可能不在拍摄场景中心），那么这种模式是很合适的。</li>
+<li><code>AVCaptureFocusModeContinuousAutoFocus:</code>在这种模式下摄像头在需要的情况下持续地进行自动对焦。</li>
+</ul>
+<p>在利用<code>focusMode</code>属性来设置聚焦模式前，你可以使用<code>isFocusModeSupported:</code>方法来决定某个设备是否支持给定的聚焦模式。<br>除此之外，某种设备可能会支持对某个兴趣点的聚焦。你可以使用<code>focusPointOfInterestSupported</code>属性来做判断。如果支持的话，你可以使用<code>focusPointOfInterest</code>属性来设置聚焦点。你可以传递一个CGPoint值来指定聚焦的点，其中{0,0}代表左上角，{1,1}在水平模式home键在右侧的情况下。如果设备在竖直模式下，那么这种坐标关系也是适用的。</p>
+<p>使用<code>adjustingFocus</code>属性来决定是否某个设备当前正在聚焦。使用KVO的形式，你可以再设备开始和停止聚焦的时候收到通知。</p>
+<p>如果你改变了聚焦模式的设置，你可以像下面一样，将它们返回到默认设置：</p>
+<pre><code class="objc"><span class="keyword">if</span> ([currentDevice isFocusModeSupported:<span class="built_in">AVCaptureFocusModeContinuousAutoFocus</span>]) {
+    <span class="built_in">CGPoint</span> autofocusPoint = <span class="built_in">CGPointMake</span>(<span class="number">0.5</span>f, <span class="number">0.5</span>f);
+    [currentDevice setFocusPointOfInterest:autofocusPoint];
+    [currentDevice setFocusMode:<span class="built_in">AVCaptureFocusModeContinuousAutoFocus</span>];
+}
+</code></pre>
+<h4 id="曝光模式（Exposure-Modes）"><a href="#曝光模式（Exposure-Modes）" class="headerlink" title="曝光模式（Exposure Modes）"></a>曝光模式（Exposure Modes）</h4><p>曝光模式有以下两种：</p>
+<ul>
+<li><code>AVCaptureExposureModeContinuousAutoExposure：</code>在需要的情况下设备自动调整曝光水平。</li>
+<li><code>AVCaptureExposureModeLocked：</code>在当前水平曝光水平是固定的。</li>
+</ul>
+<p>使用<code>isExposureModeSupported:</code>方法来决定是否某个设备支持某种给定的曝光模式，然后使用<code>exposureMode</code>属性来进行设定。</p>
+<p>除此之外，某个设备可能会支持兴趣点的曝光。你可以使用<code>exposurePointOfInterestSupported</code>来特使其是否支持。如果支持的话，你可以使用<code>exposurePointOfInterest</code>属性来进行设置。你可以传递一个CGPoint值来指定聚焦的点，其中{0,0}代表左上角，{1,1}在水平模式home键在右侧的情况下。如果设备在竖直模式下，那么这种坐标关系也是适用的。<br>使用<code>adjustingExposure</code>属性来决定是否某个设备当前正在改变其曝光设置。使用KVO的形式，你可以再设备开始和停止曝光设置的时候收到通知。</p>
+<p>如果你改变了曝光设置，那么你可以返回默认设置：</p>
+<pre><code class="objc"><span class="keyword">if</span> ([currentDevice
+isExposureModeSupported:<span class="built_in">AVCaptureExposureModeContinuousAutoExposure</span>]) {
+    <span class="built_in">CGPoint</span> exposurePoint = <span class="built_in">CGPointMake</span>(<span class="number">0.5</span>f, <span class="number">0.5</span>f);
+    [currentDevice setExposurePointOfInterest:exposurePoint];
+    [currentDevice setExposureMode:<span class="built_in">AVCaptureExposureModeContinuousAutoExposure</span>];
+}
+</code></pre>
+<h4 id="闪光灯模式"><a href="#闪光灯模式" class="headerlink" title="闪光灯模式"></a>闪光灯模式</h4><p>闪光灯模式又以下三种：</p>
+<ul>
+<li><code>AVCaptureFlashModeOff</code>：闪光灯不会开启</li>
+<li><code>AVCaptureFlashModeOn</code>：闪光灯总是开启</li>
+<li><code>AVCaptureFlashModeAuto</code>：设备会根据周围的光线环境来决定是否开启闪光灯</li>
+</ul>
+<p>使用<code>hasFlash</code>方法可以确定某个设备是否有闪光灯。如果返回是<code>YES</code>，然后你可以使用<code>isFlashModeSupported：</code>方法来判断其是否支持某种给定的闪光灯模式，最后使用<code>flashMode</code>属性来对其进行配置。</p>
+<h4 id="手电筒模式"><a href="#手电筒模式" class="headerlink" title="手电筒模式"></a>手电筒模式</h4><p>在手电筒模式下，为了照亮视频捕捉，闪光灯是在低电耗的情况下持续打开的。一共有三种手电筒模式：</p>
+<ul>
+<li><code>AVCaptureTorchModeOff</code>：手电筒关闭</li>
+<li><code>AVCaptureTorchModeOn</code>：手电筒总是打开</li>
+<li><code>AVCaptureTorchModeAuto</code>：根据需要手电筒选择打开或者关闭</li>
+</ul>
+<p>你可以使用<code>hasTorch</code>属性来检测一个设备是否有手电筒。然后你可以使用<code>isTorchModeSupported:</code>方法来检测一个设备是否有给定的手电筒模式，然后通过<code>torchMode</code>属性来设置手电筒模式。<br>对于有手电筒的设备，如果设备和一个执行中的capture session相连接，那么这个手电筒就会被打开。</p>
+<h4 id="视频防抖"><a href="#视频防抖" class="headerlink" title="视频防抖"></a>视频防抖</h4><p>依赖于具体的硬件设备，对于操作视频的连接，视频防抖是用的。尽管如此，并非所有的源格式和视频分辨率都支持视频防抖。</p>
+<p>使能视频防抖可能会给视频捕捉Pipeline引入多余的延迟。可以使用<code>videoStabilizationEnabled</code>属性来检测视频防抖是否正在使用。<code>enablesVideoStabilizationWhenAvailable</code>属性可以在摄像头支持的情况下让应用自动的使能视频防抖。由于以上的限制，默认情况下视频防抖是被关闭的。</p>
+<h4 id="白色平衡"><a href="#白色平衡" class="headerlink" title="白色平衡"></a>白色平衡</h4><p>有两种白色平衡模式：</p>
+<ul>
+<li><code>AVCaptureWhiteBalanceModeLocked</code>：白平衡模式是固定的。</li>
+<li><code>AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance</code>：在需要的情况下，摄像头持续调整白平衡。</li>
+</ul>
+<p>你可以使用<code>isWhiteBalanceModeSupported:</code>方法来确定某个设备是否支持一种给定的白平衡，然后使用<code>whiteBalanceMode</code>属性来设置白屏模式。</p>
+<p>你可以使用<code>adjustingWhiteBalance</code>属性来决定某个设备是否正在改变其白光模式的设定。你可以通过KVO来观察一个设备开始或者终止其白光设定。</p>
+<h4 id="设置设备方向"><a href="#设置设备方向" class="headerlink" title="设置设备方向"></a>设置设备方向</h4><p>对于一个<code>AVCaptureConnection</code>，你可以给它设定指定的方向来指明你在<code>AVCaptureOutput</code>（AVCaptureMovieFileOutput，AVCaptureStillImageOutput 以及AVCaptureVideoDataOutput）中图片的朝向。</p>
+<p>使用<code>AVCaptureConnectionsupportsVideoOrientation</code>属性来确定设备是否支持改变视频的方向，也可以使用<code>videoOrientation</code>属性来指明你想在输出端口中的指向。下面的代码指明了如何将一个<code>AVCaptureConnection</code>属性设定为<code>AVCaptureVideoOrientationLandscapeLeft:</code></p>
+<pre><code class="objc"><span class="built_in">AVCaptureConnection</span> *captureConnection = &lt;<span class="meta">#A capture connection#&gt;;</span>
+<span class="keyword">if</span> ([captureConnection isVideoOrientationSupported])
+{
+<span class="built_in">AVCaptureVideoOrientation</span> orientation = <span class="built_in">AVCaptureVideoOrientationLandscapeLeft</span>; [captureConnection setVideoOrientation:orientation]; 
+}
+</code></pre>
+<h4 id="设置设备"><a href="#设置设备" class="headerlink" title="设置设备"></a>设置设备</h4><p>为了给设备设置一个捕获属性，你必须使用<code>lockForConfiguration：</code>属性来获取该设备的锁。这会避免其它应用对该属性做出不能兼容的改变。下面的代码片段说明了怎样在一个设备上改变其聚焦模式（首先确定是否该模式是被支持的），然后尝试锁住该设备来重新配置。如果这个锁是可获取的，那么聚焦模式就被改变，随后这个锁会被立即释放掉。</p>
+<pre><code class="objc"><span class="keyword">if</span> ([device isFocusModeSupported:<span class="built_in">AVCaptureFocusModeLocked</span>]) {
+    <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;
+    <span class="keyword">if</span> ([device lockForConfiguration:&amp;error]) {
+        device.focusMode = <span class="built_in">AVCaptureFocusModeLocked</span>;
+        [device unlockForConfiguration];
+    }
+    <span class="keyword">else</span> {
+        <span class="comment">// Respond to the failure as appropriate.</span>
+}
+</code></pre>
+<p>只要你需要这个可设置的设备属性保持不变，那么你就应该持有这把设备锁。在非必要的情况下持有设备锁可能会降低其它应用的捕获质量。</p>
+<h4 id="转换设备"><a href="#转换设备" class="headerlink" title="转换设备"></a>转换设备</h4><p>有时你可能想让用户在不同的输入设备间进行切换，比如，从使用前置摄像头到使用后置摄像头。为了避免暂停或者卡顿，你可以在运行状态下配置一个session，然而你需要将你的配置改变放在<code>beginConfiguration</code>和<code>commitConfiguration</code>之间。</p>
+<pre><code class="objc"><span class="built_in">AVCaptureSession</span> *session = &lt;<span class="meta">#A capture session#&gt;;</span>
+[session beginConfiguration];
+[session removeInput:frontFacingCameraDeviceInput];
+[session addInput:backFacingCameraDeviceInput];
+[session commitConfiguration];
+</code></pre>
+<p>当最外面的<code>commitConfiguration</code>被触发时候，所有的改变会同时被执行。这就确保了平滑的转变。</p>
+<h3 id="使用Capture-Inputs来给一个Session添加捕获设备"><a href="#使用Capture-Inputs来给一个Session添加捕获设备" class="headerlink" title="使用Capture Inputs来给一个Session添加捕获设备"></a>使用Capture Inputs来给一个Session添加捕获设备</h3><p>你可以使用一个<code>AVCaptureDeviceInput</code>（一个抽象<code>AVCaptureInput</code>类的子类）实例来给一个capture session添加一个捕获设备。</p>
+<pre><code class="objc"><span class="built_in">NSError</span> *error;
+<span class="built_in">AVCaptureDeviceInput</span> *input =
+        [<span class="built_in">AVCaptureDeviceInput</span> deviceInputWithDevice:device error:&amp;error];
+<span class="keyword">if</span> (!input) {
+    <span class="comment">// Handle the error appropriately.</span>
+}
+</code></pre>
+<p>你可以使用<code>addInput:</code>来个一个session添加输入。如果合适的话，你可以使用<code>canAddInput</code>来确定某个捕获输入是否和现存的session是兼容的。</p>
+<pre><code class="objc"><span class="built_in">AVCaptureSession</span> *captureSession = &lt;<span class="meta">#Get a capture session#&gt;;</span>
+  <span class="built_in">AVCaptureDeviceInput</span> *captureDeviceInput = &lt;<span class="meta">#Get a capture device input#&gt;;</span>
+  <span class="keyword">if</span> ([captureSession canAddInput:captureDeviceInput]) {
+      [captureSession addInput:captureDeviceInput];
+  }
+  <span class="keyword">else</span> {
+      <span class="comment">// Handle the failure.</span>
+}
+</code></pre>
+<p>如果想知道如何重新配置一个运行中的session，你可以查看上文中的<strong>Configuring a session</strong>中的细节。</p>
+<p>一个<code>AVCaptureInput</code>可以给媒体数据提供多个流。比如，一个输入设备可以提供视频或者音频数据。每个输入提供的媒体流都是用AVCaptureInputPort来表示的。一个捕获session使用一个<code>AVCaptureConnection</code>对象来决定一组<code>AVCaptureInputPort</code>对象和一个<code>AVCaptureOutput</code>之间的映射。</p>
+<h3 id="使用捕获输出来获取一个Session的输出"><a href="#使用捕获输出来获取一个Session的输出" class="headerlink" title="使用捕获输出来获取一个Session的输出"></a>使用捕获输出来获取一个Session的输出</h3><p>为了从一个捕获session中获取输出，你需要添加一个或者多个output。一个output是一个<code>AVCaptureOutput</code>子类的实例。你使用：</p>
+<ul>
+<li><code>AVCaptureMovieFileOutput</code>来输出一个视频文件</li>
+<li>如果你想处理正在被捕获的视频的frame，比如，你要创建你自己的ViewLayer，那么你可以使用<code>AVCaptureVideoDataOutput</code></li>
+<li>如果你要处理正在被捕获的音频你可以使用<code>AVCaptureAudioDataOutput</code></li>
+<li>如果你要捕获静态图片以及元数据你可以使用<code>AVCaptureStillImageOutput</code></li>
+</ul>
+<p>使用<code>addOutput：</code>你可以给某个捕获session添加outputs。通过使用<code>canAddOutput</code>，你可以检测是否某个捕获输出和现存session相兼容。在某个session运行的过程中，你可以根据需要添加或者移除输出。</p>
+<pre><code class="objc"><span class="built_in">AVCaptureSession</span> *captureSession = &lt;<span class="meta">#Get a capture session#&gt;;</span>
+<span class="built_in">AVCaptureMovieFileOutput</span> *movieOutput = &lt;<span class="meta">#Create and configure a movie output#&gt;;</span>
+<span class="keyword">if</span> ([captureSession canAddOutput:movieOutput]) {
+    [captureSession addOutput:movieOutput];
+}
+<span class="keyword">else</span> {
+    <span class="comment">// Handle the failure.</span>
+}
+</code></pre>
+<h4 id="保存视频文件"><a href="#保存视频文件" class="headerlink" title="保存视频文件"></a>保存视频文件</h4><p>你可以使用<code>AVCaptureMovieFileOutput</code>对象来将某个视频数据保存到文件中。（<code>AVCaptureMovieFileOutput</code>是<code>AVCaptureFileOutput</code>的子类，它定义了很多基本操作）。你可以对一个视频文件输出的很多方面做以配置，比如录制的最大时长，文件大小。如果可用的磁盘空间小于指定的值你可以禁止视频的录制。</p>
+<pre><code class="objc"><span class="built_in">AVCaptureMovieFileOutput</span> *aMovieFileOutput = [[<span class="built_in">AVCaptureMovieFileOutput</span> alloc]
+init];
+<span class="built_in">CMTime</span> maxDuration = &lt;<span class="meta">#Create a CMTime to represent the maximum duration#&gt;;</span>
+aMovieFileOutput.maxRecordedDuration = maxDuration;
+aMovieFileOutput.minFreeDiskSpaceLimit = &lt;<span class="meta">#An appropriate minimum given the quality of the movie format and the duration#&gt;;</span>
+</code></pre>
+<p>视频输出的分辨率和比特率取决于一个捕获session的<code>sessionPreset</code>值。视频编码通常是H.264格式，音频编码通常是AAC格式。实际的数值可能根据设备的不同而改变。</p>
+<h4 id="开始录制"><a href="#开始录制" class="headerlink" title="开始录制"></a>开始录制</h4><p>使用<code>startRecordingToOutputFileURL:recordingDelegate:</code>你可以开始录制一个QuickTime视频。你需要提供一个基于文件的URL以及一个代理。这个URL一定不能和已存在文件相同，因为视频文件输出不会覆盖已存在的资源。同时，你也需要获得往某个指定的路径下写文件的权限。代理必须遵守<code>AVCaptureFileOutputRecordingDelegate</code>协议，并且必须要实现<code>captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:</code>方法。</p>
+<pre><code class="objc"><span class="built_in">AVCaptureMovieFileOutput</span> *aMovieFileOutput = &lt;<span class="meta">#Get a movie file output#&gt;;</span>
+<span class="built_in">NSURL</span> *fileURL = &lt;<span class="meta">#A file URL that identifies the output location#&gt;;</span>
+[aMovieFileOutput startRecordingToOutputFileURL:fileURL recordingDelegate:&lt;<span class="meta">#The</span>
+delegate<span class="meta">#&gt;];</span>
+</code></pre>
+<p>在实现<code>captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:</code>代理方法的时候，代理可以往相册中写入录制的视频。这也可以检测可能出现的错误。</p>
+<h4 id="确保文件被成功写入"><a href="#确保文件被成功写入" class="headerlink" title="确保文件被成功写入"></a>确保文件被成功写入</h4><p>在实现<code>captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:</code>方法的时候，为了确保文件是否被成功的写入了，你不仅仅需要检查error，还需要检查error的user info字典中<code>AVErrorRecordingSuccessfullyFinishedKey</code>的值：</p>
+<pre><code class="objc">- (<span class="keyword">void</span>)captureOutput:(<span class="built_in">AVCaptureFileOutput</span> *)captureOutput
+        didFinishRecordingToOutputFileAtURL:(<span class="built_in">NSURL</span> *)outputFileURL
+        fromConnections:(<span class="built_in">NSArray</span> *)connections
+        error:(<span class="built_in">NSError</span> *)error {
+    <span class="built_in">BOOL</span> recordedSuccessfully = <span class="literal">YES</span>;
+    <span class="keyword">if</span> ([error code] != noErr) {
+        <span class="comment">// A problem occurred: Find out if the recording was successful.</span>
+        <span class="keyword">id</span> value = [[error userInfo]
+objectForKey:<span class="built_in">AVErrorRecordingSuccessfullyFinishedKey</span>];
+        <span class="keyword">if</span> (value) {
+            recordedSuccessfully = [value boolValue];
+} } 
+    <span class="comment">// Continue as appropriate...</span>
+</code></pre>
+<p>你需要检测user info字典中的key<code>AVErrorRecordingSuccessfullyFinishedKeykey</code>的值，因为尽管有错误，文件还是可以被存储成功。这个错误可能标志着你达到了某个视频录制的限制，比如，<code>AVErrorMaximumDurationReached</code>或者<code>AVErrorMaximumFileSizeReached</code>。其它可能导致录制停止的原因有：</p>
+<ul>
+<li>磁盘占满了：AVErrorDiskFull</li>
+<li>录制设备断开连接了：AVErrorDeviceWasDisconnected</li>
+<li>session被中止了（比如，收到了一个电话）：AVErrorSessionWasInterrupted </li>
+</ul>
+<h4 id="给文件添加元数据"><a href="#给文件添加元数据" class="headerlink" title="给文件添加元数据"></a>给文件添加元数据</h4><p>任何时候你都可以给一个视频文件设置元数据，甚至是在录制的时候。在某些场景下这时很有用的，比如当视频录制开始的时候信息不可以拿到，这可能因为位置信息造成的。某个输出文件的元数据是由一组<code>AVMetaDataItem</code>对象来表示的；你使用它可变子类的一个实例，<code>AVMutableMetadataItem</code>来创建一个你自己的元数据。</p>
+<pre><code class="objc">VCaptureMovieFileOutput *aMovieFileOutput = &lt;<span class="meta">#Get a movie file output#&gt;;</span>
+<span class="built_in">NSArray</span> *existingMetadataArray = aMovieFileOutput.metadata;
+<span class="built_in">NSMutableArray</span> *newMetadataArray = <span class="literal">nil</span>;
+<span class="keyword">if</span> (existingMetadataArray) {
+    newMetadataArray = [existingMetadataArray mutableCopy];
+}
+<span class="keyword">else</span> {
+    newMetadataArray = [[<span class="built_in">NSMutableArray</span> alloc] init];
+} 
+<span class="built_in">AVMutableMetadataItem</span> *item = [[<span class="built_in">AVMutableMetadataItem</span> alloc] init];
+item.keySpace = <span class="built_in">AVMetadataKeySpaceCommon</span>;
+item.key = <span class="built_in">AVMetadataCommonKeyLocation</span>;
+<span class="built_in">CLLocation</span> *location - &lt;<span class="meta">#The location to set#&gt;;</span>
+item.value = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%+08.4lf%+09.4lf/"</span>
+    location.coordinate.latitude, location.coordinate.longitude];
+[newMetadataArray addObject:item];
+aMovieFileOutput.metadata = newMetadataArray;
+</code></pre>
+<h4 id="处理视频帧"><a href="#处理视频帧" class="headerlink" title="处理视频帧"></a>处理视频帧</h4><p>一个<code>AVCaptureVideoDataOutput</code>对象使用代理来处理视频帧。你可以通过<code>setSampleBufferDelegate:queue:</code>方法来设置代理。除了设置代理，你还可以指定该代理方法被调用的队列。你必须使用一个串行队列来确保传递给代理的帧是按照合适顺序进行的。你可以使用队列来改变既定的调度和处理视频帧的优先权。参考<code>SquareCam</code>来作为一个实现的例子。</p>
+<p>在代理方法里，帧作为一个<code>CMSampleBufferRef</code>类型的实例来被表示<code>captureOutput:didOutputSampleBuffer:fromConnection:</code>。默认情况下，缓冲是以视频最有效的格式被发发出的。你可以使用<code>videoSettings</code>属性来指明一种定制的输出格式。视频的设定属性是一个字典；目前为止，唯一支持的key是<code>kCVPixelBufferPixelFormatTypeKey</code>。</p>
+<p>推荐的像素格式是通过<code>availableVideoCVPixelFormatTypes</code>属性来返回的，同时<code>availableVideoCodecTypes</code>属性返回支持的数值。Core Graphics和OpenGL都和BGRA格式配合的很好。</p>
+<pre><code class="objc"><span class="built_in">AVCaptureVideoDataOutput</span> *videoDataOutput = [<span class="built_in">AVCaptureVideoDataOutput</span> new];
+<span class="built_in">NSDictionary</span> *newSettings =
+                @{ (<span class="built_in">NSString</span> *)kCVPixelBufferPixelFormatTypeKey :
+@(kCVPixelFormatType_32BGRA) };
+videoDataOutput.videoSettings = newSettings;
+ <span class="comment">// discard if the data output queue is blocked (as we process the still image</span>
+[videoDataOutput setAlwaysDiscardsLateVideoFrames:<span class="literal">YES</span>];)
+<span class="comment">// create a serial dispatch queue used for the sample buffer delegate as well as</span>
+when a still image is captured
+<span class="comment">// a serial dispatch queue must be used to guarantee that video frames will be</span>
+delivered <span class="keyword">in</span> order
+<span class="comment">// see the header doc for setSampleBufferDelegate:queue: for more information</span>
+videoDataOutputQueue = dispatch_queue_create(<span class="string">"VideoDataOutputQueue"</span>,
+DISPATCH_QUEUE_SERIAL);
+[videoDataOutput setSampleBufferDelegate:<span class="keyword">self</span> queue:videoDataOutputQueue];
+<span class="built_in">AVCaptureSession</span> *captureSession = &lt;<span class="meta">#The Capture Session#&gt;;</span>
+<span class="keyword">if</span> ( [captureSession canAddOutput:videoDataOutput] )
+     [captureSession addOutput:videoDataOutput];
+</code></pre>
+<h4 id="处理视频时考虑的性能因素"><a href="#处理视频时考虑的性能因素" class="headerlink" title="处理视频时考虑的性能因素"></a>处理视频时考虑的性能因素</h4><p>对于你的应用来说，你应该给这个session设置最低的可用分辨率。将输出设定到一个比需求更高的分辨率会浪费处理循环以及消耗更多的电量。<br>你必须确保你实现了<code>captureOutput:didOutputSampleBuffer:fromConnection</code>方法，以便在创建一帧的时候可以处理一个采样缓冲。如果这耗费过长的时间，并且你保持了这个视频帧率，那么AV Foundation对象就会停止传送帧，不尽停止给你的代理传递帧，还会停止向其它的输出传递帧，比如preview layer。<br>你可以使用捕获视频数据输出的<code>minFrameDuration</code>属性来确定你在没有被停止的情况下消耗更少的帧率，以便你有足够的时间来处理这一帧。你也许也要确保<code>alwaysDiscardsLateVideoFrames</code>属性也被设置成<code>YES</code>（默认情况下也是YES）。这个属性确保了任何延迟了的帧都会被丢弃而不是移交给你进行处理。换句话说，如果你正在录制视频，并且如果输出帧有些延迟不会造成影响，并且你想获取所有的帧，那么你可以将这个属性的值设定为NO。这并不意味这不会掉帧（也就是说，帧仍然会掉），但是它不会掉的那么早或者由于效率原因掉帧。</p>
+<h3 id="捕获静态图片"><a href="#捕获静态图片" class="headerlink" title="捕获静态图片"></a>捕获静态图片</h3><p>如果你想捕获静态图片以及元数据，那么你可以使用<code>AVCaptureStillImageOutput</code>来输出。这个图片的分辨率取决于这个session的preset以及这个设备。</p>
+<h4 id="像素和编码格式"><a href="#像素和编码格式" class="headerlink" title="像素和编码格式"></a>像素和编码格式</h4><p>不同的设备支持不同的图片格式。分别使用<code>availableImageDataCVPixelFormatTypes</code>和<code>availableImageDataCodecTypes</code>你可以找出某个设备支持的pixel和codec类型。每个方法会返回指定设备所支持数据的数组。你可以设置<code>outputSettings</code>字典来设置你所想要的图片格式，比如：</p>
+<pre><code class="objc"><span class="built_in">AVCaptureStillImageOutput</span> *stillImageOutput = [[<span class="built_in">AVCaptureStillImageOutput</span> alloc]
+init];
+<span class="built_in">NSDictionary</span> *outputSettings = @{ <span class="built_in">AVVideoCodecKey</span> : <span class="built_in">AVVideoCodecJPEG</span>};
+[stillImageOutput setOutputSettings:outputSettings];
+</code></pre>
+<p>如果你要获取一张JPEG格式的图片，那么你通常不需要指定你自己的压缩格式。相反，因为它的压缩格式是硬件驱动的，所以你应该让静态图片输出来给你压缩。尽管你改变了图片的元数据，如果你要得到一张图片的数据表示，那么你可以使用<code>jpegStillImageNSDataRepresentation:</code>来得到没有被再次压缩数据的<code>NSData</code>对象。</p>
+<h4 id="捕获一张图片"><a href="#捕获一张图片" class="headerlink" title="捕获一张图片"></a>捕获一张图片</h4><p>当你想捕获一张图片的时候，你可以调用输出的captureStillImageAsynchronouslyFromConnection:completionHandler:方法。第一个参数是你为了捕获要用的连接。你需要找到这个连接，它的输入端是一个，它的输入端口正在搜集视频：</p>
+<pre><code> AVCaptureConnection *videoConnection = nil;
+  for (AVCaptureConnection *connection in stillImageOutput.connections) {
+       for (AVCaptureInputPort *port in [connection inputPorts]) {
+          if ([[port mediaType] isEqual:AVMediaTypeVideo] ) {
+              videoConnection = connection;
+break; } 
+} 
+      if (videoConnection) { break; }
+     }
+</code></pre><p><code>captureStillImageAsynchronouslyFromConnection:completionHandler:</code>方法的第二个参数是一个具有两个参数的block：一个包含了图片数据的<code>CMSampleBuffer</code>类和一个error。采样缓冲自身包含了比如EXIF字典等元数据作为其附属。如果你想你可以改变这个附属，但是要注意在<strong>像素和编码格式</strong>中提到的对JPEG图片的优化。</p>
+<pre><code class="objc">[stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection
+completionHandler:
+    ^(<span class="built_in">CMSampleBufferRef</span> imageSampleBuffer, <span class="built_in">NSError</span> *error) {
+        <span class="built_in">CFDictionaryRef</span> exifAttachments =
+            <span class="built_in">CMGetAttachment</span>(imageSampleBuffer, kCGImagePropertyExifDictionary,
+<span class="literal">NULL</span>);
+        <span class="keyword">if</span> (exifAttachments) {
+            <span class="comment">// Do something with the attachments.</span>
+        }
+        <span class="comment">// Continue as appropriate.</span>
+    }];
+</code></pre>
+<h3 id="展示录制的内容"><a href="#展示录制的内容" class="headerlink" title="展示录制的内容"></a>展示录制的内容</h3><p>你可以给用户提供视频录制的预览（利用preview layer）,或者音频录制的预览（通过监听音频channel）。</p>
+<h4 id="视频预览"><a href="#视频预览" class="headerlink" title="视频预览"></a>视频预览</h4><p>使用<code>AVCaptureVideoPreviewLayer</code>对象，你可以给用户提供一个录制内容的预览。<code>AVCaptureVideoPreviewLayer</code>是<code>CALayer</code>的子类。为了展示预览，你不需要输出任何东西。</p>
+<p>在视频展示给用户之前，使用<code>AVCaptureVideoDataOutput</code>类可以让客户端程序具有获取视频像素的能力。</p>
+<p>和捕获输出不一样，一个视频预览layer保持一个对其关联session的一个强引用。这就确保了在该layer试图播放视频的时候session不会被释放。下面的代码展示了初始化一个预览layer的方式。</p>
+<pre><code class="objc"><span class="built_in">AVCaptureSession</span> *captureSession = &lt;<span class="meta">#Get a capture session#&gt;;</span>
+<span class="built_in">CALayer</span> *viewLayer = &lt;<span class="meta">#Get a layer from the view in which you want to present the</span>
+ preview<span class="meta">#&gt;;</span>
+<span class="built_in">AVCaptureVideoPreviewLayer</span> *captureVideoPreviewLayer = [[<span class="built_in">AVCaptureVideoPreviewLayer</span> alloc] initWithSession:captureSession]; 
+[viewLayer addSublayer:captureVideoPreviewLayer];
+</code></pre>
+<p>一般来说，这个preview layer在渲染树中和其它的CALayer对象是一样的。你可以像处理其它layer一样对图片进行伸缩，旋转等。其中有一个不同点是：为了指明来自摄像头的图片怎样旋转，你需要设置layer的<code>orientation</code>属性。除此之外，你可以通过查询<code>supportsVideoMirroring</code>属性来决定某个设备是否支持视频镜像。如果有需要你可以设置<code>videoMirrored</code>属性，尽管当<code>automaticallyAdjustsVideoMirroring</code>属性默认情况下是YES，这个镜像值基于session的配置而自动被设定的。</p>
+<h4 id="视频重力模式"><a href="#视频重力模式" class="headerlink" title="视频重力模式"></a>视频重力模式</h4><p>这个preview layer支持三种重力模式，你可以通过<code>videoGravity</code>属性来设置：</p>
+<ul>
+<li><code>AVLayerVideoGravityResizeAspect</code>：这会按照固定的比例保存视频，当视频不能铺满整个可用屏幕大小的时候会留下黑条。</li>
+<li><code>AVLayerVideoGravityResizeAspectFill</code>：这会保质视频的比例，但是会铺满整个屏幕，并且在需要的时候剪裁视频。</li>
+<li><code>AVLayerVideoGravityResize</code>：这会拉伸视频来铺满整个可用的屏幕空间，尽管这样可能让图片扭曲。</li>
+</ul>
+<h4 id="给预览添加点击捕获功能"><a href="#给预览添加点击捕获功能" class="headerlink" title="给预览添加点击捕获功能"></a>给预览添加<code>点击捕获</code>功能</h4><p>在视频连接的时候，使用preview layer来实现点击捕获，你需要小心。你必须要考虑预览方向和layer的重力，以及这个预览可能被镜像的可能性。参考示例代码中IOS的<code>AVCam</code>项目来实现这个功能。</p>
+<h3 id="展示音频等级（Audio-Level）"><a href="#展示音频等级（Audio-Level）" class="headerlink" title="展示音频等级（Audio Level）"></a>展示音频等级（Audio Level）</h3><p>为了在一个捕获连接中的音频通道中检测平均power和峰值power峰值，你可以使用<code>AVCaptureAudioChannel</code>对象。因为音频等级不是KVO的，所以你必须按照你需要的频率来访问其数值来更新UI（比如，每秒钟10次）。</p>
+<pre><code class="objc"><span class="built_in">AVCaptureAudioDataOutput</span> *audioDataOutput = &lt;<span class="meta">#Get the audio data output#&gt;;</span>
+<span class="built_in">NSArray</span> *connections = audioDataOutput.connections;
+<span class="keyword">if</span> ([connections count] &gt; <span class="number">0</span>) {
+    <span class="comment">// There should be only one connection to an AVCaptureAudioDataOutput.</span>
+    <span class="built_in">AVCaptureConnection</span> *connection = [connections objectAtIndex:<span class="number">0</span>];
+    <span class="built_in">NSArray</span> *audioChannels = connection.audioChannels;
+    <span class="keyword">for</span> (<span class="built_in">AVCaptureAudioChannel</span> *channel <span class="keyword">in</span> audioChannels) {
+        <span class="keyword">float</span> avg = channel.averagePowerLevel;
+        <span class="keyword">float</span> peak = channel.peakHoldLevel;
+        <span class="comment">// Update the level meter user interface.</span>
+} }
+</code></pre>
+<h2 id="综合：像UIImage对象一样捕获视频帧"><a href="#综合：像UIImage对象一样捕获视频帧" class="headerlink" title="综合：像UIImage对象一样捕获视频帧"></a>综合：像UIImage对象一样捕获视频帧</h2><p>下面简明的代码实例向你展示了怎样捕获一个视频并且将你得到的视频帧转换成UIImage对象。它有以下的功能：</p>
+<ul>
+<li>创建一个<code>AVCaptureSession</code>对象来协调一个AV输入的数据流到一个输出</li>
+<li>对你想要的输入类型找到<code>AVCaptureDevice</code>对象</li>
+<li>给该设备创建一个<code>AVCaptureDeviceInput</code>对象</li>
+<li>创建一个<code>AVCaptureVideoDataOutput</code>对象来产生视频帧</li>
+<li>对<code>AVCaptureVideoDataOutput</code>对象实现一个代理对象来处理视频帧</li>
+<li>实现一个方法来将该代理收到的<code>CMSampleBuffer</code>转换成一个UIImage对象</li>
+</ul>
+<h3 id="创建并且配置一个捕获Session"><a href="#创建并且配置一个捕获Session" class="headerlink" title="创建并且配置一个捕获Session"></a>创建并且配置一个捕获Session</h3><p>你可以使用<code>AVCaptureSession</code>对象来把来自一个AV输入设备的数据流来转换为一个输出。创建一个session，并且配置它来生成中等分辨率的视频帧：</p>
+<pre><code class="objc"><span class="built_in">AVCaptureSession</span> *session = [[<span class="built_in">AVCaptureSession</span> alloc] init];
+session.sessionPreset = <span class="built_in">AVCaptureSessionPresetMedium</span>;
+</code></pre>
+<h3 id="创建配置设备及设备输入"><a href="#创建配置设备及设备输入" class="headerlink" title="创建配置设备及设备输入"></a>创建配置设备及设备输入</h3><p>捕获设备是由<code>AVCaptureDevice</code>对象表示的，该类提供了获取你想要的输入类型的方法。一个设备有一个或者多个端口，这些端口使用<code>AVCaptureInput</code>对象来配置。通常情况下，在它的默认配置上，你使用捕获输入。</p>
+<p>找到一个视频捕获设备，然后利用该设备创建一个设备输入并且将其添加到session里面。如果一个合适的设备不能够被加载，那么<code>deviceInputWithDevice:error:</code>方法将会返回一个引用的错误。</p>
+<pre><code class="objc"><span class="built_in">AVCaptureDevice</span> *device =
+        [<span class="built_in">AVCaptureDevice</span> defaultDeviceWithMediaType:<span class="built_in">AVMediaTypeVideo</span>];
+<span class="built_in">NSError</span> *error = <span class="literal">nil</span>;
+<span class="built_in">AVCaptureDeviceInput</span> *input =
+        [<span class="built_in">AVCaptureDeviceInput</span> deviceInputWithDevice:device error:&amp;error];
+<span class="keyword">if</span> (!input) {
+    <span class="comment">// Handle the error appropriately.</span>
+}
+[session addInput:input];
+</code></pre>
+<h3 id="创建和配置视频输出数据"><a href="#创建和配置视频输出数据" class="headerlink" title="创建和配置视频输出数据"></a>创建和配置视频输出数据</h3><p>你使用一个<code>AVCaptureVideoDataOutput</code>对象来处理正在被捕获而未被压缩的帧。通常情况下，你可以配置一个输出的很多方面。比如，对于视频来说，你可以通过<code>videoSettings</code>属性来表明像素格式以及通过设置<code>minFrameDuration</code>属性来设置帧率的峰值。</p>
+<p>创建和配置一个视频数据的输出并将其添加到session中，通过将<code>minFrameDuration</code>属性值设置为1/15来将帧率峰值设置为15fps：</p>
+<pre><code class="objc"><span class="built_in">AVCaptureVideoDataOutput</span> *output = [[<span class="built_in">AVCaptureVideoDataOutput</span> alloc] init];
+[session addOutput:output];
+output.videoSettings =
+                @{ (<span class="built_in">NSString</span> *)kCVPixelBufferPixelFormatTypeKey :
+@(kCVPixelFormatType_32BGRA) };
+output.minFrameDuration = <span class="built_in">CMTimeMake</span>(<span class="number">1</span>, <span class="number">15</span>);=
+</code></pre>
+<p>数据输出对象使用代理来提视频帧。这个代理必须遵守<code>AVCaptureVideoDataOutputSampleBufferDelegate</code>协议。当你设置数据输出代理的时候，你也必须提供一个回调将要被触发的队列。</p>
+<pre><code class="objc"><span class="built_in">dispatch_queue_t</span> queue = dispatch_queue_create(<span class="string">"MyQueue"</span>, <span class="literal">NULL</span>);
+[output setSampleBufferDelegate:<span class="keyword">self</span> queue:queue];
+dispatch_release(queue);
+</code></pre>
+<p>你使用该队列改变给定的优先权来传递和处理视频帧。</p>
+<h3 id="实现帧缓存的代理方法"><a href="#实现帧缓存的代理方法" class="headerlink" title="实现帧缓存的代理方法"></a>实现帧缓存的代理方法</h3><p>在该代理类里，实现<code>captureOutput:didOutputSampleBuffer:fromConnection:</code>方法，这个方法会在一个采样缓存被写入的时候被调用。视频数据的输出对象以<code>CMSampleBuffer</code>类型的形式来传递帧，因此，你需要将一个<code>CMSampleBuffer</code>对象转换为一个UIImage对象。这个转换的方法会在<code>Converting CMSampleBuffer to UIImage Object</code>中说明。</p>
+<pre><code class="objc">- (<span class="keyword">void</span>)captureOutput:(<span class="built_in">AVCaptureOutput</span> *)captureOutput
+          didOutputSampleBuffer:(<span class="built_in">CMSampleBufferRef</span>)sampleBuffer
+          fromConnection:(<span class="built_in">AVCaptureConnection</span> *)connection {
+
+      <span class="built_in">UIImage</span> *image = imageFromSampleBuffer(sampleBuffer);
+     <span class="comment">// Add your code here that uses the image.</span>
+ }
+</code></pre>
+<p>这个代理方法被触发的队列就是你在<code>setSampleBufferDelegate:queue:</code>中指明的队列；如果你要更新UI，那么你必须在主线程中执行相关的代码。</p>
+<h3 id="开始和终止录制"><a href="#开始和终止录制" class="headerlink" title="开始和终止录制"></a>开始和终止录制</h3><p>在配置完capture session之后，你应该确保根据用户的偏好设置里你有录制视频的权限。</p>
+<pre><code class="objc"><span class="built_in">NSString</span> *mediaType = <span class="built_in">AVMediaTypeVideo</span>
+[<span class="built_in">AVCaptureDevice</span> requestAccessForMediaType:mediaType completionHandler:^(<span class="built_in">BOOL</span>
+granted) {
+    <span class="keyword">if</span> (granted)
+    {
+        <span class="comment">//Granted access to mediaType</span>
+        [<span class="keyword">self</span> setDeviceAuthorized:<span class="literal">YES</span>];
+    }
+<span class="keyword">else</span> { 
+        <span class="comment">//Not granted access to mediaType</span>
+        <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^{
+        [[[<span class="built_in">UIAlertView</span> alloc] initWithTitle:<span class="string">@"AVCam!"</span>
+message:<span class="string">@"AVCam doesn't have permission to use Camera, please change privacy settings"</span> 
+}); } 
+}]; 
+                   delegate:<span class="keyword">self</span>
+          cancelButtonTitle:<span class="string">@"OK"</span>
+          otherButtonTitles:<span class="literal">nil</span>] show];
+[<span class="keyword">self</span> setDeviceAuthorized:<span class="literal">NO</span>];
+</code></pre>
+<p>如果摄像头的session被配置完成并且用户隐私设定允许使用摄像头，你可以调用<code>startRunning</code>方法来执行session在串行队列上的启动，以便主队列不会被阻塞（这可以让UI更加快速的被响应）。看iOS的AVCam作为一个实现的例子。</p>
+<pre><code class="objc">[session startRunning];
+</code></pre>
+<p>通过调用<code>stopRunning</code>方法，你可以停止录制视频。</p>
+<h3 id="高帧率的视频捕获"><a href="#高帧率的视频捕获" class="headerlink" title="高帧率的视频捕获"></a>高帧率的视频捕获</h3><p>在选中的硬件上，iOS7.0引入了高帧率的视频捕获（也称作”SloMo”视频）。所有的AV Foundation框架都支持高帧率的内容。<br>你可以使用<code>AVCaptureDeviceFormat</code>类来确定某个设备的捕获能力。该类也有返回诸如：所支持的媒体类型，帧率，视图的field，最大放大倍数以及视频防抖是否被支持等参数。</p>
+<ul>
+<li>捕获支持在60fps下全720p分辨率，其中包括视频防抖，可掉P帧（H264编码视频的特性，这种特性可以让视频播放很流畅，及时在老设备上也可以这样。）</li>
+<li>视频播放可以提高音频对慢速和快速播放的支持，这就让音频的捕获时间（time pitch）可以在更低或者更高的速度下被保存。</li>
+<li>在可变合成的中，可以支持缩放编辑。</li>
+<li>在支持60fps视频的时候，输出提供了两种选择。可变的帧率，慢速或快速的移动，都会被保存或者视频帧率将会变得更小，比如30fps。</li>
+</ul>
+<h4 id="播放"><a href="#播放" class="headerlink" title="播放"></a>播放</h4><p>一个<code>AVPlayer</code>实例可以通过<code>setRate：</code>方法来自动设置大多数的播放速度。该数值会作为播放速度的一个放大倍数。1.0数值表示正常的播放，0.5数值表示以一半的速度播放，5.0数值表示以正常速度5倍的速度来播放。</p>
+<p><code>AVPlayerItem</code>对象支持<code>audioTimePitchAlgorithm</code>属性。使用<code>Time Pitch Algorithm Settings</code>常量，该属性让你可以指明音频在不同帧率下的播放方式。<br>下表展示了所支持的time pitch算法，数量，该算法是否会造成音频在某个指定帧率下停止，以及每个算法支持的帧率范围。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-f751221f7dba579d.png" alt="Time Pitch Algorithm"></p>
+<h4 id="编辑"><a href="#编辑" class="headerlink" title="编辑"></a>编辑</h4><p>编辑的时候，你可以使用<code>AVMutableComposition</code>类来建立临时的编辑。</p>
+<ul>
+<li>使用<code>composition</code>类方法来创建一个新的<code>AVMutableComposition</code>实例</li>
+<li>使用<code>insertTimeRange:ofAsset:atTime:error</code>方法来插入你的视频asset</li>
+<li>使用<code>scaleTimeRange:toDuration</code>来设定某个合成中某个部分的时间比例</li>
+</ul>
+<h4 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h4><p>使用<code>AVAssetExportSession</code>类来导出60fps的视频输出一个asset。该内容可以用以下两种方式输出：</p>
+<ul>
+<li>使用<code>AVAssetExportPresetPassthrough</code>preset来避免视频的重编码。通过对标志为60fps的媒体片段进行时间重置，这些媒体片段就会减速或者加速。</li>
+<li>为了最大播放兼容，使用恒定帧率输出。设定视频合成的<code>frameDuration</code>属性为30fps。你也可以通过设定导出session的<code>audioTimePitchAlgorithm</code>属性来指定捕获时间(time pitch)。</li>
+</ul>
+<h4 id="录制"><a href="#录制" class="headerlink" title="录制"></a>录制</h4><p>使用<code>AVCaptureMovieFileOutput</code>类，你可以捕获高帧率的视频，它自动支持高帧率捕获。它会自动选择正确的H264捕获水平。</p>
+<p>为了使用定制的录制，你必须使用<code>AVAssetWriter</code>类，这需要额外的设置。</p>
+<pre><code class="objc">assetWriterInput.expectsMediaDataInRealTime=<span class="literal">YES</span>;
+</code></pre>
+<p>该设置可以确保捕获可以和输入的数据保持同步。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/24/avfoundation-edit/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2252,150 +2781,6 @@ exportSession.timeRange = range;
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/04/avfoundation-introduction/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/04/avfoundation-introduction/" itemprop="url">AVFoundation--简介</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-04T23:37:34+08:00">
-                2017-08-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>AVFoundation是很多处理基于时间的音视频文件的框架之一。你可以用它来检查，创建，编辑或者对媒体文件重编码。可以从设备中得到输入流，以及在实时捕捉和播放的时候对视频进行处理。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-d41cc62c5bec457a.png" alt="AVFoundation"></p>
-<ul>
-<li>如果你仅仅需要播放视频，在IOS上你可以使用Media Player框架中的<code>MPMoviePlayerController</code>或者<code>MPMoviePlayerViewController</code>，如果是基于Web的视频，那么你可以使用<code>UIWebView</code>。</li>
-<li>为了录制视频，并且几乎不需要关注其格式，那么你可以使用UIKit框架中的<code>UIImagePickerController</code>。</li>
-</ul>
-<p>然而请注意：在AVFoundation中使用的一些原始数据（包括基于时间的数据结构以及携带及包含媒体信息的封装对象）都是在<code>Core Media</code>框架中声明的。</p>
-<h1 id="AVFoundation框架简介"><a href="#AVFoundation框架简介" class="headerlink" title="AVFoundation框架简介"></a>AVFoundation框架简介</h1><p>AV Foundation中有两个方面的API(处理视频的和处理音频的)。</p>
-<ul>
-<li>使用<code>AVAudioPlayer</code>来播放音频文件</li>
-<li>使用<code>AVAudioRecorder</code>来录制音频文件</li>
-</ul>
-<p>你可以通过<code>AVAudioSessin</code>对象来对配置音频的播放行为，相关配置可以参考：<code>Audio Session Programming Guide</code>。</p>
-<p>AVFoundation中用来代表媒体信息的关键类是AVAsset。该框架的大部分功能都是有AVAsset来表现的。理解AVAsset将有助于理解整个框架是如何工作的。AVAsset是一片或者多片媒体数据的集合。它统一提供这个集合的信息，包括其标题，时长，自然表现大小（natural presentation size）等。一个AVAsset不合具体的数据格式相绑定。AVAsset是其它用URL来创建asset实例的父类。<br>asset中的每一个独立媒体片是一个统一的类型并且其成为<code>track</code>。</p>
-<h2 id="使用Assets"><a href="#使用Assets" class="headerlink" title="使用Assets"></a>使用Assets</h2><p>AVAsset是AVFoundation的基础类。AVFoundation框架的设计很大程度上都是通过这个类来表现的。它提供了视频的名称，时间，正常展示的大小(natural presentation size)。AVAsset没有和具体的数据形式相绑定。AVAsset是从一个<code>URL</code>来创建出Asset实例的父类，并且可以创建出新的组合。每个asset中独立的视频片段都是统一的类型叫做<code>track</code>。一般情况下：一个track代表音频成分，一个track代表视频成分。很重要的一点是：初始化一个asset并不意味着立即就可以用。它还需要一些时间来计算。但是这种计算不会阻塞主线程，他会异步的执行。</p>
-<h2 id="播放"><a href="#播放" class="headerlink" title="播放"></a>播放</h2><p><code>presentation state</code>是由<code>player item</code>对象管理的，某个track的<code>presentation state</code>是由<code>player item track</code>对象管理的。你可以使用<code>player</code>对象来播放，并且直接将其输出到<code>Core Animation</code>上。可以使用一个<code>player queue</code>有续地来管理一系列的<code>player items</code>。</p>
-<h2 id="读，写以及重新编码Asset"><a href="#读，写以及重新编码Asset" class="headerlink" title="读，写以及重新编码Asset"></a>读，写以及重新编码<code>Asset</code></h2><p>AV Foundation让你给一个Asset用不同的方式创建出新的展示。你可以仅仅对一个已经存在的asset进行重编码（ios4.1之后），你可以在一个asset的内容上执行不同的操作，然后将结果用新的asset来存储。将一种表现转化成其他类型的表现，可以使用<code>asset reader</code>和<code>asset writer</code>来串联两个视频动画。</p>
-<h2 id="缩略图"><a href="#缩略图" class="headerlink" title="缩略图"></a>缩略图</h2><p>使用<code>AVAssetImageGenerator</code>对象可以来创建缩略图。编辑，AV Foundation使用<code>compositions</code>来从现有的媒体片段中新建assets。可以设置相对volume，音频<code>track ramp</code>，设置透明度。</p>
-<h2 id="Media捕捉和使用Camera"><a href="#Media捕捉和使用Camera" class="headerlink" title="Media捕捉和使用Camera"></a>Media捕捉和使用Camera</h2><p>可以使用<code>preview player</code>来展示camera录制的内容。</p>
-<h2 id="AV-Foundation和多线程并发"><a href="#AV-Foundation和多线程并发" class="headerlink" title="AV Foundation和多线程并发"></a>AV Foundation和多线程并发</h2><p>有两点需要注意的：</p>
-<ul>
-<li>UI相关的通知应该在主线程中触发。</li>
-<li>需要自己明确指定类和方法所在线程的话会在响应的线程中年触发通知</li>
-</ul>
-<p>如果要开发多线程的应用，那么你应该使用<code>isMainThread</code>或者<code>[[NSThread currentThread] isEqual:&lt;#A stored thread reference#&gt;]</code>来提前测试是否该线程是你期望的要执行的线程。如果要跨线程，你可能需要如下方法</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">performSelectorOnMainThread:withObject:waitUntilDone: </div><div class="line">performSelector:onThread:withObject:waitUntilDone:modes:</div><div class="line"><span class="built_in">dispatch_async</span></div></pre></td></tr></table></figure>
-<p>为了更好的开发AVFoundation，你需要具备如下前提知识：</p>
-<ul>
-<li>全面理解基础的Cocoa开发工具及技术</li>
-<li>基本理解Block</li>
-<li>基本理解KVC和KVO</li>
-<li>对于视频回播，需要理解合理动画，对于基本的回播，需要理解AV Kit框架参考手册</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2446,7 +2831,7 @@ exportSession.timeRange = range;
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-count">29</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
