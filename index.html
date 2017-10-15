@@ -326,7 +326,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/10/12/data-structure-linear-list/" itemprop="url">线性表</a></h1>
+                <a class="post-title-link" href="/2017/10/12/data-structure-linear-list/" itemprop="url">数据结构--线性表</a></h1>
         
 
         <div class="post-meta">
@@ -378,10 +378,91 @@
             <p><img src="http://upload-images.jianshu.io/upload_images/1513759-17638d16cc8b3161.png" alt="LinearList"><br><strong>线性表的定义：零个或者多个具有相同的特性的数据元素的有限序列。</strong>注意这里的连续不是指存储地址上的连续而是指存取逻辑上的连续。从线性表的存储结构上可以将线性表分为顺序存储和链式存储两种形式。在实际中常以<em>栈，队列，字符串</em>等特殊的形式来使用。</p>
 <h2 id="顺序存储结构"><a href="#顺序存储结构" class="headerlink" title="顺序存储结构"></a>顺序存储结构</h2><p>线性表的顺序存储结构是指用一段连续的存储单元依次存储线性表中的元素。它的存储形式如下：</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/1513759-c333242edadd24c3.png" alt="线性表的顺序存储"></p>
-<p>这种存储结构的存储位置很容易被计算出来，比如要计算下标为i元素的位置，这时候只需要利用下面的公式即可：</p>
-<p>LOC(a<sub>i</sub>) = LOC(a<sub>1</sub>) + (i - 1) * c</p>
-<p>其中c是每个元素所占存储单元的个数。所以根据大O阶记法，这个时间复杂度是O(1)(这种时间复杂度为1的存储结构称为随机存取结构或者直接存取结构);</p>
-<h3 id="顺序存储结构的优缺点"><a href="#顺序存储结构的优缺点" class="headerlink" title="顺序存储结构的优缺点"></a>顺序存储结构的优缺点</h3><h2 id="链式存储结构"><a href="#链式存储结构" class="headerlink" title="链式存储结构"></a>链式存储结构</h2><h3 id="链式存储结构的优缺点"><a href="#链式存储结构的优缺点" class="headerlink" title="链式存储结构的优缺点"></a>链式存储结构的优缺点</h3><h2 id="静态链表"><a href="#静态链表" class="headerlink" title="静态链表"></a>静态链表</h2><h2 id="循环链表"><a href="#循环链表" class="headerlink" title="循环链表"></a>循环链表</h2><h2 id="双向链表"><a href="#双向链表" class="headerlink" title="双向链表"></a>双向链表</h2>
+<blockquote>
+<p>这种顺序的存储结构必须有要有一个长度，并且这个长度是不能改变的。</p>
+</blockquote>
+<p>为什么会这样？因为计算机内存中的存储空间是连续的，要分配一段连续的存储空间，如果没有限制大小，那么很可能其后面的空间被其它对象占用了。举个例子，会议室有100个连续的位置，这时来了A组人来了5个人（一共20个人），做到了0，1，2，3，4这五个位置。过了一段时间之后B组来了20人，他们坐到了10…19这10个位置。然后A组的其它15个人来了，这15个人不能被放到5…9这五个位置上，这样就不满足顺序存储结构的定义了。</p>
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>这种存储结构的存储位置很容易被计算出来，比如要计算下标为i元素的位置，这时候只需要利用下面的公式即可：<br>LOC(a<sub>i</sub>) = LOC(a<sub>1</sub>) + (i - 1) * c</p>
+<p>其中c是每个元素所占存储单元的个数。所以根据大O阶记法，这个时间复杂度是O(1)(这种时间复杂度为1的存储结构称为随机存取结构或者直接存取结构)。</p>
+<h3 id="插入删除"><a href="#插入删除" class="headerlink" title="插入删除"></a>插入删除</h3><p>这种顺序存储结构的插入需要将插入点之后的所有元素都向后移（如果插入点在最后一个元素之后则不需要后移）。所以比较消耗性能，其时间复杂度是O(n)，如果在某个位置同时插入1000个元素，那么它需要循环移动1000次。这种性能消耗是比较大的，Java中的ArrayList在插入大量数据的时候就会有较大的性能消耗。</p>
+<h3 id="顺序存储结构的优缺点"><a href="#顺序存储结构的优缺点" class="headerlink" title="顺序存储结构的优缺点"></a>顺序存储结构的优缺点</h3><p>从上面的讨论中我们就可以看出来顺序存储结构的优点和缺点。</p>
+<table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无需为表示表中元素之间的逻辑关系而增加额外的存储空间</td>
+<td>插入插入和删除元素需要移动大量元素</td>
+</tr>
+<tr>
+<td>可以快速地存取表中任一位置的元素</td>
+<td>当线性表的长度变化较大时，难以确定存储空间的容量</td>
+</tr>
+<tr>
+<td></td>
+<td>造成存储空间的“碎片”</td>
+</tr>
+</tbody>
+</table>
+<h2 id="链式存储结构"><a href="#链式存储结构" class="headerlink" title="链式存储结构"></a>链式存储结构</h2><p>为了解决线性存储结构不容易扩展，难以插入和删除的缺点。出现了链式存储的线性表，这种表的每一个元素中都有一个标识用来记录下一个元素地址。这样就不需要在内存中开辟连续的空间。它的存储形式是这样的：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-5076d727f47a9f05.png" alt="LinkedList"><br>它需要两个存储空间，一个数据域用来存储数据元素的信息，一个指针域用来存贮下个元素的地址，其中的每个元素又叫做结点（Node）。每个线性表都有一个指针指向它，这个指针叫做头指针（<em>这个指针是每个链表所必须的，即使这个链表为空</em>），这个指针指向头结点（如果存在的话），头结点的数据域是空或者可以存储表的长度等附加信息。最后一个结点是的指针域是NULL或者”^”符号。那么为啥要有这个头结点呢?不要头结点可以吗？那为啥链表的结尾不需要特殊处理呢？因为链表结尾的指针域为NULL或者”^”所以其插入操作是相同的。<br>答案是可以的，但是这会让链表对第一个结点之前的插入操作变得和其它元素不统一，为了解决这种不便，人为地加入了头结点。</p>
+<h3 id="查询-1"><a href="#查询-1" class="headerlink" title="查询"></a>查询</h3><p>单链表的查询需要一个个遍历，因为它的存储空间不连续所以不能根据第一个元素的地址推断出第i个元素的地址，必须一个个查找，直到查找到第i个元素。因此它的时间复杂度是O(n)。</p>
+<h3 id="插入和删除"><a href="#插入和删除" class="headerlink" title="插入和删除"></a>插入和删除</h3><p>单链表的插入操作就比较简单，只需要改变插入点的前结点以及插入结点的指针即可。如下图所示<br><img src="http://upload-images.jianshu.io/upload_images/1513759-f5a638c6e223b1b7.png" alt="Insert Linked List"><br>关键的步骤为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">s-&gt;next = p-&gt;next; </div><div class="line">p-&gt;next = s;</div></pre></td></tr></table></figure>
+<p>这样就可以插入结点了，注意这里的。<br>单链表删除元素的操作也是比较简单，只要将要删除结点之前的结点跳过删除结点，然后指向删除结点之后的结点即可。如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-ad3a75e5ce4399f9.png" alt="Delete Node"><br>关键的步骤为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">p-&gt;next = p-&gt;next-&gt;next</div></pre></td></tr></table></figure>
+<h3 id="单链表和顺序存储结构的优缺点"><a href="#单链表和顺序存储结构的优缺点" class="headerlink" title="单链表和顺序存储结构的优缺点"></a>单链表和顺序存储结构的优缺点</h3><p>一、时间性能</p>
+<ul>
+<li>查找<ul>
+<li>顺序存储结构为O(1)</li>
+<li>单链表O(n)</li>
+</ul>
+</li>
+<li>插入和删除<ul>
+<li>顺序存储结构需要平均移动表长一半的元素，时间复杂度为O(n)</li>
+<li>单链表在找出插入点的位置之后（这个过程的时间复杂度为O(n)），插入和删除的时间复杂度为O(1)</li>
+</ul>
+</li>
+</ul>
+<p>二、空间性能</p>
+<ul>
+<li>顺序存储结构需要预先分配存储空间的大小，分大了，浪费，分小了容易发生上溢。</li>
+<li>单链表不需要分配存储空间，只要有就可以分配，元素个数也不受限制。</li>
+</ul>
+<h2 id="静态链表"><a href="#静态链表" class="headerlink" title="静态链表"></a>静态链表</h2><p>上文中提到的链表的实现是基于内存地址的，这是C语言或者其它可以操作内存的语言所容易实现。然而，对于不能操作内存的语言可以实现链表的存储结构吗？答案是可以的。实现的原理是：利用数组来代替指针，以此来描述单链表。这时数组的元素由两部分内容组成，data和cur。也就是说数组的每个元素对应一个data和cur。其中data用来存储数据，cur用来存储指针(相当于单链表中的next指针，它用来存放其后继元素在数组中的下标，我们把cur叫做游标)。<strong>这种用数组来描述的链表称为静态链表</strong>，为啥叫静态呢？因为其存储空间是顺序的，所以这也是一种顺序的存储结构，它的存储空间还是需要提前分配好的。它的结构如下所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-90418e892596cf08.png" alt="static liner"><br>静态链表的第一个和最后一个元素做了特殊处理里面不存储数据，只存储cur值。链表中申请了但是没有被利用的空间是空闲空间。第一个元素中的cur存放的是第一个空闲空间元素的下标；最后一个元素的cur值为第一个元素的下表。</p>
+<h3 id="静态链表的插入操作和删除操作"><a href="#静态链表的插入操作和删除操作" class="headerlink" title="静态链表的插入操作和删除操作"></a>静态链表的插入操作和删除操作</h3><p>动态链表在插入和删除的时候需要调用malloc()和free()这两个函数来实现。但是在静态链表中操作的是存储空间已经提前申请好的数组，所以只需要利用相关的策略就可以实现。比如我们要在上述的“乙”和“丁”之间插入“丙”元素，那我们该怎么做呢？我们只需要把“丙”放到下标为7的位置，然后“乙”的cur值改为7，丙的cur值改为3即可。<br><img src="http://upload-images.jianshu.io/upload_images/1513759-32dceff8441401f0.png" alt="insert into static liner"><br>静态链表的删除操作和动态链表的删除有些不太一样，被删除之后相当于并入到了空闲链表，那么我们就把第一个元素的cur值标为要删除元素的下标（表明它是第一个空闲元素），然后让被删除元素的cur值指向之前第一个空闲元素的下标。这样之后该被删除的元素就并入了空闲元素之中。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-cfb09c3fcb5f4c73.png" alt="delete from static liner"></p>
+<p>静态链表的查询操作和动态链表的几乎相同，就不赘述了。</p>
+<h3 id="静态链表的优缺点"><a href="#静态链表的优缺点" class="headerlink" title="静态链表的优缺点"></a>静态链表的优缺点</h3><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>插入和删除操作，只需修改游标，不用移动元素，<br>从而改进了顺序存储结构中的插入和删除<br>需要移动大量元素的缺点</td>
+<td>没有解决连续存储带来的长度难以确定的问题</td>
+</tr>
+<tr>
+<td></td>
+<td>失去了顺序存储结构随机存取的特性</td>
+</tr>
+</tbody>
+</table>
+<h2 id="循环链表"><a href="#循环链表" class="headerlink" title="循环链表"></a>循环链表</h2><p>单链表有一个非常严重的问题：从链表中的一个结点出发，访问到链表中的所有结点，比如当从尾结点出发，要访问到所有的结点，必须先把指针移动头结点，然后从头开始遍历。为了解决这个问题，又引入了一种新的数据结构：循环链表。循环链表也就是说把原来单链表中终端结点的指针端由空改为指向头结点，这就使整个链表形成一个环，这种头尾相接的单链表成为单循环链表，简称循环链表（circular linked list）。这样虽然可以解决遍历其中任何一个结点的目的，但是还有一个问题：从头结点查找尾结点的时间复杂度为O(n)。我们可以通过将头指针移动位置来解决这个问题：<em>不用头指针，而是用指向终端结点的尾指针来表示循环链表，此时查找开始结点和终端结点都很方便了（时间复杂度都是O(1)）。</em><br><img src="http://upload-images.jianshu.io/upload_images/1513759-144be4c25748578e.png" alt="rear point circular linked list"><br>关于循环链表的其它操作和单链表的几乎是一样的，不再赘述。</p>
+<h2 id="双向链表"><a href="#双向链表" class="headerlink" title="双向链表"></a>双向链表</h2><p>循环链表是解决了单链表中查找所有结点的难题，但是它还存在一个问题：如果要查找某个结点的前驱结点，那么需要的时间复杂度是O(n)，因为我们要按照单向的指针遍历一遍。为了解决这个问题提出了双向链表的概念：双向链表(double linked list)是在单链表的每个结点中，再设置一个指向其前驱结点的指针域。它的结构如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-48340e06fb86b26b.png" alt="structure of double linked list"></p>
+<h3 id="双向链表的插入和删除"><a href="#双向链表的插入和删除" class="headerlink" title="双向链表的插入和删除"></a>双向链表的插入和删除</h3><p>双向链表的插入相对于单链表的插入要复杂一些，因为它涉及到两个指针的操作。如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-d028f13fa949a3e7.png" alt="insert into double linked list"><br>其中的关键步骤为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">s-&gt;prior = p;  // 把p赋值给s的前驱，如①</div><div class="line">s-&gt;next = p-&gt;next; // 把p的后继赋值给s的后继，如②</div><div class="line">p-&gt;next-&gt;prior = s; // 把s赋值给p的后继的前驱，如③</div><div class="line">p-&gt;next = s; // 把s赋值给p的后继，如④</div></pre></td></tr></table></figure>
+<p>相对于插入操作，删除操作相对比较简单，如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-c899193e34b4442d.png" alt="delete from double linked list"><br>其中的关键步骤为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">p-&gt;prior-&gt;next = p-&gt;next; // 将p的后继赋值给其前驱的后继，如①</div><div class="line">p-&gt;next-&gt;prior = p-&gt;prior; // 将p的前驱赋值给p的后继的前驱，如②</div><div class="line">free(p); // 释放p</div></pre></td></tr></table></figure>
+<p>相对于单链表其查找速度更快了，但是它多出了一位来存储指向其前继结点的指针，因此是典型的用空间换取时间的做法。另外循环链表的插入相对来说比较复杂，需要把握好每一步的顺序，否则会出错。</p>
+
           
         
       
