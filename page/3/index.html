@@ -588,7 +588,7 @@ Use `openssl rand -base64 32` to generate a random string.
                 <span class="keyword">throw</span> <span class="type">Abort</span>.badRequest
             }
             <span class="keyword">let</span> validInput = <span class="keyword">try</span> input.tested(by: <span class="type">OnlyAlphanumeric</span>())
-            <span class="keyword">return</span> <span class="string">"validated:\(validInput)"</span>
+            <span class="keyword">return</span> <span class="string">"validated:<span class="subst">\(validInput)</span>"</span>
 }
 </code></pre>
 <p>我们运行程序，然后在PostMan中输入<a href="http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：" target="_blank" rel="external">http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：</a></p>
@@ -602,7 +602,7 @@ Use `openssl rand -base64 32` to generate a random string.
                 <span class="keyword">throw</span> <span class="type">Abort</span>.badRequest
             }
             <span class="keyword">let</span> validaInput = <span class="keyword">try</span> input.tested(by: <span class="type">EmailValidator</span>())
-            <span class="keyword">return</span> <span class="string">"validated:\(validaInput)"</span>
+            <span class="keyword">return</span> <span class="string">"validated:<span class="subst">\(validaInput)</span>"</span>
     }
 </code></pre>
 <p>然后我们输入URL：<a href="http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：" target="_blank" rel="external">http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：</a></p>
@@ -661,7 +661,7 @@ Use `openssl rand -base64 32` to generate a random string.
 
     <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">validate</span><span class="params">(<span class="number">_</span> input: T)</span></span> <span class="keyword">throws</span> {
         <span class="keyword">guard</span> input == expectation <span class="keyword">else</span> {
-            <span class="keyword">throw</span> error(<span class="string">"\(input) does not equal expectation \(expectation)"</span>)
+            <span class="keyword">throw</span> error(<span class="string">"<span class="subst">\(input)</span> does not equal expectation <span class="subst">\(expectation)</span>"</span>)
         }
     }
 }
@@ -823,7 +823,7 @@ newLongDescription longDescription: <span class="type">String</span>) { ... }
 </code></pre>
 <p>这样我们的<code>Boards</code>类就遵守了<code>Pullable</code>协议，当我们来检查某个对象是否遵守了某个协议时，我们可以这样做：</p>
 <pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">performPull</span><span class="params">(object: Thing)</span></span> { <span class="keyword">if</span> <span class="keyword">let</span> pullableObject = object <span class="keyword">as</span> <span class="type">Pullable</span> { pullableObject.pull()    }<span class="keyword">else</span>{ 
-     <span class="built_in">print</span>(<span class="string">"You are not sure how to print a \(object.name)."</span>)
+     <span class="built_in">print</span>(<span class="string">"You are not sure how to print a <span class="subst">\(object.name)</span>."</span>)
    } 
 }
 </code></pre>
@@ -862,17 +862,17 @@ newLongDescription longDescription: <span class="type">String</span>) { ... }
 <h2 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h2><p> 比如以下三个方法，其参数的形式是一样的，但是其参数类型不同，我们想把它变成一个函数，这时候我们最常想到的做法就是使用<code>Any</code>来表示任何类型的参数和任何类型的返回值。</p>
 <pre><code class="Swift"><span class="comment">// 之前的三个函数</span>
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: String)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
 }
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Int)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
 }
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Float)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
 } 
 <span class="comment">// 变为一个函数</span>
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Any)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
 }
 </code></pre>
 <p>但是这有个问题，在我们要调用返回值的某个方法时候编译器会报错，因为我们的返回值<code>Any</code>并没有所调用的方法，也就是说我们需要一次强转，强转在代码层面是很难看的，也很麻烦，这时候我们就可以使用泛型来解决这个问题，如果我们使用了泛型，那么编译器会将输入的参数和输出的参数给我们推断出来，这样就不必强转了。并且当编译器可以推断出来是那种type的时候它会给我们做各种优化。</p>
@@ -1648,7 +1648,7 @@ exportSession.timeRange = range;
 </code></pre>
 <p>这response可能是用户输入的,可能会输入不确定的数值<code>Do you konw?</code>那么肯定会得到错误的结果，在OC中遇到这种情况我们怎么处理呢？我们有如下的值可以表示错误：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-65ce6dec3ca6cade.png" alt="Wrong!"><br>但是你必须从不同的接口中去选择相应的错误类型，并且要记住这些错误类型。为了解决这个问题，Swift中引入了Optional的概念，将这种可能是nil的值进行打包。它可以表示上述所有错误的类型，同时，<strong>如果我们使用Optional，就一定要对它进行拆包，使用<code>!</code>号，如果不拆包会造成编译器错误</strong>，如下所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-03cea3691052ac9b.png" alt="Need Unwrap"><br><strong>也可以使用Optional Binding将判断是否有值和拆包结合在一起使用：<code>if let</code></strong>。</p>
 <pre><code class="Swift"><span class="keyword">var</span> neighbors = [<span class="string">"Alex"</span>, <span class="string">"Anna"</span>, <span class="string">"Madison"</span>, <span class="string">"Dave"</span>] <span class="keyword">let</span> index = findIndexOfString(<span class="string">"Anna"</span>, neighbors)  <span class="keyword">if</span> <span class="keyword">let</span> indexValue = index { 
-    <span class="built_in">println</span>(<span class="string">"Hello, \(neighbors[indexValue])"</span>)
+    <span class="built_in">println</span>(<span class="string">"Hello, <span class="subst">\(neighbors[indexValue])</span>"</span>)
 } <span class="keyword">else</span> {
     <span class="built_in">println</span>(<span class="string">"Must've moved away"</span>)
 }
@@ -1771,7 +1771,7 @@ clients.<span class="built_in">sort</span>({(a: <span class="type">String</span>
 <span class="type">HUNGRY</span>
 </code></pre>
 <p>我们还可以调用<code>reduce</code>方法将其和成一个字符串</p>
-<pre><code class="Swift"><span class="keyword">let</span> reducedResult = result.<span class="built_in">reduce</span>(<span class="string">"HULK"</span>){<span class="string">"\($0) \($1)"</span>}
+<pre><code class="Swift"><span class="keyword">let</span> reducedResult = result.<span class="built_in">reduce</span>(<span class="string">"HULK"</span>){<span class="string">"<span class="subst">\($<span class="number">0</span>)</span> <span class="subst">\($<span class="number">1</span>)</span>"</span>}
 </code></pre>
 <p>这时结果如下：</p>
 <pre><code class="Swift"><span class="type">HULK</span> <span class="type">ANGRY</span> <span class="type">HUNGRY</span>
@@ -1795,7 +1795,7 @@ numbers.<span class="built_in">map</span> (indexes.addIndex) <span class="commen
 <span class="function"><span class="keyword">func</span> <span class="title">logTemperatureDifferences</span><span class="params">(initial: Int)</span></span> {
     <span class="keyword">var</span> prev = initial
     onTemperatureChange = { next <span class="keyword">in</span>
-        <span class="built_in">println</span>(<span class="string">"Changed \(next - prev)°F"</span>)
+        <span class="built_in">println</span>(<span class="string">"Changed <span class="subst">\(next - prev)</span>°F"</span>)
 prev = next 
 }
 </code></pre>
@@ -1803,7 +1803,7 @@ prev = next
 <pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">logTemperatureDifferences</span><span class="params">(initial: Int)</span></span> {
     <span class="keyword">var</span> prev = initial
     <span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(next: Int)</span></span> {
-        <span class="built_in">println</span>(<span class="string">"Changed \(next - prev)°F"</span>)
+        <span class="built_in">println</span>(<span class="string">"Changed <span class="subst">\(next - prev)</span>°F"</span>)
 prev = next } 
     onTemperatureChange = log
 </code></pre>
@@ -1851,7 +1851,7 @@ currentTemp = temp    } <span class="comment">// error: requires explicit 'sel
   <span class="built_in">println</span>(<span class="string">"on time"</span>)
 <span class="keyword">case</span> .<span class="type">Delayed</span>(<span class="keyword">let</span> minutes)
                         :
-<span class="built_in">println</span>(<span class="string">"delayed by \(minutes) minutes"</span>)
+<span class="built_in">println</span>(<span class="string">"delayed by <span class="subst">\(minutes)</span> minutes"</span>)
 </code></pre>
 <p>我们可以对这个<code>delay</code>做各种各样的匹配：</p>
 <pre><code class="Swift"><span class="keyword">switch</span> trainStatus {
@@ -1898,9 +1898,9 @@ currentTemp = temp    } <span class="comment">// error: requires explicit 'sel
 <pre><code class="Swift"><span class="keyword">let</span> color = (<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>)
 <span class="keyword">switch</span> color {
   <span class="keyword">case</span> (<span class="number">0.0</span>, <span class="number">0.5</span>...<span class="number">1.0</span>, <span class="keyword">let</span> blue, <span class="number">_</span>):
-    <span class="built_in">println</span>(<span class="string">"Green and \(blue * 100)% blue"</span>)
+    <span class="built_in">println</span>(<span class="string">"Green and <span class="subst">\(blue * <span class="number">100</span>)</span>% blue"</span>)
   <span class="keyword">case</span> <span class="keyword">let</span> (r, g, b, <span class="number">1.0</span>) <span class="keyword">where</span> r == g &amp;&amp; g == b:
-    <span class="built_in">println</span>(<span class="string">"Opaque grey \(r * 100)%"</span>)
+    <span class="built_in">println</span>(<span class="string">"Opaque grey <span class="subst">\(r * <span class="number">100</span>)</span>%"</span>)
 </code></pre>
 <p>我们甚至可以对其中的各个数值做以相应的模式匹配。</p>
 <h3 id="Pattern-Matching的应用PList校验"><a href="#Pattern-Matching的应用PList校验" class="headerlink" title="Pattern Matching的应用PList校验"></a>Pattern Matching的应用PList校验</h3><p>比如我们有下面的方法来校验Plist中的内容是否有效</p>
