@@ -99,18 +99,18 @@
 
 
 
-<meta name="description" content="Java泛型为什么需要泛型？在Java1.5版本之前是没有泛型的。这时如果我们要实现一个Array类，它里面可以存储任何的对象，我们该怎样做呢？显然，我们可以通过多态来实现： 12345class Array &amp;#123;void add(Object e);// ....Object get(int i);&amp;#125; 这时我们就可以 泛型的基本用法Java中的泛型可以给一个类添加泛型，也可以给">
+<meta name="description" content="为什么需要泛型？在Java1.5版本之前是没有泛型的。这时如果我们要实现一个Array类，它里面可以存储任何的对象，我们该怎样做呢？显然，我们可以通过多态来实现： 12345class Array &amp;#123;void add(Object e);// ....Object get(int i);&amp;#125; 因为Java中的对象都继承自Object，所以就可以往这个Array中添加任何的对象，并">
 <meta name="keywords" content="Notes">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java_generic_details">
+<meta property="og:title" content="Java泛型">
 <meta property="og:url" content="https://mikefighting.github.io/2017/10/17/java-generic-details/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="Java泛型为什么需要泛型？在Java1.5版本之前是没有泛型的。这时如果我们要实现一个Array类，它里面可以存储任何的对象，我们该怎样做呢？显然，我们可以通过多态来实现： 12345class Array &amp;#123;void add(Object e);// ....Object get(int i);&amp;#125; 这时我们就可以 泛型的基本用法Java中的泛型可以给一个类添加泛型，也可以给">
+<meta property="og:description" content="为什么需要泛型？在Java1.5版本之前是没有泛型的。这时如果我们要实现一个Array类，它里面可以存储任何的对象，我们该怎样做呢？显然，我们可以通过多态来实现： 12345class Array &amp;#123;void add(Object e);// ....Object get(int i);&amp;#125; 因为Java中的对象都继承自Object，所以就可以往这个Array中添加任何的对象，并">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-10-19T10:58:02.000Z">
+<meta property="og:updated_time" content="2017-12-05T02:16:18.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="java_generic_details">
-<meta name="twitter:description" content="Java泛型为什么需要泛型？在Java1.5版本之前是没有泛型的。这时如果我们要实现一个Array类，它里面可以存储任何的对象，我们该怎样做呢？显然，我们可以通过多态来实现： 12345class Array &amp;#123;void add(Object e);// ....Object get(int i);&amp;#125; 这时我们就可以 泛型的基本用法Java中的泛型可以给一个类添加泛型，也可以给">
+<meta name="twitter:title" content="Java泛型">
+<meta name="twitter:description" content="为什么需要泛型？在Java1.5版本之前是没有泛型的。这时如果我们要实现一个Array类，它里面可以存储任何的对象，我们该怎样做呢？显然，我们可以通过多态来实现： 12345class Array &amp;#123;void add(Object e);// ....Object get(int i);&amp;#125; 因为Java中的对象都继承自Object，所以就可以往这个Array中添加任何的对象，并">
 
 
 
@@ -144,7 +144,7 @@
 
 
 
-  <title>java_generic_details | 击水湘江</title>
+  <title>Java泛型 | 击水湘江</title>
   
 
 
@@ -324,7 +324,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">java_generic_details</h1>
+          <h1 class="post-title" itemprop="name headline">Java泛型</h1>
         
 
         <div class="post-meta">
@@ -371,33 +371,53 @@
       
 
       
-        <h1 id="Java泛型"><a href="#Java泛型" class="headerlink" title="Java泛型"></a>Java泛型</h1><h2 id="为什么需要泛型？"><a href="#为什么需要泛型？" class="headerlink" title="为什么需要泛型？"></a>为什么需要泛型？</h2><p>在Java1.5版本之前是没有泛型的。这时如果我们要实现一个Array类，它里面可以存储任何的对象，我们该怎样做呢？显然，我们可以通过多态来实现：</p>
+        <h2 id="为什么需要泛型？"><a href="#为什么需要泛型？" class="headerlink" title="为什么需要泛型？"></a>为什么需要泛型？</h2><p>在Java1.5版本之前是没有泛型的。这时如果我们要实现一个Array类，它里面可以存储任何的对象，我们该怎样做呢？显然，我们可以通过多态来实现：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Array</span> </span>&#123;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(Object e)</span></span>;</div><div class="line"><span class="comment">// ....</span></div><div class="line"><span class="function">Object <span class="title">get</span><span class="params">(<span class="keyword">int</span> i)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这时我们就可以</p>
-<h2 id="泛型的基本用法"><a href="#泛型的基本用法" class="headerlink" title="泛型的基本用法"></a>泛型的基本用法</h2><p>Java中的泛型可以给一个类添加泛型，也可以给一个方法添加泛型，具体的方法如下：<br>泛型类的实现方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pair</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">   T first;</div><div class="line">   T second;</div><div class="line">   <span class="comment">// ....</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这样在</p>
+<p>因为Java中的对象都继承自Object，所以就可以往这个Array中添加任何的对象，并且取出任何的对象了。但是这样做会有很大的风险：</p>
 <ul>
-<li>虚拟机中是没有泛型的，只有普通的类和方法</li>
-<li>所有的泛型参数都会被它们的边界值(bounds)所取代</li>
-<li>为了保证多态会使用桥接方法</li>
-<li>为了保证类型安全，编译器会在适当的时候插入强制转换代码</li>
+<li>我们取出的对象都是Object类型的，所以如果要使用这个对象就必须做一次强制转换，因为我们使用Collection框架的频率是很高的，所以这种转换就显得比较麻烦</li>
+<li>不安全，因为是Object，所以我们可以往里面放任何的对象，比如Animal对象，Plant对象，Plane对象，这样如果我们在调用Array中对象的方法时就可能Crash</li>
 </ul>
-<blockquote>
-<p>Java的泛型只对第一个元素起作用</p>
-</blockquote>
-<p>里面有隐式转换，</p>
-<h2 id="Java泛型中需要注意的问题"><a href="#Java泛型中需要注意的问题" class="headerlink" title="Java泛型中需要注意的问题"></a>Java泛型中需要注意的问题</h2><ol>
-<li>不能使用基本数据类型初始化泛型参数</li>
-<li>Runtime类型检查不起作用 </li>
-<li>不能使用参数类型来创建Array</li>
-<li>可变参数警告</li>
-<li>不能初始化类型变量</li>
-<li>泛型类中的静态环境中不允许使用类型变量</li>
-<li>不能抛出或者捕获泛型类对象</li>
-<li>注意泛型擦除之后的冲突</li>
-</ol>
-<h2 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h2><p>Array有特殊的保护，不能对存有父类的Array中添加子类元素，否则在运行时虚拟机会抛出ArrayStoreException的异常。</p>
+<p>第二点对于Java这种追求安全性的语言来说，显然是不可以接受的，所以就出现了泛型。</p>
+<h2 id="泛型的基本用法"><a href="#泛型的基本用法" class="headerlink" title="泛型的基本用法"></a>泛型的基本用法</h2><h3 id="泛型类"><a href="#泛型类" class="headerlink" title="泛型类"></a>泛型类</h3><p>我们可以定义一个泛型的类，具体的方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pair</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">   T first;</div><div class="line">   T second;</div><div class="line">   <span class="comment">// ....</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样在我们创建对象的时候就可以使用<code>Pair&lt;Integer&gt; pair = new Pair&lt;Integer&gt;()</code>，这样我们就可以明确的指出这里的<code>Pair</code>中存放的就是<code>Integer</code>类型的对象，其它对象如果要放到Pair中编译器就会报错，这样就在很大程度上增加了安全性。并且在取出的时候也不必再进行一次强制转换了。<br>如果某个类中有多个泛型，那么这些泛型用<code>,</code>好分割开就好了。<code>public class Pair&lt;T, U&gt; { . . . }</code>。<em>一般我们会用大写字母来表示泛型的元素，在Java框架中<code>E</code>用来表示一个元素，<code>K</code>和<code>V</code>用来表示一个table的key value值。</em></p>
+<p>同样，我们可以定义一个泛型的方法，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArrayAlg</span> </span>&#123;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">getMiddle</span><span class="params">(T... a)</span> </span>&#123;</div><div class="line"><span class="keyword">return</span> a[a.length / <span class="number">2</span>]; &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>调用的时候不需要进行强制转换</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">String middle = ArrayAlg.getMiddle(<span class="string">"John"</span>, <span class="string">"Q."</span>, <span class="string">"Public"</span>);</div><div class="line"><span class="keyword">double</span> middle = ArrayAlg.getMiddle(<span class="number">3.14</span>, <span class="number">1729</span>, <span class="number">0</span>);</div></pre></td></tr></table></figure>
+<p>在第二个例子中我们传入的参数是原始数据类型，这时编译器会给我们自动打包，在从类中取出的时候编译器会给我们自动的拆包。</p>
+<h2 id="泛型的界"><a href="#泛型的界" class="headerlink" title="泛型的界"></a>泛型的界</h2><p>有时候我们需要对输入的参数做一些限制，比如说要好处两个数值中较小的一个，那么我们就要求进入方法的参数是实现了<code>Comparable</code>接口的，或者是某个类的子类，这样我们就可以做如下的限制，来让泛型有界：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T extends Comparable&gt; <span class="function">T <span class="title">min</span><span class="params">(T[] a)</span> . . .</span></div></pre></td></tr></table></figure>
+<p>如果某个类型没有实现<code>Comparable</code>接口的话，让它作为参数会产生一个编译期的警告，在运行时就会Crash。如果一个泛型需要限制很多个接口的话，那么很多个接口之间用<code>,</code>隔开（但是这其中只能有一个是对类的限制，并且如果有对类的限制，那么这个限制一定要写在第一个的位置）。</p>
+<h2 id="泛型和JVM"><a href="#泛型和JVM" class="headerlink" title="泛型和JVM"></a>泛型和JVM</h2><p>在Java虚拟机中是没有任何泛型类的，所有的对象都是普通的Java类。其实编译器会对泛型实行一次擦除的过程。也就是说，当你定义一个泛型的时候，系统会自动给你创建一个原始类型给你。原始类型变量的名字和泛型时候取的名字是一样的，但是泛型类型的参数类型被移除了。这些类型被移除之后，取而代之的是它们的边界类型（如果没有边界，那么它的边界就是Object，这也是为了和Java之前的版本做兼容。这也就是上文提到的，为什么对于原始数据类型有一个装包和拆包的过程）。比如，如果你创建上文中的<code>Pair&lt;T&gt;</code>，在编译之后Pair类就成了下面的样子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Pair</span> </span>&#123;</div><div class="line"><span class="keyword">private</span> Object first; <span class="keyword">private</span> Object second;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Pair</span><span class="params">(Object first, Object second)</span> </span>&#123;</div><div class="line"><span class="keyword">this</span>.first = first;</div><div class="line"><span class="keyword">this</span>.second = second; &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">getFirst</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> first; &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">getSecond</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> second; &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFirst</span><span class="params">(Object newValue)</span> </span>&#123; first = newValue; &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSecond</span><span class="params">(Object newValue)</span> </span>&#123; second = newValue; &#125; &#125;</div></pre></td></tr></table></figure>
+<p>这其实和没有泛型时候创建的类是一样的了。</p>
+<p>这里有一个特殊情况，如果有两个限制，那么会以第一个限制为准：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Interval</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Comparable</span> &amp; <span class="title">Serializable</span>&gt; <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</div><div class="line"><span class="keyword">private</span> T lower;</div><div class="line"><span class="keyword">private</span> T upper;</div><div class="line">...</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Interval</span><span class="params">(T first, T second)</span> </span>&#123;</div><div class="line"><span class="keyword">if</span> (first.compareTo(second) &lt;= <span class="number">0</span>) &#123; lower = first; upper = second; &#125;</div><div class="line"><span class="keyword">else</span> &#123; lower = second; upper = first; &#125; &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这时<code>Interval</code>的基本类型就是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Interval</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</div><div class="line"><span class="keyword">private</span> Comparable lower;</div><div class="line"><span class="keyword">private</span> Comparable upper;</div><div class="line">...</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Interval</span><span class="params">(Comparable first, Comparable second)</span> </span>&#123; . . . &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这种情况下，如果第一种类型要转化为第二种类型的时候编译器会自动的加上强制转换。</p>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Pair&lt;Employee&gt; buddies = . . .;</div><div class="line">Employee buddy = buddies.getFirst();</div></pre></td></tr></table></figure>
+<p>因为在编译期进行了类型擦除，所以在调用<code>buddies.getFirst()</code>的时候返回的是一个Object，所以编译器就自动添加了一层强制转换。</p>
+<h2 id="泛型方法的翻译"><a href="#泛型方法的翻译" class="headerlink" title="泛型方法的翻译"></a>泛型方法的翻译</h2><p>上文提到过泛型会被编译器在编译的阶段进行擦除，并且将边界替换为泛型的类型。这种泛型的擦除同时也带来了复杂性，比如下面的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DateInterval</span> <span class="keyword">extends</span> <span class="title">Pair</span>&lt;<span class="title">LocalDate</span>&gt; </span>&#123;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSecond</span><span class="params">(LocalDate second)</span> </span>&#123;</div><div class="line"><span class="keyword">if</span> (second.compareTo(getFirst()) &gt;= <span class="number">0</span>) <span class="keyword">super</span>.setSecond(second);</div><div class="line">&#125;</div><div class="line"><span class="comment">//...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>因为我们要保证<code>Pair</code>中的第二个元素要始终不小于第一个元素，所以我们就继承了<code>Pair</code>，并且重写了其<code>setSecond</code>方法，这样经过泛型的擦除，最后将会变为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DateInterval</span> <span class="keyword">extends</span> <span class="title">Pair</span> // <span class="title">after</span> <span class="title">erasure</span> </span></div><div class="line">&#123;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSecond</span><span class="params">(LocalDate second)</span> </span>&#123; . . . &#125;</div><div class="line"><span class="comment">//...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>而原来的<code>Pair</code>类中的<code>setSecond</code>方法是这样子的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSecond</span><span class="params">(Object second)</span></span></div></pre></td></tr></table></figure>
+<p>很显然，这是两个不同的方法，然而我们不想让它们是不同的方法，我们想让它走我们新写的方法，因为我们在这里面新增加了我们自己的业务逻辑，比如下面的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">DateInterval interval = <span class="keyword">new</span> DateInterval(. . .); Pair&lt;LocalDate&gt; pair = interval; <span class="comment">// OK--assignment to superclass</span></div><div class="line">pair.setSecond(aDate);</div></pre></td></tr></table></figure>
+<p>在这里很显然，我们想走我们新的方法，这时编译器其实会在我们的参数为<code>Object</code>的方法里面重新调用我们新写的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSecond</span><span class="params">(Object second)</span> </span>&#123;</div><div class="line">    setSecond((Date) second);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>也就是这种转换让系统调用到了我们新写的方法。这样就可以始终调用到我们自己的方法里面了。</p>
+<h2 id="Java泛型中需要注意的问题"><a href="#Java泛型中需要注意的问题" class="headerlink" title="Java泛型中需要注意的问题"></a>Java泛型中需要注意的问题</h2><h3 id="不能使用基本数据类型初始化泛型参数"><a href="#不能使用基本数据类型初始化泛型参数" class="headerlink" title="不能使用基本数据类型初始化泛型参数"></a>不能使用基本数据类型初始化泛型参数</h3><h3 id="Runtime类型检查不起作用"><a href="#Runtime类型检查不起作用" class="headerlink" title="Runtime类型检查不起作用"></a>Runtime类型检查不起作用</h3><h3 id="不能使用参数类型来创建Array"><a href="#不能使用参数类型来创建Array" class="headerlink" title="不能使用参数类型来创建Array"></a>不能使用参数类型来创建Array</h3><h3 id="可变参数警告"><a href="#可变参数警告" class="headerlink" title="可变参数警告"></a>可变参数警告</h3><h3 id="不能初始化类型变量"><a href="#不能初始化类型变量" class="headerlink" title="不能初始化类型变量"></a>不能初始化类型变量</h3><h3 id="泛型类中的静态环境中不允许使用类型变量"><a href="#泛型类中的静态环境中不允许使用类型变量" class="headerlink" title="泛型类中的静态环境中不允许使用类型变量"></a>泛型类中的静态环境中不允许使用类型变量</h3><h3 id="不能抛出或者捕获泛型类对象"><a href="#不能抛出或者捕获泛型类对象" class="headerlink" title="不能抛出或者捕获泛型类对象"></a>不能抛出或者捕获泛型类对象</h3><h3 id="注意泛型擦除之后的冲突"><a href="#注意泛型擦除之后的冲突" class="headerlink" title="注意泛型擦除之后的冲突"></a>注意泛型擦除之后的冲突</h3><h2 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h2><p>在遗留代码中往往有非泛型的类，这时，如果用一个泛型类去接，那么往往会产生一个警告，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Dictionary&lt;Integer, Components&gt; labelTable = slider.getLabelTable(); <span class="comment">// Warning</span></div></pre></td></tr></table></figure>
+<p>这时如果你检查了<code>labelTable</code>中数据的类型，并且确定了其中的key value为<code>Integer</code>和<code>Components</code>，那么就可以使用<code>@SuppressWarnings(&quot;unchecked&quot;)</code>来忽略这个警告。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</div><div class="line">Dictionary&lt;Integer, Components&gt; labelTable = slider.getLabelTable(); <span class="comment">// No warning</span></div></pre></td></tr></table></figure>
+<p>当然也可以在外层的方法上添加。</p>
+<p>Array有特殊的保护，不能对存有父类的Array中添加子类元素，否则在运行时虚拟机会抛出ArrayStoreException的异常。</p>
 <h2 id="参考内容"><a href="#参考内容" class="headerlink" title="参考内容"></a>参考内容</h2><p><a href="https://www.zhihu.com/question/20400700" target="_blank" rel="external">https://www.zhihu.com/question/20400700</a><br><a href="http://blog.csdn.net/claram/article/details/51943742" target="_blank" rel="external">http://blog.csdn.net/claram/article/details/51943742</a></p>
 
       
@@ -450,6 +470,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/21/note-concurrency-in-practice/" rel="prev" title="Java多线程基础">
+                Java多线程基础 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -522,7 +546,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-count">34</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -535,7 +559,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>
@@ -570,7 +594,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java泛型"><span class="nav-number">1.</span> <span class="nav-text">Java泛型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要泛型？"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要泛型？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型的基本用法"><span class="nav-number">1.2.</span> <span class="nav-text">泛型的基本用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java泛型中需要注意的问题"><span class="nav-number">1.3.</span> <span class="nav-text">Java泛型中需要注意的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其它"><span class="nav-number">1.4.</span> <span class="nav-text">其它</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考内容"><span class="nav-number">1.5.</span> <span class="nav-text">参考内容</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要泛型？"><span class="nav-number">1.</span> <span class="nav-text">为什么需要泛型？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型的基本用法"><span class="nav-number">2.</span> <span class="nav-text">泛型的基本用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#泛型类"><span class="nav-number">2.1.</span> <span class="nav-text">泛型类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型的界"><span class="nav-number">3.</span> <span class="nav-text">泛型的界</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型和JVM"><span class="nav-number">4.</span> <span class="nav-text">泛型和JVM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型方法的翻译"><span class="nav-number">5.</span> <span class="nav-text">泛型方法的翻译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java泛型中需要注意的问题"><span class="nav-number">6.</span> <span class="nav-text">Java泛型中需要注意的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#不能使用基本数据类型初始化泛型参数"><span class="nav-number">6.1.</span> <span class="nav-text">不能使用基本数据类型初始化泛型参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Runtime类型检查不起作用"><span class="nav-number">6.2.</span> <span class="nav-text">Runtime类型检查不起作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不能使用参数类型来创建Array"><span class="nav-number">6.3.</span> <span class="nav-text">不能使用参数类型来创建Array</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可变参数警告"><span class="nav-number">6.4.</span> <span class="nav-text">可变参数警告</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不能初始化类型变量"><span class="nav-number">6.5.</span> <span class="nav-text">不能初始化类型变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#泛型类中的静态环境中不允许使用类型变量"><span class="nav-number">6.6.</span> <span class="nav-text">泛型类中的静态环境中不允许使用类型变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不能抛出或者捕获泛型类对象"><span class="nav-number">6.7.</span> <span class="nav-text">不能抛出或者捕获泛型类对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注意泛型擦除之后的冲突"><span class="nav-number">6.8.</span> <span class="nav-text">注意泛型擦除之后的冲突</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其它"><span class="nav-number">7.</span> <span class="nav-text">其它</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考内容"><span class="nav-number">8.</span> <span class="nav-text">参考内容</span></a></li></ol></div>
             
 
           </div>

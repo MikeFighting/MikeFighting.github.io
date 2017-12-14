@@ -386,7 +386,7 @@
                 <span class="keyword">throw</span> <span class="type">Abort</span>.badRequest
             }
             <span class="keyword">let</span> validInput = <span class="keyword">try</span> input.tested(by: <span class="type">OnlyAlphanumeric</span>())
-            <span class="keyword">return</span> <span class="string">"validated:<span class="subst">\(validInput)</span>"</span>
+            <span class="keyword">return</span> <span class="string">"validated:\(validInput)"</span>
 }
 </code></pre>
 <p>我们运行程序，然后在PostMan中输入<a href="http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：" target="_blank" rel="external">http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：</a></p>
@@ -400,7 +400,7 @@
                 <span class="keyword">throw</span> <span class="type">Abort</span>.badRequest
             }
             <span class="keyword">let</span> validaInput = <span class="keyword">try</span> input.tested(by: <span class="type">EmailValidator</span>())
-            <span class="keyword">return</span> <span class="string">"validated:<span class="subst">\(validaInput)</span>"</span>
+            <span class="keyword">return</span> <span class="string">"validated:\(validaInput)"</span>
     }
 </code></pre>
 <p>然后我们输入URL：<a href="http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：" target="_blank" rel="external">http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：</a></p>
@@ -459,7 +459,7 @@
 
     <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">validate</span><span class="params">(<span class="number">_</span> input: T)</span></span> <span class="keyword">throws</span> {
         <span class="keyword">guard</span> input == expectation <span class="keyword">else</span> {
-            <span class="keyword">throw</span> error(<span class="string">"<span class="subst">\(input)</span> does not equal expectation <span class="subst">\(expectation)</span>"</span>)
+            <span class="keyword">throw</span> error(<span class="string">"\(input) does not equal expectation \(expectation)"</span>)
         }
     }
 }
@@ -593,7 +593,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-count">34</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -606,7 +606,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>

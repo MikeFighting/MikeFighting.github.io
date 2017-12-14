@@ -307,6 +307,562 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/12/12/note-java-concurrency-in-practice-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/12/note-java-concurrency-in-practice-2/" itemprop="url">活跃性，性能与测试(一)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-12T13:15:34+08:00">
+                2017-12-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现<strong>顺序死锁</strong>。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现<strong>资源死锁</strong>。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样去避免死锁呢?</p>
+<h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><p>我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。</p>
+<h2 id="死锁之后的处理形式"><a href="#死锁之后的处理形式" class="headerlink" title="死锁之后的处理形式"></a>死锁之后的处理形式</h2><p>死锁之后该怎么处理分为两种方式，第一种方式就是什么都不做不了，应用程序将到此结束（也可能是某个子系统停止或者性能降低），直到重新启动，才会解除本次死锁。第二种方式就是干涉死锁。比如数据库操作在两个事务之间出现了死锁，那么数据库服务器会选择一个牺牲者并且放弃这个事务。作为牺牲者的事务将放弃它的所有资源，从而使其它事务继续进行。让后等待其它任务执行完成之后再去执行这个被牺牲了的任务。</p>
+<h2 id="顺序死锁"><a href="#顺序死锁" class="headerlink" title="顺序死锁"></a>顺序死锁</h2><p>如果有left和right两把锁，同时有A线程和B线程去访问，如果按照下面的顺序就可能造成死锁。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-56118e0094e4a64d.png" alt="order_dead_lock"></p>
+<p>线程A持有了left锁，再获取了right锁的时候才可以进行下一步的执行，并且只有获得了right锁才可以释放掉left锁。线程B已经获取了right锁，在获取了left锁的时候才可以进行下一步的执行，也只有获取了right锁才可能释放掉right锁。所以就造成了最后的死锁。这个死锁引起的原因就是锁的顺序不一致，也就是说在使用锁进行同步的过程中如果有两把锁，那么锁的顺序需要保持一致，否则就可能造成死锁。代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LeftRightDeadLock</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object left = <span class="keyword">new</span> Object();</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object right = <span class="keyword">new</span> Object();</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">leftRight</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span>(left) &#123;</div><div class="line">            <span class="keyword">synchronized</span>(right) &#123;</div><div class="line">                doSomething();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rightLeft</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span>(right) &#123;</div><div class="line">            <span class="keyword">synchronized</span>(left) &#123;</div><div class="line">                doSomethingElse();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="动态的锁顺序死锁"><a href="#动态的锁顺序死锁" class="headerlink" title="动态的锁顺序死锁"></a>动态的锁顺序死锁</h2><p>有些时候我们没有很明确的在两个不同的方法中使用两把锁，但是仍然可能造成死锁，这种死锁往往不容易被发现，比如我们要给将账户A的钱转给账户B，那么我们可以使用下面的方法来确保转账的原子性，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transferMoney</span><span class="params">(Account fromAccount, Account toAccount,</span></span></div><div class="line">DollarAmount amount) <span class="keyword">throws</span> InsufficientFundsException &#123;</div><div class="line"><span class="keyword">synchronized</span> (fromAccount) &#123;</div><div class="line">    <span class="keyword">synchronized</span> (toAccount) &#123;</div><div class="line"><span class="keyword">if</span> (fromAccount.getBalance().compareTo(amount) &lt; <span class="number">0</span>) &#123;</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> InsufficientFundsException();</div><div class="line">    &#125;</div><div class="line"><span class="keyword">else</span> &#123;</div><div class="line">    fromAccount.debit(amount); toAccount.credit(amount);</div><div class="line">        &#125;</div><div class="line">     &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个死锁的原因就是可能调用方在两个线程中使用的参数顺序可能相反，这就造成死锁，因为我们不能确定调用方是怎么调用我们写的接口的。比如下面的调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">A: transferMoney(myAccount, yourAccount,<span class="number">10</span>);</div><div class="line">B: transferMoney(yourAccount, myAccount,<span class="number">20</span>);</div></pre></td></tr></table></figure>
+<p>这时就造成了死锁，并且这种死锁是在一般情况下是不会发生的，这就造成了难以排查的错误。这时该如何去做呢？我们的目的是想让外界两个参数的改变不会影响到内部锁的顺序，所以，我们可以拿两个入参的<code>identityHashCode</code>去作为判断条件，根据hash值的大小来改变加锁的顺序。当然，这里面可能有哈希碰撞的情况（这种情况发生的几率是非常低的），如果有这种情况的出现，那么就给这两个同步操作外部再加一个锁，这样来确保这个操作的原子性，就不会有死锁的情况了。这里面如果加锁的两个对象有唯一的键值，那么就可以直接用其键值，这样就不必再使用额外的锁了。</p>
+<h2 id="协作对象之间发生的死锁"><a href="#协作对象之间发生的死锁" class="headerlink" title="协作对象之间发生的死锁"></a>协作对象之间发生的死锁</h2><p>比如下面的Taxi和Dispatcher对象都使用了锁，并且它们之前是相互协作的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Taxi</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> Point location, destination; <span class="keyword">private</span> <span class="keyword">final</span> Dispatcher dispatcher;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Taxi</span><span class="params">(Dispatcher dispatcher)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.dispatcher = dispatcher;</div><div class="line">    &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> Point <span class="title">getLocation</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> location;</div><div class="line">   &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">setLocation</span><span class="params">(Point location)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.location = location;</div><div class="line"><span class="keyword">if</span> (location.equals(destination)) &#123;</div><div class="line">    dispatcher .notifyAvailable (<span class="keyword">this</span> );</div><div class="line"> &#125;</div><div class="line"></div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dispatcher</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Taxi&gt; taxis; <span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Taxi&gt; availableTaxis;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Dispatcher</span><span class="params">()</span> </span>&#123;</div><div class="line">       taxis = <span class="keyword">new</span> HashSet&lt;Taxi&gt;(); availableTaxis = <span class="keyword">new</span> HashSet&lt;Taxi&gt;();</div><div class="line">    &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">notifyAvailable</span><span class="params">(Taxi taxi)</span> </span>&#123;</div><div class="line">        availableTaxis .add(taxi);</div><div class="line">    &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> Image <span class="title">getImage</span><span class="params">()</span> </span>&#123;</div><div class="line">    Image image = <span class="keyword">new</span> Image();</div><div class="line">    <span class="keyword">for</span> (Taxi t : taxis) &#123;</div><div class="line">     image.drawMarker(t.getLocation()); <span class="keyword">return</span> image;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在这里面<code>setLocation</code>方法需要先获取<code>Taxi</code>的锁，再获取<code>Dispatcher</code>的锁。而<code>getImage</code>方法需要先获取<code>Dispatcher</code>的锁，然后再获取<code>Taxi</code>的锁，这样就可能造成上文中所说的顺序锁的问题。并且这种锁是更加难以排查的。所以最好不要使用<code>synchronize</code>(管程)。</p>
+<blockquote>
+<p>在持有锁的过程中调用某个外部方法，那么将可能会出现活跃性的问题。</p>
+</blockquote>
+<h2 id="开放调用"><a href="#开放调用" class="headerlink" title="开放调用"></a>开放调用</h2><p>之所以出现上述协作对象之间发生的死锁，是因为在调用另外一个对象的方法的过程中，已经持有了一把锁。这种调用称作不开放，所谓的开放调用就是指：在调用某个方法的时候不需要持有锁。通常来说开放调用要比非开放调用更加安全，更加不容易产生死锁，所以我们要尽可能地使用开放调用。我们可以使用开放调用的方法来解决上述遇到的问题：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ThreadSafe</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Taxi</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>)</div><div class="line"><span class="keyword">private</span> Point location, destination; <span class="keyword">private</span> <span class="keyword">final</span> Dispatcher dispatcher;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> Point <span class="title">getLocation</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> location;</div><div class="line">    &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLocation</span><span class="params">(Point location)</span> </span>&#123;</div><div class="line">    <span class="keyword">boolean</span> reachedDestination; <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">    <span class="keyword">this</span>.location = location;</div><div class="line">    reachedDestination = location.equals(destination);</div><div class="line">&#125;</div><div class="line"><span class="keyword">if</span> (reachedDestination) &#123;</div><div class="line">    dispatcher .notifyAvailable (<span class="keyword">this</span> );</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@ThreadSafe</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dispatcher</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Taxi&gt; taxis;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Taxi&gt; availableTaxis;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">notifyAvailable</span><span class="params">(Taxi taxi)</span> </span>&#123;</div><div class="line">availableTaxis .add(taxi); &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> Image <span class="title">getImage</span><span class="params">()</span> </span>&#123;</div><div class="line">    Set&lt;Taxi&gt; copy;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">copy = <span class="keyword">new</span> HashSet&lt;Taxi&gt;(taxis);</div><div class="line">&#125;</div><div class="line">Image image = <span class="keyword">new</span> Image(); <span class="keyword">for</span> (Taxi t : copy)</div><div class="line">image.drawMarker(t.getLocation()); <span class="keyword">return</span> image;</div></pre></td></tr></table></figure>
+<p>这样就可以将多个锁区分开来，从而在多个对象调用的时候就不会死锁了。</p>
+<h2 id="资源死锁"><a href="#资源死锁" class="headerlink" title="资源死锁"></a>资源死锁</h2><p>资源死锁的起因也是由于访问资源的原子性和访问资源的顺序所造成的互相牵制。比如：线程A已经建立了和数据库D1的链接，正在尝试连接数据库D2；与此同时，线程B已经建立了和数据库D2的连接，正在尝试连接数据库D1。这时就造成了资源死锁。（当然这和数据库同时连接的个数，以及资源的大小有关。资源越大，连接的个数越多，那么出现死锁的可能性就越少。）<br>在资源死锁中，还有一种线程饥饿死锁的情况，比如下面的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDeadlock</span> </span>&#123;</div><div class="line">ExecutorService exec = Executors.newSingleThreadExecutor();</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RenderPageTask</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">String</span>&gt; </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        Future&lt;String&gt; header, footer;</div><div class="line">        header = exec.submit(<span class="keyword">new</span> LoadFileTask(<span class="string">"header.html"</span>));</div><div class="line">        footer = exec.submit(<span class="keyword">new</span> LoadFileTask(<span class="string">"footer.html"</span>));</div><div class="line">        String page = renderBody();</div><div class="line">        <span class="comment">// Will deadlock -- task waiting for result of subtask</span></div><div class="line">        <span class="keyword">return</span> header.get() + page + footer.get();</div><div class="line">   &#125;</div><div class="line"> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这会出现死锁，因为<code>header.get()</code>和<code>fotter.get()</code>是阻塞的，它将会等待exec执行完毕，而exec想要执行必须要等到<code>header.get() + page + footer.get();</code>执行完毕，这样就造成了线程饥饿死锁。(RenderPageTask是任务1，header.get() + page + footer.get()是任务2)。</p>
+<h2 id="饥饿"><a href="#饥饿" class="headerlink" title="饥饿"></a>饥饿</h2><p>饥饿就是指某个线程始终不能获取其所需要的资源，导致它不能继续执行，引起饥饿的最常见资源就是CPU的时钟周期。Java中提供了10中线程的优先级，然而对应到操作系统中，可能某些优先级会重合（因为操作系统可能没有这么多的优先级）。并且设置线程的优先级可能不会起到明显的效果，反而可能因为优先级翻转而造成死锁，所以我们尽量不要去改动线程的优先级。但是这种情况也不是绝对的，比如有一个CPU密集的后台任务在执行，那么这个任务很可能会和主线程去抢占CPU资源，从而导致主线程响应性降低，为了解决这个问题，我们可以将后台线程的优先级降低，从而提高主线程的响应性。</p>
+<blockquote>
+<p>尽量避免使用线程优先级，因为这会增加平台依赖性，并且可能会导致活跃性问题。在大多数并发应用程序中，都应该使用默认的线程优先级。</p>
+</blockquote>
+<h2 id="活锁"><a href="#活锁" class="headerlink" title="活锁"></a>活锁</h2><p>活锁是指没有发生死锁，但是程序一直在重试，并且重试一直错误，导致程序不能正常往下执行。（产生这种情况的原因是对错误的估计不对：本来是不能解决的错误，却以为可以通过重试解决）。<br>同时，多个线程之间的协作也可能造成死锁，因为可能两个协作的线程都对彼此进行响应，响应完之后使得任何一个线程都不能继续执行，解决这种活锁的问题可以通过在重试机制中引入随机性，也就是说某个重试完之后，另一个线程在随机的时间段之后再进行重试，从而避免了和之前线程的碰撞。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/12/01/note-java-concurrency-in-practice-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/01/note-java-concurrency-in-practice-1/" itemprop="url">Java结构化并发应用程序</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-01T20:50:39+08:00">
+                2017-12-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Java结构化并发应用程序"><a href="#Java结构化并发应用程序" class="headerlink" title="Java结构化并发应用程序"></a>Java结构化并发应用程序</h1><h2 id="线程池和队列的关系"><a href="#线程池和队列的关系" class="headerlink" title="线程池和队列的关系"></a>线程池和队列的关系</h2><p>线程池和队列之间的关系是很紧密的。队列是用来放任务的，它有并行和串行之分。其中并行队列中的任务可以并发的执行；串行队列中的任务只能按照顺序一个一个执行，正是因为这个原因，串行队列也可以实现线程安全，也可以作为锁来用。而线程池就是很多的线程的容器，这些线程负责从队列中取出任务执行任务并且返回线程池以等待下个任务的到来。<br>在Java中通常会有如下几种创建线程池的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> <span class="comment">// 创建的线程数量是固定的</span></span></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newWorkStealingPool</span><span class="params">(<span class="keyword">int</span> parallelism)</span> <span class="comment">// 利用所有可用的处理器资源创建一个'工作密取'的线程池</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newSingleThreadExecutor</span><span class="params">()</span> <span class="comment">// 创建一个单线程的线程池，放入线程池中的任务顺序执行</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span> <span class="comment">// 创建一个缓存的线程池，如果之前有可用的线程就用，如果没有就重新创建，如果执行的任务量小并且多的时候用这个线程池会提高性能。如果一个线程在60s之内没有被使用，那么这个线程将会被中断并且被移除线程池。所以说如果这个线程池如果一直是idel状态的时候，那么它不会消耗任何的资源</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newScheduledExecutor</span><span class="params">()</span> <span class="comment">// 创建一个具有定时功能的线程池</span></div><div class="line"><span class="comment">//...</span></div></pre></td></tr></table></figure>
+<p>在IOS开发中GCD就是典型的例子：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">dispatch_async</span>(<span class="built_in">dispatch_queue_t</span> queue, dispatch_block_t block);</div></pre></td></tr></table></figure>
+<p>这个函数调用时候是这样子的：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">dispatch_queue_t</span> concruntQueue = dispatch_queue_create(<span class="string">"come.mike.fighting0.com"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">    <span class="built_in">dispatch_async</span>(concruntQueue, ^&#123;</div><div class="line"></div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"我正在做一项耗时的任务"</span>);</div><div class="line"></div><div class="line">    &#125;);</div></pre></td></tr></table></figure>
+<p>这段代码就是说吧一个耗时的任务放到了一个并行的队列中，然后调用<code>dispatch_async</code>，在调用这个方法时系统会自动的给我们创建好一个线程池并且从其中取出一个线程，来执行我们的任务。这样，我们就不用自己再去创建并管理线程了，避免了不必要的错误并且避免了频繁创建线程所带来的开销，同时避免了任务到来的时候再去创建线程从而造成一定程度的响应延迟。</p>
+<h2 id="Executor的生命周期"><a href="#Executor的生命周期" class="headerlink" title="Executor的生命周期"></a>Executor的生命周期</h2><p><code>Executor</code>的创建在上文中已经说明了，下面说下它的关闭。<code>Executor</code>的终止方式有以下两种：</p>
+<ul>
+<li>缓慢关闭，让已经执行的任务执行完毕，然后不再接受正在等待的任务或者新来的其它任务(<code>shutdown</code>方法)</li>
+<li>暴力关闭，直接关闭线程池，不管已经执行的任务(<code>shutdownNow</code>方法)</li>
+</ul>
+<h2 id="Timer和SecheduledThreadPoolExecutor的对比"><a href="#Timer和SecheduledThreadPoolExecutor的对比" class="headerlink" title="Timer和SecheduledThreadPoolExecutor的对比"></a>Timer和SecheduledThreadPoolExecutor的对比</h2><blockquote>
+<p>因为Timer的调度机制是基于绝对时间而不是相对时间的，因此任务的执行对系统的时钟很敏感，而<code>SecheduledThreadPoolExecutor</code>是基于相对时间调度的，所以更加准确。<br></p>
+</blockquote>
+<ul>
+<li>Timer会将所有的定时任务都放到一个线程中去执行，所以如果某个任务的执行时间长于所设定的时间间隔那么这个Timer就会不准确。而线程池就能很好的解决这个问题，因为它是在多个线程中执行不同的任务的，所以各个任务之间彼此没有影响。</li>
+<li>TimerTask如果抛出一个异常，那么Timer不会处理它，反而会终止所有的任务，包括正在执行的任务和将要执行的任务。在这之后也没有可以恢复Timer的方式。</li>
+</ul>
+<p>那么问题来了，在Java中如果要实现自己的调度任务不使用Timer，该使用什么呢？应该使用<code>DelayQueue</code>，它内部的每个对象都有一个延迟时间的方法。</p>
+<h2 id="任务和线程处理中断的方式"><a href="#任务和线程处理中断的方式" class="headerlink" title="任务和线程处理中断的方式"></a>任务和线程处理中断的方式</h2><p>虽然每个任务都在一个线程中执行，但是这个线程并不被这个任务所拥有。拥有这个线程和管理这个线程的<em>主人</em>是线程池，所以在遇到中断的时候，通常会将其抛出，然后让上层的代码来处理中断。举个例子：你在一个朋友家玩耍，这时忽然来了一个收租金的人大吵大闹要交房租（中断），这时你不应该处理，而是应该保留这个现场，并且把问题抛给你的朋友，因为这是他的家。这也就是什么很多阻塞库框架都会在遇到中断的时候抛出来<code>InterruptedException</code>，以便上层代码进行处理（尽快的退出，并且将中断尽快的传递给上层也是最温和的响应策略）。也就是说任务本身对中断不应该做任何的处理，不应该对中断策略做任何的假想，除非这个框架的中断处理策略已经定了，不需要再将中断抛给上层代码了。除了将中断传递给上层的调用者之外，任务还需要保存中断的状态，以备后续上层代码的处理，保存状态的方式为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Thread.currentThread().interrupt();</div></pre></td></tr></table></figure>
+<p>调用之后就会保持线程的中断状态，恢复中断状态的目的就是让调用栈中更高层的代码看到引发了一个中断，并且这个线程的状态是<code>interrupted</code>的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Thread myThread =  <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    <span class="keyword">throw</span>  <span class="keyword">new</span> InterruptedException();</div><div class="line">                &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">                    Thread.currentThread().interrupt();</div><div class="line">                    System.out.println(<span class="string">"thread status:"</span> + Thread.currentThread().isInterrupted());</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">myThread.run();</div></pre></td></tr></table></figure>
+<p>这段代码如果不加<code>Thread.currentThread().interrupt();</code>，那么下面的<code>Thread.currentThread().isInterrupted()</code>就将会返回<code>false</code>。如果没有确定上层代码是否要处理异常，那么切记不能catch中这个中止的异常而不做任何的事情。</p>
+<h2 id="Executor的作用"><a href="#Executor的作用" class="headerlink" title="Executor的作用"></a>Executor的作用</h2><p>既然已经有了线程，那么Executor的作用是什么呢？它是将任务的提交和任务的执行分离开了。也就是说把复杂的业务过程分割开了，这样就更加便于我们修改执行策略。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/12/01/chat-locks-of-ios/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/01/chat-locks-of-ios/" itemprop="url">IOS中锁</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-01T17:34:14+08:00">
+                2017-12-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="IOS中锁的种类"><a href="#IOS中锁的种类" class="headerlink" title="IOS中锁的种类"></a>IOS中锁的种类</h2><h2 id="IOS中锁的基本用法"><a href="#IOS中锁的基本用法" class="headerlink" title="IOS中锁的基本用法"></a>IOS中锁的基本用法</h2><h2 id="各种锁的试用场景"><a href="#各种锁的试用场景" class="headerlink" title="各种锁的试用场景"></a>各种锁的试用场景</h2><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://stackoverflow.com/questions/195853/spinlock-versus-semaphore" target="_blank" rel="external">https://stackoverflow.com/questions/195853/spinlock-versus-semaphore</a><br><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1" target="_blank" rel="external">https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/11/21/note-concurrency-in-practice/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/21/note-concurrency-in-practice/" itemprop="url">Java多线程基础</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-21T14:09:19+08:00">
+                2017-11-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="复合的线程安全方法就一定是线程安全的吗？"><a href="#复合的线程安全方法就一定是线程安全的吗？" class="headerlink" title="复合的线程安全方法就一定是线程安全的吗？"></a>复合的线程安全方法就一定是线程安全的吗？</h2><p>   尽管同步方法可以让每一个操作都是原子的，但是当很多个原子操作合并为一个复合操作的时候，需要额外加锁，否则就会出现竞态条件（race condition）造成线程不安全。但是这里额外的加锁可能会导致性能损耗并且可能引起死锁。如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (!vector.contains(element))</div><div class="line">    vector.add(element);</div></pre></td></tr></table></figure>
+<p>这里<code>contains</code>方法和<code>add</code>方法都是线程安全的，但是综合起来就是非线程安全的了。</p>
+<h2 id="某个方法的局部变量是不需要加锁的"><a href="#某个方法的局部变量是不需要加锁的" class="headerlink" title="某个方法的局部变量是不需要加锁的"></a>某个方法的局部变量是不需要加锁的</h2><p>   某个线程进入一个方法就会创建一个栈，这个栈中存储了某个局部变量，这个局部变量是每个线程所独有，不是共享的，他们之间互不影响，没有必要加锁。</p>
+<h2 id="锁的粒度该怎样控制"><a href="#锁的粒度该怎样控制" class="headerlink" title="锁的粒度该怎样控制"></a>锁的粒度该怎样控制</h2><p>代码块加锁的粒度应该越小越好，但是如果代码块中加锁的粒度很小，频繁的加锁和开锁也会造成性能的开销，所以并不是加锁越多越好。这就是简单性和性能之间存在的互相制约。当我们实现某个同步策略时，一定不要盲目的为了性能而牺牲简单性。</p>
+<h2 id="加锁的意义"><a href="#加锁的意义" class="headerlink" title="加锁的意义"></a>加锁的意义</h2><ul>
+<li>操作互斥，很多个线程不能同时对一个代码块进行操作</li>
+<li>加锁之后可以保证变量的可见性</li>
+</ul>
+<h2 id="可见性和原子性"><a href="#可见性和原子性" class="headerlink" title="可见性和原子性"></a>可见性和原子性</h2><p>   <code>volatile</code>保证了属性的可见性，但是不能保证某个操作的原子性。如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">volatile</span> <span class="keyword">long</span> number;</div><div class="line"><span class="comment">//...</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addMethod</span><span class="params">()</span> </span>&#123;</div><div class="line"> number++;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>  这里的<code>number</code>就是可见的，但是<code>addMethod</code>这个方法不是线程安全的，也就是说<code>number++</code>这个操作不是原子操作，因为它只是保证了，线程<code>A</code>对<code>number</code>的操作对线程<code>B</code>是可见的，但是不能保证在线程<code>A</code>对<code>number</code>操作的时候，线程<code>B</code>也可以对<code>number</code>进行操作。比如线程<code>A</code>和<code>B</code>同时读取了<code>number</code>的数值，发现它是<code>12</code>，这时线程A和线程B</p>
+<blockquote>
+<p>当执行时间较长的计算或者可能无法快速完成的操作时一定不要加锁，比如：网络IO或者控制台IO。</p>
+</blockquote>
+<h2 id="如何正确地将对象发布出去以供其他对象使用"><a href="#如何正确地将对象发布出去以供其他对象使用" class="headerlink" title="如何正确地将对象发布出去以供其他对象使用"></a>如何正确地将对象<code>发布</code>出去以供其他对象使用</h2><p> 这里的发布指的是将某个类的属性值公开。这里如果没有正确的公开，那么就会造成线程不安全。比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Holder</span> </span>&#123;</div><div class="line">      <span class="keyword">private</span> <span class="keyword">int</span> n;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="title">Holder</span> <span class="params">(<span class="keyword">int</span> n )</span> </span>&#123;<span class="keyword">this</span>.n = n;&#125;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">assertSanity</span><span class="params">()</span> </span>&#123;</div><div class="line">       <span class="keyword">if</span>(n != n)</div><div class="line">       <span class="keyword">throw</span> <span class="keyword">new</span> AssertionError(<span class="string">"This statement is false."</span>);</div><div class="line">      &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>这里如果在线程A中创建对象，这时线程B调用这个对象的<code>assertSanity</code>方法，那么这个方法就可能会触发断言，也就是说在对象的创建过程中，它的属性n的值可能还没有确定，<code>this.n = n;</code>。这个代码还没有被执行，而在执行<code>n != n</code>的过程中执行了。</p>
+<h2 id="对象的可见性"><a href="#对象的可见性" class="headerlink" title="对象的可见性"></a>对象的可见性</h2><p>   对象的引用对另外的线程可见，并不意味着对象的状态对另外的线程可见。<br>   As we’ve seen, that an object reference becomes visible to another thread does not necessarily mean that the state of that object is visible to the consuming thread。</p>
+<h2 id="不可变对象的线程安全性"><a href="#不可变对象的线程安全性" class="headerlink" title="不可变对象的线程安全性"></a>不可变对象的线程安全性</h2><p>   不可变对象在正确的初始化之后是线程安全的，所以发布的时候就不必使用锁机制。但是如果某个引用是不可见的，并且引用的对象是可变的，那么在这个不可变的引用在发布的时候也需要加锁。</p>
+<h2 id="哪些操作必须是原子的"><a href="#哪些操作必须是原子的" class="headerlink" title="哪些操作必须是原子的?"></a>哪些操作必须是原子的?</h2><p>   如果有两个变量，其中一个变量值的更改会影响另外一个变量的，那么如果要同时改变这两个变量，那么它们需要是原子的，否则其中一个变量改变，而另外的一个变量没有变，那么从这个没有变化的变量中取到的值就有可能是过期的值。比如：</p>
+<ul>
+<li>我们给每个请求都做一个<strong>标记</strong>，如果某个请求和上一个请求的标记相同，那么就从<strong>缓存</strong>去取这个结果。在这里，这个标记和这个结果是一体的，所以对它们两个的操作必须是原子操作，否则就不能保证取出的结果就是正确的。因为有可能<strong>标记变了，但是缓存还没有变。</strong></li>
+<li>我们有一个Range这样的对象，它有一个<strong>下界</strong>和一个<strong>上界</strong>，上界要大于下界，所以对上下界的操作就必须保证是原子的，否则如果一个线程改变了下界，这时上界没有跟着变化，就可能会造成下界大于上界的情况。</li>
+</ul>
+<p>也就是说：</p>
+<blockquote>
+<p>是规则和限制产生了必须要原子操作的需要，这就是线程安全的需要。</p>
+</blockquote>
+<h2 id="线程安全是有粒度的"><a href="#线程安全是有粒度的" class="headerlink" title="线程安全是有粒度的"></a>线程安全是有粒度的</h2><p>某个类不是线程安全的，但是如果封装它的类做了线程安全的处理，那么使用它的时候也就是线程安全的了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PersonSet</span> </span>&#123;</div><div class="line">   <span class="meta">@GuardedBy</span>(<span class="string">"this"</span>)</div><div class="line">   <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Person&gt; mySet = <span class="keyword">new</span> HashSet&lt;Person&gt;();</div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">addPerson</span><span class="params">(Person p)</span> </span>&#123;</div><div class="line">        mySet.add(p);</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">boolean</span> <span class="title">containsPerson</span><span class="params">(Person p)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mySet.contains(p);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="如果某个类包含了一个线程安全的类，那么它不一定是线程安全，比如："><a href="#如果某个类包含了一个线程安全的类，那么它不一定是线程安全，比如：" class="headerlink" title="如果某个类包含了一个线程安全的类，那么它不一定是线程安全，比如："></a>如果某个类包含了一个线程安全的类，那么它不一定是线程安全，比如：</h2><p>两个<code>AtomicLong</code>类型的变量，这两个变量有关联，那么就必须让对这两个变量的操作变为原子化之后才可以是线程安全的，否则仍然不是线程安全的。</p>
+<h2 id="给线程安全的类添加线程安全的方法"><a href="#给线程安全的类添加线程安全的方法" class="headerlink" title="给线程安全的类添加线程安全的方法"></a>给线程安全的类添加线程安全的方法</h2><p>如果要给线程安全的类添加线程安全的方法，那么最好不要使用类扩展，因为如果使用类扩展，那么原来类的线程安全策略做了改动，那么被扩展的类就失效了，比如改了线程安全所用的锁，有些时候这些错误还很难被发现。同时需要特别注意多个线程对线程安全类的同时操作，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getLast</span><span class="params">(Vector list)</span> </span>&#123;</div><div class="line"><span class="keyword">int</span> lastIndex = list.size() - <span class="number">1</span>;</div><div class="line"><span class="keyword">return</span> list.get(lastIndex);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">deleteLast</span><span class="params">(Vector list)</span> </span>&#123;</div><div class="line"><span class="keyword">int</span> lastIndex = list.size() - <span class="number">1</span>;</div><div class="line">list.remove(lastIndex);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面两个方法都是针对于线程安全的<code>Vector</code>所做的，那么它们是线程安全的吗？答案是否定的。<br>比如在<code>getLast</code>方法中，如果线程A在执行完<code>int lastIndex = list.size() - 1;</code>之后恰巧有线程B也对这个Vector做了<code>deleteLast</code>操作，那么就可能引起<code>list.get</code>越界的情况。也就是说，所有针对同一个Vector的操作都应该是原子的。所以正确的做法应该是这样子的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getLast</span><span class="params">(Vector list)</span> </span>&#123;</div><div class="line"><span class="keyword">synchronized</span> (list) &#123;</div><div class="line"><span class="keyword">int</span> lastIndex = list.size() - <span class="number">1</span>;</div><div class="line"><span class="keyword">return</span> list.get(lastIndex); &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">deleteLast</span><span class="params">(Vector list)</span> </span>&#123;</div><div class="line"><span class="keyword">synchronized</span> (list) &#123;</div><div class="line"><span class="keyword">int</span> lastIndex = list.size() - <span class="number">1</span>;</div><div class="line">list.remove(lastIndex);</div><div class="line">          &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样通过给<code>Vector</code>加锁就确保了这些方法的操作是线程安全的。下面还有个很类似的问题：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; vector.size(); i++) &#123;</div><div class="line">    doSomething(vector.get(i));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里也是非线程安全的，因为不能保证在执行<code>vector.size()</code>和<code>vector.get(i)</code>之间不会有另外一个线程对<code>vector</code>做其它的操作。这个问题的解决思路和上面是一样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">synchronized</span>(vector) &#123;</div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; vector.size(); i++) &#123;</div><div class="line">doSomething(vector.get(i));</div><div class="line">     &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>加锁之后，就可以保证<code>vector.size()</code>和<code>vector.get(i)</code>的操作是原子的，中间不会有其它的线程会对<code>Vector</code>做响应的操作。</p>
+<h2 id="某个方法加了同步锁就一定是线程安全的吗？"><a href="#某个方法加了同步锁就一定是线程安全的吗？" class="headerlink" title="某个方法加了同步锁就一定是线程安全的吗？"></a>某个方法加了同步锁就一定是线程安全的吗？</h2><p>答案是否定的。因为<strong>加锁实现的互斥是基于锁的，多个线程必须使用同一把锁才可以实现互斥。</strong>，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@NotThreadSafe</span>   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListHelper</span>&lt;<span class="title">E</span>&gt; </span>&#123;</div><div class="line"><span class="keyword">public</span> List&lt;E&gt; list = Collections.synchronizedList(<span class="keyword">new</span> ArrayList&lt;E&gt;());</div><div class="line">...  <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">boolean</span> <span class="title">putIfAbsent</span><span class="params">(E x)</span> </span>&#123;</div><div class="line"><span class="keyword">boolean</span> absent = !list.contains(x); <span class="keyword">if</span>(absent)</div><div class="line">    list.add(x);</div><div class="line">    <span class="keyword">return</span> absent;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个<code>putIfAbsent</code>中的加锁并不能保证<code>ListHelper</code>的线程安全，因为这个锁是对象锁，锁住的是<code>ListHelper</code>，而并没有锁住真正需要锁的<code>list</code>上。客户端如果有多个线程同时对list做其它的操作，那么就不能保证线程的安全性。这时争取的做法是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ThreadSafe</span> </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListHelper</span>&lt;<span class="title">E</span>&gt; </span>&#123;</div><div class="line"><span class="keyword">public</span> List&lt;E&gt; list = Collections.synchronizedList(newArrayList&lt;E&gt;()); </div><div class="line">...<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">putIfAbsent</span><span class="params">(E x)</span> </span>&#123;</div><div class="line"><span class="keyword">synchronized</span> (list) &#123;</div><div class="line">    <span class="keyword">boolean</span> absent = !list.contains(x);</div><div class="line">       <span class="keyword">if</span> (absent) &#123;</div><div class="line">          list.add(x);</div><div class="line">         &#125;</div><div class="line">      <span class="keyword">return</span> absent;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样就保证了putIfAbsent的线程安全性。但是这种通过客户端加锁的方法不是很可靠，因为你不能确定客户端做怎样的操作，有时候会造成死锁。</p>
+<h2 id="最理想的并发是什么样的？"><a href="#最理想的并发是什么样的？" class="headerlink" title="最理想的并发是什么样的？"></a>最理想的并发是什么样的？</h2><p>   The best way to implement concurrency is to reduce the interactions and inter-dependencies between your concurrent tasks。实现并发最好的方式就是避免并发任务之间的交互和相互之间的依赖。</p>
+<h2 id="容易被忽略的线程安全问题"><a href="#容易被忽略的线程安全问题" class="headerlink" title="容易被忽略的线程安全问题"></a>容易被忽略的线程安全问题</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HiddenIterator</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>)</div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Integer&gt; set = <span class="keyword">new</span> HashSet&lt;Integer&gt;();</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Integer i)</span> </span>&#123;</div><div class="line">    set.add(i);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">(Integer i)</span> </span>&#123;</div><div class="line">    set.remove(i);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addTenThings</span><span class="params">()</span> </span>&#123;</div><div class="line">    Random r = <span class="keyword">new</span> Random()</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</div><div class="line">    add(r.nextInt());</div><div class="line">    System.out.println(<span class="string">"DEBUG: added ten elements to "</span> + set);</div><div class="line">&#125; &#125;</div></pre></td></tr></table></figure>
+<p>这里同样是非线程安全的，因为在执行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">System.out.println(<span class="string">"DEBUG: added ten elements to "</span> + set);</div></pre></td></tr></table></figure>
+<p>的时候，系统会默认调用<code>StringBuilder.append(Object)</code>方法，在这个方法里面会再次调用Object的<code>toString</code>方法，在这个<code>toString</code>方法内部将会调用迭代器方法并且生成相应的字符串（容器的hashCode和equals方法也有相似的问题）。所以这里是非线程安全的，可能会抛出<code>ConcurrentModificationException</code>方法。也就是说如果一个状态和保护这个状态的同步代码之间相隔越远，那么开发人员就越容易忘记在访问这个状态时使用正确的同步。这时如果将HashSet用<code>synchronizedSet</code>来封装一下，那么就不会忘记了。</p>
+<blockquote>
+<p>封装对象的状态有助于维持不变形条件；封装对象的同步机制有助于确保实施同步策略。</p>
+</blockquote>
+<h2 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h2><p><code>ConcurrentHashMap</code>的出现就是为了解决同步容器性能差的问题。在一些操作中，比如HashMap.get或者List.contains，可能会包含大量的工作，在执行这些大量工作的时间段内，其它的线程都是被阻塞的，这极大的影响了并发的性能。虽然<code>ConcurrentHashMap</code>和<code>HashMap</code>一样是基于散列的Map，但是它们使用不同的加锁策略来提供更高的并发性和伸缩性，从而使用一种粒度更细的加锁机制来实现更大程度的共享，这种机制成为分段锁（Lock Striping）。</p>
+<h2 id="什么是工作密取-work-stealing-方法，它有什么优点？"><a href="#什么是工作密取-work-stealing-方法，它有什么优点？" class="headerlink" title="什么是工作密取(work stealing)方法，它有什么优点？"></a>什么是工作密取(work stealing)方法，它有什么优点？</h2><p>在生产者-消费者模型中所有的消费者有一个共享的工作队列。工作密取的每个消费者都含有一个双端队列。如果一个消费者完成了自己工作队列中的所有问题，那么其它就可以从其它的队列<strong>末尾</strong>秘密的获取工作。密取的工作模式比传统的消费者-生产者模式具有更好的可伸缩性，因为工作者线程不会在单个共享的任务队列上发生竞争。在大多数情况下他们都只访问自己的双端队列，从而极大地减少了竞争。当工作者线程要访问另外一个工作者线程的队列时它将从队列的末尾获取工作，因此进一步降低了队列的竞争程度。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/10/17/java-generic-details/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -326,7 +882,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/10/17/java-generic-details/" itemprop="url">java_generic_details</a></h1>
+                <a class="post-title-link" href="/2017/10/17/java-generic-details/" itemprop="url">Java泛型</a></h1>
         
 
         <div class="post-meta">
@@ -375,33 +931,53 @@
       
         
           
-            <h1 id="Java泛型"><a href="#Java泛型" class="headerlink" title="Java泛型"></a>Java泛型</h1><h2 id="为什么需要泛型？"><a href="#为什么需要泛型？" class="headerlink" title="为什么需要泛型？"></a>为什么需要泛型？</h2><p>在Java1.5版本之前是没有泛型的。这时如果我们要实现一个Array类，它里面可以存储任何的对象，我们该怎样做呢？显然，我们可以通过多态来实现：</p>
+            <h2 id="为什么需要泛型？"><a href="#为什么需要泛型？" class="headerlink" title="为什么需要泛型？"></a>为什么需要泛型？</h2><p>在Java1.5版本之前是没有泛型的。这时如果我们要实现一个Array类，它里面可以存储任何的对象，我们该怎样做呢？显然，我们可以通过多态来实现：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Array</span> </span>&#123;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(Object e)</span></span>;</div><div class="line"><span class="comment">// ....</span></div><div class="line"><span class="function">Object <span class="title">get</span><span class="params">(<span class="keyword">int</span> i)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这时我们就可以</p>
-<h2 id="泛型的基本用法"><a href="#泛型的基本用法" class="headerlink" title="泛型的基本用法"></a>泛型的基本用法</h2><p>Java中的泛型可以给一个类添加泛型，也可以给一个方法添加泛型，具体的方法如下：<br>泛型类的实现方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pair</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">   T first;</div><div class="line">   T second;</div><div class="line">   <span class="comment">// ....</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这样在</p>
+<p>因为Java中的对象都继承自Object，所以就可以往这个Array中添加任何的对象，并且取出任何的对象了。但是这样做会有很大的风险：</p>
 <ul>
-<li>虚拟机中是没有泛型的，只有普通的类和方法</li>
-<li>所有的泛型参数都会被它们的边界值(bounds)所取代</li>
-<li>为了保证多态会使用桥接方法</li>
-<li>为了保证类型安全，编译器会在适当的时候插入强制转换代码</li>
+<li>我们取出的对象都是Object类型的，所以如果要使用这个对象就必须做一次强制转换，因为我们使用Collection框架的频率是很高的，所以这种转换就显得比较麻烦</li>
+<li>不安全，因为是Object，所以我们可以往里面放任何的对象，比如Animal对象，Plant对象，Plane对象，这样如果我们在调用Array中对象的方法时就可能Crash</li>
 </ul>
-<blockquote>
-<p>Java的泛型只对第一个元素起作用</p>
-</blockquote>
-<p>里面有隐式转换，</p>
-<h2 id="Java泛型中需要注意的问题"><a href="#Java泛型中需要注意的问题" class="headerlink" title="Java泛型中需要注意的问题"></a>Java泛型中需要注意的问题</h2><ol>
-<li>不能使用基本数据类型初始化泛型参数</li>
-<li>Runtime类型检查不起作用 </li>
-<li>不能使用参数类型来创建Array</li>
-<li>可变参数警告</li>
-<li>不能初始化类型变量</li>
-<li>泛型类中的静态环境中不允许使用类型变量</li>
-<li>不能抛出或者捕获泛型类对象</li>
-<li>注意泛型擦除之后的冲突</li>
-</ol>
-<h2 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h2><p>Array有特殊的保护，不能对存有父类的Array中添加子类元素，否则在运行时虚拟机会抛出ArrayStoreException的异常。</p>
+<p>第二点对于Java这种追求安全性的语言来说，显然是不可以接受的，所以就出现了泛型。</p>
+<h2 id="泛型的基本用法"><a href="#泛型的基本用法" class="headerlink" title="泛型的基本用法"></a>泛型的基本用法</h2><h3 id="泛型类"><a href="#泛型类" class="headerlink" title="泛型类"></a>泛型类</h3><p>我们可以定义一个泛型的类，具体的方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pair</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">   T first;</div><div class="line">   T second;</div><div class="line">   <span class="comment">// ....</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样在我们创建对象的时候就可以使用<code>Pair&lt;Integer&gt; pair = new Pair&lt;Integer&gt;()</code>，这样我们就可以明确的指出这里的<code>Pair</code>中存放的就是<code>Integer</code>类型的对象，其它对象如果要放到Pair中编译器就会报错，这样就在很大程度上增加了安全性。并且在取出的时候也不必再进行一次强制转换了。<br>如果某个类中有多个泛型，那么这些泛型用<code>,</code>好分割开就好了。<code>public class Pair&lt;T, U&gt; { . . . }</code>。<em>一般我们会用大写字母来表示泛型的元素，在Java框架中<code>E</code>用来表示一个元素，<code>K</code>和<code>V</code>用来表示一个table的key value值。</em></p>
+<p>同样，我们可以定义一个泛型的方法，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArrayAlg</span> </span>&#123;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">getMiddle</span><span class="params">(T... a)</span> </span>&#123;</div><div class="line"><span class="keyword">return</span> a[a.length / <span class="number">2</span>]; &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>调用的时候不需要进行强制转换</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">String middle = ArrayAlg.getMiddle(<span class="string">"John"</span>, <span class="string">"Q."</span>, <span class="string">"Public"</span>);</div><div class="line"><span class="keyword">double</span> middle = ArrayAlg.getMiddle(<span class="number">3.14</span>, <span class="number">1729</span>, <span class="number">0</span>);</div></pre></td></tr></table></figure>
+<p>在第二个例子中我们传入的参数是原始数据类型，这时编译器会给我们自动打包，在从类中取出的时候编译器会给我们自动的拆包。</p>
+<h2 id="泛型的界"><a href="#泛型的界" class="headerlink" title="泛型的界"></a>泛型的界</h2><p>有时候我们需要对输入的参数做一些限制，比如说要好处两个数值中较小的一个，那么我们就要求进入方法的参数是实现了<code>Comparable</code>接口的，或者是某个类的子类，这样我们就可以做如下的限制，来让泛型有界：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T extends Comparable&gt; <span class="function">T <span class="title">min</span><span class="params">(T[] a)</span> . . .</span></div></pre></td></tr></table></figure>
+<p>如果某个类型没有实现<code>Comparable</code>接口的话，让它作为参数会产生一个编译期的警告，在运行时就会Crash。如果一个泛型需要限制很多个接口的话，那么很多个接口之间用<code>,</code>隔开（但是这其中只能有一个是对类的限制，并且如果有对类的限制，那么这个限制一定要写在第一个的位置）。</p>
+<h2 id="泛型和JVM"><a href="#泛型和JVM" class="headerlink" title="泛型和JVM"></a>泛型和JVM</h2><p>在Java虚拟机中是没有任何泛型类的，所有的对象都是普通的Java类。其实编译器会对泛型实行一次擦除的过程。也就是说，当你定义一个泛型的时候，系统会自动给你创建一个原始类型给你。原始类型变量的名字和泛型时候取的名字是一样的，但是泛型类型的参数类型被移除了。这些类型被移除之后，取而代之的是它们的边界类型（如果没有边界，那么它的边界就是Object，这也是为了和Java之前的版本做兼容。这也就是上文提到的，为什么对于原始数据类型有一个装包和拆包的过程）。比如，如果你创建上文中的<code>Pair&lt;T&gt;</code>，在编译之后Pair类就成了下面的样子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Pair</span> </span>&#123;</div><div class="line"><span class="keyword">private</span> Object first; <span class="keyword">private</span> Object second;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Pair</span><span class="params">(Object first, Object second)</span> </span>&#123;</div><div class="line"><span class="keyword">this</span>.first = first;</div><div class="line"><span class="keyword">this</span>.second = second; &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">getFirst</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> first; &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">getSecond</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> second; &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFirst</span><span class="params">(Object newValue)</span> </span>&#123; first = newValue; &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSecond</span><span class="params">(Object newValue)</span> </span>&#123; second = newValue; &#125; &#125;</div></pre></td></tr></table></figure>
+<p>这其实和没有泛型时候创建的类是一样的了。</p>
+<p>这里有一个特殊情况，如果有两个限制，那么会以第一个限制为准：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Interval</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Comparable</span> &amp; <span class="title">Serializable</span>&gt; <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</div><div class="line"><span class="keyword">private</span> T lower;</div><div class="line"><span class="keyword">private</span> T upper;</div><div class="line">...</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Interval</span><span class="params">(T first, T second)</span> </span>&#123;</div><div class="line"><span class="keyword">if</span> (first.compareTo(second) &lt;= <span class="number">0</span>) &#123; lower = first; upper = second; &#125;</div><div class="line"><span class="keyword">else</span> &#123; lower = second; upper = first; &#125; &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这时<code>Interval</code>的基本类型就是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Interval</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</div><div class="line"><span class="keyword">private</span> Comparable lower;</div><div class="line"><span class="keyword">private</span> Comparable upper;</div><div class="line">...</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Interval</span><span class="params">(Comparable first, Comparable second)</span> </span>&#123; . . . &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这种情况下，如果第一种类型要转化为第二种类型的时候编译器会自动的加上强制转换。</p>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Pair&lt;Employee&gt; buddies = . . .;</div><div class="line">Employee buddy = buddies.getFirst();</div></pre></td></tr></table></figure>
+<p>因为在编译期进行了类型擦除，所以在调用<code>buddies.getFirst()</code>的时候返回的是一个Object，所以编译器就自动添加了一层强制转换。</p>
+<h2 id="泛型方法的翻译"><a href="#泛型方法的翻译" class="headerlink" title="泛型方法的翻译"></a>泛型方法的翻译</h2><p>上文提到过泛型会被编译器在编译的阶段进行擦除，并且将边界替换为泛型的类型。这种泛型的擦除同时也带来了复杂性，比如下面的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DateInterval</span> <span class="keyword">extends</span> <span class="title">Pair</span>&lt;<span class="title">LocalDate</span>&gt; </span>&#123;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSecond</span><span class="params">(LocalDate second)</span> </span>&#123;</div><div class="line"><span class="keyword">if</span> (second.compareTo(getFirst()) &gt;= <span class="number">0</span>) <span class="keyword">super</span>.setSecond(second);</div><div class="line">&#125;</div><div class="line"><span class="comment">//...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>因为我们要保证<code>Pair</code>中的第二个元素要始终不小于第一个元素，所以我们就继承了<code>Pair</code>，并且重写了其<code>setSecond</code>方法，这样经过泛型的擦除，最后将会变为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DateInterval</span> <span class="keyword">extends</span> <span class="title">Pair</span> // <span class="title">after</span> <span class="title">erasure</span> </span></div><div class="line">&#123;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSecond</span><span class="params">(LocalDate second)</span> </span>&#123; . . . &#125;</div><div class="line"><span class="comment">//...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>而原来的<code>Pair</code>类中的<code>setSecond</code>方法是这样子的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSecond</span><span class="params">(Object second)</span></span></div></pre></td></tr></table></figure>
+<p>很显然，这是两个不同的方法，然而我们不想让它们是不同的方法，我们想让它走我们新写的方法，因为我们在这里面新增加了我们自己的业务逻辑，比如下面的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">DateInterval interval = <span class="keyword">new</span> DateInterval(. . .); Pair&lt;LocalDate&gt; pair = interval; <span class="comment">// OK--assignment to superclass</span></div><div class="line">pair.setSecond(aDate);</div></pre></td></tr></table></figure>
+<p>在这里很显然，我们想走我们新的方法，这时编译器其实会在我们的参数为<code>Object</code>的方法里面重新调用我们新写的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSecond</span><span class="params">(Object second)</span> </span>&#123;</div><div class="line">    setSecond((Date) second);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>也就是这种转换让系统调用到了我们新写的方法。这样就可以始终调用到我们自己的方法里面了。</p>
+<h2 id="Java泛型中需要注意的问题"><a href="#Java泛型中需要注意的问题" class="headerlink" title="Java泛型中需要注意的问题"></a>Java泛型中需要注意的问题</h2><h3 id="不能使用基本数据类型初始化泛型参数"><a href="#不能使用基本数据类型初始化泛型参数" class="headerlink" title="不能使用基本数据类型初始化泛型参数"></a>不能使用基本数据类型初始化泛型参数</h3><h3 id="Runtime类型检查不起作用"><a href="#Runtime类型检查不起作用" class="headerlink" title="Runtime类型检查不起作用"></a>Runtime类型检查不起作用</h3><h3 id="不能使用参数类型来创建Array"><a href="#不能使用参数类型来创建Array" class="headerlink" title="不能使用参数类型来创建Array"></a>不能使用参数类型来创建Array</h3><h3 id="可变参数警告"><a href="#可变参数警告" class="headerlink" title="可变参数警告"></a>可变参数警告</h3><h3 id="不能初始化类型变量"><a href="#不能初始化类型变量" class="headerlink" title="不能初始化类型变量"></a>不能初始化类型变量</h3><h3 id="泛型类中的静态环境中不允许使用类型变量"><a href="#泛型类中的静态环境中不允许使用类型变量" class="headerlink" title="泛型类中的静态环境中不允许使用类型变量"></a>泛型类中的静态环境中不允许使用类型变量</h3><h3 id="不能抛出或者捕获泛型类对象"><a href="#不能抛出或者捕获泛型类对象" class="headerlink" title="不能抛出或者捕获泛型类对象"></a>不能抛出或者捕获泛型类对象</h3><h3 id="注意泛型擦除之后的冲突"><a href="#注意泛型擦除之后的冲突" class="headerlink" title="注意泛型擦除之后的冲突"></a>注意泛型擦除之后的冲突</h3><h2 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h2><p>在遗留代码中往往有非泛型的类，这时，如果用一个泛型类去接，那么往往会产生一个警告，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Dictionary&lt;Integer, Components&gt; labelTable = slider.getLabelTable(); <span class="comment">// Warning</span></div></pre></td></tr></table></figure>
+<p>这时如果你检查了<code>labelTable</code>中数据的类型，并且确定了其中的key value为<code>Integer</code>和<code>Components</code>，那么就可以使用<code>@SuppressWarnings(&quot;unchecked&quot;)</code>来忽略这个警告。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</div><div class="line">Dictionary&lt;Integer, Components&gt; labelTable = slider.getLabelTable(); <span class="comment">// No warning</span></div></pre></td></tr></table></figure>
+<p>当然也可以在外层的方法上添加。</p>
+<p>Array有特殊的保护，不能对存有父类的Array中添加子类元素，否则在运行时虚拟机会抛出ArrayStoreException的异常。</p>
 <h2 id="参考内容"><a href="#参考内容" class="headerlink" title="参考内容"></a>参考内容</h2><p><a href="https://www.zhihu.com/question/20400700" target="_blank" rel="external">https://www.zhihu.com/question/20400700</a><br><a href="http://blog.csdn.net/claram/article/details/51943742" target="_blank" rel="external">http://blog.csdn.net/claram/article/details/51943742</a></p>
 
           
@@ -1140,1134 +1716,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/06/google-the-clean-code-talks-inheritance/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/06/google-the-clean-code-talks-inheritance/" itemprop="url">代码整洁之道-继承，多态和测试</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-06T07:50:00+08:00">
-                2017-09-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="代码整洁的讨论，条件和多态"><a href="#代码整洁的讨论，条件和多态" class="headerlink" title="代码整洁的讨论，条件和多态"></a>代码整洁的讨论，条件和多态</h3><p><img src="http://upload-images.jianshu.io/upload_images/1513759-0ac66a6395d8b9ff.png" alt="Conclusion"></p>
-<p>条件和多态是怎样影响测试的？</p>
-<ol>
-<li>大多数的if可以被多态所取代</li>
-</ol>
-<p>为什么要取代ifs</p>
-<ol>
-<li>没有if的代码更容易阅读</li>
-<li>没有if的代码更容易测试</li>
-<li>多态更容易维护：容易扩展</li>
-</ol>
-<p>什么时候使用多态：</p>
-<ol>
-<li>如果一个对象基于其不同的状态，而表现不一样</li>
-<li>如果你要在不同的地方来检测这种条件</li>
-</ol>
-<p>对于基本数据类型，我们使用<code>&gt;,&lt;,==,!=</code>来做比较。我们要避免使用<code>if</code>。</p>
-<p>尽量不适用if<br>不要返回null（使用null之后不能够Dispatch这个错误）,而是返回一个Null对象，比如一个空的list<br>不要返回error代码，而是抛出异常</p>
-<h3 id="尽量少用继承"><a href="#尽量少用继承" class="headerlink" title="尽量少用继承"></a>尽量少用继承</h3><p>多态需要使用继承<br>小心继承的层级太深</p>
-<h3 id="将条件用多态替代"><a href="#将条件用多态替代" class="headerlink" title="将条件用多态替代"></a>将条件用多态替代</h3><p>你有一个条件，该条件是基于某个对象的类型来选择不同的行为。</p>
-<p>将这些条件的判断一到一个子类的覆盖方法中。然后将原来的的方变成一个抽象方法。<br>我们用下面的例子：</p>
-<pre><code class="java"><span class="function"><span class="keyword">double</span> <span class="title">getSpeed</span><span class="params">()</span> </span>{
-
-  <span class="keyword">switch</span> (_type) {
-
-   <span class="keyword">case</span> ENROPEAN:
-        <span class="keyword">return</span> getBaseSpeed();
-
-   <span class="keyword">case</span> AFRICAN:
-        <span class="keyword">return</span> getBaseSpeed() - getLoadFactor() * _numberOfCoconuts;
-
-   <span class="keyword">case</span> NORWEGIAN_BLUE:
-        <span class="keyword">return</span> (_isNailed) ? <span class="number">0</span> : getBaseSpeed(_voltage);
-  }
-
-  <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Should be unreachable"</span>);
-}
-</code></pre>
-<p>比如我们有一个<code>1+ 2 * 3</code>的表达式，如果用树来表示应该是这样的： </p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-44f337f613e5c3f2.png" alt="1 + 2 * 3"></p>
-<p>这时候大多情况下我们会写下面的的代码：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-4efa0dbac30dd19d.png" alt="Implement"></p>
-<p>那么大多数情况下会出问题，比如：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-3ee95ff9e5c8dd78.png" alt="Evaluate UML"></p>
-<p>从中我们可以看到叶子节点的左右分支都是null，上文已经提到null是很不好的。比如叶子节点我们需要的只是数值，没有function，没有left和right数值。</p>
-<p>那么怎么办呢？我们需要将原来的Node创建两个子类，一个ValueNode，一个OpNode。UML图如下：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-e32bbbf0adf5e116.png" alt="SubClass UML"></p>
-<p>创建子类之后：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-92adea90f4f9f44d.png" alt="Node Subclass"></p>
-<p>Java只针对某个类编译。</p>
-<p>这样最终我们的UML图是这样的：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-d12731bff0df6db3.png" alt="ValueNode"></p>
-<p>用多态替代switch case。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-8e09c9eb66adc448.png" alt="多态UML"></p>
-<p>然后系统的操作类变为：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-f3b681a924bba620.png" alt="Operation Class"></p>
-<p>然后我们再创建两个<code>OpNode</code>的子类：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-d6699abc050608e6.png" alt="OpNodeSubClass"></p>
-<p>然后我们有了除去Operation字段的UML图：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-1ebf2e28e6c0c310.png" alt="NoOperationUML"></p>
-<h2 id="进一步探讨"><a href="#进一步探讨" class="headerlink" title="进一步探讨"></a>进一步探讨</h2><p>定义一个<code>toString()</code>方法来打印表达式的前缀，并且在适当的时候加上括号。<br>添加一些新的数学操作：添加方程，阶乘，算法，三角学。</p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p> 多态的结局方案通常来说是更好的，因为；</p>
-<ul>
-<li>新功能的添加不需要改动原来的代码</li>
-<li>每个操都被放到一个单独的文件中了，这样易于测试和理解，并且易于扩展</li>
-</ul>
-<p>多用多态而不是条件语句：</p>
-<ul>
-<li><strong>switch</strong>语句就意味着你应该使用多态</li>
-<li><strong>if</strong>更加很精妙，但是有时候一个<strong>if</strong>仅仅是一个<strong>if</strong></li>
-</ul>
-<h3 id="重复条件"><a href="#重复条件" class="headerlink" title="重复条件"></a>重复条件</h3><pre><code class="java"><span class="class"><span class="keyword">class</span> <span class="title">Update</span> </span>{
-    execute (){
-    <span class="keyword">if</span> (FLAG_i18n_ENABLED) {
-
-       <span class="comment">// DO A;</span>
-    }<span class="keyword">else</span> {
-       <span class="comment">// DO B;</span>
-     }
-   }
-}
-</code></pre>
-<p>但是后来又有了相似的代码：</p>
-<pre><code class="java"><span class="class"><span class="keyword">class</span> <span class="title">Update</span> </span>{
-   render (){
-    <span class="keyword">if</span> (FLAG_i18n_ENABLED) {
-
-       <span class="comment">// Render A;</span>
-    }<span class="keyword">else</span> {
-       <span class="comment">// Render B;</span>
-     }
-   }
-}
-</code></pre>
-<p>在测试的时候，我们还需要写两套代码，比如：</p>
-<pre><code class="java"><span class="keyword">void</span> testExecuteDoA {
-    FLAG_i18n_ENABLED = <span class="keyword">true</span>;
-    Update u = <span class="keyword">new</span> Update();
-    u.execute();
-    assertX();
-}
-<span class="keyword">void</span> testExecuteDoB {
-  FLAG_i18n_ENABLED = <span class="keyword">false</span>;
-  Update u = <span class="keyword">new</span> Update();
-  u.execute();
-  assertX();
-}
-</code></pre>
-<p>应该怎样做才好呢？我们应该经条件语句用多态来替代：</p>
-<p><em>你有一种条件，这种条件会基于某个对象的类型类选择不同的行为。</em><br>将判断条件一到一个子类的覆盖方法中。将原来类的方法变成抽象方法。</p>
-<pre><code class="java">
-<span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Update</span> </span>{
- <span class="comment">//...</span>
-}
-
-<span class="class"><span class="keyword">class</span> <span class="title">I18NUpdate</span> <span class="keyword">extends</span> <span class="title">Update</span> </span>{
-   execute() {
-    <span class="comment">// Do A;</span>
-   }
-   render() {
-   <span class="comment">// Render A;</span>
-   }
-}
-
-<span class="class"><span class="keyword">class</span> <span class="title">NoNI18NUpdate</span> <span class="keyword">extends</span> <span class="title">Update</span> </span>{
-  execute() {
-   <span class="comment">// Do B;</span>
-  }
-  render() {
-   <span class="comment">// Render A;</span>
-  }
-}
-</code></pre>
-<p>测试的时候我们就方便多了：</p>
-<pre><code class="java"><span class="keyword">void</span> testExecuteDoA {
-   Update u = <span class="keyword">new</span> MyI18NUpdate();
-   u.execute();
-   assertX();
-}
-
-<span class="keyword">void</span> testExecuteDoB {
-   Update u = <span class="keyword">new</span> MyNonI18NUpdate();
-   u.execute();
-   assertX();
-}
-</code></pre>
-<p><strong>if</strong>s去哪里了？</p>
-<pre><code class="java"><span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> </span>{
-  Consumer(Update u){...}
-}
-</code></pre>
-<p>两种方式：</p>
-<p>第一种方式：</p>
-<p>对象的堆砌</p>
-<ul>
-<li>业务逻辑</li>
-<li>有趣的东西</li>
-<li>目的是建造逻辑，主要的抽象</li>
-<li>假如需要很多的合作者</li>
-</ul>
-<p>第二种方式：</p>
-<p>构造方法的堆砌</p>
-<ul>
-<li>工厂</li>
-<li>建造者</li>
-<li>Provier<t></t></li>
-<li>目的是建造对象表</li>
-<li>创建和提供合作者（依赖注入）</li>
-</ul>
-<p>将创建某个具体对象的操作放到工厂方法中去性能会更高，因为我们只需要判断一次就可以对这个对象做一系列的操作。而之前，我们需要尽心一系列的判断。将If else放到工厂中还有一个好处就是便于测试和调试Bug，因为尽管我们有if else，但是这是在创建对象的过程中，具体的业务逻辑我们是放到了子类中去做的，而经常出错的地方往往是业务逻辑，而不是创建对象的过程。举个例子：</p>
-<pre><code class="java"><span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> </span>{
-  Consumer(Update u){...}
-}
-
-<span class="class"><span class="keyword">class</span> <span class="title">Factory</span> </span>{
-  <span class="function">Consumer <span class="title">build</span><span class="params">()</span> </span>{
-    Update u = FLAG_i18n_ENABLED ? <span class="keyword">new</span> I18NUpdate()
-                                 : <span class="keyword">new</span> NonI18NUpdate();
-    <span class="keyword">return</span> <span class="keyword">new</span> Consumer(u);
-  }
-}
-</code></pre>
-<p>使用依赖注入：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-d44fe1f5cbe6fe8f.png" alt="Injection"></p>
-<p>这样做的好处是：</p>
-<ol>
-<li>所有的判断条件都被放到了一个地方</li>
-<li>没有很多的重复代码</li>
-<li>将责任分离，将全局状态分离</li>
-</ol>
-<h2 id="总结优势"><a href="#总结优势" class="headerlink" title="总结优势"></a>总结优势</h2><ol>
-<li>公用代码放到了一个地方</li>
-<li>很容易独立测试和平行测试</li>
-<li>关注子类让它更加明白不同点在哪里</li>
-</ol>
-<p>什么时候用继承？</p>
-<p>不同的状态产生不同的行为<br>不同的地方有平行的条件</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/05/chat-if-else/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/05/chat-if-else/" itemprop="url">聊聊if else</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-05T07:04:01+08:00">
-                2017-09-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><img src="http://upload-images.jianshu.io/upload_images/1513759-12027b6db51d7301.png" alt="if else"><br>if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。</p>
-<h2 id="为什么太多的if-else不好？"><a href="#为什么太多的if-else不好？" class="headerlink" title="为什么太多的if else不好？"></a>为什么太多的if else不好？</h2><p>我们先看一个例子：</p>
-<pre><code class="swift">   <span class="keyword">public</span> void <span class="type">OnMessage</span>(<span class="type">Push</span>.<span class="type">PushMessage</span> pushMessage) {
-    <span class="keyword">try</span> {
-        <span class="type">String</span> message = pushMessage.messageContent;
-        <span class="type">Log</span>.v(<span class="string">"keyes"</span>, <span class="string">"pushMessage = "</span> + message);
-        <span class="keyword">if</span> (message != null) {
-            <span class="type">JsonObject</span> data = new <span class="type">JsonParser</span>().parse(message).getAsJsonObject();
-            <span class="keyword">if</span> (data.<span class="keyword">get</span>(<span class="string">"type"</span>) != null) {
-                <span class="type">String</span> type = data.<span class="keyword">get</span>(<span class="string">"type"</span>).getAsString();
-                <span class="keyword">if</span> (<span class="string">"100"</span>.equals(type)) {<span class="comment">//XX消息</span>
-                    <span class="type">EventBus</span>.getDefault().post(new <span class="type">GrabActionEvent</span>());
-                    <span class="type">PopBean</span> bean = <span class="type">PushUtils</span>.dealPushMessage(mContext, message);
-                    <span class="type">IDealWithPush</span> dealWithPush = <span class="type">AppStateUtils</span>.getAppState(mContext);
-                    dealWithPush.dealPush(mContext, bean);
-                } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"106"</span>.equals(type)) {<span class="comment">// </span>
-                    <span class="type">String</span> nick = data.<span class="keyword">get</span>(<span class="string">"nick"</span>).getAsString();
-                    <span class="type">WPushNotify</span>.notification(<span class="number">106</span>, nick, <span class="string">"正在访问您的信息，请立即回复"</span>);
-                } <span class="keyword">else</span> {
-                    <span class="type">Gson</span> temp = new <span class="type">Gson</span>();
-                    <span class="keyword">final</span> <span class="type">SystemNotification</span> bean = temp.fromJson(pushMessage.messageContent, <span class="type">SystemNotification</span>.<span class="keyword">class</span>);
-                    <span class="keyword">if</span> (bean.getType() == <span class="number">103</span>) {
-                        <span class="comment">//应用在后台，不需要刷新UI,通知栏提示新消息</span>
-                        <span class="keyword">if</span> (!<span class="type">AppInfoUtils</span>.isRunningForeground(<span class="type">HyApplication</span>.getApplication())) {
-                            <span class="type">WPushNotify</span>.notification(bean);
-                        }
-                        saveDataToDB(bean);
-                        <span class="type">EventBus</span>.getDefault().post(bean);
-                    } <span class="keyword">else</span> <span class="keyword">if</span> (bean.getType() == <span class="number">104</span>) {
-                        <span class="type">List</span>&lt;<span class="type">Activity</span>&gt; list = <span class="type">HyApplication</span>.getInstance().getActivityList();
-                        <span class="keyword">if</span> (list != null &amp;&amp; list.size() &gt; <span class="number">0</span>) {
-                            <span class="type">Activity</span> activity = list.<span class="keyword">get</span>(list.size() - <span class="number">1</span>);
-                            <span class="keyword">if</span> (!<span class="type">TextUtils</span>.isEmpty(bean.getDescribe())) {
-                                new <span class="type">LogoutDialog</span>(activity, bean.getDescribe());
-                            } <span class="keyword">else</span> {
-                                new <span class="type">LogoutDialog</span>(activity, activity.getString(<span class="type">R</span>.string.force_exit));
-                            }
-                        }
-                    } <span class="keyword">else</span> <span class="keyword">if</span> (bean.getType() == <span class="number">108</span>) {<span class="comment">//沉默用户唤醒</span>
-                        <span class="type">String</span> title = bean.getTitle();
-                        <span class="type">String</span> describe = bean.getDescribe();
-                        <span class="type">WPushNotify</span>.notification(<span class="number">108</span>, title, describe);
-                    }
-                }
-            }
-        }
-    } <span class="keyword">catch</span> (<span class="type">Exception</span> e) {
-        <span class="type">LogUtils</span>.e(<span class="string">"push"</span>, e.getMessage());
-    }
-
-    <span class="type">Log</span>.i(<span class="string">"song"</span>, pushMessage.messageContent);
-
-}
-</code></pre>
-<p>这个方法里面仅仅嵌套了好多层if else，看上去会比较复杂难懂，再看一个例子：</p>
-<pre><code class="swift"><span class="keyword">if</span>(isSkipPPUForQA &amp;&amp; <span class="type">StringUtils</span>.isNotBlank(request.getParameter(<span class="string">"userId"</span>))){
-    <span class="keyword">super</span>.doFilter(request, response, chain);
-}<span class="keyword">else</span> {
-    <span class="keyword">try</span> {
-        <span class="keyword">if</span>(<span class="string">"/app/school/article/share"</span>.equals(request.getRequestURI())){
-            <span class="keyword">super</span>.doFilter(request, response, chain);
-        }<span class="keyword">else</span>{
-            <span class="keyword">if</span>(!filterReqUrl(request)) {
-                long ppuUserId = <span class="type">PassportService</span>.passportService.getLoginUserId(<span class="type">RemoteValid</span>.<span class="type">SAPCE_ONE_HOUR</span>, request, response);
-                <span class="keyword">if</span> (ppuUserId &lt; <span class="number">2</span>) {
-response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">PPU_UNVALID</span>.getCodeStr(), <span class="string">"登录认证信息已过期，请重新登录"</span>));
-                    log.error(<span class="string">"ppu返回的userId:"</span> + ppuUserId + <span class="string">",ppu过期,ppu="</span> + <span class="type">PPUCookieUtil</span>.getPpuCookie(request) + <span class="string">",url="</span> + request.getRequestURI());
-                    log.error(<span class="string">"imei="</span> + request.getParameter(<span class="string">"imei"</span>) + <span class="string">",version="</span> + request.getParameter(<span class="string">"version"</span>) + <span class="string">",platform="</span> + request.getParameter(<span class="string">"platform"</span>));
-                } <span class="keyword">else</span> {
-                    boolean flag = isTouchSingleDeviceLimitWithoutLogin(ppuUserId, request);
-                    <span class="keyword">if</span> (flag) {
-                        <span class="type">String</span> singleDeviceLoginContent = configComp.getValueByConfigTable(<span class="type">ConfigEnum</span>.<span class="type">APP_SINGLE_DEVICE_LOGIN_CONTENT</span>);
-                        boolean isH5 = <span class="string">"1"</span>.equals(request.getParameter(<span class="string">"isH5"</span>));
-                        <span class="keyword">if</span>(isH5){
-                            <span class="type">String</span> jsAjaxHeader = request.getHeader(<span class="string">"X-Requested-With"</span>);
-                            <span class="keyword">if</span>(<span class="string">"XMLHttpRequest"</span>.equals(jsAjaxHeader)){response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">SINGLE_DEVICE_LOGIN</span>.getCodeStr(), singleDeviceLoginContent));
-                            }<span class="keyword">else</span> {
-                             renderSingleDeviceHtml(response,<span class="string">"/single_device_error"</span>);
-                            }
-                        }<span class="keyword">else</span> {
-                            response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">SINGLE_DEVICE_LOGIN</span>.getCodeStr(), singleDeviceLoginContent));
-                        }
-                        log.error(<span class="string">"触发单设备登录限制错误"</span>);
-                    } <span class="keyword">else</span> {
-                        request.addParameter(<span class="string">"userId"</span>, new <span class="type">String</span>[]{ppuUserId + <span class="string">""</span>});
-                        <span class="keyword">super</span>.doFilter(request, response, chain);
-                    }
-                }
-            }
-        }
-    } <span class="keyword">catch</span> (<span class="type">Exception</span> e) {
-        logger.error(<span class="string">"业务处理异常,url="</span>,e);
-    }
-}
-</code></pre>
-<p>第一，这个方法中嵌套了七层的if else，层次太多。第二这个方法太长。嵌套层次过多和方法过长都是Bad Smell。那么究竟很多的if else有哪些弊端呢？</p>
-<ul>
-<li><p><strong>僵化</strong>：如果再有更多情况的时候，我们需要在原来的地方写更多的if…else if条件。也就是说你需要去改动原来的代码，然后重新编译，重新部署，这是很浪费时间的。并且这违背了面向对象中的<strong>开放封闭原则</strong>：对扩展开放，对修改封闭。同时由于这个类需要处理各种业务，职责太多，所以也违背了<strong>职责单一原则。</strong></p>
-</li>
-<li><p><strong>效率低下</strong>：很多系统的类，比如<code>HashMaps</code>，<code>Properties</code>等，都非常注意基于数据的条件判断。</p>
-</li>
-<li><p><strong>难阅读</strong>：像这种层层if else嵌套的情况，如果其他人需要来看，并且维护这份代码，由于难阅读，他们会感觉吃力。试想下，如果段代码很长，一个屏看不完，那肯定是维护的灾难。</p>
-</li>
-<li><p><strong>难维护</strong>：if else不像switch case，它的每个分支都和其它分支有关系，如果需求变更，在修改某个分支之前要看懂其它所有分支，确保不会对其它分支造成影响。</p>
-</li>
-<li><p><strong>难调试</strong>：很多if else，调试过程中需要一步步跟进，会影响调试效率。</p>
-</li>
-<li><p><strong>难测试</strong>：每次我们写测试用例的Case，针对每个有很多if else的方法，我们要对每个分支都写一个测试，这样下来这个测试用例将会变得非常长。</p>
-</li>
-</ul>
-<blockquote>
-<p>在任何面向对象语言中，都需要考虑移除分支控制逻辑（<code>if</code>以及<code>switch</code>，<code>case</code>）。移除的常用做法是将这些控制逻辑的方法移到一个类中。 <a href="https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements" target="_blank" rel="external">Quora,Simon Hayes</a></p>
-</blockquote>
-<p>那么我们怎样来解决这种情况，因为遇到不同的情况需要用不同的解决方案，我们逐个来分析：</p>
-<h2 id="常见的嵌套类if-else处理方式"><a href="#常见的嵌套类if-else处理方式" class="headerlink" title="常见的嵌套类if else处理方式"></a>常见的嵌套类if else处理方式</h2><p>比如第一个if else的例子，通常</p>
-<h2 id="平行类的if-else处理方式"><a href="#平行类的if-else处理方式" class="headerlink" title="平行类的if else处理方式"></a>平行类的if else处理方式</h2><p><strong>如果我们有几个判断条件是平级if，那么我们可以使用命令模式来解决这种问题。</strong>比如我们现在有如下的if else：</p>
-<pre><code class="swift"><span class="keyword">if</span> (value.equals(<span class="string">"A"</span>)) { doCommandA() }
-<span class="keyword">else</span> <span class="keyword">if</span> (value.equals(<span class="string">"B"</span>)) { doCommandB() } 
-<span class="keyword">else</span> <span class="keyword">if</span> etc.
-</code></pre>
-<p>这时，我们可以使用<strong>命令模式</strong>来解决，先创建一个接口：</p>
-<pre><code class="swift"><span class="keyword">public</span> interface <span class="type">Command</span> {
-     void exec();
-}
-</code></pre>
-<p>然后<code>CommandA</code>和<code>CommandB</code>类实现这个接口：</p>
-<pre><code class="swift"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommandA</span>() <span class="title">implements</span> <span class="title">Command</span> </span>{
-
-     void exec() {
-          <span class="comment">// ... </span>
-     }
-}
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommandB</span>() <span class="title">implements</span> <span class="title">Command</span> </span>{
-
-     void exec() {
-          <span class="comment">// ...</span>
-     }
-}
-</code></pre>
-<p>然后创建一个<code>Map&lt;String,Command&gt;</code>,并且往其中添加Command实例：</p>
-<pre><code class="swift">commandMap.put(<span class="string">"A"</span>, new <span class="type">CommandA</span>());
-commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB</span>());
-</code></pre>
-<p>然后所有的<strong>if/else if</strong>，就都会变成：</p>
-<pre><code class="swift">commandMap.<span class="keyword">get</span>(value).exec();
-</code></pre>
-<p>如果某个Command有任何的改变只需要改动某个具体的类即可，如果有新加的Command，那么只需要添加响应的Command即可。命令模式就是加了一个<strong>中间件：命令容器</strong>(就是这里的Map，根据情况可能会是List或者其它)来实现解耦。</p>
-<h2 id="复杂处理算法的if-else"><a href="#复杂处理算法的if-else" class="headerlink" title="复杂处理算法的if else"></a>复杂处理算法的if else</h2><p>如果我们if之后的代码处理的业务逻辑很相似，并且这种处理算法可能会经常变动，比如：</p>
-<pre><code class="swift"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>{
-    <span class="keyword">public</span> double calculateInsurance(double income, <span class="type">InputType</span> type) {
-        <span class="keyword">if</span> (type == smallType) {
-            <span class="keyword">return</span> income*<span class="number">0.365</span>;
-        } <span class="keyword">else</span> <span class="keyword">if</span> (type == mediumType) {
-            <span class="keyword">return</span> (income-<span class="number">10000</span>)*<span class="number">0.2</span>+<span class="number">35600</span>;
-        } <span class="keyword">else</span> <span class="keyword">if</span> (type == bigType) {
-            <span class="keyword">return</span> (income-<span class="number">30000</span>)*<span class="number">0.1</span>+<span class="number">76500</span>;
-        } <span class="keyword">else</span> {
-            <span class="keyword">return</span> (income-<span class="number">60000</span>)*<span class="number">0.02</span>+<span class="number">105600</span>;
-        }
-    }
-}
-</code></pre>
-<p>那么我们就可以将每个if分支中的代码单独分离到各个类中，然后再抽出一个父类，这样我们每个条件分支中就不会有很多代码了：</p>
-<pre><code class="swift"><span class="keyword">public</span> abstract <span class="class"><span class="keyword">class</span> <span class="title">InsuranceStrategy</span> </span>{
-    <span class="keyword">public</span> double calculateInsuranceVeryHigh(double income) {
-        <span class="keyword">return</span> (income - getAdjustment()) * getWeight() + getConstant();
-    }
-    <span class="keyword">public</span> abstract int getConstant();
-    <span class="keyword">public</span> abstract double getWeight();
-    <span class="keyword">public</span> abstract int getAdjustment();
-}
-
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InsuranceStrategyMedium</span> <span class="title">extends</span> <span class="title">InsuranceStrategy</span> </span>{
-    @<span class="type">Override</span>
-    <span class="keyword">public</span> int getConstant() {
-        <span class="keyword">return</span> <span class="number">35600</span>;
-    }
-    @<span class="type">Override</span>
-    <span class="keyword">public</span> double getWeight() {
-        <span class="keyword">return</span> <span class="number">0.2</span>;
-    }
-    @<span class="type">Override</span>
-    <span class="keyword">public</span> int getAdjustment() {
-        <span class="keyword">return</span> <span class="number">10000</span>;
-    }
-}
-
-<span class="comment">/*InsuranceStrategyLow和InsuranceStrategyHigh的处理方式相似，此处略去*/</span>
-<span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>{
-    <span class="keyword">private</span> <span class="type">InsuranceStrategy</span> strategy;
-    <span class="keyword">public</span> double calculateInsurance(double income, <span class="type">InputType</span> type) {
-        <span class="keyword">if</span> (type == smallType) {
-            strategy = new <span class="type">InsuranceStrategyLow</span>();
-        } <span class="keyword">else</span> <span class="keyword">if</span> (type == mediumType) {
-            strategy = new <span class="type">InsuranceStrategyMedium</span>();
-        } <span class="keyword">else</span> <span class="keyword">if</span> (type == bigType) {
-            strategy = new <span class="type">InsuranceStrategyHigh</span>();
-        } <span class="keyword">else</span> {
-            strategy = new <span class="type">InsuranceStrategyVeryHigh</span>();
-        }
-
-        <span class="keyword">return</span> strategy.calculate(income);
-    }
-}
-</code></pre>
-<p>这样最终不还是有if else吗？是的，最终还是有if else，但是if else的逻辑变得非常清晰，只是用于创建一个新的类。并且我们将经常变化的算法部分封装到了子类中，如果某个子类中的算法变了，只需要变动某个子类（<strong>封装变化</strong>），然后重新编译就可以了，不需要将整个项目重新编译，部署。</p>
-<h2 id="区间类的if-else"><a href="#区间类的if-else" class="headerlink" title="区间类的if else"></a>区间类的if else</h2><p>如果客户端的if条件表示的是不同的范围，然后根据不同范围来选择不同的对象来处理，比如：</p>
-<pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>{
-
-    <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span> </span>{
-
-        Request request = <span class="keyword">new</span> Request();
-        request.addSalaryAmount = <span class="number">9999</span>;
-        <span class="keyword">if</span> (request.addSalaryAmount &lt;= <span class="number">100</span>){
-            DivisionManager divisionManager = <span class="keyword">new</span> DivisionManager();
-            divisionManager.accept();
-        }<span class="keyword">else</span> <span class="keyword">if</span> (request.addSalaryAmount &lt;= <span class="number">1000</span>){
-            Chief chief = <span class="keyword">new</span> Chief();
-            chief.accept();
-        }<span class="keyword">else</span> <span class="keyword">if</span> (request.addSalaryAmount &lt;= <span class="number">10000</span>){
-            GeneralManager generalManager  = <span class="keyword">new</span> GeneralManager();
-            generalManager.accept();
-        }<span class="keyword">else</span> {
-            System.out.println(<span class="string">"金额太大没人能批准"</span>);
-        }
-    }
-}
-</code></pre>
-<p>上面这个例子中，不同的条件分支是让不同的对象来处理这种条件。并且以后可能Request对象会添加其他的请求属性，比如offWork（请假），并且这种请求属性同样需要<code>DivisionManager</code>，<code>Chief</code>，<code>GeneralManager</code>。然而其中的处理顺序变了，并不是现在的请求等级。可能是先由<code>Chief</code>处理，再有<code>GeneralManager</code>处理，最后有<code>DivisionManager</code>来处理，那怎么办呢？难道还要写一套if else吗？<br>这时候我们就可以用责任链模式来将这一长串if else嵌套进每一个对象中去，我们可以这样做：</p>
-<pre><code class="java"><span class="class"><span class="keyword">interface</span> <span class="title">ManagerCommand</span></span>{
-    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span></span>;
-}
-
-<span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">CommManager</span> <span class="keyword">implements</span> <span class="title">ManagerCommand</span> </span>{
-    <span class="keyword">public</span> CommManager superior;
-    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSuperior</span><span class="params">(CommManager superior)</span> </span>{
-        <span class="keyword">this</span>.superior = superior;
-    }
-}
-
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DivisionManager</span> <span class="keyword">extends</span> <span class="title">CommManager</span> </span>{
-
-    <span class="meta">@Override</span>
-    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span> </span>{
-
-        <span class="keyword">if</span> (requestAmount&lt;<span class="number">100</span>){
-            System.out.println(<span class="string">"部门经理批准"</span>);
-        }<span class="keyword">else</span> <span class="keyword">if</span> ( <span class="keyword">this</span>.superior != <span class="keyword">null</span>){
-            <span class="keyword">this</span>.superior.accept(requestAmount);
-        }
-    }
-}
-
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chief</span> <span class="keyword">extends</span> <span class="title">CommManager</span></span>{
-
-    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span>  <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span>  </span>{
-        <span class="keyword">if</span> (requestAmount &lt; <span class="number">1000</span>){
-        System.out.println(<span class="string">"总监同意"</span>);
-        }<span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.superior != <span class="keyword">null</span>){
-            <span class="keyword">this</span>.superior.accept(requestAmount);
-        }
-    }
-}
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GeneralManager</span> <span class="keyword">extends</span> <span class="title">CommManager</span></span>{
-
-    <span class="meta">@Override</span>
-    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span> </span>{
-
-        <span class="keyword">if</span> (requestAmount&lt;<span class="number">10000</span>){
-            System.out.println(<span class="string">"总经理批准"</span>);
-        }<span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.superior != <span class="keyword">null</span>){
-            <span class="keyword">this</span>.superior.accept(requestAmount);
-        }
-    }
-}
-</code></pre>
-<p>最后在Client端调用的时候，我们可以这样写：</p>
-<pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>{
-
-    <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span> </span>{
-
-        Request request = <span class="keyword">new</span> Request();
-        request.addSalaryAmount = <span class="number">999</span>;
-        DivisionManager divisionManager = <span class="keyword">new</span> DivisionManager();
-        Chief chief = <span class="keyword">new</span> Chief();
-        GeneralManager generalManager = <span class="keyword">new</span> GeneralManager();
-        divisionManager.setSuperior(chief);
-        chief.setSuperior(generalManager);
-        divisionManager.accept(request.addSalaryAmount);
-    }
-}
-</code></pre>
-<p>这种写法的好处是：<strong>将条件和处理该条件的对象解耦，每个处理条件的对象都不知道其他对象，我们可以随时地增加或者修改处理一个请求的结构。这增加了给对象指派职责的灵活性</strong>。</p>
-<blockquote>
-<p>小结：其实上述的每种方式都是利用<strong>多态</strong>来解决分支带来的僵化，<a href="https://www.youtube.com/watch?v=4F72VULWFvc" target="_blank" rel="external">谷歌有一个视频对这个问题阐述得很好。</a>。</p>
-</blockquote>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a href="https://stackoverflow.com/questions/10175805/how-to-avoid-a-lot-of-if-else-conditions" target="_blank" rel="external">https://stackoverflow.com/questions/10175805/how-to-avoid-a-lot-of-if-else-conditions</a></li>
-<li><a href="https://stackoverflow.com/questions/271526/avoiding-null-statements?rq=1" target="_blank" rel="external">https://stackoverflow.com/questions/271526/avoiding-null-statements?rq=1</a></li>
-<li><a href="https://stackoverflow.com/questions/14136721/converting-many-if-else-statements-to-a-cleaner-approach" target="_blank" rel="external">https://stackoverflow.com/questions/14136721/converting-many-if-else-statements-to-a-cleaner-approach</a></li>
-<li><a href="https://www.youtube.com/watch?v=4F72VULWFvc" target="_blank" rel="external">https://www.youtube.com/watch?v=4F72VULWFvc</a></li>
-<li><a href="https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements" target="_blank" rel="external">https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements</a></li>
-<li><a href="https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-swift/1199677#1199677" target="_blank" rel="external">https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-swift/1199677#1199677</a></li>
-<li><a href="https://industriallogic.com/xp/refactoring/conditionalWithStrategy.html" target="_blank" rel="external">https://industriallogic.com/xp/refactoring/conditionalWithStrategy.html</a></li>
-<li>大话设计模式</li>
-<li>重构改善既有代码的设计</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/04/wwdc-understand-foundation/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/04/wwdc-understand-foundation/" itemprop="url">理解Foundation框架</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-04T10:13:00+08:00">
-                2017-09-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文源于对WWDC：UnderStanding Foundation的总结。</p>
-<h2 id="什么是Foundation"><a href="#什么是Foundation" class="headerlink" title="什么是Foundation?"></a>什么是Foundation?</h2><ul>
-<li>Foundation提供了构建基础类的框架<ul>
-<li>所有应用都是用的基础类型</li>
-<li>它们供软件的更高层来组合使用</li>
-</ul>
-</li>
-</ul>
-<h2 id="Dictionry"><a href="#Dictionry" class="headerlink" title="Dictionry"></a>Dictionry</h2><p>Dictionary中提供了<code>objectEnumerator</code>和<code>keyEnumerator</code>两个方法，可以直接取到<code>key</code>或者<code>value</code>的Enumerator，然后就直接可以用while循环了。</p>
-<pre><code class="objc"><span class="built_in">NSEnumerator</span> *e = [dictionary keyEnumerator];
-
-<span class="keyword">while</span>(<span class="keyword">id</span> key = [e nextObject]){
-
- <span class="keyword">id</span> value = [e objectForKey:key];
- ....
-}
-</code></pre>
-<h3 id="Fast-Enumeration"><a href="#Fast-Enumeration" class="headerlink" title="Fast Enumeration"></a>Fast Enumeration</h3><p>如果想获取某个Dictionary中的key，那么直接用Fast Enumeration就可以：</p>
-<pre><code class="objc"><span class="built_in">NSDictionary</span> *someDic = @{<span class="string">@"key"</span>:<span class="string">@"value"</span>};
-<span class="keyword">for</span> (<span class="keyword">id</span> key <span class="keyword">in</span> someDic) {
-
-    <span class="built_in">NSLog</span>(<span class="string">@"key:%@"</span>,key);   
-}
-</code></pre>
-<p>如果想要获取Key及其对应的Value，那么直接是用Block就可以：</p>
-<pre><code class="objc">[someDic enumerateKeysAndObjectsUsingBlock:^(<span class="keyword">id</span>  _Nonnull key, <span class="keyword">id</span>  _Nonnull obj, <span class="built_in">BOOL</span> * _Nonnull stop) {
-
-}];
-</code></pre>
-<h3 id="NSArray排序"><a href="#NSArray排序" class="headerlink" title="NSArray排序"></a>NSArray排序</h3><p>对一个NSArray进行排序，有以下几种方法：</p>
-<ol>
-<li>C function</li>
-<li>Objective-C method</li>
-<li>NSSortDescriptor</li>
-<li>Blocks</li>
-</ol>
-<p>使用Bock遍历数组的方法：</p>
-<pre><code class="objc"><span class="built_in">NSMutableArray</span> *names = [<span class="built_in">NSMutableArray</span> arrayWithObjects:<span class="string">@"11"</span>,<span class="string">@"22"</span>, <span class="literal">nil</span>];
-    [names sortUsingComparator:^<span class="built_in">NSComparisonResult</span>(<span class="keyword">id</span>  _Nonnull obj1, <span class="keyword">id</span>  _Nonnull obj2) {
-        <span class="built_in">NSComparisonResult</span> result;
-        <span class="built_in">NSUInteger</span> lLen = [obj1 length], rLen = [obj2 length];
-
-        <span class="keyword">if</span> (lLen &lt; rLen) {
-            result = <span class="built_in">NSOrderedAscending</span>;
-        }<span class="keyword">else</span> <span class="keyword">if</span> (lLen &gt; rLen){   
-            result = <span class="built_in">NSOrderedDescending</span>;
-        }<span class="keyword">else</span>{
-            result = <span class="built_in">NSOrderedSame</span>;
-        }        
-        <span class="keyword">return</span> result;
-    }];
-</code></pre>
-<h3 id="Collection的过滤"><a href="#Collection的过滤" class="headerlink" title="Collection的过滤"></a>Collection的过滤</h3><p><strong>遍历一个Collection的同时再改变它，会引发异常。</strong><br>Collection的过滤步骤：</p>
-<ol>
-<li>将要筛选的Collection改为可变类型的</li>
-<li>筛选出需要移除的项</li>
-<li>调用可变类型的响应方法进行移除</li>
-</ol>
-<pre><code class="objc"><span class="built_in">NSMutableArray</span> *files = [<span class="built_in">NSMutableArray</span> arrayWithObjects:<span class="string">@"file0"</span>,<span class="string">@"file1"</span>, <span class="literal">nil</span>]; <span class="comment">// array of NSString objcects;</span>
-<span class="built_in">NSIndexSet</span> *toRemove = [files indexesOfObjectsPassingTest:^<span class="built_in">BOOL</span>(<span class="keyword">id</span>  _Nonnull obj, <span class="built_in">NSUInteger</span> idx, <span class="built_in">BOOL</span> * _Nonnull stop) {
-
-    <span class="keyword">if</span> ([obj hasPrefix:<span class="string">@"."</span>]) {<span class="keyword">return</span> <span class="literal">YES</span>;}
-    <span class="keyword">return</span> <span class="literal">NO</span>;
-
-}];
-[files removeObjectsAtIndexes:toRemove];
-</code></pre>
-<h3 id="Collection更多的特性"><a href="#Collection更多的特性" class="headerlink" title="Collection更多的特性"></a>Collection更多的特性</h3><ul>
-<li>查找</li>
-<li>对每个元素都调用某个方法</li>
-<li><code>NSArray</code>：切开和串联</li>
-<li>NSSet：交集，合并和子集</li>
-</ul>
-<h2 id="Strings"><a href="#Strings" class="headerlink" title="Strings"></a>Strings</h2><p>String其实是一个Unicode字符集的数组，你可以将它看做非透明的容器。对它的常用方法有：</p>
-<ul>
-<li>比较</li>
-<li>查找</li>
-<li>转换编码</li>
-</ul>
-<h3 id="字符串比较的方法："><a href="#字符串比较的方法：" class="headerlink" title="字符串比较的方法："></a>字符串比较的方法：</h3><pre><code class="objc">- (<span class="built_in">NSComparisonResult</span>)compare:(<span class="built_in">NSString</span> *)string; <span class="comment">// 1</span>
-- (<span class="built_in">NSComparisonResult</span>)localizedStandardCompare:(<span class="built_in">NSString</span> *)string <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_6, <span class="number">4</span>_0); <span class="comment">// 2</span>
-- (<span class="built_in">NSComparisonResult</span>)localizedCompare:(<span class="built_in">NSString</span> *)string; <span class="comment">// 3</span>
-- (<span class="built_in">NSComparisonResult</span>)localizedCaseInsensitiveCompare:(<span class="built_in">NSString</span> *)string; <span class="comment">// 4</span>
-- (<span class="built_in">NSComparisonResult</span>)compare:(<span class="built_in">NSString</span> *)string options: (<span class="built_in">NSStringCompareOptions</span>)mask range:(<span class="built_in">NSRange</span>)rangeOfReceiverToCompare locale:(<span class="keyword">nullable</span> <span class="keyword">id</span>)locale; <span class="comment">// 5</span>
-</code></pre>
-<p>第二个方法和第三个方法是对那些做了本地化的字符串进行比对。第四个可以对字符串的一部分进行比较，并且可以指定是否是大小写敏感等。如果数组中有字符串需要排序，那么我们可以用到上文中提到的，让数组中的元素分别调用其自身的方法。</p>
-<pre><code class="objc"><span class="built_in">NSArray</span> *strings = [<span class="built_in">NSArray</span> arrayWithObjects:<span class="string">@"Larry"</span>,<span class="string">@"Curly"</span>,<span class="string">@"Moe"</span>, <span class="literal">nil</span>];
-<span class="built_in">NSArray</span> *sortedArray = [strings sortedArrayUsingSelector:<span class="keyword">@selector</span>(localizedCompare:)];
-</code></pre>
-<h3 id="字符串查找"><a href="#字符串查找" class="headerlink" title="字符串查找"></a>字符串查找</h3><p>字符串查找的方法如下：</p>
-<pre><code class="objc">- (<span class="built_in">NSRange</span>)rangeOfString:(<span class="built_in">NSString</span> *)searchString;
-- (<span class="built_in">NSRange</span>)rangeOfString:(<span class="built_in">NSString</span> *)searchString options:(<span class="built_in">NSStringCompareOptions</span>)mask range:(<span class="built_in">NSRange</span>)rangeOfReceiverToSearch locale:(<span class="keyword">nullable</span> <span class="built_in">NSLocale</span> *)locale <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_5, <span class="number">2</span>_0);
-</code></pre>
-<p>*注：如果有特殊字符，比如<code>Ó</code>，那么它在数组中是<code>O</code>，<code>´</code>两个分开存储，是占两个存储单位的，所以它自身rang的length是2。</p>
-<p>字符串的查找中还支持正则表达式：</p>
-<pre><code class="objc"><span class="built_in">NSString</span> *str = <span class="string">@"Going going gone!"</span>;
-<span class="built_in">NSRange</span> found = [str rangeOfString:<span class="string">@"go(\\w*)"</span>
-                           options:<span class="built_in">NSRegularExpressionSearch</span>
-                             range:<span class="built_in">NSMakeRange</span>(<span class="number">0</span>, str.length)];
-</code></pre>
-<p>这样我们就可以得到found的值：found.location = 6, found.length = 5;</p>
-<h3 id="字符串编码"><a href="#字符串编码" class="headerlink" title="字符串编码"></a>字符串编码</h3><p>字符串和Data之间编码的相互转换：</p>
-<pre><code class="objc"><span class="built_in">NSData</span> *someData = [<span class="built_in">NSData</span> dataWithContentsOfFile:<span class="string">@""</span>];
-<span class="built_in">NSString</span> *inString = [[<span class="built_in">NSString</span> alloc]initWithData:someData encoding:<span class="built_in">NSUTF8StringEncoding</span>];
-<span class="built_in">NSString</span> *outString = <span class="string">@"For Windows"</span>;
-<span class="built_in">NSData</span> *converted = [outString dataUsingEncoding:<span class="built_in">NSUTF16StringEncoding</span>];
-</code></pre>
-<p>如果要将某个和文件系统相独立的字符串表示成文件系统调用时所指定的字符串表示，可以使用：</p>
-<pre><code class="objc"><span class="keyword">const</span> <span class="keyword">char</span> *fileName = [outString fileSystemRepresentation];
-</code></pre>
-<p>将它表示成一个C类型的字符串，这个字符串在outString销毁的时候也跟着自动销毁。</p>
-<p>更多的特性：</p>
-<ul>
-<li>打印格式</li>
-<li>遍历逐个子字符串遍历，逐行遍历，逐段遍历</li>
-<li>替换某个子字符串</li>
-<li>路径补全</li>
-</ul>
-<h3 id="NSDateFormatter："><a href="#NSDateFormatter：" class="headerlink" title="NSDateFormatter："></a>NSDateFormatter：</h3><p>如果不想将一个<code>NSDate</code>转换成字符串的时候出现时间，那么可以将<code>timeStyle</code>设置为：<code>NSDateFormatterNoStyle</code>。</p>
-<pre><code class="objc"><span class="built_in">NSDateFormatter</span> *fmt = [[<span class="built_in">NSDateFormatter</span> alloc]init];
-[fmt setTimeStyle:<span class="built_in">NSDateFormatterNoStyle</span>];
-[fmt setDateStyle:<span class="built_in">NSDateFormatterLongStyle</span>];
-</code></pre>
-<h3 id="Dates和Formatter小结"><a href="#Dates和Formatter小结" class="headerlink" title="Dates和Formatter小结"></a>Dates和Formatter小结</h3><ul>
-<li>将NSDate和NSCalendar混合使用来计算时间</li>
-<li>当展现日期和数字的时候使用foramtter</li>
-</ul>
-<h2 id="数据持久化"><a href="#数据持久化" class="headerlink" title="数据持久化"></a>数据持久化</h2><h3 id="将数据以Plist的形式存储"><a href="#将数据以Plist的形式存储" class="headerlink" title="将数据以Plist的形式存储"></a>将数据以Plist的形式存储</h3><p>将数据转换成Plist：</p>
-<pre><code class="objc"><span class="built_in">NSDictionary</span> *colors = [<span class="built_in">NSDictionary</span> dictionaryWithObjectsAndKeys:<span class="string">@"Verde"</span>,<span class="string">@"Green"</span>,<span class="string">@"Rojo"</span>,<span class="string">@"Red"</span>,<span class="string">@"Amarillo"</span>,<span class="string">@"Yellow"</span>, <span class="literal">nil</span>];
-<span class="built_in">NSError</span> *error = <span class="literal">nil</span>;
-<span class="built_in">NSData</span> *plist = [<span class="built_in">NSPropertyListSerialization</span> dataWithPropertyList:colors format:<span class="built_in">NSPropertyListXMLFormat_v1_0</span> options:<span class="number">0</span> error:&amp;error];
-<span class="keyword">if</span> (!plist) {
-    <span class="built_in">NSLog</span>(<span class="string">@"本地化失败"</span>);
-}
-[plist writeToFile:<span class="string">@"filePath"</span> atomically:<span class="literal">YES</span>];
-</code></pre>
-<p>将Plist转化成NSData：</p>
-<pre><code class="objc"><span class="built_in">NSData</span> *readData = [<span class="built_in">NSData</span> dataWithContentsOfURL:urlOfFile];
-<span class="built_in">NSDictionary</span> *newColors = [<span class="built_in">NSPropertyListSerialization</span> propertyListWithData:readData options:<span class="number">0</span> format:<span class="literal">nil</span> error:&amp;error];
-</code></pre>
-<h3 id="NSFileManager"><a href="#NSFileManager" class="headerlink" title="NSFileManager"></a>NSFileManager</h3><p>NSFileManager支持文件的复制，移动，链接，删除等。</p>
-<pre><code class="objc"><span class="built_in">NSFileManager</span> *mgr = [[<span class="built_in">NSFileManager</span> alloc]init];
-<span class="built_in">BOOL</span> res;
-res = [mgr copyItemAtURL:src toURL:des error:&amp;error];
-res = [mgr moveItemAtURL:src toURL:des error:&amp;error];
-res = [mgr linkItemAtURL:src toURL:des error:&amp;error];
-res = [mgr removeItemAtURL:src error:&amp;error];
-</code></pre>
-<p><code>linkItemAtURL</code>就是创建一个硬链接，硬链接就是给一个已经存在的文件重新创建另外一个名字，如果原来文件被删除了，那么硬链接的名字就会失效了。</p>
-<p>NSFileManager还可以遍历某个目录下所有的内容：</p>
-<pre><code class="objc"><span class="built_in">NSArray</span> *stuff = [mgr contentsOfDirectoryAtURL:dirURL includingPropertiesForKeys:[<span class="built_in">NSArray</span> array] options:<span class="number">0</span> error:&amp;error];
-</code></pre>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/27/chat-nsdateformatter/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/27/chat-nsdateformatter/" itemprop="url">如何优雅地使用DateFormatter？</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-27T09:48:45+08:00">
-                2017-08-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h2><p>之所以要聊<code>DateFormatter</code>是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithMultipleInstantiation</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">    </div><div class="line">        <span class="keyword">var</span> dateStrings:[<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">            df.dateStyle = .medium</div><div class="line">            df.timeStyle = .full</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithSingleInstance</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">    </div><div class="line">        <span class="keyword">var</span> dateStrings: [<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">        df.dateStyle = .medium</div><div class="line">        df.timeStyle = .full</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))   </div><div class="line">        &#125;   </div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>然后我们调用这两个方法：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"testWithMultipleInstantiation--<span class="subst">\(testWithMultipleInstantiation()</span>)"</span>)</div><div class="line"><span class="built_in">print</span>(<span class="string">"testWithSingleInstance--<span class="subst">\(testWithSingleInstance()</span>)"</span>)</div></pre></td></tr></table></figure>
-<p>打印结果是：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">testWithMultipleInstantiation--<span class="number">7.83139349098201</span></div><div class="line">testWithSingleInstance--<span class="number">0.742719032976311</span></div></pre></td></tr></table></figure>
-<p>从中可以明显看到创建<code>DateFormatter</code>是很消耗性能的，多次创建DateFormatter比单次创建大约要慢11倍。如果我们要用DateFormatter，那么尽量创建一次，然后多次使用。</p>
-<p>然后我们再做进一步的实验：创建一次<code>DateFormatter</code>，但是改变这个NSDateFormatter的<code>dateStyle</code>和<code>timeStyle</code>。</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithSingleInstanceChangeFormatter</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">        </div><div class="line">        <span class="keyword">var</span> dateStrings: [<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            </div><div class="line">            df.dateStyle = .medium</div><div class="line">            df.timeStyle = .full</div><div class="line">            df.dateStyle = .full</div><div class="line">            df.timeStyle = .medium</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>然后调用这个方法：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"ChangeFormatter--<span class="subst">\(testWithSingleInstanceChangeFormatter()</span>)"</span>)</div></pre></td></tr></table></figure>
-<p>这时输出的结果是：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="type">ChangeFormatter</span>--<span class="number">5.77827541399165</span></div></pre></td></tr></table></figure>
-<p>从中我们可以看到，其对性能的消耗和多次创建DateFormatter相差并不多。最后我们得到这样一个结论：</p>
-<blockquote>
-<ol>
-<li>每次使用DateFormatter时都新建是最消耗性能的</li>
-<li>创建一个DateFormatter然后改变其<code>dateStyle</code>和<code>timeStyle</code>等和1中的性能消耗差不多</li>
-<li>为每一种日期类型创建一种DateFormatter并且不改变其<code>dateStyle</code>和<code>timeStyle</code>等属性是性能最优的</li>
-</ol>
-</blockquote>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>通过上面的结论，我们发现如果对DateFormatter做成单例，那么就必须保证每个DateFormatter的格式是相同的，因为改变DateFormatter的格式也是很消耗性能的。我们要做多个单例，每种单例是一种formatter，然后分别使用吗？显然太过于麻烦。<strong>我们可以使用缓存策略，将每种格式的DateFormatter缓存一份，下次如果有相同格式的Formatter，直接从缓存中取就可以了，这就避免了多次创建和多次改变格式的问题。</strong>为了解决这个问题，我使用NSCache做了一个DateFormatter的缓存池：<a href="https://github.com/MikeFighting/MFDateFormatterPool" target="_blank" rel="external">MFDateFormatterPool</a>，已经上传到了GitHub上，分为OC和Swift两个版本，如有问题可以联系我（Swift版稍后会加上）。</p>
-<p><em>其它：NSDateFormatter在IOS7之前是非线程安全的，多线程可能引起崩溃，</em></p>
-<h3 id="延伸阅读："><a href="#延伸阅读：" class="headerlink" title="延伸阅读："></a>延伸阅读：</h3><p><a href="https://www.raywenderlich.com/31166/25-ios-app-performance-tips-tricks#reuseobjects" target="_blank" rel="external">https://www.raywenderlich.com/31166/25-ios-app-performance-tips-tricks#reuseobjects</a><br><a href="http://www.chibicode.org/?p=41" target="_blank" rel="external">http://www.chibicode.org/?p=41</a><br><a href="https://stackoverflow.com/questions/18195051/crash-in-nsdateformatter-setdateformat-method" target="_blank" rel="external">https://stackoverflow.com/questions/18195051/crash-in-nsdateformatter-setdateformat-method</a></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2313,7 +1766,7 @@ res = [mgr removeItemAtURL:src error:&amp;error];
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-count">34</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -2326,7 +1779,7 @@ res = [mgr removeItemAtURL:src error:&amp;error];
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>

@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Notes," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="复合的线程安全方法就一定是线程安全的吗？   尽管同步方法可以让每一个操作都是原子的，但是当很多个原子操作合并为一个复合操作的时候，需要额外加锁，否则就会出现竞态条件（race condition）造成线程不安全。但是这里额外的加锁可能会导致性能损耗并且可能引起死锁。如： 12if (!vector.contains(element))    vector.add(element); 这里cont">
+<meta name="keywords" content="Notes">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java多线程基础">
+<meta property="og:url" content="https://mikefighting.github.io/2017/11/21/note-concurrency-in-practice/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="复合的线程安全方法就一定是线程安全的吗？   尽管同步方法可以让每一个操作都是原子的，但是当很多个原子操作合并为一个复合操作的时候，需要额外加锁，否则就会出现竞态条件（race condition）造成线程不安全。但是这里额外的加锁可能会导致性能损耗并且可能引起死锁。如： 12if (!vector.contains(element))    vector.add(element); 这里cont">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-12-02T14:55:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java多线程基础">
+<meta name="twitter:description" content="复合的线程安全方法就一定是线程安全的吗？   尽管同步方法可以让每一个操作都是原子的，但是当很多个原子操作合并为一个复合操作的时候，需要额外加锁，否则就会出现竞态条件（race condition）造成线程不安全。但是这里额外的加锁可能会导致性能损耗并且可能引起死锁。如： 12if (!vector.contains(element))    vector.add(element); 这里cont">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/11/21/note-concurrency-in-practice/"/>
+
+
+
+
+
+  <title>Java多线程基础 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/11/21/note-concurrency-in-practice/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java多线程基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-21T14:09:19+08:00">
+                2017-11-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="复合的线程安全方法就一定是线程安全的吗？"><a href="#复合的线程安全方法就一定是线程安全的吗？" class="headerlink" title="复合的线程安全方法就一定是线程安全的吗？"></a>复合的线程安全方法就一定是线程安全的吗？</h2><p>   尽管同步方法可以让每一个操作都是原子的，但是当很多个原子操作合并为一个复合操作的时候，需要额外加锁，否则就会出现竞态条件（race condition）造成线程不安全。但是这里额外的加锁可能会导致性能损耗并且可能引起死锁。如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (!vector.contains(element))</div><div class="line">    vector.add(element);</div></pre></td></tr></table></figure>
+<p>这里<code>contains</code>方法和<code>add</code>方法都是线程安全的，但是综合起来就是非线程安全的了。</p>
+<h2 id="某个方法的局部变量是不需要加锁的"><a href="#某个方法的局部变量是不需要加锁的" class="headerlink" title="某个方法的局部变量是不需要加锁的"></a>某个方法的局部变量是不需要加锁的</h2><p>   某个线程进入一个方法就会创建一个栈，这个栈中存储了某个局部变量，这个局部变量是每个线程所独有，不是共享的，他们之间互不影响，没有必要加锁。</p>
+<h2 id="锁的粒度该怎样控制"><a href="#锁的粒度该怎样控制" class="headerlink" title="锁的粒度该怎样控制"></a>锁的粒度该怎样控制</h2><p>代码块加锁的粒度应该越小越好，但是如果代码块中加锁的粒度很小，频繁的加锁和开锁也会造成性能的开销，所以并不是加锁越多越好。这就是简单性和性能之间存在的互相制约。当我们实现某个同步策略时，一定不要盲目的为了性能而牺牲简单性。</p>
+<h2 id="加锁的意义"><a href="#加锁的意义" class="headerlink" title="加锁的意义"></a>加锁的意义</h2><ul>
+<li>操作互斥，很多个线程不能同时对一个代码块进行操作</li>
+<li>加锁之后可以保证变量的可见性</li>
+</ul>
+<h2 id="可见性和原子性"><a href="#可见性和原子性" class="headerlink" title="可见性和原子性"></a>可见性和原子性</h2><p>   <code>volatile</code>保证了属性的可见性，但是不能保证某个操作的原子性。如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">volatile</span> <span class="keyword">long</span> number;</div><div class="line"><span class="comment">//...</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addMethod</span><span class="params">()</span> </span>&#123;</div><div class="line"> number++;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>  这里的<code>number</code>就是可见的，但是<code>addMethod</code>这个方法不是线程安全的，也就是说<code>number++</code>这个操作不是原子操作，因为它只是保证了，线程<code>A</code>对<code>number</code>的操作对线程<code>B</code>是可见的，但是不能保证在线程<code>A</code>对<code>number</code>操作的时候，线程<code>B</code>也可以对<code>number</code>进行操作。比如线程<code>A</code>和<code>B</code>同时读取了<code>number</code>的数值，发现它是<code>12</code>，这时线程A和线程B</p>
+<blockquote>
+<p>当执行时间较长的计算或者可能无法快速完成的操作时一定不要加锁，比如：网络IO或者控制台IO。</p>
+</blockquote>
+<h2 id="如何正确地将对象发布出去以供其他对象使用"><a href="#如何正确地将对象发布出去以供其他对象使用" class="headerlink" title="如何正确地将对象发布出去以供其他对象使用"></a>如何正确地将对象<code>发布</code>出去以供其他对象使用</h2><p> 这里的发布指的是将某个类的属性值公开。这里如果没有正确的公开，那么就会造成线程不安全。比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Holder</span> </span>&#123;</div><div class="line">      <span class="keyword">private</span> <span class="keyword">int</span> n;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="title">Holder</span> <span class="params">(<span class="keyword">int</span> n )</span> </span>&#123;<span class="keyword">this</span>.n = n;&#125;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">assertSanity</span><span class="params">()</span> </span>&#123;</div><div class="line">       <span class="keyword">if</span>(n != n)</div><div class="line">       <span class="keyword">throw</span> <span class="keyword">new</span> AssertionError(<span class="string">"This statement is false."</span>);</div><div class="line">      &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>这里如果在线程A中创建对象，这时线程B调用这个对象的<code>assertSanity</code>方法，那么这个方法就可能会触发断言，也就是说在对象的创建过程中，它的属性n的值可能还没有确定，<code>this.n = n;</code>。这个代码还没有被执行，而在执行<code>n != n</code>的过程中执行了。</p>
+<h2 id="对象的可见性"><a href="#对象的可见性" class="headerlink" title="对象的可见性"></a>对象的可见性</h2><p>   对象的引用对另外的线程可见，并不意味着对象的状态对另外的线程可见。<br>   As we’ve seen, that an object reference becomes visible to another thread does not necessarily mean that the state of that object is visible to the consuming thread。</p>
+<h2 id="不可变对象的线程安全性"><a href="#不可变对象的线程安全性" class="headerlink" title="不可变对象的线程安全性"></a>不可变对象的线程安全性</h2><p>   不可变对象在正确的初始化之后是线程安全的，所以发布的时候就不必使用锁机制。但是如果某个引用是不可见的，并且引用的对象是可变的，那么在这个不可变的引用在发布的时候也需要加锁。</p>
+<h2 id="哪些操作必须是原子的"><a href="#哪些操作必须是原子的" class="headerlink" title="哪些操作必须是原子的?"></a>哪些操作必须是原子的?</h2><p>   如果有两个变量，其中一个变量值的更改会影响另外一个变量的，那么如果要同时改变这两个变量，那么它们需要是原子的，否则其中一个变量改变，而另外的一个变量没有变，那么从这个没有变化的变量中取到的值就有可能是过期的值。比如：</p>
+<ul>
+<li>我们给每个请求都做一个<strong>标记</strong>，如果某个请求和上一个请求的标记相同，那么就从<strong>缓存</strong>去取这个结果。在这里，这个标记和这个结果是一体的，所以对它们两个的操作必须是原子操作，否则就不能保证取出的结果就是正确的。因为有可能<strong>标记变了，但是缓存还没有变。</strong></li>
+<li>我们有一个Range这样的对象，它有一个<strong>下界</strong>和一个<strong>上界</strong>，上界要大于下界，所以对上下界的操作就必须保证是原子的，否则如果一个线程改变了下界，这时上界没有跟着变化，就可能会造成下界大于上界的情况。</li>
+</ul>
+<p>也就是说：</p>
+<blockquote>
+<p>是规则和限制产生了必须要原子操作的需要，这就是线程安全的需要。</p>
+</blockquote>
+<h2 id="线程安全是有粒度的"><a href="#线程安全是有粒度的" class="headerlink" title="线程安全是有粒度的"></a>线程安全是有粒度的</h2><p>某个类不是线程安全的，但是如果封装它的类做了线程安全的处理，那么使用它的时候也就是线程安全的了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PersonSet</span> </span>&#123;</div><div class="line">   <span class="meta">@GuardedBy</span>(<span class="string">"this"</span>)</div><div class="line">   <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Person&gt; mySet = <span class="keyword">new</span> HashSet&lt;Person&gt;();</div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">addPerson</span><span class="params">(Person p)</span> </span>&#123;</div><div class="line">        mySet.add(p);</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">boolean</span> <span class="title">containsPerson</span><span class="params">(Person p)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mySet.contains(p);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="如果某个类包含了一个线程安全的类，那么它不一定是线程安全，比如："><a href="#如果某个类包含了一个线程安全的类，那么它不一定是线程安全，比如：" class="headerlink" title="如果某个类包含了一个线程安全的类，那么它不一定是线程安全，比如："></a>如果某个类包含了一个线程安全的类，那么它不一定是线程安全，比如：</h2><p>两个<code>AtomicLong</code>类型的变量，这两个变量有关联，那么就必须让对这两个变量的操作变为原子化之后才可以是线程安全的，否则仍然不是线程安全的。</p>
+<h2 id="给线程安全的类添加线程安全的方法"><a href="#给线程安全的类添加线程安全的方法" class="headerlink" title="给线程安全的类添加线程安全的方法"></a>给线程安全的类添加线程安全的方法</h2><p>如果要给线程安全的类添加线程安全的方法，那么最好不要使用类扩展，因为如果使用类扩展，那么原来类的线程安全策略做了改动，那么被扩展的类就失效了，比如改了线程安全所用的锁，有些时候这些错误还很难被发现。同时需要特别注意多个线程对线程安全类的同时操作，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getLast</span><span class="params">(Vector list)</span> </span>&#123;</div><div class="line"><span class="keyword">int</span> lastIndex = list.size() - <span class="number">1</span>;</div><div class="line"><span class="keyword">return</span> list.get(lastIndex);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">deleteLast</span><span class="params">(Vector list)</span> </span>&#123;</div><div class="line"><span class="keyword">int</span> lastIndex = list.size() - <span class="number">1</span>;</div><div class="line">list.remove(lastIndex);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面两个方法都是针对于线程安全的<code>Vector</code>所做的，那么它们是线程安全的吗？答案是否定的。<br>比如在<code>getLast</code>方法中，如果线程A在执行完<code>int lastIndex = list.size() - 1;</code>之后恰巧有线程B也对这个Vector做了<code>deleteLast</code>操作，那么就可能引起<code>list.get</code>越界的情况。也就是说，所有针对同一个Vector的操作都应该是原子的。所以正确的做法应该是这样子的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getLast</span><span class="params">(Vector list)</span> </span>&#123;</div><div class="line"><span class="keyword">synchronized</span> (list) &#123;</div><div class="line"><span class="keyword">int</span> lastIndex = list.size() - <span class="number">1</span>;</div><div class="line"><span class="keyword">return</span> list.get(lastIndex); &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">deleteLast</span><span class="params">(Vector list)</span> </span>&#123;</div><div class="line"><span class="keyword">synchronized</span> (list) &#123;</div><div class="line"><span class="keyword">int</span> lastIndex = list.size() - <span class="number">1</span>;</div><div class="line">list.remove(lastIndex);</div><div class="line">          &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样通过给<code>Vector</code>加锁就确保了这些方法的操作是线程安全的。下面还有个很类似的问题：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; vector.size(); i++) &#123;</div><div class="line">    doSomething(vector.get(i));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里也是非线程安全的，因为不能保证在执行<code>vector.size()</code>和<code>vector.get(i)</code>之间不会有另外一个线程对<code>vector</code>做其它的操作。这个问题的解决思路和上面是一样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">synchronized</span>(vector) &#123;</div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; vector.size(); i++) &#123;</div><div class="line">doSomething(vector.get(i));</div><div class="line">     &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>加锁之后，就可以保证<code>vector.size()</code>和<code>vector.get(i)</code>的操作是原子的，中间不会有其它的线程会对<code>Vector</code>做响应的操作。</p>
+<h2 id="某个方法加了同步锁就一定是线程安全的吗？"><a href="#某个方法加了同步锁就一定是线程安全的吗？" class="headerlink" title="某个方法加了同步锁就一定是线程安全的吗？"></a>某个方法加了同步锁就一定是线程安全的吗？</h2><p>答案是否定的。因为<strong>加锁实现的互斥是基于锁的，多个线程必须使用同一把锁才可以实现互斥。</strong>，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@NotThreadSafe</span>   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListHelper</span>&lt;<span class="title">E</span>&gt; </span>&#123;</div><div class="line"><span class="keyword">public</span> List&lt;E&gt; list = Collections.synchronizedList(<span class="keyword">new</span> ArrayList&lt;E&gt;());</div><div class="line">...  <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">boolean</span> <span class="title">putIfAbsent</span><span class="params">(E x)</span> </span>&#123;</div><div class="line"><span class="keyword">boolean</span> absent = !list.contains(x); <span class="keyword">if</span>(absent)</div><div class="line">    list.add(x);</div><div class="line">    <span class="keyword">return</span> absent;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个<code>putIfAbsent</code>中的加锁并不能保证<code>ListHelper</code>的线程安全，因为这个锁是对象锁，锁住的是<code>ListHelper</code>，而并没有锁住真正需要锁的<code>list</code>上。客户端如果有多个线程同时对list做其它的操作，那么就不能保证线程的安全性。这时争取的做法是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ThreadSafe</span> </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListHelper</span>&lt;<span class="title">E</span>&gt; </span>&#123;</div><div class="line"><span class="keyword">public</span> List&lt;E&gt; list = Collections.synchronizedList(newArrayList&lt;E&gt;()); </div><div class="line">...<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">putIfAbsent</span><span class="params">(E x)</span> </span>&#123;</div><div class="line"><span class="keyword">synchronized</span> (list) &#123;</div><div class="line">    <span class="keyword">boolean</span> absent = !list.contains(x);</div><div class="line">       <span class="keyword">if</span> (absent) &#123;</div><div class="line">          list.add(x);</div><div class="line">         &#125;</div><div class="line">      <span class="keyword">return</span> absent;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样就保证了putIfAbsent的线程安全性。但是这种通过客户端加锁的方法不是很可靠，因为你不能确定客户端做怎样的操作，有时候会造成死锁。</p>
+<h2 id="最理想的并发是什么样的？"><a href="#最理想的并发是什么样的？" class="headerlink" title="最理想的并发是什么样的？"></a>最理想的并发是什么样的？</h2><p>   The best way to implement concurrency is to reduce the interactions and inter-dependencies between your concurrent tasks。实现并发最好的方式就是避免并发任务之间的交互和相互之间的依赖。</p>
+<h2 id="容易被忽略的线程安全问题"><a href="#容易被忽略的线程安全问题" class="headerlink" title="容易被忽略的线程安全问题"></a>容易被忽略的线程安全问题</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HiddenIterator</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>)</div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Integer&gt; set = <span class="keyword">new</span> HashSet&lt;Integer&gt;();</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Integer i)</span> </span>&#123;</div><div class="line">    set.add(i);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">(Integer i)</span> </span>&#123;</div><div class="line">    set.remove(i);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addTenThings</span><span class="params">()</span> </span>&#123;</div><div class="line">    Random r = <span class="keyword">new</span> Random()</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</div><div class="line">    add(r.nextInt());</div><div class="line">    System.out.println(<span class="string">"DEBUG: added ten elements to "</span> + set);</div><div class="line">&#125; &#125;</div></pre></td></tr></table></figure>
+<p>这里同样是非线程安全的，因为在执行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">System.out.println(<span class="string">"DEBUG: added ten elements to "</span> + set);</div></pre></td></tr></table></figure>
+<p>的时候，系统会默认调用<code>StringBuilder.append(Object)</code>方法，在这个方法里面会再次调用Object的<code>toString</code>方法，在这个<code>toString</code>方法内部将会调用迭代器方法并且生成相应的字符串（容器的hashCode和equals方法也有相似的问题）。所以这里是非线程安全的，可能会抛出<code>ConcurrentModificationException</code>方法。也就是说如果一个状态和保护这个状态的同步代码之间相隔越远，那么开发人员就越容易忘记在访问这个状态时使用正确的同步。这时如果将HashSet用<code>synchronizedSet</code>来封装一下，那么就不会忘记了。</p>
+<blockquote>
+<p>封装对象的状态有助于维持不变形条件；封装对象的同步机制有助于确保实施同步策略。</p>
+</blockquote>
+<h2 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h2><p><code>ConcurrentHashMap</code>的出现就是为了解决同步容器性能差的问题。在一些操作中，比如HashMap.get或者List.contains，可能会包含大量的工作，在执行这些大量工作的时间段内，其它的线程都是被阻塞的，这极大的影响了并发的性能。虽然<code>ConcurrentHashMap</code>和<code>HashMap</code>一样是基于散列的Map，但是它们使用不同的加锁策略来提供更高的并发性和伸缩性，从而使用一种粒度更细的加锁机制来实现更大程度的共享，这种机制成为分段锁（Lock Striping）。</p>
+<h2 id="什么是工作密取-work-stealing-方法，它有什么优点？"><a href="#什么是工作密取-work-stealing-方法，它有什么优点？" class="headerlink" title="什么是工作密取(work stealing)方法，它有什么优点？"></a>什么是工作密取(work stealing)方法，它有什么优点？</h2><p>在生产者-消费者模型中所有的消费者有一个共享的工作队列。工作密取的每个消费者都含有一个双端队列。如果一个消费者完成了自己工作队列中的所有问题，那么其它就可以从其它的队列<strong>末尾</strong>秘密的获取工作。密取的工作模式比传统的消费者-生产者模式具有更好的可伸缩性，因为工作者线程不会在单个共享的任务队列上发生竞争。在大多数情况下他们都只访问自己的双端队列，从而极大地减少了竞争。当工作者线程要访问另外一个工作者线程的队列时它将从队列的末尾获取工作，因此进一步降低了队列的竞争程度。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Notes/" rel="tag"># Notes</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/17/java-generic-details/" rel="next" title="Java泛型">
+                <i class="fa fa-chevron-left"></i> Java泛型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/01/chat-locks-of-ios/" rel="prev" title="IOS中锁">
+                IOS中锁 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="击水湘江" />
+          <p class="site-author-name" itemprop="name">击水湘江</p>
+           
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#复合的线程安全方法就一定是线程安全的吗？"><span class="nav-number">1.</span> <span class="nav-text">复合的线程安全方法就一定是线程安全的吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#某个方法的局部变量是不需要加锁的"><span class="nav-number">2.</span> <span class="nav-text">某个方法的局部变量是不需要加锁的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁的粒度该怎样控制"><span class="nav-number">3.</span> <span class="nav-text">锁的粒度该怎样控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加锁的意义"><span class="nav-number">4.</span> <span class="nav-text">加锁的意义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#可见性和原子性"><span class="nav-number">5.</span> <span class="nav-text">可见性和原子性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何正确地将对象发布出去以供其他对象使用"><span class="nav-number">6.</span> <span class="nav-text">如何正确地将对象发布出去以供其他对象使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象的可见性"><span class="nav-number">7.</span> <span class="nav-text">对象的可见性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不可变对象的线程安全性"><span class="nav-number">8.</span> <span class="nav-text">不可变对象的线程安全性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#哪些操作必须是原子的"><span class="nav-number">9.</span> <span class="nav-text">哪些操作必须是原子的?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程安全是有粒度的"><span class="nav-number">10.</span> <span class="nav-text">线程安全是有粒度的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如果某个类包含了一个线程安全的类，那么它不一定是线程安全，比如："><span class="nav-number">11.</span> <span class="nav-text">如果某个类包含了一个线程安全的类，那么它不一定是线程安全，比如：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#给线程安全的类添加线程安全的方法"><span class="nav-number">12.</span> <span class="nav-text">给线程安全的类添加线程安全的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#某个方法加了同步锁就一定是线程安全的吗？"><span class="nav-number">13.</span> <span class="nav-text">某个方法加了同步锁就一定是线程安全的吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最理想的并发是什么样的？"><span class="nav-number">14.</span> <span class="nav-text">最理想的并发是什么样的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#容易被忽略的线程安全问题"><span class="nav-number">15.</span> <span class="nav-text">容易被忽略的线程安全问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConcurrentHashMap"><span class="nav-number">16.</span> <span class="nav-text">ConcurrentHashMap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是工作密取-work-stealing-方法，它有什么优点？"><span class="nav-number">17.</span> <span class="nav-text">什么是工作密取(work stealing)方法，它有什么优点？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.1"></script>
+
+
+  
+
+</body>
+</html>
