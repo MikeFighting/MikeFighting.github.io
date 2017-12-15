@@ -307,6 +307,134 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/30/wwdc-understand-swift-performance/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/30/wwdc-understand-swift-performance/" itemprop="url">理解Swift的性能</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-30T13:26:43+08:00">
+                2017-07-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>草稿：</strong><br>本博客主要来源于WWDC2016-416，UnderStanding Swift Performance。<br>Swift性能指标：</p>
+<ol>
+<li>Stack VS Heap</li>
+<li>Reference Count</li>
+<li>Method Dispatch中Static多还是Dynamic多<br>栈上的操作更加高效，降低栈指针来创建，增加栈指针来释放栈。<br>堆上可以存放高级数据结构，但是堆的操作效率是更低的，因为每次开辟堆空间都需要寻找空闲的内存块。在消除的时候需要重新插入一个内存块。除此之外，Class等存在堆上的对象，需要开辟我们看不到的空间，这些空间是需要消耗内存的。<br>引用计数的不断操作会降低性能。所以要尽可能少的创建Class。<br>在Struct中包含Class是会降低性能的，我们要尽量减少这种情况的出现，比如在使用纯字符串的时候，我们可以使用Enum，或者其它的值类型来替代。<br>如果Struct中包含Class对象，那么在CopyStruct的时候也会拷贝其引用计数，包含的Class越多，就需要操作更多的retain和release方法方法。<br>Swift在调用一个函数的时候，我们需要跳到对应的方法实现。<br>Static 调度：如果在编译时期就可以确定某个方法的实现的话，就可以直接跳转到相应的方法的。并且是inline方法。既然静态调度这么好，为什么还需要Dynamic Dispatch呢？因为我们需要执行各种业务逻辑，需要根据具体的场景来决定究竟调用那个方法，我们需要使用多态。<br>对于类，那么编译器会增加一个指针来存储来指向那个类的Type信息，并且存到静态区。在执行函数调用时，编译器会到该类型对应的虚拟方法表（VTable）中找到相应的方法实现。将类标记为<code>final</code>时，其方法的调用将变为静态派发。在不需要动态派发的时候，我们应该尽量使用静态派发。</li>
+</ol>
+<p>怎样是用<code>Struct</code>写多态呢？Protocol类型的变量是怎样被存储，被拷贝，以及方法调度是怎样工作的呢？<br>Static Dispatches VS Dynamic Dispatch<br>Static方法：可以在编译时确定需要调用的方法实现，在运行时，可以直接调用并且可以做<code>inline</code>优化。<br>Dynamic方法：需要在运行时在表中找到对应的方法的实现。并且会妨碍inlining及其它的性能优化。当我们利用了多态之后，我们就难以确定这个方法究竟是调用那个方法，也就是说必须在运行时去确定到底要执行那个方法的实现。<br>Swift中Protocol Type的多态，由于没有继承，所以就没有了<code>V-Table</code>方式的调度。Swift使用了一种Protocol Witness Table的技术来调度Protocol Type的方法，这个表格的入口和该Type的实现先链接，因此找到这个表格就找到了方法的实现，那么我们怎样找到这个Table呢？，注意数组中的数值都有相同的offset，因此Swift使用Existential Container来封装protocol type，它的前三个字（两个字节称为一个字）是valueBuffer，小数据，例如两个word的Point可以存储，但是大于三个字时候，swift将会开辟一个堆空间，并且将这个控件的地址存储在Existential Container里面。<br>Swift让value Type，比如Strut和protocol一起获得了动态调度行为，实现了动态多态。<br>Copy on write：Swift自己提供了Copy on Write的机制，但是如果我们自己写了结构体，并且结构体比较重，还有其它的引用类型，在Copy结构体的时候，我们同时需要Copy这个对象，所以在Write的时候，我们需要判断这个引用类型的引用计数，然后做相应的改变。<br>因此Existential Container需要处理不同的数据类型，这是怎样实现的呢？这需要另外一个基于表的机制–Value Witness Table，程序中的每一个type都有一个这样的表，它包含以下几部分：<br>allocate:<br>copy:<br>destruct:<br>deallocate:<br>Whole Model优化可以让同一个模块中的不同文件都可以同时优化。<br>Type不会在运行时改变。</p>
+<p>Generics-Small Value<br>如果使用泛型，那么每次函数的调用就只能产生一个call context，并且call context中的类型是一定的，这里Swift不会使用Existential container，它可以直接传递value witness table和 protocol witness table</p>
+<ol>
+<li>没有比必要开辟堆空间，没有在堆上进行操作，所以不需要考虑线程安全，无需对线程进行加锁。</li>
+<li>没有引用计数，操作引用计数也需要是线程安全的，因为引用计数操作极其频繁，所以其性能消耗会逐渐增多，并且不是可以忽略的。</li>
+<li>通过Protocol Witness Table进行动态调度以实现多态<br>Generics-Large Value</li>
+<li>使用indirect storage 来开辟堆空间</li>
+<li>如果包含引用类型的话会有引用计数</li>
+<li>通过Protocol Witness Table进行动态调度实现多态</li>
+</ol>
+<p>总结：<br>尽可能少的使用dynamic runtime，选择合适的抽象。这样编译器可以做错误检查，并且可以做优化，提升代码执行速度。<br>Class类型：identity或者OOP类型的多态。<br>结构体&amp;枚举类型：值语义。<br>Protocol types：动态多态。<br>泛型和值语义相结合可以实现静态多态。<br>使用indirect Storage来处理大数值。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -377,7 +505,7 @@
           
             <h2 id="Sequences"><a href="#Sequences" class="headerlink" title="Sequences"></a>Sequences</h2><p><code>Sequence</code>协议位于系统架构的底层，其定义是<br>   <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>&#123;</div><div class="line">   </div><div class="line"> associatedtype <span class="type">Iterator</span>: <span class="type">IteratorProtocol</span></div><div class="line"> <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span>-&gt; <span class="type">Iterator</span></div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h2 id="Iterators"><a href="#Iterators" class="headerlink" title="Iterators"></a>Iterators</h2><pre><code><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">IteratorProtocol</span></span>&#123;</div><div class="line">associatedtype <span class="type">Element</span></div><div class="line"><span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span>-&gt; <span class="type">Element</span>?</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</div><div class="line">   <span class="keyword">let</span> string:<span class="type">String</span></div><div class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></div><div class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</div><div class="line">       <span class="keyword">self</span>.string = string</div><div class="line">       offset = string.startIndex</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></div><div class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String</span>? &#123;</div><div class="line"></div><div class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</div><div class="line">       offset = string.index(after: offset)</div><div class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</div><div class="line">       <span class="keyword">return</span> offSetString;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</div><div class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</div><div class="line">    <span class="built_in">print</span>(content)</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> string: <span class="type">String</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</div><div class="line">       </div><div class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</div><div class="line">       </div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"for in<span class="subst">\(<span class="keyword">prefix</span>)</span>"</span>)</div><div class="line">   &#125;</div><div class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</div></pre></td></tr></table></figure></p>
+</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</div><div class="line">   <span class="keyword">let</span> string:<span class="type">String</span></div><div class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></div><div class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</div><div class="line">       <span class="keyword">self</span>.string = string</div><div class="line">       offset = string.startIndex</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></div><div class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String</span>? &#123;</div><div class="line"></div><div class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</div><div class="line">       offset = string.index(after: offset)</div><div class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</div><div class="line">       <span class="keyword">return</span> offSetString;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</div><div class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</div><div class="line">    <span class="built_in">print</span>(content)</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> string: <span class="type">String</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</div><div class="line">       </div><div class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</div><div class="line">       </div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"for in\(prefix)"</span>)</div><div class="line">   &#125;</div><div class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</div></pre></td></tr></table></figure></p>
 <p>如上所示，我么要想对一个Type实现for in 操作，需要两步：</p>
 <ol>
 <li>创建一个遍历器：让其遵守<code>IteratorProtocol</code>协议</li>
@@ -973,7 +1101,7 @@ git push heroku master
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-count">35</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>

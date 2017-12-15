@@ -307,6 +307,158 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/13/server-side-json-model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/13/server-side-json-model/" itemprop="url">Vapor制作JSON Model</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-13T18:16:34+08:00">
+                2017-08-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>上篇博客中我们讲到了怎样配置数据库，以及怎样将数据库中的数据读出并且返回给客户端，本文将说明怎样将数据库中的数据用Model来表示，并且怎样对Model进行各种操作。</p>
+<h2 id="建立Class"><a href="#建立Class" class="headerlink" title="建立Class"></a>建立Class</h2><p>我们建立以个简单的<code>User</code>类，如下：</p>
+<pre><code class="Swift"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>{
+ <span class="keyword">var</span> id: <span class="type">String</span>
+    <span class="keyword">var</span> name: <span class="type">String</span>
+    <span class="keyword">var</span> age: <span class="type">Int</span>
+    <span class="keyword">var</span> gender: <span class="type">String</span>
+    <span class="keyword">var</span> imageUrl: <span class="type">String</span>
+    <span class="keyword">var</span> oatch: <span class="type">String</span>
+
+    <span class="keyword">init</span>(id: <span class="type">String</span>, name: <span class="type">String</span>, age:<span class="type">Int</span>, gender: <span class="type">String</span>, imageUrl: <span class="type">String</span>, oatch: <span class="type">String</span>) 
+    {
+
+        <span class="keyword">self</span>.id = id
+        <span class="keyword">self</span>.age = age
+        <span class="keyword">self</span>.name = name
+        <span class="keyword">self</span>.gender = gender
+        <span class="keyword">self</span>.imageUrl = imageUrl
+        <span class="keyword">self</span>.oatch = oatch
+    }
+}
+</code></pre>
+<h2 id="遵守NodeRepresentable和NodeRepresentable协议"><a href="#遵守NodeRepresentable和NodeRepresentable协议" class="headerlink" title="遵守NodeRepresentable和NodeRepresentable协议"></a>遵守NodeRepresentable和NodeRepresentable协议</h2><p>从之前返回JSON时，JSONS的生成过程<code>JSON(node:someNode)</code>，那么Node是什么呢？其实就是一个遵守<code>NodeRepresentable</code>的对象，我们让User遵守<code>NodeRepresentable</code>协议，兵且实现其<code>makeNode</code>方法，这样就可以传入<code>JSON(node:user)</code>了：</p>
+<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">makeNode</span><span class="params">(<span class="keyword">in</span> context: Context?)</span></span> <span class="keyword">throws</span> -&gt; <span class="type">Node</span> {
+
+        <span class="keyword">return</span> <span class="keyword">try</span> <span class="type">Node</span>(node:[
+            <span class="string">"id"</span>:id,
+            <span class="string">"name"</span>:name,
+            <span class="string">"age"</span>:age,
+            <span class="string">"gender"</span>:gender,
+            <span class="string">"imageUrl"</span>:imageUrl,
+            <span class="string">"oatch"</span>:oatch
+            ])
+    }
+</code></pre>
+<p>我们这样不调用<code>JSON</code>的方法，只使用我们的Model就可以创建出来JSON对象呢？我们只需要遵守<code>JSONRepresentable</code>对象即可，然后添加其需要实现的协议方法。</p>
+<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">makeJSON</span><span class="params">()</span></span> <span class="keyword">throws</span> -&gt; <span class="type">JSON</span> {
+    <span class="keyword">return</span> <span class="keyword">try</span> <span class="type">JSON</span>(node: <span class="keyword">self</span>)
+}
+</code></pre>
+<p>然后我们就可以使用<code>user.makeJSON()</code>来创建JSON对象了。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/11/vapor-prepare-data-base/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -588,7 +740,7 @@ Use `openssl rand -base64 32` to generate a random string.
                 <span class="keyword">throw</span> <span class="type">Abort</span>.badRequest
             }
             <span class="keyword">let</span> validInput = <span class="keyword">try</span> input.tested(by: <span class="type">OnlyAlphanumeric</span>())
-            <span class="keyword">return</span> <span class="string">"validated:<span class="subst">\(validInput)</span>"</span>
+            <span class="keyword">return</span> <span class="string">"validated:\(validInput)"</span>
 }
 </code></pre>
 <p>我们运行程序，然后在PostMan中输入<a href="http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：" target="_blank" rel="external">http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：</a></p>
@@ -602,7 +754,7 @@ Use `openssl rand -base64 32` to generate a random string.
                 <span class="keyword">throw</span> <span class="type">Abort</span>.badRequest
             }
             <span class="keyword">let</span> validaInput = <span class="keyword">try</span> input.tested(by: <span class="type">EmailValidator</span>())
-            <span class="keyword">return</span> <span class="string">"validated:<span class="subst">\(validaInput)</span>"</span>
+            <span class="keyword">return</span> <span class="string">"validated:\(validaInput)"</span>
     }
 </code></pre>
 <p>然后我们输入URL：<a href="http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：" target="_blank" rel="external">http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：</a></p>
@@ -661,7 +813,7 @@ Use `openssl rand -base64 32` to generate a random string.
 
     <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">validate</span><span class="params">(<span class="number">_</span> input: T)</span></span> <span class="keyword">throws</span> {
         <span class="keyword">guard</span> input == expectation <span class="keyword">else</span> {
-            <span class="keyword">throw</span> error(<span class="string">"<span class="subst">\(input)</span> does not equal expectation <span class="subst">\(expectation)</span>"</span>)
+            <span class="keyword">throw</span> error(<span class="string">"\(input) does not equal expectation \(expectation)"</span>)
         }
     }
 }
@@ -823,7 +975,7 @@ newLongDescription longDescription: <span class="type">String</span>) { ... }
 </code></pre>
 <p>这样我们的<code>Boards</code>类就遵守了<code>Pullable</code>协议，当我们来检查某个对象是否遵守了某个协议时，我们可以这样做：</p>
 <pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">performPull</span><span class="params">(object: Thing)</span></span> { <span class="keyword">if</span> <span class="keyword">let</span> pullableObject = object <span class="keyword">as</span> <span class="type">Pullable</span> { pullableObject.pull()    }<span class="keyword">else</span>{ 
-     <span class="built_in">print</span>(<span class="string">"You are not sure how to print a <span class="subst">\(object.name)</span>."</span>)
+     <span class="built_in">print</span>(<span class="string">"You are not sure how to print a \(object.name)."</span>)
    } 
 }
 </code></pre>
@@ -862,17 +1014,17 @@ newLongDescription longDescription: <span class="type">String</span>) { ... }
 <h2 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h2><p> 比如以下三个方法，其参数的形式是一样的，但是其参数类型不同，我们想把它变成一个函数，这时候我们最常想到的做法就是使用<code>Any</code>来表示任何类型的参数和任何类型的返回值。</p>
 <pre><code class="Swift"><span class="comment">// 之前的三个函数</span>
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: String)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
 }
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Int)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
 }
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Float)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
 } 
 <span class="comment">// 变为一个函数</span>
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Any)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
 }
 </code></pre>
 <p>但是这有个问题，在我们要调用返回值的某个方法时候编译器会报错，因为我们的返回值<code>Any</code>并没有所调用的方法，也就是说我们需要一次强转，强转在代码层面是很难看的，也很麻烦，这时候我们就可以使用泛型来解决这个问题，如果我们使用了泛型，那么编译器会将输入的参数和输出的参数给我们推断出来，这样就不必强转了。并且当编译器可以推断出来是那种type的时候它会给我们做各种优化。</p>
@@ -1648,7 +1800,7 @@ exportSession.timeRange = range;
 </code></pre>
 <p>这response可能是用户输入的,可能会输入不确定的数值<code>Do you konw?</code>那么肯定会得到错误的结果，在OC中遇到这种情况我们怎么处理呢？我们有如下的值可以表示错误：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-65ce6dec3ca6cade.png" alt="Wrong!"><br>但是你必须从不同的接口中去选择相应的错误类型，并且要记住这些错误类型。为了解决这个问题，Swift中引入了Optional的概念，将这种可能是nil的值进行打包。它可以表示上述所有错误的类型，同时，<strong>如果我们使用Optional，就一定要对它进行拆包，使用<code>!</code>号，如果不拆包会造成编译器错误</strong>，如下所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-03cea3691052ac9b.png" alt="Need Unwrap"><br><strong>也可以使用Optional Binding将判断是否有值和拆包结合在一起使用：<code>if let</code></strong>。</p>
 <pre><code class="Swift"><span class="keyword">var</span> neighbors = [<span class="string">"Alex"</span>, <span class="string">"Anna"</span>, <span class="string">"Madison"</span>, <span class="string">"Dave"</span>] <span class="keyword">let</span> index = findIndexOfString(<span class="string">"Anna"</span>, neighbors)  <span class="keyword">if</span> <span class="keyword">let</span> indexValue = index { 
-    <span class="built_in">println</span>(<span class="string">"Hello, <span class="subst">\(neighbors[indexValue])</span>"</span>)
+    <span class="built_in">println</span>(<span class="string">"Hello, \(neighbors[indexValue])"</span>)
 } <span class="keyword">else</span> {
     <span class="built_in">println</span>(<span class="string">"Must've moved away"</span>)
 }
@@ -1771,7 +1923,7 @@ clients.<span class="built_in">sort</span>({(a: <span class="type">String</span>
 <span class="type">HUNGRY</span>
 </code></pre>
 <p>我们还可以调用<code>reduce</code>方法将其和成一个字符串</p>
-<pre><code class="Swift"><span class="keyword">let</span> reducedResult = result.<span class="built_in">reduce</span>(<span class="string">"HULK"</span>){<span class="string">"<span class="subst">\($<span class="number">0</span>)</span> <span class="subst">\($<span class="number">1</span>)</span>"</span>}
+<pre><code class="Swift"><span class="keyword">let</span> reducedResult = result.<span class="built_in">reduce</span>(<span class="string">"HULK"</span>){<span class="string">"\($0) \($1)"</span>}
 </code></pre>
 <p>这时结果如下：</p>
 <pre><code class="Swift"><span class="type">HULK</span> <span class="type">ANGRY</span> <span class="type">HUNGRY</span>
@@ -1795,7 +1947,7 @@ numbers.<span class="built_in">map</span> (indexes.addIndex) <span class="commen
 <span class="function"><span class="keyword">func</span> <span class="title">logTemperatureDifferences</span><span class="params">(initial: Int)</span></span> {
     <span class="keyword">var</span> prev = initial
     onTemperatureChange = { next <span class="keyword">in</span>
-        <span class="built_in">println</span>(<span class="string">"Changed <span class="subst">\(next - prev)</span>°F"</span>)
+        <span class="built_in">println</span>(<span class="string">"Changed \(next - prev)°F"</span>)
 prev = next 
 }
 </code></pre>
@@ -1803,7 +1955,7 @@ prev = next
 <pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">logTemperatureDifferences</span><span class="params">(initial: Int)</span></span> {
     <span class="keyword">var</span> prev = initial
     <span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(next: Int)</span></span> {
-        <span class="built_in">println</span>(<span class="string">"Changed <span class="subst">\(next - prev)</span>°F"</span>)
+        <span class="built_in">println</span>(<span class="string">"Changed \(next - prev)°F"</span>)
 prev = next } 
     onTemperatureChange = log
 </code></pre>
@@ -1851,7 +2003,7 @@ currentTemp = temp    } <span class="comment">// error: requires explicit 'sel
   <span class="built_in">println</span>(<span class="string">"on time"</span>)
 <span class="keyword">case</span> .<span class="type">Delayed</span>(<span class="keyword">let</span> minutes)
                         :
-<span class="built_in">println</span>(<span class="string">"delayed by <span class="subst">\(minutes)</span> minutes"</span>)
+<span class="built_in">println</span>(<span class="string">"delayed by \(minutes) minutes"</span>)
 </code></pre>
 <p>我们可以对这个<code>delay</code>做各种各样的匹配：</p>
 <pre><code class="Swift"><span class="keyword">switch</span> trainStatus {
@@ -1898,9 +2050,9 @@ currentTemp = temp    } <span class="comment">// error: requires explicit 'sel
 <pre><code class="Swift"><span class="keyword">let</span> color = (<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>)
 <span class="keyword">switch</span> color {
   <span class="keyword">case</span> (<span class="number">0.0</span>, <span class="number">0.5</span>...<span class="number">1.0</span>, <span class="keyword">let</span> blue, <span class="number">_</span>):
-    <span class="built_in">println</span>(<span class="string">"Green and <span class="subst">\(blue * <span class="number">100</span>)</span>% blue"</span>)
+    <span class="built_in">println</span>(<span class="string">"Green and \(blue * 100)% blue"</span>)
   <span class="keyword">case</span> <span class="keyword">let</span> (r, g, b, <span class="number">1.0</span>) <span class="keyword">where</span> r == g &amp;&amp; g == b:
-    <span class="built_in">println</span>(<span class="string">"Opaque grey <span class="subst">\(r * <span class="number">100</span>)</span>%"</span>)
+    <span class="built_in">println</span>(<span class="string">"Opaque grey \(r * 100)%"</span>)
 </code></pre>
 <p>我们甚至可以对其中的各个数值做以相应的模式匹配。</p>
 <h3 id="Pattern-Matching的应用PList校验"><a href="#Pattern-Matching的应用PList校验" class="headerlink" title="Pattern Matching的应用PList校验"></a>Pattern Matching的应用PList校验</h3><p>比如我们有下面的方法来校验Plist中的内容是否有效</p>
@@ -2356,134 +2508,6 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/30/wwdc-understand-swift-performance/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/30/wwdc-understand-swift-performance/" itemprop="url">理解Swift的性能</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-30T13:26:43+08:00">
-                2017-07-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><strong>草稿：</strong><br>本博客主要来源于WWDC2016-416，UnderStanding Swift Performance。<br>Swift性能指标：</p>
-<ol>
-<li>Stack VS Heap</li>
-<li>Reference Count</li>
-<li>Method Dispatch中Static多还是Dynamic多<br>栈上的操作更加高效，降低栈指针来创建，增加栈指针来释放栈。<br>堆上可以存放高级数据结构，但是堆的操作效率是更低的，因为每次开辟堆空间都需要寻找空闲的内存块。在消除的时候需要重新插入一个内存块。除此之外，Class等存在堆上的对象，需要开辟我们看不到的空间，这些空间是需要消耗内存的。<br>引用计数的不断操作会降低性能。所以要尽可能少的创建Class。<br>在Struct中包含Class是会降低性能的，我们要尽量减少这种情况的出现，比如在使用纯字符串的时候，我们可以使用Enum，或者其它的值类型来替代。<br>如果Struct中包含Class对象，那么在CopyStruct的时候也会拷贝其引用计数，包含的Class越多，就需要操作更多的retain和release方法方法。<br>Swift在调用一个函数的时候，我们需要跳到对应的方法实现。<br>Static 调度：如果在编译时期就可以确定某个方法的实现的话，就可以直接跳转到相应的方法的。并且是inline方法。既然静态调度这么好，为什么还需要Dynamic Dispatch呢？因为我们需要执行各种业务逻辑，需要根据具体的场景来决定究竟调用那个方法，我们需要使用多态。<br>对于类，那么编译器会增加一个指针来存储来指向那个类的Type信息，并且存到静态区。在执行函数调用时，编译器会到该类型对应的虚拟方法表（VTable）中找到相应的方法实现。将类标记为<code>final</code>时，其方法的调用将变为静态派发。在不需要动态派发的时候，我们应该尽量使用静态派发。</li>
-</ol>
-<p>怎样是用<code>Struct</code>写多态呢？Protocol类型的变量是怎样被存储，被拷贝，以及方法调度是怎样工作的呢？<br>Static Dispatches VS Dynamic Dispatch<br>Static方法：可以在编译时确定需要调用的方法实现，在运行时，可以直接调用并且可以做<code>inline</code>优化。<br>Dynamic方法：需要在运行时在表中找到对应的方法的实现。并且会妨碍inlining及其它的性能优化。当我们利用了多态之后，我们就难以确定这个方法究竟是调用那个方法，也就是说必须在运行时去确定到底要执行那个方法的实现。<br>Swift中Protocol Type的多态，由于没有继承，所以就没有了<code>V-Table</code>方式的调度。Swift使用了一种Protocol Witness Table的技术来调度Protocol Type的方法，这个表格的入口和该Type的实现先链接，因此找到这个表格就找到了方法的实现，那么我们怎样找到这个Table呢？，注意数组中的数值都有相同的offset，因此Swift使用Existential Container来封装protocol type，它的前三个字（两个字节称为一个字）是valueBuffer，小数据，例如两个word的Point可以存储，但是大于三个字时候，swift将会开辟一个堆空间，并且将这个控件的地址存储在Existential Container里面。<br>Swift让value Type，比如Strut和protocol一起获得了动态调度行为，实现了动态多态。<br>Copy on write：Swift自己提供了Copy on Write的机制，但是如果我们自己写了结构体，并且结构体比较重，还有其它的引用类型，在Copy结构体的时候，我们同时需要Copy这个对象，所以在Write的时候，我们需要判断这个引用类型的引用计数，然后做相应的改变。<br>因此Existential Container需要处理不同的数据类型，这是怎样实现的呢？这需要另外一个基于表的机制–Value Witness Table，程序中的每一个type都有一个这样的表，它包含以下几部分：<br>allocate:<br>copy:<br>destruct:<br>deallocate:<br>Whole Model优化可以让同一个模块中的不同文件都可以同时优化。<br>Type不会在运行时改变。</p>
-<p>Generics-Small Value<br>如果使用泛型，那么每次函数的调用就只能产生一个call context，并且call context中的类型是一定的，这里Swift不会使用Existential container，它可以直接传递value witness table和 protocol witness table</p>
-<ol>
-<li>没有比必要开辟堆空间，没有在堆上进行操作，所以不需要考虑线程安全，无需对线程进行加锁。</li>
-<li>没有引用计数，操作引用计数也需要是线程安全的，因为引用计数操作极其频繁，所以其性能消耗会逐渐增多，并且不是可以忽略的。</li>
-<li>通过Protocol Witness Table进行动态调度以实现多态<br>Generics-Large Value</li>
-<li>使用indirect storage 来开辟堆空间</li>
-<li>如果包含引用类型的话会有引用计数</li>
-<li>通过Protocol Witness Table进行动态调度实现多态</li>
-</ol>
-<p>总结：<br>尽可能少的使用dynamic runtime，选择合适的抽象。这样编译器可以做错误检查，并且可以做优化，提升代码执行速度。<br>Class类型：identity或者OOP类型的多态。<br>结构体&amp;枚举类型：值语义。<br>Protocol types：动态多态。<br>泛型和值语义相结合可以实现静态多态。<br>使用indirect Storage来处理大数值。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2534,7 +2558,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-count">35</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>

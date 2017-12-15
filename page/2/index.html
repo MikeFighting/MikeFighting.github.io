@@ -307,6 +307,120 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/08/chat-uitableView/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/08/chat-uitableView/" itemprop="url">聊聊UITableView</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-08T14:18:29+08:00">
+                2017-09-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p><strong>在UITableViewCell展示过一次，第二次展示时会被复用。</strong>，系统自带的UITableview的复用方式，除了减少了内存消耗之外没有任何的好处。这种内存消耗的减少也是以产生一堆Cell复用的时带来的Bug作为代价的。</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/06/google-the-clean-code-talks-inheritance/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1366,14 +1480,14 @@ res = [mgr removeItemAtURL:src error:&amp;error];
             <h2 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h2><p>之所以要聊<code>DateFormatter</code>是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithMultipleInstantiation</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">    </div><div class="line">        <span class="keyword">var</span> dateStrings:[<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">            df.dateStyle = .medium</div><div class="line">            df.timeStyle = .full</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithSingleInstance</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">    </div><div class="line">        <span class="keyword">var</span> dateStrings: [<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">        df.dateStyle = .medium</div><div class="line">        df.timeStyle = .full</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))   </div><div class="line">        &#125;   </div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>然后我们调用这两个方法：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"testWithMultipleInstantiation--<span class="subst">\(testWithMultipleInstantiation()</span>)"</span>)</div><div class="line"><span class="built_in">print</span>(<span class="string">"testWithSingleInstance--<span class="subst">\(testWithSingleInstance()</span>)"</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"testWithMultipleInstantiation--\(testWithMultipleInstantiation())"</span>)</div><div class="line"><span class="built_in">print</span>(<span class="string">"testWithSingleInstance--\(testWithSingleInstance())"</span>)</div></pre></td></tr></table></figure>
 <p>打印结果是：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">testWithMultipleInstantiation--<span class="number">7.83139349098201</span></div><div class="line">testWithSingleInstance--<span class="number">0.742719032976311</span></div></pre></td></tr></table></figure>
 <p>从中可以明显看到创建<code>DateFormatter</code>是很消耗性能的，多次创建DateFormatter比单次创建大约要慢11倍。如果我们要用DateFormatter，那么尽量创建一次，然后多次使用。</p>
 <p>然后我们再做进一步的实验：创建一次<code>DateFormatter</code>，但是改变这个NSDateFormatter的<code>dateStyle</code>和<code>timeStyle</code>。</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithSingleInstanceChangeFormatter</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">        </div><div class="line">        <span class="keyword">var</span> dateStrings: [<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            </div><div class="line">            df.dateStyle = .medium</div><div class="line">            df.timeStyle = .full</div><div class="line">            df.dateStyle = .full</div><div class="line">            df.timeStyle = .medium</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
 <p>然后调用这个方法：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"ChangeFormatter--<span class="subst">\(testWithSingleInstanceChangeFormatter()</span>)"</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"ChangeFormatter--\(testWithSingleInstanceChangeFormatter())"</span>)</div></pre></td></tr></table></figure>
 <p>这时输出的结果是：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="type">ChangeFormatter</span>--<span class="number">5.77827541399165</span></div></pre></td></tr></table></figure>
 <p>从中我们可以看到，其对性能的消耗和多次创建DateFormatter相差并不多。最后我们得到这样一个结论：</p>
@@ -2766,158 +2880,6 @@ composedLayout.layout(<span class="keyword">in</span>: rect)
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/13/server-side-json-model/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/13/server-side-json-model/" itemprop="url">Vapor制作JSON Model</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-13T18:16:34+08:00">
-                2017-08-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>上篇博客中我们讲到了怎样配置数据库，以及怎样将数据库中的数据读出并且返回给客户端，本文将说明怎样将数据库中的数据用Model来表示，并且怎样对Model进行各种操作。</p>
-<h2 id="建立Class"><a href="#建立Class" class="headerlink" title="建立Class"></a>建立Class</h2><p>我们建立以个简单的<code>User</code>类，如下：</p>
-<pre><code class="Swift"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>{
- <span class="keyword">var</span> id: <span class="type">String</span>
-    <span class="keyword">var</span> name: <span class="type">String</span>
-    <span class="keyword">var</span> age: <span class="type">Int</span>
-    <span class="keyword">var</span> gender: <span class="type">String</span>
-    <span class="keyword">var</span> imageUrl: <span class="type">String</span>
-    <span class="keyword">var</span> oatch: <span class="type">String</span>
-
-    <span class="keyword">init</span>(id: <span class="type">String</span>, name: <span class="type">String</span>, age:<span class="type">Int</span>, gender: <span class="type">String</span>, imageUrl: <span class="type">String</span>, oatch: <span class="type">String</span>) 
-    {
-
-        <span class="keyword">self</span>.id = id
-        <span class="keyword">self</span>.age = age
-        <span class="keyword">self</span>.name = name
-        <span class="keyword">self</span>.gender = gender
-        <span class="keyword">self</span>.imageUrl = imageUrl
-        <span class="keyword">self</span>.oatch = oatch
-    }
-}
-</code></pre>
-<h2 id="遵守NodeRepresentable和NodeRepresentable协议"><a href="#遵守NodeRepresentable和NodeRepresentable协议" class="headerlink" title="遵守NodeRepresentable和NodeRepresentable协议"></a>遵守NodeRepresentable和NodeRepresentable协议</h2><p>从之前返回JSON时，JSONS的生成过程<code>JSON(node:someNode)</code>，那么Node是什么呢？其实就是一个遵守<code>NodeRepresentable</code>的对象，我们让User遵守<code>NodeRepresentable</code>协议，兵且实现其<code>makeNode</code>方法，这样就可以传入<code>JSON(node:user)</code>了：</p>
-<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">makeNode</span><span class="params">(<span class="keyword">in</span> context: Context?)</span></span> <span class="keyword">throws</span> -&gt; <span class="type">Node</span> {
-
-        <span class="keyword">return</span> <span class="keyword">try</span> <span class="type">Node</span>(node:[
-            <span class="string">"id"</span>:id,
-            <span class="string">"name"</span>:name,
-            <span class="string">"age"</span>:age,
-            <span class="string">"gender"</span>:gender,
-            <span class="string">"imageUrl"</span>:imageUrl,
-            <span class="string">"oatch"</span>:oatch
-            ])
-    }
-</code></pre>
-<p>我们这样不调用<code>JSON</code>的方法，只使用我们的Model就可以创建出来JSON对象呢？我们只需要遵守<code>JSONRepresentable</code>对象即可，然后添加其需要实现的协议方法。</p>
-<pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">makeJSON</span><span class="params">()</span></span> <span class="keyword">throws</span> -&gt; <span class="type">JSON</span> {
-    <span class="keyword">return</span> <span class="keyword">try</span> <span class="type">JSON</span>(node: <span class="keyword">self</span>)
-}
-</code></pre>
-<p>然后我们就可以使用<code>user.makeJSON()</code>来创建JSON对象了。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2968,7 +2930,7 @@ composedLayout.layout(<span class="keyword">in</span>: rect)
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-count">35</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>

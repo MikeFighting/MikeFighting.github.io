@@ -102,15 +102,15 @@
 <meta name="description" content="在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现顺序死锁。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现资源死锁。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样去避免死锁呢? 死锁我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。 死锁">
 <meta name="keywords" content="Note">
 <meta property="og:type" content="article">
-<meta property="og:title" content="活跃性，性能与测试(一)">
+<meta property="og:title" content="Java中的活跃性">
 <meta property="og:url" content="https://mikefighting.github.io/2017/12/12/note-java-concurrency-in-practice-2/index.html">
 <meta property="og:site_name" content="击水湘江">
 <meta property="og:description" content="在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现顺序死锁。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现资源死锁。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样去避免死锁呢? 死锁我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。 死锁">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-56118e0094e4a64d.png">
-<meta property="og:updated_time" content="2017-12-14T07:39:37.000Z">
+<meta property="og:updated_time" content="2017-12-14T07:45:32.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="活跃性，性能与测试(一)">
+<meta name="twitter:title" content="Java中的活跃性">
 <meta name="twitter:description" content="在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现顺序死锁。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现资源死锁。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样去避免死锁呢? 死锁我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。 死锁">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-56118e0094e4a64d.png">
 
@@ -146,7 +146,7 @@
 
 
 
-  <title>活跃性，性能与测试(一) | 击水湘江</title>
+  <title>Java中的活跃性 | 击水湘江</title>
   
 
 
@@ -326,7 +326,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">活跃性，性能与测试(一)</h1>
+          <h1 class="post-title" itemprop="name headline">Java中的活跃性</h1>
         
 
         <div class="post-meta">
@@ -454,6 +454,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2017/12/14/note-java-concurrency-in-practice-2-2/" rel="prev" title="Java并发编程-性能">
+                Java并发编程-性能 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -525,7 +529,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-count">35</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
