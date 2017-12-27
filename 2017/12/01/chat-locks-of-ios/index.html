@@ -99,18 +99,18 @@
 
 
 
-<meta name="description" content="IOS中锁的种类IOS中锁的基本用法各种锁的试用场景参考资料https://stackoverflow.com/questions/195853/spinlock-versus-semaphorehttps://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety">
+<meta name="description" content="关于IOS中的锁很多文章都曾谈过，也有很多基本的用法，比如：IOS中的各种锁,探讨IOS开发中各种锁,ibireme的不再安全的OSSpinLock，这里面对每种锁的用法和加解锁的时间都给出了说明，但是对每种锁的适用场景和在此场景下各种锁的优劣，都没有给予说明，导致我们虽然知道锁的基本用法，但是在选择的时候还是无从下手，本文就是为了解决这个问题的。 IOS中各种锁的试用场景OSSpinLock和d">
 <meta name="keywords" content="Objective-C">
 <meta property="og:type" content="article">
-<meta property="og:title" content="IOS中锁">
+<meta property="og:title" content="如何选择IOS中的锁？">
 <meta property="og:url" content="https://mikefighting.github.io/2017/12/01/chat-locks-of-ios/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="IOS中锁的种类IOS中锁的基本用法各种锁的试用场景参考资料https://stackoverflow.com/questions/195853/spinlock-versus-semaphorehttps://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety">
+<meta property="og:description" content="关于IOS中的锁很多文章都曾谈过，也有很多基本的用法，比如：IOS中的各种锁,探讨IOS开发中各种锁,ibireme的不再安全的OSSpinLock，这里面对每种锁的用法和加解锁的时间都给出了说明，但是对每种锁的适用场景和在此场景下各种锁的优劣，都没有给予说明，导致我们虽然知道锁的基本用法，但是在选择的时候还是无从下手，本文就是为了解决这个问题的。 IOS中各种锁的试用场景OSSpinLock和d">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-12-01T10:59:54.000Z">
+<meta property="og:updated_time" content="2017-12-27T06:11:10.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="IOS中锁">
-<meta name="twitter:description" content="IOS中锁的种类IOS中锁的基本用法各种锁的试用场景参考资料https://stackoverflow.com/questions/195853/spinlock-versus-semaphorehttps://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety">
+<meta name="twitter:title" content="如何选择IOS中的锁？">
+<meta name="twitter:description" content="关于IOS中的锁很多文章都曾谈过，也有很多基本的用法，比如：IOS中的各种锁,探讨IOS开发中各种锁,ibireme的不再安全的OSSpinLock，这里面对每种锁的用法和加解锁的时间都给出了说明，但是对每种锁的适用场景和在此场景下各种锁的优劣，都没有给予说明，导致我们虽然知道锁的基本用法，但是在选择的时候还是无从下手，本文就是为了解决这个问题的。 IOS中各种锁的试用场景OSSpinLock和d">
 
 
 
@@ -144,7 +144,7 @@
 
 
 
-  <title>IOS中锁 | 击水湘江</title>
+  <title>如何选择IOS中的锁？ | 击水湘江</title>
   
 
 
@@ -324,7 +324,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">IOS中锁</h1>
+          <h1 class="post-title" itemprop="name headline">如何选择IOS中的锁？</h1>
         
 
         <div class="post-meta">
@@ -371,7 +371,13 @@
       
 
       
-        <h2 id="IOS中锁的种类"><a href="#IOS中锁的种类" class="headerlink" title="IOS中锁的种类"></a>IOS中锁的种类</h2><h2 id="IOS中锁的基本用法"><a href="#IOS中锁的基本用法" class="headerlink" title="IOS中锁的基本用法"></a>IOS中锁的基本用法</h2><h2 id="各种锁的试用场景"><a href="#各种锁的试用场景" class="headerlink" title="各种锁的试用场景"></a>各种锁的试用场景</h2><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://stackoverflow.com/questions/195853/spinlock-versus-semaphore" target="_blank" rel="external">https://stackoverflow.com/questions/195853/spinlock-versus-semaphore</a><br><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1" target="_blank" rel="external">https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1</a></p>
+        <p>关于IOS中的锁很多文章都曾谈过，也有很多基本的用法，比如：<a href="http://www.cocoachina.com/ios/20161129/18216.html" target="_blank" rel="external">IOS中的各种锁</a>,<a href="https://www.jianshu.com/p/6773757a6cd5" target="_blank" rel="external">探讨IOS开发中各种锁</a>,<a href="https://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/" target="_blank" rel="external">ibireme的不再安全的OSSpinLock</a>，这里面对每种锁的用法和加解锁的时间都给出了说明，但是对每种锁的适用场景和在此场景下各种锁的优劣，都没有给予说明，导致我们虽然知道锁的基本用法，但是在选择的时候还是无从下手，本文就是为了解决这个问题的。</p>
+<h2 id="IOS中各种锁的试用场景"><a href="#IOS中各种锁的试用场景" class="headerlink" title="IOS中各种锁的试用场景"></a>IOS中各种锁的试用场景</h2><h3 id="OSSpinLock和dispatch-semaphore"><a href="#OSSpinLock和dispatch-semaphore" class="headerlink" title="OSSpinLock和dispatch_semaphore"></a>OSSpinLock和dispatch_semaphore</h3><p>从ibireme的测试中，我们知道自旋锁的加锁和解锁时间是最快的，为什么自旋锁会这么快呢？我们知道当多线程为了争夺一个锁，这时没有争到锁的线程可能会挂起，如果锁被释放了，那么其它被挂起的线程就会被重新唤醒来重新竞争锁。在线程被挂起和重新唤醒的过程中会发生上下文切换，上下文切换是很消耗性能的。如果说每次获取锁之后执行的任务时间很短，那么这些上下文切换造成的性能损耗就会很大。而OSSpinLock这种锁，不会让线程挂起，而是会让线程自旋，不断的去判断锁的状态，如果锁可用就去获得锁，如果不可用就会一直自旋。这样就没有了上下文切换造成的性能损耗，既然自旋锁的加锁开锁速度最快，那么是不是说所有涉及线程安全的地方都应该使用自旋锁呢？不是的。如果说加锁之后任务执行的时间很长，那么所有的没有得到锁的线程都在自循空等，那么就会造成CPU资源的浪费，这些浪费还会影响执行任务线程的执行。这时就可以考虑使用信号量来作为锁，信号量也是非常快的，但是它会让线程休眠而不是空旋，并且在现在比较智能的处理器上，如果使用信号量来加锁，那么它会先让各自的线程先自旋一段时间，如果这个时间之内，线程还没有获得锁，那么就让其休眠。</p>
+<blockquote>
+<p>如果任务执行的时间非常短（比如给对象的属性赋值），并且资源的竞争很激烈，那么最好使用OSSpinLock，否则使用dispatch_semaphore较好</p>
+</blockquote>
+<h3 id="NSCondition和NSConditionLock"><a href="#NSCondition和NSConditionLock" class="headerlink" title="NSCondition和NSConditionLock"></a>NSCondition和NSConditionLock</h3><p>条件锁是为了解决生产者消费者问题而产生的一类锁。也就是说在生产者消费者模式中，生产者的生产量达到了消费者可以消费的水平时就释放锁，否则就持有锁。消费者只有在生产者释放锁之后才可以进行消费，并且在消费完成之后就也释放对生产者的锁，然后生产者就可以重新进行生产。也就是说条件锁解决了多个相互关联任务之间的执行顺序问题。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="http://www.cocoachina.com/ios/20161129/18216.html" target="_blank" rel="external">http://www.cocoachina.com/ios/20161129/18216.html</a><br><a href="https://stackoverflow.com/questions/195853/spinlock-versus-semaphore" target="_blank" rel="external">https://stackoverflow.com/questions/195853/spinlock-versus-semaphore</a><br><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1" target="_blank" rel="external">https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1</a></p>
 
       
     </div>
@@ -499,7 +505,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-count">37</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -547,7 +553,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#IOS中锁的种类"><span class="nav-number">1.</span> <span class="nav-text">IOS中锁的种类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IOS中锁的基本用法"><span class="nav-number">2.</span> <span class="nav-text">IOS中锁的基本用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#各种锁的试用场景"><span class="nav-number">3.</span> <span class="nav-text">各种锁的试用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#IOS中各种锁的试用场景"><span class="nav-number">1.</span> <span class="nav-text">IOS中各种锁的试用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OSSpinLock和dispatch-semaphore"><span class="nav-number">1.1.</span> <span class="nav-text">OSSpinLock和dispatch_semaphore</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSCondition和NSConditionLock"><span class="nav-number">1.2.</span> <span class="nav-text">NSCondition和NSConditionLock</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">2.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>

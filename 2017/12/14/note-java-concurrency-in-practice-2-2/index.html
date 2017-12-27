@@ -108,7 +108,7 @@
 <meta property="og:description" content="并发的目的就是提高系统的性能和响应速度，但是这些都要建立在安全性的基础之上的，也就是说先要保证系统能够正常的运行，满足现有的业务需求，然后再考虑性能。并且在提升性能的同时往往会增加系统的复杂性，因为很多性能的优化需要牺牲掉代码的可理解性和面向对象的原则（同时可能会出现活跃性的问题），增加系统的维护成本，并且有时不会增加系统的性能反而会降低系统的性能。 多线程带来的开销多线程的引入会造成一些额外的开">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-d38318f874db2020.png">
-<meta property="og:updated_time" content="2017-12-15T05:08:33.000Z">
+<meta property="og:updated_time" content="2017-12-26T04:46:16.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java并发编程-性能">
 <meta name="twitter:description" content="并发的目的就是提高系统的性能和响应速度，但是这些都要建立在安全性的基础之上的，也就是说先要保证系统能够正常的运行，满足现有的业务需求，然后再考虑性能。并且在提升性能的同时往往会增加系统的复杂性，因为很多性能的优化需要牺牲掉代码的可理解性和面向对象的原则（同时可能会出现活跃性的问题），增加系统的维护成本，并且有时不会增加系统的性能反而会降低系统的性能。 多线程带来的开销多线程的引入会造成一些额外的开">
@@ -399,7 +399,15 @@
 <blockquote>
 <p>同步的开销要比new对象的开销少的得多。</p>
 </blockquote>
-<h2 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h2><p>锁竞争的过程中会发生上下文切换，越多的上下文切换将会造成越低的吞吐量。如果某个执行IO操作的线程被阻塞了，同时这个线程还持有一把锁，那么如果有越来越多的线程来请求这个锁，也将被阻塞而挂起，这就会增加上下文切换的次数。所以要尽量减少持有锁的时间来减少上下文切换。</p>
+<h2 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h2><p>上下文切换是什么？<br>锁竞争的过程中会发生上下文切换，越多的上下文切换将会造成越低的吞吐量。如果某个执行IO操作的线程被阻塞了，同时这个线程还持有一把锁，那么如果有越来越多的线程来请求这个锁，也将被阻塞而挂起，这就会增加上下文切换的次数。所以要尽量减少持有锁的时间来减少上下文切换。</p>
+<p>参考资料：</p>
+<ol>
+<li><p><a href="https://stackoverflow.com/questions/5440128/thread-context-switch-vs-process-context-switch" target="_blank" rel="external">线程上下文切换和进程上下文</a></p>
+</li>
+<li><p><a href="http://www.linfo.org/context_switch.html" target="_blank" rel="external">上下文切换的定义</a></p>
+</li>
+<li></li>
+</ol>
 
       
     </div>
@@ -451,6 +459,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/16/note-concurrency-in-practice-advance-3-0/" rel="prev" title="显式锁">
+                显式锁 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -523,7 +535,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-count">37</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>

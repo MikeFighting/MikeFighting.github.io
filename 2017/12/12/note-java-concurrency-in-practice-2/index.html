@@ -99,19 +99,19 @@
 
 
 
-<meta name="description" content="在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现顺序死锁。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现资源死锁。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样去避免死锁呢? 死锁我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。 死锁">
+<meta name="description" content="在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现顺序死锁。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现资源死锁。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样避免死锁呢? 死锁我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。 死锁之">
 <meta name="keywords" content="Note">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java中的活跃性">
 <meta property="og:url" content="https://mikefighting.github.io/2017/12/12/note-java-concurrency-in-practice-2/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现顺序死锁。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现资源死锁。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样去避免死锁呢? 死锁我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。 死锁">
+<meta property="og:description" content="在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现顺序死锁。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现资源死锁。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样避免死锁呢? 死锁我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。 死锁之">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-56118e0094e4a64d.png">
-<meta property="og:updated_time" content="2017-12-14T07:45:32.000Z">
+<meta property="og:updated_time" content="2017-12-17T00:30:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java中的活跃性">
-<meta name="twitter:description" content="在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现顺序死锁。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现资源死锁。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样去避免死锁呢? 死锁我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。 死锁">
+<meta name="twitter:description" content="在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现顺序死锁。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现资源死锁。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样避免死锁呢? 死锁我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。 死锁之">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-56118e0094e4a64d.png">
 
 
@@ -373,7 +373,7 @@
       
 
       
-        <p>在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现<strong>顺序死锁</strong>。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现<strong>资源死锁</strong>。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样去避免死锁呢?</p>
+        <p>在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现<strong>顺序死锁</strong>。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现<strong>资源死锁</strong>。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样避免死锁呢?</p>
 <h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><p>我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。</p>
 <h2 id="死锁之后的处理形式"><a href="#死锁之后的处理形式" class="headerlink" title="死锁之后的处理形式"></a>死锁之后的处理形式</h2><p>死锁之后该怎么处理分为两种方式，第一种方式就是什么都不做不了，应用程序将到此结束（也可能是某个子系统停止或者性能降低），直到重新启动，才会解除本次死锁。第二种方式就是干涉死锁。比如数据库操作在两个事务之间出现了死锁，那么数据库服务器会选择一个牺牲者并且放弃这个事务。作为牺牲者的事务将放弃它的所有资源，从而使其它事务继续进行。让后等待其它任务执行完成之后再去执行这个被牺牲了的任务。</p>
 <h2 id="顺序死锁"><a href="#顺序死锁" class="headerlink" title="顺序死锁"></a>顺序死锁</h2><p>如果有left和right两把锁，同时有A线程和B线程去访问，如果按照下面的顺序就可能造成死锁。</p>
@@ -391,6 +391,7 @@
 <blockquote>
 <p>在持有锁的过程中调用某个外部方法，那么将可能会出现活跃性的问题。</p>
 </blockquote>
+<h2 id="丢失信号死锁"><a href="#丢失信号死锁" class="headerlink" title="丢失信号死锁"></a>丢失信号死锁</h2><p>多线程访问某个资源，在有条件谓词作为前置条件，如果条件为假，那么我们会调用wait方法将线程阻塞。如果某个线程将条件变为了真，并且这个wait的线程没有收到这个信号。那么原来wait的线程将会永远等待下去，进而导致死锁。也就是说，线程A通知了一个条件队列，而线程B随后进入这个条件队列，但是线程B将被阻塞而不能执行，因为其需要等待另外一个通知的到来。</p>
 <h2 id="开放调用"><a href="#开放调用" class="headerlink" title="开放调用"></a>开放调用</h2><p>之所以出现上述协作对象之间发生的死锁，是因为在调用另外一个对象的方法的过程中，已经持有了一把锁。这种调用称作不开放，所谓的开放调用就是指：在调用某个方法的时候不需要持有锁。通常来说开放调用要比非开放调用更加安全，更加不容易产生死锁，所以我们要尽可能地使用开放调用。我们可以使用开放调用的方法来解决上述遇到的问题：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ThreadSafe</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Taxi</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>)</div><div class="line"><span class="keyword">private</span> Point location, destination; <span class="keyword">private</span> <span class="keyword">final</span> Dispatcher dispatcher;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> Point <span class="title">getLocation</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> location;</div><div class="line">    &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLocation</span><span class="params">(Point location)</span> </span>&#123;</div><div class="line">    <span class="keyword">boolean</span> reachedDestination; <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">    <span class="keyword">this</span>.location = location;</div><div class="line">    reachedDestination = location.equals(destination);</div><div class="line">&#125;</div><div class="line"><span class="keyword">if</span> (reachedDestination) &#123;</div><div class="line">    dispatcher .notifyAvailable (<span class="keyword">this</span> );</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@ThreadSafe</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dispatcher</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Taxi&gt; taxis;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Taxi&gt; availableTaxis;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">notifyAvailable</span><span class="params">(Taxi taxi)</span> </span>&#123;</div><div class="line">availableTaxis .add(taxi); &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> Image <span class="title">getImage</span><span class="params">()</span> </span>&#123;</div><div class="line">    Set&lt;Taxi&gt; copy;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">copy = <span class="keyword">new</span> HashSet&lt;Taxi&gt;(taxis);</div><div class="line">&#125;</div><div class="line">Image image = <span class="keyword">new</span> Image(); <span class="keyword">for</span> (Taxi t : copy)</div><div class="line">image.drawMarker(t.getLocation()); <span class="keyword">return</span> image;</div></pre></td></tr></table></figure>
 <p>这样就可以将多个锁区分开来，从而在多个对象调用的时候就不会死锁了。</p>
@@ -529,7 +530,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-count">37</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -577,7 +578,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁"><span class="nav-number">1.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁之后的处理形式"><span class="nav-number">2.</span> <span class="nav-text">死锁之后的处理形式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序死锁"><span class="nav-number">3.</span> <span class="nav-text">顺序死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态的锁顺序死锁"><span class="nav-number">4.</span> <span class="nav-text">动态的锁顺序死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#协作对象之间发生的死锁"><span class="nav-number">5.</span> <span class="nav-text">协作对象之间发生的死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开放调用"><span class="nav-number">6.</span> <span class="nav-text">开放调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#资源死锁"><span class="nav-number">7.</span> <span class="nav-text">资源死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#饥饿"><span class="nav-number">8.</span> <span class="nav-text">饥饿</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#活锁"><span class="nav-number">9.</span> <span class="nav-text">活锁</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁"><span class="nav-number">1.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁之后的处理形式"><span class="nav-number">2.</span> <span class="nav-text">死锁之后的处理形式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序死锁"><span class="nav-number">3.</span> <span class="nav-text">顺序死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态的锁顺序死锁"><span class="nav-number">4.</span> <span class="nav-text">动态的锁顺序死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#协作对象之间发生的死锁"><span class="nav-number">5.</span> <span class="nav-text">协作对象之间发生的死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#丢失信号死锁"><span class="nav-number">6.</span> <span class="nav-text">丢失信号死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开放调用"><span class="nav-number">7.</span> <span class="nav-text">开放调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#资源死锁"><span class="nav-number">8.</span> <span class="nav-text">资源死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#饥饿"><span class="nav-number">9.</span> <span class="nav-text">饥饿</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#活锁"><span class="nav-number">10.</span> <span class="nav-text">活锁</span></a></li></ol></div>
             
 
           </div>

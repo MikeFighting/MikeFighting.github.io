@@ -307,6 +307,314 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/10/java-detials/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/10/java-detials/" itemprop="url">可能被遗漏的Java细节</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-10T16:15:27+08:00">
+                2017-09-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Java中的类型转换"><a href="#Java中的类型转换" class="headerlink" title="Java中的类型转换"></a>Java中的类型转换</h3><h4 id="兼容的自动转换"><a href="#兼容的自动转换" class="headerlink" title="兼容的自动转换"></a>兼容的自动转换</h4><p>在编程中把一种类型的值赋给另一种类型的变量是合法的。如果这两种类型是兼容的，那么Java会自动对其进行类型转换。例如：把int类型的值赋给long类型的变量就可以。然而如果两种类型不兼容，那么就不会发生这种隐式的类型转换。例如，没有将double类型转化为byte类型的定义。这种不兼容的转化只能自己强制进行。<br>满足以下两个条件时，Java会自动给你进行类型转换：</p>
+<ul>
+<li>这两种类型是兼容的。</li>
+<li>目的类型的范围要比源类型的范围大。</li>
+</ul>
+<p>数字类型，包括整数和浮点类型都是彼此兼容的，但是，数字类型和字符类型（char）或布尔类型（bollean）是不兼容的。</p>
+<h4 id="不兼容的强制转换"><a href="#不兼容的强制转换" class="headerlink" title="不兼容的强制转换"></a>不兼容的强制转换</h4><p>虽然自动转换很好，但是它不能满足所有的需求。例如，你需要将一个int类型的变量付给一个byte类型的变量，你就需要使用(target-type)value这种转换了。下面演示将int转换为byte，如果整数超出了byte类型的取值范围，那么它的值将会因为对byte类型的值取%而减少。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> a;</div><div class="line"><span class="keyword">byte</span> b;</div><div class="line"><span class="comment">// ...</span></div><div class="line">b = (<span class="keyword">byte</span>)a;</div></pre></td></tr></table></figure>
+<p>当把浮点数转换为整数类型时会发生一种不同的转换：截断。你知道整数没有小数部分，当你把浮点数转化为整数的时候，其小数部分将会被舍弃。例如，如果将值1.23赋给一个整数，那么其结果是1，0.23被舍弃了。如果浮点数值太而不能适合目标整数类型，那么它的值将会因为对目标类型值域取模而减少。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"> <span class="comment">// Demonstrate casts.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Conversion</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">       <span class="keyword">byte</span> b;</div><div class="line">       <span class="keyword">int</span> i = <span class="number">257</span>;</div><div class="line">       <span class="keyword">double</span> d = <span class="number">323.142</span>;</div><div class="line">       System.out.println(<span class="string">"\nConversion of int to byte."</span>);</div><div class="line">       b = (<span class="keyword">byte</span>) i;</div><div class="line">       System.out.println(<span class="string">"i and b "</span> + i + <span class="string">" "</span> + b);</div><div class="line">       System.out.println(<span class="string">"\nConversion of double to int."</span>);</div><div class="line">       i = (<span class="keyword">int</span>) d;</div><div class="line">       System.out.println(<span class="string">"d and i "</span> + d + <span class="string">" "</span> + i);</div><div class="line">       System.out.println(<span class="string">"\nConversion of double to byte."</span>);</div><div class="line">       b = (<span class="keyword">byte</span>) d;</div><div class="line">       System.out.println(<span class="string">"d and b "</span> + d + <span class="string">" "</span> + b);</div><div class="line">&#125; &#125;</div></pre></td></tr></table></figure>
+<p>该程序的输出如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Conversion of <span class="keyword">int</span> to <span class="keyword">byte</span>.</div><div class="line">i and b <span class="number">257</span> <span class="number">1</span></div><div class="line">Conversion of <span class="keyword">double</span> to <span class="keyword">int</span>.</div><div class="line">d and i <span class="number">323.142</span> <span class="number">323</span></div><div class="line">Conversion of <span class="keyword">double</span> to <span class="keyword">byte</span>.</div><div class="line">d and b <span class="number">323.142</span> <span class="number">67</span></div></pre></td></tr></table></figure>
+<p>当值257被强制转换为byte变量时，其结果是257除以256(256是byte类型的变化范围)的余数。当把变量d转换为int类型时，它的小数部分被舍弃了。当吧变量d转换为byte类型时，它的小数部分被舍弃了，而且它的值减少为256的模，即67。</p>
+<h4 id="表达式中的类型提升"><a href="#表达式中的类型提升" class="headerlink" title="表达式中的类型提升"></a>表达式中的类型提升</h4><p>在表达式中，有时候中间值的精度会比较高，它有可能超过任何一个操作数的范围。例如，考虑下面的表达式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">byte</span> a = <span class="number">40</span>;</div><div class="line"><span class="keyword">byte</span> b = <span class="number">50</span>;</div><div class="line"><span class="keyword">byte</span> c = <span class="number">100</span>;</div><div class="line"><span class="keyword">int</span> d = a * b / c;</div></pre></td></tr></table></figure>
+<p>其中间结果<code>a*b</code>很容易超出它的任何一个byte型操作数的范围。为了处理这种问题，当分析表达式时，Java会自动提升各个byte或者short型的操作数为int型。这意味着表达式<code>a*b</code>是使用整数而不是字节型来运算的。这样，尽管变量a和b都被指定为byte型，50*40的中间表达式的结果2000是合法的。</p>
+<p>自动类型提升很好，但是有时候会引起令人疑惑的编译错误。例如，这个看起来正确的程序却会引起问题：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">byte</span> b = <span class="number">50</span>;</div><div class="line">b = b * <span class="number">2</span>; <span class="comment">// Error! Cannot assign an int to a byte!</span></div></pre></td></tr></table></figure>
+<p>这里看上去完全合法，但由于当表达式求值的时候，操作数被自动提升为了int型，所以需要强制转换才可以赋值（但是你必须考虑好溢出的情况）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">byte</span> b = <span class="number">50</span>;</div><div class="line">b = (<span class="keyword">byte</span>)(b * <span class="number">2</span>);</div></pre></td></tr></table></figure>
+<p>这样就不会有编译器错误了。</p>
+<h4 id="类型提升的约定"><a href="#类型提升的约定" class="headerlink" title="类型提升的约定"></a>类型提升的约定</h4><p>除了将byte型和short型提升到int型以外，Java还定义了其它的类型提升规则。如果一个操作数是long型，那么整个表达式将被提升到long型；如果一个操作数是float型，整个表达式将被提升到float型；如果一个操作数是double型，计算结构就是double型。我们用个例子来说明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Promote</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">       <span class="keyword">byte</span> b = <span class="number">42</span>;</div><div class="line">       <span class="keyword">char</span> c = <span class="string">'a'</span>;</div><div class="line">       <span class="keyword">short</span> s = <span class="number">1024</span>;</div><div class="line">       <span class="keyword">int</span> i = <span class="number">50000</span>;</div><div class="line">       <span class="keyword">float</span> f = <span class="number">5.67f</span>;</div><div class="line">       <span class="keyword">double</span> d = .<span class="number">1234</span>;</div><div class="line">       <span class="keyword">double</span> result = (f * b) + (i / c) - (d * s);</div><div class="line">       System.out.println((f * b) + <span class="string">" + "</span> + (i / c) + <span class="string">" - "</span> + (d * s));</div><div class="line">       System.out.println(<span class="string">"result = "</span> + result);</div><div class="line">&#125; &#125;</div></pre></td></tr></table></figure>
+<p>我们来分析：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">double</span> result = (f * b) + (i / c) - (d * s);</div></pre></td></tr></table></figure>
+<p>的类型提升过程，在第一个子表达式<code>f*b</code>中，变量b被 升为float类型，该子表达式的结果当然是float类型。 接下来，在子表达式i/c，中，变量c被 升为int类型，该子表达式的结果当然是int类型。然 后，子表达式<code>d*s</code>中的变量s被 升为double类型，该子表达式的结果当然也是double类型。 最后，考虑三个中间值，float类型，int类型，和double类型。float类型加int类型的结果是float 类型。然后float类型减去 升为double类型的double类型，该表达式的最后结果是double型。</p>
+<h3 id="Java中的break"><a href="#Java中的break" class="headerlink" title="Java中的break"></a>Java中的break</h3><p>Java中的break除了可以用来在switch或者循环中终止某个条件或者循环，还可以作为goto语句的一种形式来使用。Java中没有goto语句，因为goto让程序流程变得非结构化，可能让程序难以理解和维护，并且可以阻止某些编译器优化。但是，有些地方使用goto语句有助于流程控制，并且是合法的。例如，从嵌套很深的循环中退出来，goto语句就很有帮助。因此，Java定义了break语句的一种扩展形式来处理这种情况。通过给某个代码块加上标签，那么<strong>其内部的break语句</strong>就可以在某些情况下跳转到该标签。这个代码块不必非要是循环或者switch，它可以是任意的代码块。标签的指定如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Using break as a civilized form of goto.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Break</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">       <span class="keyword">boolean</span> t = <span class="keyword">true</span>;</div><div class="line">       first: &#123;</div><div class="line">         second: &#123;</div><div class="line">           third: &#123;</div><div class="line">            System.out.println(<span class="string">"Before the break."</span>);</div><div class="line">            <span class="keyword">if</span>(t) <span class="keyword">break</span> second; <span class="comment">// break out of second block</span></div><div class="line">            System.out.println(<span class="string">"This won't execute"</span>);</div><div class="line">&#125; </div><div class="line">           System.out.println(<span class="string">"This won't execute"</span>);</div><div class="line">         &#125;</div><div class="line">         System.out.println(<span class="string">"This is after second block."</span>);</div><div class="line">       &#125;</div><div class="line">&#125; &#125;</div></pre></td></tr></table></figure>
+<p>改程序的输出如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Before the <span class="built_in">break</span>.</div><div class="line">This is after second block.</div></pre></td></tr></table></figure>
+<p>这个示例中有三个嵌套的代码块，每一个都有它自己的标签。break语句使得循环往外层跳转，直接跳过了second标签的的代码块，直接执行了first标签的代码块。</p>
+<h3 id="Java中的方法重载"><a href="#Java中的方法重载" class="headerlink" title="Java中的方法重载"></a>Java中的方法重载</h3><p>方法重载就是说如果两个方法有相同的方法名字，但是其参数不同（参数个数不同或者参数类型不同），那么Java会根据调用时候不同的参数类型来匹配不同的方法来调用。然而有时候其类型匹配不是很精确：比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">  <span class="comment">// Automatic type conversions apply to overloading.</span></div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">OverloadDemo</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</div><div class="line">     System.out.println(<span class="string">"No parameters"</span>);</div><div class="line">    &#125; </div><div class="line">    <span class="comment">// Overload test for two integer parameters. </span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">int</span> a，<span class="keyword">int</span> b)</span> </span>&#123; </div><div class="line">      System.out.println(<span class="string">"a and b: "</span> + a + <span class="string">" "</span> + b);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// overload test for a double parameter</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">double</span> a)</span> </span>&#123;</div><div class="line">      System.out.println(<span class="string">"Inside test(double) a: "</span> + a);</div><div class="line">    &#125;</div><div class="line">&#125; </div><div class="line"> <span class="class"><span class="keyword">class</span> <span class="title">Overload</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">      OverloadDemo ob = <span class="keyword">new</span> OverloadDemo();</div><div class="line">      <span class="keyword">int</span> i = <span class="number">88</span>;</div><div class="line">      ob.test(); ob.test(<span class="number">10</span>，<span class="number">20</span>); </div><div class="line">      ob.test(i); <span class="comment">// this will invoke test(double)</span></div><div class="line">      ob.test(<span class="number">123.2</span>); <span class="comment">// this will invoke test(double)</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出结果是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">No parameters</div><div class="line">a and b: 10 20</div><div class="line">Inside <span class="built_in">test</span>(double) a: 88</div><div class="line">Inside <span class="built_in">test</span>(double) a: 123.2</div></pre></td></tr></table></figure>
+<p>这里，我们的<code>test(i)</code>中i是int型，但是在调用时，我们发现调用<code>test(double)</code>类型，这是因为在调用<code>test(int)</code>型的时候Java找不到相应的类型，所以就将int扩大为了double，然后就调用了<code>test(double)</code>，如果我们这里定义了一个<code>test(int)</code>，那么就会调用这个<code>test(int)</code>而不会将int扩大为double。</p>
+<h3 id="super关键字"><a href="#super关键字" class="headerlink" title="super关键字"></a>super关键字</h3><p>在继承中，super可以用来表示父类，可以调用父类特有的方法。还有一种应用情况是：它可以用来调用父类中被子类所隐藏的属性，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</div><div class="line"><span class="keyword">int</span> i; &#125; </div><div class="line">    <span class="comment">// Create a subclass by extending class A.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</div><div class="line">      <span class="keyword">int</span> i; <span class="comment">// this i hides the i in A</span></div><div class="line">      B(<span class="keyword">int</span> a, <span class="keyword">int</span> b) &#123;</div><div class="line">       <span class="keyword">super</span>.i = a; <span class="comment">// i in A</span></div><div class="line">       i = b; <span class="comment">// i in B</span></div><div class="line">&#125; </div><div class="line">      <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</div><div class="line">       System.out.println(<span class="string">"i in superclass: "</span> + <span class="keyword">super</span>.i);</div><div class="line">       System.out.println(<span class="string">"i in subclass: "</span> + i);</div><div class="line">&#125; &#125; </div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">UseSuper</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">       B subOb = <span class="keyword">new</span> B(<span class="number">1</span>, <span class="number">2</span>);</div><div class="line">       subOb.show();</div><div class="line">      &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该程序的输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">i <span class="keyword">in</span> superclass: 1</div><div class="line">i <span class="keyword">in</span> subclass: 2</div></pre></td></tr></table></figure>
+<p>尽管B中的实例变量i隐藏了A中的i，使用super就可以访问超类中定义的i。其实， super也可以用来调用超类中被子类隐藏的方法。 </p>
+<h3 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h3><p>在类的层次结构中，构造函数的调用顺序是从父类到子类。并且父类的构造方法的调用要放在子类构造方法的第一行中。如果子类中没有用到super()，那么每个父类默认的或者无参数的构造函数将执行。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Create a super class.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</div><div class="line">      A() &#123;</div><div class="line">       System.out.println(<span class="string">"Inside A's constructor."</span>);</div><div class="line">&#125; &#125; </div><div class="line">    <span class="comment">// Create a subclass by extending class A.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</div><div class="line">      B() &#123;</div><div class="line">       System.out.println(<span class="string">"Inside B's constructor."</span>);</div><div class="line">&#125; &#125; </div><div class="line">    <span class="comment">// Create another subclass by extending B.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">C</span> <span class="keyword">extends</span> <span class="title">B</span> </span>&#123;</div><div class="line">      C() &#123;</div><div class="line">       System.out.println(<span class="string">"Inside C's constructor."</span>);</div><div class="line">&#125; &#125; </div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">CallingCons</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">C c = <span class="keyword">new</span> C(); &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该程序的输出如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Inside A’s constructor</div><div class="line">Inside B’s constructor</div><div class="line">Inside C’s constructor</div></pre></td></tr></table></figure>
+<p>由此可见，构造函数以派生的顺序被调用。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/10/chat-computer-science-basic/" itemprop="url">计算机基础</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-10T10:10:40+08:00">
+                2017-09-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="补码"><a href="#补码" class="headerlink" title="补码"></a>补码</h3><p>我们先来看一个有趣的例子：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-f48d5ace81b3d0cb.png" alt="溢出128"></p>
+<p>在这里我们定义了一个<code>signed char</code>类型的数据，将其赋值为128，然后系统给我们一个警告，意思就是说它隐式地将数值给转换成了<strong>-128</strong>，这究竟是为什么呢？</p>
+<p>其实在计算机中数值都是以补码的形式存储的：</p>
+<blockquote>
+<p>正数的补码是其自身，负数的补码是其对应的正数的反码加1。</p>
+</blockquote>
+<p>我们先看一下-42在计算机中是如何表示的：<br>它是先将其对象的正数42，0010 1010然后取反1101 0101，然后再加1，得到1101 0110。</p>
+<p>我们知道signed char是占八位的。其存储范围是：0000 0000到1111 1111。那么128的补码还是128，其二进制表示为：1000 0000。但是这里有个问题，因为其类型是有符号的，所以最高位是符号位，也就是说这个数不能用来表示128了，那么它表示多少呢？我们就要看看它是谁的补码就是好了。我们先将<code>1000 0000</code>取反，然后的到<code>0111 1111</code>，加一得到<code>1000 0000</code>，再乘以-1,得到-128。如果不太明白，我我们可以将128变大，变成129：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-d236d51fa77178ad.png" alt="溢出129"></p>
+<p>129为整数，其补码是其自身，1000 0001，又因为其最高位是符号位，所以其表示的是一个负数，它表示多少呢？先将其取反<code>0111 1110</code>，然后+1得到<code>0111 1111</code>，这时127，最后乘以-1得到-127。</p>
+<h3 id="switch语句为什么比if-else快？"><a href="#switch语句为什么比if-else快？" class="headerlink" title="switch语句为什么比if else快？"></a>switch语句为什么比if else快？</h3><p>因为编译器在编译switch语句的时候会检查每个case常量，并且会创建出一个”跳转表”，这个表用来在表达式的基础上选择执行路径，其时间复杂度是O(1)，而if else的时间复杂度是O(n)，所以switch case要比if else快很多。</p>
+<h3 id="寄存器是什么？"><a href="#寄存器是什么？" class="headerlink" title="寄存器是什么？"></a>寄存器是什么？</h3><p>寄存器是一种存储信息的硬件，它和内存一样可以用来存储，但是和内存不同的是，它的速度极其快（比RAM的主存要快得多，它还有一些辅助功能，它常常被用做软件和外设之间通信的桥梁，起到缓冲的作用，同时CPU中寄存器速度非常快，这就让经常需要用到的数据放到寄存器中，而不需要每次都从主存中去读取，从而提高了程序的执行速度。软件将信息写入寄存器，然后外设将信息从寄存器中读出去。如果外设有信息需要软件进行处理，那么它也需要先将信息放到寄存器中，然后有软件从中读取。寄存器的主要功能包括：</p>
+<ul>
+<li>某些功能的配置和初始化，特别是在初始化阶段</li>
+<li>缓存存储</li>
+<li>不同种类的输入输出</li>
+<li>状态报告，比如某个硬件的状态发生了变化</li>
+</ul>
+<p>常见的寄存器包括：MAR(Memory Address Register)，这个寄存器主要用来存放下一条即将执行的指令，CPU根据MAR中指令的地址取出指令，然后放到MDR(Memory Data Register中，然后CIR(Current Instruction Regitster)将指令从MDR中拷贝一份。MBR(Memory Buffer Register)，用来存放要放入存储器的数据和从存储器中读出的数据。<a href="https://www.youtube.com/watch?time_continue=220&amp;v=TBADs7knuWM" target="_blank" rel="external">相关资料可以参考YouTube</a></p>
+<h3 id="CPU为什么需要三级缓存？"><a href="#CPU为什么需要三级缓存？" class="headerlink" title="CPU为什么需要三级缓存？"></a>CPU为什么需要三级缓存？</h3><p>CPU和内存的速度不匹配是计算机领域的一个重要问题，如果内存中采用和CPU中相同型号的寄存器，那么其代价又会太高，并且根据局部性原理，这种需求是没有必要的。存储器的<strong>价格，速度，容量</strong>是人们考虑的主要因素，但是它们之间也存在这制约因素：速度越快，价格就越高；容量越大，价格越高；容量越大，速度越低。根据局部性原理(Principle of Locality)我们的程序中常用的数据又基本都是固定的。所以就在CPU和内存之间采用了三级缓存（它内部存储的）来提高获取数据的速度，如果数据能在L1，L2，L3中找到的话就直接从中取，如果没有再从内存取，如果内存没有，再从外存取，这样就会提高获取数据的速度。<strong>这里要注意每个处理器都有其自己的缓存区，最后他们共享一块内存，这就会造成数据不一致的严重问题。</strong></p>
+<h3 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h3><p>在多任务执行的时候，上下文切换是指从一个线程或者进程切换到另外一个线程或者进程，这里的上下文是指：<strong>CPU寄存器和程序计数器中的内容。</strong>它的具体内容包含以下三个步骤：</p>
+<ol>
+<li>挂起当前进程，将当前的CPU状态保存至内存</li>
+<li>从内存中获取接下来将要执行进程的上下文，并且将其存入CPU寄存器中</li>
+<li>返回程序计数器指定的位置（例如进程被终止的点）并且继续执行进程</li>
+</ol>
+<p>这里的切换包含进程切换和线程切换两种情况，它们之间的相同点和不同点为：</p>
+<h4 id="一、进程切换"><a href="#一、进程切换" class="headerlink" title="一、进程切换"></a>一、进程切换<br></h4><p>虚拟内存空间不能保持相同；调用操作系统内核；寄存器内容的切入切出和内核操作的转移是最消耗性能的；</p>
+<h4 id="二、线程切换"><a href="#二、线程切换" class="headerlink" title="二、线程切换"></a>二、线程切换<br></h4><p>虚拟内存空间保持相同；调用操作系统内核；寄存器内容的切入切出和内核操作的转移是最消耗性能的；</p>
+<p>这其中还有一个隐含的性能消耗点是：处理器缓存系统的失效。在虚拟内存空间切换的过程中会导致处理器的Translation Lookaside Buffer (TLB) 失效，这会造成很大的内存损耗。造成上下文切换的原因有：进程自动让出其时间片，或者调度器给它分配的时间片到了，或者硬件发生了中断操作，加锁，或者其它的软件操作也会造成上下文切换。上下文切换很消耗大量的CPU时间造成较大的性能损耗。</p>
+<h3 id="什么是线程？"><a href="#什么是线程？" class="headerlink" title="什么是线程？"></a>什么是线程？</h3><p>线程是寄存器的一组状态，这组状态用来规定程序的执行顺序，执行地址，以及下条指令的地址。</p>
+<p>参考资料:</p>
+<ol>
+<li><p><a href="https://stackoverflow.com/questions/5440128/thread-context-switch-vs-process-context-switch" target="_blank" rel="external">线程上下文切换和进程上下文</a></p>
+</li>
+<li><p><a href="http://www.linfo.org/context_switch.html" target="_blank" rel="external">上下文切换的定义</a></p>
+</li>
+<li><p><a href="https://stackoverflow.com/questions/5201852/what-is-a-thread-really" target="_blank" rel="external">线程的定义</a></p>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/08/chat-uitableView/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1480,14 +1788,14 @@ res = [mgr removeItemAtURL:src error:&amp;error];
             <h2 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h2><p>之所以要聊<code>DateFormatter</code>是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithMultipleInstantiation</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">    </div><div class="line">        <span class="keyword">var</span> dateStrings:[<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">            df.dateStyle = .medium</div><div class="line">            df.timeStyle = .full</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithSingleInstance</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">    </div><div class="line">        <span class="keyword">var</span> dateStrings: [<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">        df.dateStyle = .medium</div><div class="line">        df.timeStyle = .full</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))   </div><div class="line">        &#125;   </div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>然后我们调用这两个方法：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"testWithMultipleInstantiation--\(testWithMultipleInstantiation())"</span>)</div><div class="line"><span class="built_in">print</span>(<span class="string">"testWithSingleInstance--\(testWithSingleInstance())"</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"testWithMultipleInstantiation--<span class="subst">\(testWithMultipleInstantiation()</span>)"</span>)</div><div class="line"><span class="built_in">print</span>(<span class="string">"testWithSingleInstance--<span class="subst">\(testWithSingleInstance()</span>)"</span>)</div></pre></td></tr></table></figure>
 <p>打印结果是：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">testWithMultipleInstantiation--<span class="number">7.83139349098201</span></div><div class="line">testWithSingleInstance--<span class="number">0.742719032976311</span></div></pre></td></tr></table></figure>
 <p>从中可以明显看到创建<code>DateFormatter</code>是很消耗性能的，多次创建DateFormatter比单次创建大约要慢11倍。如果我们要用DateFormatter，那么尽量创建一次，然后多次使用。</p>
 <p>然后我们再做进一步的实验：创建一次<code>DateFormatter</code>，但是改变这个NSDateFormatter的<code>dateStyle</code>和<code>timeStyle</code>。</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithSingleInstanceChangeFormatter</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">        </div><div class="line">        <span class="keyword">var</span> dateStrings: [<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            </div><div class="line">            df.dateStyle = .medium</div><div class="line">            df.timeStyle = .full</div><div class="line">            df.dateStyle = .full</div><div class="line">            df.timeStyle = .medium</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
 <p>然后调用这个方法：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"ChangeFormatter--\(testWithSingleInstanceChangeFormatter())"</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"ChangeFormatter--<span class="subst">\(testWithSingleInstanceChangeFormatter()</span>)"</span>)</div></pre></td></tr></table></figure>
 <p>这时输出的结果是：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="type">ChangeFormatter</span>--<span class="number">5.77827541399165</span></div></pre></td></tr></table></figure>
 <p>从中我们可以看到，其对性能的消耗和多次创建DateFormatter相差并不多。最后我们得到这样一个结论：</p>
@@ -2397,489 +2705,6 @@ create:@YES error:<span class="literal">nil</span>] URLByAppendingPathComponent:
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/23/sdwebimage-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/23/sdwebimage-1/" itemprop="url">从SDWebImage中学到的（二）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-23T09:52:09+08:00">
-                2017-08-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文是根据SDWebImage，Tag2.0到Tag2.6所做的总结。</p>
-<h2 id="注意判空"><a href="#注意判空" class="headerlink" title="注意判空"></a>注意判空</h2><p>为了安全起见，方法中每个参数的值的异常我们都需考虑到，我们要有一个guard，然后直接返回，否则在某些特殊情况下，比如这个参数是服务端返回的，某次服务端没有返回，就会崩溃，加了guard之后就不会了，在swift中加入了<code>guard</code>关键字来做：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div></pre></td><td class="code"><pre><div class="line"> <span class="keyword">guard</span> x &gt; <span class="number">0</span> <span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">// 变量不符合条件判断,则返回</span></div><div class="line">        <span class="keyword">return</span></div><div class="line">    &#125;</div><div class="line">```     </div><div class="line"></div><div class="line">因为在<span class="type">OC</span>中没有这样的判断，所以我们需要添加如下的代码：</div><div class="line">```objc </div><div class="line">  <span class="keyword">if</span> (!url)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">self</span>.image = <span class="literal">nil</span>;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">```   </div><div class="line"></div><div class="line">## 针对某个机型做接口适配</div><div class="line"></div><div class="line">如果某个机型的手机需要做一些特殊处理，我们可以这么做：</div><div class="line"></div><div class="line">```objc</div><div class="line"> #ifdef __IPHONE_4_0</div><div class="line"> <span class="type">UIDevice</span> *device = [<span class="type">UIDevice</span> currentDevice];</div><div class="line">        <span class="keyword">if</span> ([device respondsToSelector:@selector(isMultitaskingSupported)] &amp;&amp; device.multitaskingSupported)</div><div class="line">        &#123;</div><div class="line">            <span class="comment">// When in background, clean memory in order to have less chance to be killed</span></div><div class="line">            [[<span class="type">NSNotificationCenter</span> defaultCenter] addObserver:<span class="keyword">self</span></div><div class="line">                                                     selector:@selector(clearMemory)</div><div class="line">                                                         name:<span class="type">UIApplicationDidEnterBackgroundNotification</span></div><div class="line">                                                       object:<span class="literal">nil</span>];</div><div class="line">        &#125;</div><div class="line">#endif</div><div class="line">```   </div><div class="line"></div><div class="line">这样一来就只有iPhone4会执行里面的代码（__IPHONE_4_0是系统自带的宏）。</div><div class="line"></div><div class="line">## 多线程中如何使用`<span class="type">NSFileManager</span>`</div><div class="line"></div><div class="line">如果某个方法是在后台线程中执行的，并且这个线程中使用了`<span class="type">NSFileManager</span>`，为了避免资源竞争，需要使用`[[<span class="type">NSFileManager</span> alloc] <span class="keyword">init</span>]`的方式进行初始化：</div><div class="line"></div><div class="line">```objc</div><div class="line">  <span class="comment">// Can't use defaultManager another thread</span></div><div class="line">    <span class="type">NSFileManager</span> *fileManager = [[<span class="type">NSFileManager</span> alloc] <span class="keyword">init</span>];</div><div class="line">```   </div><div class="line"></div><div class="line">## 存储图片时候不改变其图片类型</div><div class="line"></div><div class="line">如果我们在存储图片的时候要存储成某种格式的图片类型，那么可以使用：</div><div class="line"></div><div class="line">```objc</div><div class="line"> [fileManager createFileAtPath:[<span class="keyword">self</span> cachePathForKey:key] contents:<span class="type">UIImageJPEGRepresentation</span>(image, (<span class="type">CGFloat</span>)<span class="number">1.0</span>) attributes:<span class="literal">nil</span>];</div><div class="line">```   </div><div class="line"></div><div class="line">如果我们不想改变存储时候的数据类型，那么可以使用：</div><div class="line"></div><div class="line">```objc</div><div class="line">   [fileManager createFileAtPath:[<span class="keyword">self</span> cachePathForKey:key] contents:data attributes:<span class="literal">nil</span>];</div><div class="line">```   </div><div class="line"></div><div class="line">来完成。</div><div class="line"></div><div class="line">## 在<span class="type">NSOperationQueue</span>中添加立即执行的任务</div><div class="line"></div><div class="line">如果要在<span class="type">NSOperationQueue</span>中添加要立即执行的任务，那么可以这样做：</div><div class="line"></div><div class="line">```objc</div><div class="line">[cacheOutQueue addOperation:[[[<span class="type">NSInvocationOperation</span> alloc] initWithTarget:<span class="keyword">self</span> selector:@selector(queryDiskCacheOperation:) object:arguments]</div><div class="line">```   </div><div class="line"></div><div class="line"></div><div class="line">## 头文件引入过多</div><div class="line"></div><div class="line">如果我们的头文件引入过多，那么我们需要将这些头文件都放到一个新的文件中去，然后引入那个单独的文件即可，比如<span class="type">SDWebImageCompat</span>文件的存在就是为了解决这个问题：</div><div class="line"></div><div class="line">```objc</div><div class="line">#<span class="keyword">import</span> &lt;TargetConditionals.h&gt;</div><div class="line">#<span class="keyword">if</span> !<span class="type">TARGET_OS_IPHONE</span></div><div class="line">#<span class="keyword">import</span> &lt;AppKit/AppKit.h&gt;</div><div class="line">#ifndef <span class="type">UIImage</span></div><div class="line">#define <span class="type">UIImage</span> <span class="type">NSImage</span></div><div class="line">#endif</div><div class="line">#ifndef <span class="type">UIImageView</span></div><div class="line">#define <span class="type">UIImageView</span> <span class="type">NSImageView</span></div><div class="line">#endif</div><div class="line">#<span class="keyword">else</span></div><div class="line">#<span class="keyword">import</span> &lt;UIKit/UIKit.h&gt;</div><div class="line">#endif</div></pre></td></tr></table></figure>
-<h2 id="从数组中找到指向同一块内存空间的指针"><a href="#从数组中找到指向同一块内存空间的指针" class="headerlink" title="从数组中找到指向同一块内存空间的指针"></a>从数组中找到指向同一块内存空间的指针</h2><p>如果要从数组中找到数值相同的指针，我们可以使用：</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line">    <span class="built_in">NSUInteger</span> idx = [cacheDelegates indexOfObjectIdenticalTo:delegate];</div><div class="line">    <span class="keyword">if</span> (idx == <span class="built_in">NSNotFound</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="comment">// Request has since been canceled</span></div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">```     </div><div class="line"></div><div class="line">这种形式，但是要注意没有找到时候的处理。</div><div class="line"></div><div class="line"><span class="meta">## UIImage的解压缩</span></div><div class="line"></div><div class="line">PNG和JPEG等只是一种图片压缩格式，PNG是无损压缩，含有alpha通道，JPEG是有损压缩，没有alpha通道。我们每次展示图片的时候都需要先将<span class="built_in">UIImage</span>进行解压缩。解压缩默认是在主线程中进行的，如果图片较大则会造成很大的性能消耗，如果在IO线程中进行则会提高性能，框架中使用的方式是：</div><div class="line"></div><div class="line">```objc</div><div class="line"><span class="built_in">CGImageRef</span> imageRef = image.CGImage;</div><div class="line"><span class="built_in">CGColorSpaceRef</span> colorSpace = <span class="built_in">CGColorSpaceCreateDeviceRGB</span>();</div><div class="line"><span class="built_in">CGContextRef</span> context = <span class="built_in">CGBitmapContextCreate</span>(<span class="literal">NULL</span>,</div><div class="line">                                                 <span class="built_in">CGImageGetWidth</span>(imageRef),</div><div class="line">                                                 <span class="built_in">CGImageGetHeight</span>(imageRef),</div><div class="line">                                                 <span class="number">8</span>,</div><div class="line">                                                 <span class="comment">// Just always return width * 4 will be enough</span></div><div class="line">                                                 <span class="built_in">CGImageGetWidth</span>(imageRef) * <span class="number">4</span>,</div><div class="line">                                                 <span class="comment">// System only supports RGB, set explicitly</span></div><div class="line">                                                 colorSpace,</div><div class="line">                                                 <span class="comment">// Makes system don't need to do extra conversion when displayed.</span></div><div class="line">                                                 kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little); </div><div class="line">    <span class="built_in">CGColorSpaceRelease</span>(colorSpace);</div><div class="line">    <span class="keyword">if</span> (!context) <span class="keyword">return</span> <span class="literal">nil</span>;</div><div class="line"></div><div class="line">    <span class="built_in">CGRect</span> rect = (<span class="built_in">CGRect</span>)&#123;<span class="built_in">CGPointZero</span>, <span class="built_in">CGImageGetWidth</span>(imageRef), <span class="built_in">CGImageGetHeight</span>(imageRef)&#125;;</div><div class="line">    <span class="built_in">CGContextDrawImage</span>(context, rect, imageRef);</div><div class="line">    <span class="built_in">CGImageRef</span> decompressedImageRef = <span class="built_in">CGBitmapContextCreateImage</span>(context);</div><div class="line">    <span class="built_in">CGContextRelease</span>(context);</div><div class="line"></div><div class="line">    <span class="built_in">UIImage</span> *decompressedImage = [[<span class="built_in">UIImage</span> alloc] initWithCGImage:decompressedImageRef];</div><div class="line">    <span class="built_in">CGImageRelease</span>(decompressedImageRef);</div><div class="line">    <span class="keyword">return</span> [decompressedImage autorelease];</div><div class="line">```     </div><div class="line"></div><div class="line">关于<span class="built_in">UIImage</span>的解压缩，可以参考相关文章：</div><div class="line">[怎样避免<span class="built_in">UIImage</span>解压缩造成的性能消耗？](https:<span class="comment">//www.cocoanetics.com/2011/10/avoiding-image-decompression-sickness/)，[IOS中的图片解压缩](http://blog.leichunfeng.com/blog/2017/02/20/talking-about-the-decompression-of-the-image-in-ios/)，[UIImage解压缩的两种形式](https://stackoverflow.com/questions/19682804/why-does-this-code-decompress-a-uiimage-so-much-better-than-the-naive-approach)，[谈谈IOS中图片的解压缩](http://blog.leichunfeng.com/blog/2017/02/20/talking-about-the-decompression-of-the-image-in-ios/)</span></div><div class="line"></div><div class="line"><span class="meta">## 怎样获取某个目录下的文件大小？</span></div><div class="line"></div><div class="line">```objc</div><div class="line">-(<span class="keyword">int</span>)getSize</div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> size = <span class="number">0</span>;</div><div class="line">    <span class="built_in">NSDirectoryEnumerator</span> *fileEnumerator = [[<span class="built_in">NSFileManager</span> defaultManager] enumeratorAtPath:diskCachePath];</div><div class="line">    <span class="keyword">for</span> (<span class="built_in">NSString</span> *fileName <span class="keyword">in</span> fileEnumerator)</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">NSString</span> *filePath = [diskCachePath stringByAppendingPathComponent:fileName];</div><div class="line">        <span class="built_in">NSDictionary</span> *attrs = [[<span class="built_in">NSFileManager</span> defaultManager] attributesOfItemAtPath:filePath error:<span class="literal">nil</span>];</div><div class="line">        size += [attrs fileSize];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> size;</div><div class="line">&#125; </div><div class="line">```  </div><div class="line"></div><div class="line"><span class="meta">## Struct初始化</span></div><div class="line"></div><div class="line">在某些情况下，Struct可以使用如下的方法进行初始化：</div><div class="line"></div><div class="line">```objc</div><div class="line"><span class="built_in">CGRect</span> rect = (<span class="built_in">CGRect</span>)&#123;<span class="built_in">CGPointZero</span>, &#123; <span class="built_in">CGImageGetWidth</span>(imageRef), <span class="built_in">CGImageGetHeight</span>(imageRef) &#125;&#125;;</div></pre></td></tr></table></figure>
-<h2 id="调用方法是需要注意"><a href="#调用方法是需要注意" class="headerlink" title="调用方法是需要注意"></a>调用方法是需要注意</h2><p>在某种特殊情况下，调用方法前要判断是否该对象具有某个方法，以免引起崩溃：</p>
-<pre><code class="objc">-    <span class="keyword">if</span> ([((<span class="built_in">NSHTTPURLResponse</span> *)response) statusCode] &gt;= <span class="number">400</span>)
-+    <span class="keyword">if</span> ([response respondsToSelector:<span class="keyword">@selector</span>(statusCode)] &amp;&amp; [((<span class="built_in">NSHTTPURLResponse</span> *)response) statusCode] &gt;= <span class="number">400</span>)
-</code></pre>
-<p>因为在上述代码中<code>response</code>可能不是HTTP的response。</p>
-<h2 id="ImageIO实现图片边下边展示效果"><a href="#ImageIO实现图片边下边展示效果" class="headerlink" title="ImageIO实现图片边下边展示效果"></a>ImageIO实现图片边下边展示效果</h2><p>实现渐下渐放效果是在<code>SDWebImageDownloader.m</code>文件的<code>- (void)connection:(NSURLConnection *)aConnection didReceiveData:(NSData *)data{}</code>方法中。其中的关键代码为：</p>
-<pre><code class="objc"> <span class="comment">/// Create the image</span>
-            <span class="built_in">CGImageRef</span> partialImageRef = <span class="built_in">CGImageSourceCreateImageAtIndex</span>(imageSource, <span class="number">0</span>, <span class="literal">NULL</span>);
-
-<span class="meta">#ifdef TARGET_OS_IPHONE</span>
-            <span class="comment">// Workaround for iOS anamorphic image</span>
-            <span class="keyword">if</span> (partialImageRef)
-            {
-                <span class="keyword">const</span> size_t partialHeight = <span class="built_in">CGImageGetHeight</span>(partialImageRef);
-                <span class="built_in">CGColorSpaceRef</span> colorSpace = <span class="built_in">CGColorSpaceCreateDeviceRGB</span>();
-                <span class="built_in">CGContextRef</span> bmContext = <span class="built_in">CGBitmapContextCreate</span>(<span class="literal">NULL</span>, width, height, <span class="number">8</span>, width * <span class="number">4</span>, colorSpace, kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedFirst);
-                <span class="built_in">CGColorSpaceRelease</span>(colorSpace);
-                <span class="keyword">if</span> (bmContext)
-                {
-                    <span class="built_in">CGContextDrawImage</span>(bmContext, (<span class="built_in">CGRect</span>){.origin.x = <span class="number">0.0</span>f, .origin.y = <span class="number">0.0</span>f, .size.width = width, .size.height = partialHeight}, partialImageRef);
-                    <span class="built_in">CGImageRelease</span>(partialImageRef);
-                    partialImageRef = <span class="built_in">CGBitmapContextCreateImage</span>(bmContext);
-                    <span class="built_in">CGContextRelease</span>(bmContext);
-                }
-                <span class="keyword">else</span>
-                {
-                    <span class="built_in">CGImageRelease</span>(partialImageRef);
-                    partialImageRef = <span class="literal">nil</span>;
-                }
-            }
-</code></pre>
-<p>然后根据<code>CGImageRef</code>生成对应的<code>UIImage</code>并且将结果返回给delegate：</p>
-<pre><code class="objc"><span class="built_in">UIImage</span> *image = [[<span class="built_in">UIImage</span> alloc] initWithCGImage:partialImageRef];
-[delegate imageDownloader:<span class="keyword">self</span> didUpdatePartialImage:image];
-</code></pre>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/14/wwdc-protocol-value-type-uikit/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/14/wwdc-protocol-value-type-uikit/" itemprop="url">怎样在UIKit中更好的使用ValueType</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-14T09:06:45+08:00">
-                2017-08-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="ValueType怎样用到UIView中？"><a href="#ValueType怎样用到UIView中？" class="headerlink" title="ValueType怎样用到UIView中？"></a>ValueType怎样用到UIView中？</h2><p><strong>如果两个类没有相同的父类，我们又想对它们写一个相同的逻辑</strong>，怎么办？我们可以让它们遵守同一个协议，该协议中有它们共有的属性，然后就可以复用了。这样我们就依赖Protocol而不是SuperClassl来建立一个多态。<br>分享代码不必使用继承了：<br>UIView的组合不是最优的，因为UIView的创建需要很长的时间，并且需要开辟堆空间，需要处理事件。</p>
-<p>我们接下来看看怎样利用ValueType将Layout和具体的类进行分开。因为我们可能会用<code>UIView</code>也可能用<code>SKNode</code>来做其ContentView。<br>按照之前的情况，我们可能这样写：  </p>
-<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">DecoratingLayoutCell</span> : <span class="title">UITableViewCell</span> </span>{
-   <span class="keyword">var</span> content: <span class="type">UIView</span>
-   <span class="keyword">var</span> decoration: <span class="type">UIView</span>
-   <span class="comment">// Perform layout...</span>
-}
-</code></pre>
-<p>为了将具体的Cell和其Layout分开，我们创建一个Struct：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">DecoratingLayout</span> </span>{
-   <span class="keyword">var</span> content: <span class="type">UIView</span>
-   <span class="keyword">var</span> decoration: <span class="type">UIView</span>   
-<span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">layout</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span> {
-   <span class="comment">// Perform layout...</span>
-   } 
-}
-</code></pre>
-<p>然后在Cell中我们就可以这样写：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">DreamCell</span> : <span class="title">UITableViewCell</span> </span>{
-   ...
-   <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">layoutSubviews</span><span class="params">()</span></span> {
-
-   <span class="keyword">var</span> decoratingLayout = <span class="type">DecoratingLayout</span>(content: content, decoration:decoration)
-   decoratingLayout.layout(<span class="keyword">in</span>:bounds)
-}
-</code></pre>
-<p>同时，我们可以对UIView也用同样的Layout（封装变化）。</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">DreamDetailView</span> : <span class="title">UIView</span> </span>{
-   ...
-   <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">layoutSubviews</span><span class="params">()</span></span> {
-      <span class="keyword">var</span> decoratingLayout = <span class="type">DecoratingLayout</span>(content: content, decoration:decoration)
-   decoratingLayout.layout(<span class="keyword">in</span>:bounds)
-} }
-</code></pre>
-<p>将Layout分开之后还非常有利于单元测试，比如我们想要测试我们的Layout创建出来的两个View是否符合我们的预期，我们可以这样：</p>
-<pre><code class="Swift"> <span class="keyword">let</span> child1 = <span class="type">UIView</span>()
-   <span class="keyword">let</span> child2 = <span class="type">UIView</span>()
-   <span class="keyword">var</span> layout = <span class="type">DecoratingLayout</span>(content: child1, decoration: child2)
-   layout.layout(<span class="keyword">in</span>: <span class="type">CGRect</span>(x: <span class="number">0</span>, y: <span class="number">0</span>, width: <span class="number">120</span>, height: <span class="number">40</span>))
-} 
-<span class="type">XCTAssertEqual</span>(child2.frame, <span class="type">CGRect</span>(x: <span class="number">0</span>, y: <span class="number">5</span>, width: <span class="number">35</span>, height: <span class="number">30</span>))
-<span class="type">XCTAssertEqual</span>(child2.frame, <span class="type">CGRect</span>(x: <span class="number">35</span>, y: <span class="number">5</span>, width: <span class="number">70</span>, height: <span class="number">30</span>))
-</code></pre>
-<p>因为我们的Layout代码量很小并且和其它代码是隔离的（没有继承，不是Reference Type），那么这样我们就可以很好的做局部分析。</p>
-<p>有一天，我们要对SKNode也做同样的操作。所以我们也需要<code>NodeDecoratingLayout</code>：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">ViewDecoratingLayout</span> </span>{
-   <span class="keyword">var</span> content: <span class="type">UIView</span>
-   <span class="keyword">var</span> decoration: <span class="type">UIView</span>   
-<span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">layout</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span> {
-   <span class="comment">// Perform layout...</span>
-   } 
-} 
-<span class="class"><span class="keyword">struct</span> <span class="title">NodeDecoratingLayout</span> </span>{
-   <span class="keyword">var</span> content: <span class="type">SKNode</span>
-   <span class="keyword">var</span> decoration: <span class="type">SKNode</span>   
-<span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">layout</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span> {
-   <span class="comment">// Perform layout...</span>
-   content.frame = ....
-   decoration.frame = ...
-   } 
-}
-</code></pre>
-<p>我们可以看到这和<code>VIewDecoratingLayout</code>是一样的。所以我们要将它封装起来，怎么封装？UIView和SKNode没有共同的父类。因为这两个结构体都有一个属性，那么我们就用一个Layout的<code>Protocol</code>来解决这个问题：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">protocol</span> <span class="title">Layout</span> </span>{
-   <span class="keyword">var</span> frame: <span class="type">CGRect</span> {<span class="keyword">get</span> <span class="keyword">set</span>}
-}
-<span class="class"><span class="keyword">struct</span> <span class="title">DecoratingLayout</span> </span>{
-   <span class="keyword">var</span> content: <span class="type">Layout</span>
-   <span class="keyword">var</span> decoration: <span class="type">Layout</span>
-   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">layout</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span> {
-      content.frame = ...
-      decoration.frame = ...
-   }
-}
-</code></pre>
-<p>然后为了让<code>UIView</code>和<code>SKNode</code>都是用这个<code>Layout</code>，我们只用<code>Protocol Extension</code>。</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">extension</span> <span class="title">UIView</span> : <span class="title">Layout</span></span>{}
-<span class="class"><span class="keyword">extension</span> <span class="title">SKNode</span> : <span class="title">Layout</span></span>{}
-</code></pre>
-<blockquote>
-<p>我们用Protocol和Extension实现了多态，而没有使用继承!</p>
-</blockquote>
-<p> 这样我们的Layout就不必依赖于UIKit了。</p>
-<p>但是上面的代码有一个Bug，我们不能保证<code>content</code>和<code>decoration</code>是相同的类型，他们可能一个是<code>UIView</code>，一个是<code>SKNode</code>。我们可以使用<strong>泛型</strong>来解决这个问题。我们可以给<code>DecoratingLayout</code>添加泛型：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">DecoratingLayout</span>&lt;<span class="title">Child</span>: <span class="title">Layout</span>&gt; </span>{
-   <span class="keyword">var</span> content: <span class="type">Child</span>
-   <span class="keyword">var</span> decoration: <span class="type">Child</span>
-   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">layout</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span> {
-      content.frame = ...
-      decoration.frame = ...
-   }
-}
-</code></pre>
-<p>这样我么就可以保证了，content和decoration有相同的类型。使用泛型，可以让编译器对代码有一个更好的理解，然后会对代码做很多的优化。</p>
-<p>但是如果出现了更加相似的布局，我们该怎样重用我们的代码呢？比如：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-c5236656635ca10c.png" alt="SimilarLayout"></p>
-<p>重用代码，我们最先想到的是继承，但是继承会造成Override及变量的变更，这样我们很难从子类中就明确的推断出代码的含义，那么我们用组合来做这个事情，面对上面的第二张图，我们通常的做法是，创建两个UIView：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-8a14f1f51e4c035c.png" alt="Composition"></p>
-<p>但是这样做有弊端的：类对象是很消耗性能的：开辟堆空间，内存管理，除此之外，UIView还有：绘制，事件处理。然而Struct是几乎不消耗性能，并且由于其实Value Type，所以它可以做更好的封装，你不需要关系别人对其进行修改。</p>
-<p>我们可以使用如下方式：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">CascadingLayout</span>&lt;<span class="title">Child</span> : <span class="title">Layout</span>&gt; </span>{
-   <span class="keyword">var</span> children: [<span class="type">Child</span>]
-   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">layout</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span> {
-... } 
-} 
-<span class="class"><span class="keyword">struct</span> <span class="title">DecoratingLayout</span>&lt;<span class="title">Child</span> : <span class="title">Layout</span>&gt; </span>{
-   <span class="keyword">var</span> content: <span class="type">Child</span>
-   <span class="keyword">var</span> decoration: <span class="type">Child</span>
-   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">layout</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span> {
-      content.frame = ...
-      decoration.frame = ...
-   }
-}
-</code></pre>
-<p>这两种方式组合，这里我们不需要<code>Layout</code>协议有frame属性，我们只需要其有<code>layout()</code>方法即可</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">protocol</span> <span class="title">Layout</span> </span>{
- <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">layout</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span>
-}
-</code></pre>
-<p>然后，我们的<code>DecoratingLayout</code>和<code>CascadingLayout</code>遵守该协议即可：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">DecoratingLayout</span>&lt;<span class="title">Child</span> : <span class="title">Layout</span>, ...&gt; : <span class="title">Layout</span> </span>{}
-<span class="class"><span class="keyword">struct</span> <span class="title">CascadingLayout</span>&lt;<span class="title">Child</span> : <span class="title">Layout</span>&gt; : <span class="title">Layout</span> </span>{}
-</code></pre>
-<p>这之后我们就可以用组合的方式实现上文提到的UI效果了：</p>
-<pre><code class="Swift"><span class="comment">// Composition of Values</span>
-<span class="keyword">let</span> decoration = <span class="type">CascadingLayout</span>(children: accessories)
-<span class="keyword">var</span> composedLayout = <span class="type">DecoratingLayout</span>(content: content, decoration: decoration)
-composedLayout.layout(<span class="keyword">in</span>: rect)
-</code></pre>
-<p>为了实现这种UIView的叠加效果，我们给Layout协议添加<code>contents</code>属性：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">protocol</span> <span class="title">Layout</span> </span>{
-  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">layout</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span>
-  <span class="keyword">var</span> contents:[<span class="type">Layout</span>]{<span class="keyword">get</span>}  <span class="comment">// 这里可以是UIView或者SKNode</span>
-}
-</code></pre>
-<p>但是这回出现和之前所说的一样的Bug，我们没有办法保证这个contents属性里是否既有UIView还有SKNode，为了解决这个问题，我们加上一个关联属性：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">protocol</span> <span class="title">Layout</span> </span>{
-  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">layout</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span>
-  associatedtype <span class="type">Content</span>
-  <span class="keyword">var</span> contents:[<span class="type">Content</span>]{<span class="keyword">get</span>}  <span class="comment">// 这里可以是UIView或者SKNode</span>
-}
-</code></pre>
-<p>然后在<code>DecoratingLayout</code>中，我们这样做：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">DecoratingLayout</span>&lt;<span class="title">Child</span> : <span class="title">Layout</span>&gt; : <span class="title">Layout</span> </span>{
-   ...
-   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">layout</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span>
-   <span class="keyword">typealias</span> <span class="type">Content</span> = <span class="type">Child</span>.<span class="type">Content</span>
-   <span class="keyword">var</span> contents: [<span class="type">Content</span>] { <span class="keyword">get</span> }
-</code></pre>
-<p>如果我们要对其中的内容做以限制，那么我们可以这样做：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">DecoratingLayout</span>&lt;<span class="title">Child</span>:<span class="title">Layout</span>, <span class="title">Decoration</span>:<span class="title">Layout</span> <span class="title">where</span> <span class="title">Child</span>.<span class="title">Content</span> == <span class="title">Decoration</span>.<span class="title">Content</span>&gt; : <span class="title">Layout</span> </span>{
-    <span class="keyword">var</span> content: <span class="type">Child</span>
-    <span class="keyword">var</span> decoration: <span class="type">Decoration</span>
-    <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">layout</span><span class="params">(<span class="keyword">in</span> rect: CGRect)</span></span>
-    <span class="keyword">typealias</span> <span class="type">Content</span> = <span class="type">Child</span>.<span class="type">Content</span>
-    <span class="keyword">var</span> contents: [<span class="type">Content</span>] { <span class="keyword">get</span> }
-}
-</code></pre>
-<p>这样我们的单元测试就不必依赖于具体的UIView或者是SKNode：</p>
-<pre><code class="Swift">  <span class="function"><span class="keyword">func</span> <span class="title">testLayout</span><span class="params">()</span></span> {
-   <span class="keyword">let</span> child1 = <span class="type">TestLayout</span>()
-   <span class="keyword">let</span> child2 = <span class="type">TestLayout</span>()
-   <span class="keyword">var</span> layout = <span class="type">DecoratingLayout</span>(content: child1, decoration: child2)
-   layout.layout(<span class="keyword">in</span>: <span class="type">CGRect</span>(x: <span class="number">0</span>, y: <span class="number">0</span>, width: <span class="number">120</span>, height: <span class="number">40</span>))
-   <span class="type">XCTAssertEqual</span>(layout.contents[<span class="number">0</span>].frame, <span class="type">CGRect</span>(x: <span class="number">0</span>, y: <span class="number">5</span>, width: <span class="number">35</span>, height: <span class="number">30</span>))
-   <span class="type">XCTAssertEqual</span>(layout.contents[<span class="number">1</span>].frame, <span class="type">CGRect</span>(x: <span class="number">35</span>, y: <span class="number">5</span>, width: <span class="number">70</span>, height: <span class="number">30</span>))
-}
-
-<span class="class"><span class="keyword">struct</span> <span class="title">TestLayout</span> : <span class="title">Layout</span> </span>{
-   <span class="keyword">var</span> frame: <span class="type">CGRect</span>
-   ...  
-}
-</code></pre>
-<h2 id="ValueType怎样用到Controller中"><a href="#ValueType怎样用到Controller中" class="headerlink" title="ValueType怎样用到Controller中"></a>ValueType怎样用到Controller中</h2><p>我们增加了Favoriate功能之后，我们的撤销功能消失了。为了隔离我们的Model，我们将其变为一个Struct，并且拥有之前的属性：</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">DreamListViewController</span> : <span class="title">UITableViewController</span> </span>{
-   <span class="keyword">var</span> model: <span class="type">Model</span>
-... 
-} 
-<span class="class"><span class="keyword">struct</span> <span class="title">Model</span> : <span class="title">Equatable</span> </span>{
-    <span class="keyword">var</span> dreams: [<span class="type">Dream</span>]
-    <span class="keyword">var</span> favoriteCreature: <span class="type">Creature</span>
-}
-</code></pre>
-<p>然后将Model和View隔离的做法极其容易出bug，因为我们的Model的任何改变都要对应相应View的位置。<br>我们可以将其合并起来：</p>
-<pre><code class="Swift"><span class="comment">/// Diffs the model changes and updates the UI based on the new model.</span>
-    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">modelDidChange</span><span class="params">(diff: Model.Diff)</span></span> {
-        <span class="comment">// Check to see if we need to update any rows that present a dream.</span>
-        <span class="keyword">if</span> diff.hasAnyDreamChanges {
-            <span class="keyword">switch</span> diff.dreamChange {
-                <span class="keyword">case</span> .inserted?:
-                    <span class="keyword">let</span> indexPath = <span class="type">IndexPath</span>(row: diff.from.dreams.<span class="built_in">count</span>, section: <span class="type">Section</span>.dreams.rawValue)
-                    tableView.insertRows(at: [indexPath], with: .automatic)
-
-                <span class="keyword">case</span> .removed?:
-                    <span class="keyword">let</span> indexPath = <span class="type">IndexPath</span>(row: diff.from.dreams.<span class="built_in">count</span> - <span class="number">1</span>, section: <span class="type">Section</span>.dreams.rawValue)
-                    tableView.deleteRows(at: [indexPath], with: .automatic)
-
-                <span class="keyword">case</span> .updated(<span class="keyword">let</span> indexes)?:
-                    <span class="keyword">let</span> indexPaths = indexes.<span class="built_in">map</span> { <span class="type">IndexPath</span>(row: $<span class="number">0</span>, section: <span class="type">Section</span>.dreams.rawValue) }
-                    tableView.reloadRows(at: indexPaths, with: .automatic)
-
-                <span class="keyword">case</span> <span class="literal">nil</span>: <span class="keyword">break</span>
-            }
-        }
-</code></pre>
-<p>如果我们的UI有各种状态，并且我们要处理这种状态，这时，该怎样处理才比较好呢？比如我们的这个App中有:展示、选择、分享三种状态。这时如果遇到状态的切换就会遇到问题，因为Cell是复用的，所以就会出现忘记清除前一种Cell的状态而引起的Bug。<br>这种情况出现的原因就是我们的ViewController持有了这些不同的状态，如果状态逐渐变多，那么就会有非常复杂的业务逻辑需要处理。</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">class</span> <span class="title">DreamListViewController</span> : <span class="title">UITableViewController</span> </span>{
-    <span class="keyword">var</span> isInViewingMode: <span class="type">Bool</span>
-    <span class="keyword">var</span> sharingDreams: [<span class="type">Dream</span>]?
-    <span class="keyword">var</span> selectedRows: <span class="type">IndexSet</span>?
-    ... 
-}
-</code></pre>
-<p>因为UI只能出现一种状态，所以每次我们切换状态，我们就需要给其它的两种状态进行置空，这时就很容易引起Bug，为了解决这个问题，我们可以使用<code>Enum</code>来讲这些状态进行封装。</p>
-<pre><code class="Swift"><span class="class"><span class="keyword">enum</span> <span class="title">State</span> </span>{
-    <span class="keyword">case</span> viewing
-    <span class="keyword">case</span> sharing(dreams:[<span class="type">Dream</span>])
-    <span class="keyword">case</span> selecting(selectedRows: <span class="type">IndexSet</span>)
-}
-</code></pre>
-<p>这样我们就可以避免因为状态转换而产生的Bug了。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2930,7 +2755,7 @@ composedLayout.layout(<span class="keyword">in</span>: rect)
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-count">37</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>

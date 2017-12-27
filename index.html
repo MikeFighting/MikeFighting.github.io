@@ -307,6 +307,259 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/12/20/note-concurrency-jmm-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/20/note-concurrency-jmm-0/" itemprop="url">Java内存模型</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-20T10:22:33+08:00">
+                2017-12-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="JVM不能保证64位的long型和double型具有顺序一致性"><a href="#JVM不能保证64位的long型和double型具有顺序一致性" class="headerlink" title="JVM不能保证64位的long型和double型具有顺序一致性"></a>JVM不能保证64位的long型和double型具有顺序一致性</h2><p>CPU和内存中的通信是通过总线进行的，如果有多个CPU同时请求总线进行读/写总线事务的话，会由总线仲裁（Bus Arbitration）进行裁决，然后获胜的CPU才可以进行数据传递。并且在某个CPU占用了总线之后，其它CPU要请求总线仲裁是要被拒的。这种机制就保证了CPU对内存的访问是以串行的方式进行的。如果有一个32位的处理器，但是要进行64位的写数据操作，这时CPU会将数据分为两个32位的写操作，并且这两个32位数据在请求总线仲裁的时候可能被分配到了不同的总线事务中，所以此时这个64位的写操作就不具有原子性了。这时如果处理器A写入了高32位，在写入低32位期间，处理器B对该数据进行了访问，那么就会产生错误的数据。（Java5之前读写都可以被拆分，Java5之后写操作可以被拆分，但是读操作必须是原子的）。</p>
+<h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><h3 id="volatile对变量读写的影响"><a href="#volatile对变量读写的影响" class="headerlink" title="volatile对变量读写的影响"></a>volatile对变量读写的影响</h3><p>某个变量如果被声明为volatile，那么对它的读操作和写操作就具有原子性，但是如果是复合操作，那么就不具有原子性，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">VolatileFeaturesExample</span> </span>&#123;</div><div class="line">    <span class="keyword">volatile</span> <span class="keyword">long</span> v1 = <span class="number">0L</span>;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(<span class="keyword">long</span> l)</span></span>&#123;</div><div class="line">        v1 = l;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">get</span><span class="params">()</span></span>&#123;</div><div class="line">        returen v1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAndIncrement</span><span class="params">()</span></span>&#123;</div><div class="line">        v1 ++;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在这里set和get方法的语义和加了锁是一样的，其中getAndIncrement其实可以分为以下三个部分：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAndIncrement</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">long</span> tempt = get();</div><div class="line">    temp += <span class="number">1L</span>;</div><div class="line">    set(tempt);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这其中get和set方法是加锁的，但是<code>tempt += 1L;</code>就不具有原子性了，也就是说volatile让单个读和写操作具有原子性，但是对于复合操作是没有原子性的。</p>
+<h3 id="volatile变量读写的内存语义"><a href="#volatile变量读写的内存语义" class="headerlink" title="volatile变量读写的内存语义"></a>volatile变量读写的内存语义</h3><blockquote>
+<p>对volatile变量执行写操作，会将线程的本地内存值刷新到主存中；对volatile变量执行度操作，会将变量所在线程的本地内存置为无效，线程然后会从主内存中读取该volatile变量。</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/12/16/note-concurrency-in-practice-advance-3-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/16/note-concurrency-in-practice-advance-3-0/" itemprop="url">显式锁</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-16T10:59:57+08:00">
+                2017-12-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="内置锁和显示锁"><a href="#内置锁和显示锁" class="headerlink" title="内置锁和显示锁"></a>内置锁和显示锁</h2><p>在Java5中<code>ReentrantLock</code>相比内置锁有很大的性能提升，但是在Java6中内置锁的性能有了很大的提升，他们的性能相差不大。并且由于<code>synchronized</code>是JVM的内置属性，所以它在未来可以进行更深层次的优化。<br>内置锁相比显式锁拥有以下的优势：</p>
+<ul>
+<li>结构更加紧凑</li>
+<li>使用内置锁不用手动进行解锁，所以具有更低的危险性</li>
+<li>在线程转储(thread dumps)过程中能给出哪些帧获取了哪些锁(<code>ReentrantLock</code>在Java6之后也支持)</li>
+<li>可以检测和识别反生死锁的线程</li>
+</ul>
+<blockquote>
+<p>当使用某些内置锁不能满足的高级功能时，比如：可定时的，可轮询的，可中断的锁，公平队列，以及非结构的锁时。则需要考虑使用<code>ReentrantLock</code>。</p>
+</blockquote>
+<h2 id="公平锁和非公平锁"><a href="#公平锁和非公平锁" class="headerlink" title="公平锁和非公平锁"></a>公平锁和非公平锁</h2><p>公平锁就是说每个请求锁的线程按照先到先得的顺序获得锁，后到的线程在它前一个线程没有释放锁时是不能获取锁的，没有获取的锁的线程就被放到队列里挂起。非公平锁就是说每个请求锁的线程，如果发现该锁没有被占用就去请求锁，而不管其前面有没有线程在等待，这将提升吞吐量。由于线程的挂起和重新唤醒，线程的调度会带来很大的性能损耗，所以，如果请求锁的平均时间间隔非常短，那么最好使用非公平锁。反之，如果持有锁的时间较长，或者请求锁的时间间隔较长，那么性能的瓶颈就不在切换线程上了，这时就应该使用公平锁，使用非公平锁”插队”的方式所带来吞吐量的提升将会是非常微弱的。内置锁和<code>ReentrantLock</code>都没有提供确定的公平性保证，因为一般来说实现总体的公平性已经足够了。</p>
+<h2 id="条件队列"><a href="#条件队列" class="headerlink" title="条件队列"></a>条件队列</h2><p>首先为什么会出现条件队列呢？我们知道要保证某个多线程的方法被调用成功可以使用线程休眠的方式，但是这种方式会有问题：如果休眠的时间过短，那么会导致CPU的资源消耗过高，如果休眠的时间很长，这时如果其它某个线程修改了判断条件，这时休眠的线程不能及时响应，只有在休眠之后才会响应。比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ThreadSafe</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SleepyBoundedBuffer</span>&lt;<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">BaseBoundedBuffer</span>&lt;<span class="title">V</span>&gt; </span>&#123;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">SleepyBoundedBuffer</span><span class="params">(<span class="keyword">int</span> size)</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>(size);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(V v)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">        <span class="keyword">if</span> (!isFull()) &#123;</div><div class="line">            doPut(v);</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">     Thread.sleep( SLEEP_GRANULARITY );</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> V <span class="title">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">        <span class="keyword">if</span> (!isEmpty())</div><div class="line">            <span class="keyword">return</span> doTake();</div><div class="line">    &#125;</div><div class="line">     Thread.sleep( SLEEP_GRANULARITY ); &#125;</div><div class="line">  &#125;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>使用条件队列就可以解决这种问题：条件队列就是说在条件不满足时候线程休眠(调用wait方法)，当条件满足的时候线程会收到通知并且被唤醒(调用notify方法)，这样就不会产生多余的开销。<br><br>调用<code>wait</code>方法之后会发生以下事情：</p>
+<ol>
+<li>释放锁</li>
+<li>阻塞当前线程并等待直到超时</li>
+<li>线程被终端或者被一个通知唤醒</li>
+<li>唤醒后，wait在返回前还要重新获取锁</li>
+</ol>
+<p>在步骤3和步骤4之间可能有另外一个线程获取了锁，并且改变了对象的标志，这个时候其实条件已经变成假的了。或者这个被唤醒的原因并不是条件变成了真，而是其它的线程的某个条件变成了真，那个线程调用了notify或者notifyAll方法。所以说即使线程被notify唤醒了，并不一定是因为条件满足了，所以在唤醒之后还要继续检查条件，这时要将wati放在一个。如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">stateDependentMethod</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line"><span class="comment">// condition predicate must be guarded by lock</span></div><div class="line"><span class="keyword">synchronized</span>(lock) &#123;</div><div class="line"><span class="keyword">while</span> (!conditionPredicate())&#123;</div><div class="line">    lock.wait();</div><div class="line">    <span class="comment">// object is now in desired state</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/12/14/note-java-concurrency-in-practice-2-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -401,7 +654,15 @@
 <blockquote>
 <p>同步的开销要比new对象的开销少的得多。</p>
 </blockquote>
-<h2 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h2><p>锁竞争的过程中会发生上下文切换，越多的上下文切换将会造成越低的吞吐量。如果某个执行IO操作的线程被阻塞了，同时这个线程还持有一把锁，那么如果有越来越多的线程来请求这个锁，也将被阻塞而挂起，这就会增加上下文切换的次数。所以要尽量减少持有锁的时间来减少上下文切换。</p>
+<h2 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h2><p>上下文切换是什么？<br>锁竞争的过程中会发生上下文切换，越多的上下文切换将会造成越低的吞吐量。如果某个执行IO操作的线程被阻塞了，同时这个线程还持有一把锁，那么如果有越来越多的线程来请求这个锁，也将被阻塞而挂起，这就会增加上下文切换的次数。所以要尽量减少持有锁的时间来减少上下文切换。</p>
+<p>参考资料：</p>
+<ol>
+<li><p><a href="https://stackoverflow.com/questions/5440128/thread-context-switch-vs-process-context-switch" target="_blank" rel="external">线程上下文切换和进程上下文</a></p>
+</li>
+<li><p><a href="http://www.linfo.org/context_switch.html" target="_blank" rel="external">上下文切换的定义</a></p>
+</li>
+<li></li>
+</ol>
 
           
         
@@ -513,7 +774,7 @@
       
         
           
-            <p>在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现<strong>顺序死锁</strong>。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现<strong>资源死锁</strong>。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样去避免死锁呢?</p>
+            <p>在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现<strong>顺序死锁</strong>。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现<strong>资源死锁</strong>。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样避免死锁呢?</p>
 <h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><p>我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。</p>
 <h2 id="死锁之后的处理形式"><a href="#死锁之后的处理形式" class="headerlink" title="死锁之后的处理形式"></a>死锁之后的处理形式</h2><p>死锁之后该怎么处理分为两种方式，第一种方式就是什么都不做不了，应用程序将到此结束（也可能是某个子系统停止或者性能降低），直到重新启动，才会解除本次死锁。第二种方式就是干涉死锁。比如数据库操作在两个事务之间出现了死锁，那么数据库服务器会选择一个牺牲者并且放弃这个事务。作为牺牲者的事务将放弃它的所有资源，从而使其它事务继续进行。让后等待其它任务执行完成之后再去执行这个被牺牲了的任务。</p>
 <h2 id="顺序死锁"><a href="#顺序死锁" class="headerlink" title="顺序死锁"></a>顺序死锁</h2><p>如果有left和right两把锁，同时有A线程和B线程去访问，如果按照下面的顺序就可能造成死锁。</p>
@@ -531,6 +792,7 @@
 <blockquote>
 <p>在持有锁的过程中调用某个外部方法，那么将可能会出现活跃性的问题。</p>
 </blockquote>
+<h2 id="丢失信号死锁"><a href="#丢失信号死锁" class="headerlink" title="丢失信号死锁"></a>丢失信号死锁</h2><p>多线程访问某个资源，在有条件谓词作为前置条件，如果条件为假，那么我们会调用wait方法将线程阻塞。如果某个线程将条件变为了真，并且这个wait的线程没有收到这个信号。那么原来wait的线程将会永远等待下去，进而导致死锁。也就是说，线程A通知了一个条件队列，而线程B随后进入这个条件队列，但是线程B将被阻塞而不能执行，因为其需要等待另外一个通知的到来。</p>
 <h2 id="开放调用"><a href="#开放调用" class="headerlink" title="开放调用"></a>开放调用</h2><p>之所以出现上述协作对象之间发生的死锁，是因为在调用另外一个对象的方法的过程中，已经持有了一把锁。这种调用称作不开放，所谓的开放调用就是指：在调用某个方法的时候不需要持有锁。通常来说开放调用要比非开放调用更加安全，更加不容易产生死锁，所以我们要尽可能地使用开放调用。我们可以使用开放调用的方法来解决上述遇到的问题：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ThreadSafe</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Taxi</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>)</div><div class="line"><span class="keyword">private</span> Point location, destination; <span class="keyword">private</span> <span class="keyword">final</span> Dispatcher dispatcher;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> Point <span class="title">getLocation</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> location;</div><div class="line">    &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLocation</span><span class="params">(Point location)</span> </span>&#123;</div><div class="line">    <span class="keyword">boolean</span> reachedDestination; <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">    <span class="keyword">this</span>.location = location;</div><div class="line">    reachedDestination = location.equals(destination);</div><div class="line">&#125;</div><div class="line"><span class="keyword">if</span> (reachedDestination) &#123;</div><div class="line">    dispatcher .notifyAvailable (<span class="keyword">this</span> );</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@ThreadSafe</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dispatcher</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Taxi&gt; taxis;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Taxi&gt; availableTaxis;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">notifyAvailable</span><span class="params">(Taxi taxi)</span> </span>&#123;</div><div class="line">availableTaxis .add(taxi); &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> Image <span class="title">getImage</span><span class="params">()</span> </span>&#123;</div><div class="line">    Set&lt;Taxi&gt; copy;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">copy = <span class="keyword">new</span> HashSet&lt;Taxi&gt;(taxis);</div><div class="line">&#125;</div><div class="line">Image image = <span class="keyword">new</span> Image(); <span class="keyword">for</span> (Taxi t : copy)</div><div class="line">image.drawMarker(t.getLocation()); <span class="keyword">return</span> image;</div></pre></td></tr></table></figure>
 <p>这样就可以将多个锁区分开来，从而在多个对象调用的时候就不会死锁了。</p>
@@ -741,7 +1003,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/01/chat-locks-of-ios/" itemprop="url">IOS中锁</a></h1>
+                <a class="post-title-link" href="/2017/12/01/chat-locks-of-ios/" itemprop="url">如何选择IOS中的锁？</a></h1>
         
 
         <div class="post-meta">
@@ -790,7 +1052,13 @@
       
         
           
-            <h2 id="IOS中锁的种类"><a href="#IOS中锁的种类" class="headerlink" title="IOS中锁的种类"></a>IOS中锁的种类</h2><h2 id="IOS中锁的基本用法"><a href="#IOS中锁的基本用法" class="headerlink" title="IOS中锁的基本用法"></a>IOS中锁的基本用法</h2><h2 id="各种锁的试用场景"><a href="#各种锁的试用场景" class="headerlink" title="各种锁的试用场景"></a>各种锁的试用场景</h2><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://stackoverflow.com/questions/195853/spinlock-versus-semaphore" target="_blank" rel="external">https://stackoverflow.com/questions/195853/spinlock-versus-semaphore</a><br><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1" target="_blank" rel="external">https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1</a></p>
+            <p>关于IOS中的锁很多文章都曾谈过，也有很多基本的用法，比如：<a href="http://www.cocoachina.com/ios/20161129/18216.html" target="_blank" rel="external">IOS中的各种锁</a>,<a href="https://www.jianshu.com/p/6773757a6cd5" target="_blank" rel="external">探讨IOS开发中各种锁</a>,<a href="https://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/" target="_blank" rel="external">ibireme的不再安全的OSSpinLock</a>，这里面对每种锁的用法和加解锁的时间都给出了说明，但是对每种锁的适用场景和在此场景下各种锁的优劣，都没有给予说明，导致我们虽然知道锁的基本用法，但是在选择的时候还是无从下手，本文就是为了解决这个问题的。</p>
+<h2 id="IOS中各种锁的试用场景"><a href="#IOS中各种锁的试用场景" class="headerlink" title="IOS中各种锁的试用场景"></a>IOS中各种锁的试用场景</h2><h3 id="OSSpinLock和dispatch-semaphore"><a href="#OSSpinLock和dispatch-semaphore" class="headerlink" title="OSSpinLock和dispatch_semaphore"></a>OSSpinLock和dispatch_semaphore</h3><p>从ibireme的测试中，我们知道自旋锁的加锁和解锁时间是最快的，为什么自旋锁会这么快呢？我们知道当多线程为了争夺一个锁，这时没有争到锁的线程可能会挂起，如果锁被释放了，那么其它被挂起的线程就会被重新唤醒来重新竞争锁。在线程被挂起和重新唤醒的过程中会发生上下文切换，上下文切换是很消耗性能的。如果说每次获取锁之后执行的任务时间很短，那么这些上下文切换造成的性能损耗就会很大。而OSSpinLock这种锁，不会让线程挂起，而是会让线程自旋，不断的去判断锁的状态，如果锁可用就去获得锁，如果不可用就会一直自旋。这样就没有了上下文切换造成的性能损耗，既然自旋锁的加锁开锁速度最快，那么是不是说所有涉及线程安全的地方都应该使用自旋锁呢？不是的。如果说加锁之后任务执行的时间很长，那么所有的没有得到锁的线程都在自循空等，那么就会造成CPU资源的浪费，这些浪费还会影响执行任务线程的执行。这时就可以考虑使用信号量来作为锁，信号量也是非常快的，但是它会让线程休眠而不是空旋，并且在现在比较智能的处理器上，如果使用信号量来加锁，那么它会先让各自的线程先自旋一段时间，如果这个时间之内，线程还没有获得锁，那么就让其休眠。</p>
+<blockquote>
+<p>如果任务执行的时间非常短（比如给对象的属性赋值），并且资源的竞争很激烈，那么最好使用OSSpinLock，否则使用dispatch_semaphore较好</p>
+</blockquote>
+<h3 id="NSCondition和NSConditionLock"><a href="#NSCondition和NSConditionLock" class="headerlink" title="NSCondition和NSConditionLock"></a>NSCondition和NSConditionLock</h3><p>条件锁是为了解决生产者消费者问题而产生的一类锁。也就是说在生产者消费者模式中，生产者的生产量达到了消费者可以消费的水平时就释放锁，否则就持有锁。消费者只有在生产者释放锁之后才可以进行消费，并且在消费完成之后就也释放对生产者的锁，然后生产者就可以重新进行生产。也就是说条件锁解决了多个相互关联任务之间的执行顺序问题。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="http://www.cocoachina.com/ios/20161129/18216.html" target="_blank" rel="external">http://www.cocoachina.com/ios/20161129/18216.html</a><br><a href="https://stackoverflow.com/questions/195853/spinlock-versus-semaphore" target="_blank" rel="external">https://stackoverflow.com/questions/195853/spinlock-versus-semaphore</a><br><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1" target="_blank" rel="external">https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1</a></p>
 
           
         
@@ -902,7 +1170,7 @@
       
         
           
-            <h2 id="复合的线程安全方法就一定是线程安全的吗？"><a href="#复合的线程安全方法就一定是线程安全的吗？" class="headerlink" title="复合的线程安全方法就一定是线程安全的吗？"></a>复合的线程安全方法就一定是线程安全的吗？</h2><p>   尽管同步方法可以让每一个操作都是原子的，但是当很多个原子操作合并为一个复合操作的时候，需要额外加锁，否则就会出现竞态条件（race condition）造成线程不安全。但是这里额外的加锁可能会导致性能损耗并且可能引起死锁。如：</p>
+            <h2 id="多个线程安全类的方法在一起一定是线程安全的吗？"><a href="#多个线程安全类的方法在一起一定是线程安全的吗？" class="headerlink" title="多个线程安全类的方法在一起一定是线程安全的吗？"></a>多个线程安全类的方法在一起一定是线程安全的吗？</h2><p>  尽管线程安全类的每个方法都是原子的，但是当很多原子操作合并为一个复合操作的时候，需要额外加锁，否则就会出现竞态条件（race condition）造成线程不安全。但是这里额外的加锁可能会导致性能损耗并且可能引起死锁。如：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (!vector.contains(element))</div><div class="line">    vector.add(element);</div></pre></td></tr></table></figure>
 <p>这里<code>contains</code>方法和<code>add</code>方法都是线程安全的，但是综合起来就是非线程安全的了。</p>
 <h2 id="方法的局部变量无需加锁"><a href="#方法的局部变量无需加锁" class="headerlink" title="方法的局部变量无需加锁"></a>方法的局部变量无需加锁</h2><p>   某个线程进入一个方法就会创建一个栈，这个栈中存储了某个局部变量，这个局部变量是每个线程所独有，不是共享的，他们之间互不影响，没有必要加锁。</p>
@@ -1464,285 +1732,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/10/java-detials/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/10/java-detials/" itemprop="url">可能被遗漏的Java细节</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-10T16:15:27+08:00">
-                2017-09-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="Java中的类型转换"><a href="#Java中的类型转换" class="headerlink" title="Java中的类型转换"></a>Java中的类型转换</h3><h4 id="兼容的自动转换"><a href="#兼容的自动转换" class="headerlink" title="兼容的自动转换"></a>兼容的自动转换</h4><p>在编程中把一种类型的值赋给另一种类型的变量是合法的。如果这两种类型是兼容的，那么Java会自动对其进行类型转换。例如：把int类型的值赋给long类型的变量就可以。然而如果两种类型不兼容，那么就不会发生这种隐式的类型转换。例如，没有将double类型转化为byte类型的定义。这种不兼容的转化只能自己强制进行。<br>满足以下两个条件时，Java会自动给你进行类型转换：</p>
-<ul>
-<li>这两种类型是兼容的。</li>
-<li>目的类型的范围要比源类型的范围大。</li>
-</ul>
-<p>数字类型，包括整数和浮点类型都是彼此兼容的，但是，数字类型和字符类型（char）或布尔类型（bollean）是不兼容的。</p>
-<h4 id="不兼容的强制转换"><a href="#不兼容的强制转换" class="headerlink" title="不兼容的强制转换"></a>不兼容的强制转换</h4><p>虽然自动转换很好，但是它不能满足所有的需求。例如，你需要将一个int类型的变量付给一个byte类型的变量，你就需要使用(target-type)value这种转换了。下面演示将int转换为byte，如果整数超出了byte类型的取值范围，那么它的值将会因为对byte类型的值取%而减少。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> a;</div><div class="line"><span class="keyword">byte</span> b;</div><div class="line"><span class="comment">// ...</span></div><div class="line">b = (<span class="keyword">byte</span>)a;</div></pre></td></tr></table></figure>
-<p>当把浮点数转换为整数类型时会发生一种不同的转换：截断。你知道整数没有小数部分，当你把浮点数转化为整数的时候，其小数部分将会被舍弃。例如，如果将值1.23赋给一个整数，那么其结果是1，0.23被舍弃了。如果浮点数值太而不能适合目标整数类型，那么它的值将会因为对目标类型值域取模而减少。例如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"> <span class="comment">// Demonstrate casts.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Conversion</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">       <span class="keyword">byte</span> b;</div><div class="line">       <span class="keyword">int</span> i = <span class="number">257</span>;</div><div class="line">       <span class="keyword">double</span> d = <span class="number">323.142</span>;</div><div class="line">       System.out.println(<span class="string">"\nConversion of int to byte."</span>);</div><div class="line">       b = (<span class="keyword">byte</span>) i;</div><div class="line">       System.out.println(<span class="string">"i and b "</span> + i + <span class="string">" "</span> + b);</div><div class="line">       System.out.println(<span class="string">"\nConversion of double to int."</span>);</div><div class="line">       i = (<span class="keyword">int</span>) d;</div><div class="line">       System.out.println(<span class="string">"d and i "</span> + d + <span class="string">" "</span> + i);</div><div class="line">       System.out.println(<span class="string">"\nConversion of double to byte."</span>);</div><div class="line">       b = (<span class="keyword">byte</span>) d;</div><div class="line">       System.out.println(<span class="string">"d and b "</span> + d + <span class="string">" "</span> + b);</div><div class="line">&#125; &#125;</div></pre></td></tr></table></figure>
-<p>该程序的输出如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Conversion of <span class="keyword">int</span> to <span class="keyword">byte</span>.</div><div class="line">i and b <span class="number">257</span> <span class="number">1</span></div><div class="line">Conversion of <span class="keyword">double</span> to <span class="keyword">int</span>.</div><div class="line">d and i <span class="number">323.142</span> <span class="number">323</span></div><div class="line">Conversion of <span class="keyword">double</span> to <span class="keyword">byte</span>.</div><div class="line">d and b <span class="number">323.142</span> <span class="number">67</span></div></pre></td></tr></table></figure>
-<p>当值257被强制转换为byte变量时，其结果是257除以256(256是byte类型的变化范围)的余数。当把变量d转换为int类型时，它的小数部分被舍弃了。当吧变量d转换为byte类型时，它的小数部分被舍弃了，而且它的值减少为256的模，即67。</p>
-<h4 id="表达式中的类型提升"><a href="#表达式中的类型提升" class="headerlink" title="表达式中的类型提升"></a>表达式中的类型提升</h4><p>在表达式中，有时候中间值的精度会比较高，它有可能超过任何一个操作数的范围。例如，考虑下面的表达式：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">byte</span> a = <span class="number">40</span>;</div><div class="line"><span class="keyword">byte</span> b = <span class="number">50</span>;</div><div class="line"><span class="keyword">byte</span> c = <span class="number">100</span>;</div><div class="line"><span class="keyword">int</span> d = a * b / c;</div></pre></td></tr></table></figure>
-<p>其中间结果<code>a*b</code>很容易超出它的任何一个byte型操作数的范围。为了处理这种问题，当分析表达式时，Java会自动提升各个byte或者short型的操作数为int型。这意味着表达式<code>a*b</code>是使用整数而不是字节型来运算的。这样，尽管变量a和b都被指定为byte型，50*40的中间表达式的结果2000是合法的。</p>
-<p>自动类型提升很好，但是有时候会引起令人疑惑的编译错误。例如，这个看起来正确的程序却会引起问题：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">byte</span> b = <span class="number">50</span>;</div><div class="line">b = b * <span class="number">2</span>; <span class="comment">// Error! Cannot assign an int to a byte!</span></div></pre></td></tr></table></figure>
-<p>这里看上去完全合法，但由于当表达式求值的时候，操作数被自动提升为了int型，所以需要强制转换才可以赋值（但是你必须考虑好溢出的情况）。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">byte</span> b = <span class="number">50</span>;</div><div class="line">b = (<span class="keyword">byte</span>)(b * <span class="number">2</span>);</div></pre></td></tr></table></figure>
-<p>这样就不会有编译器错误了。</p>
-<h4 id="类型提升的约定"><a href="#类型提升的约定" class="headerlink" title="类型提升的约定"></a>类型提升的约定</h4><p>除了将byte型和short型提升到int型以外，Java还定义了其它的类型提升规则。如果一个操作数是long型，那么整个表达式将被提升到long型；如果一个操作数是float型，整个表达式将被提升到float型；如果一个操作数是double型，计算结构就是double型。我们用个例子来说明：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Promote</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">       <span class="keyword">byte</span> b = <span class="number">42</span>;</div><div class="line">       <span class="keyword">char</span> c = <span class="string">'a'</span>;</div><div class="line">       <span class="keyword">short</span> s = <span class="number">1024</span>;</div><div class="line">       <span class="keyword">int</span> i = <span class="number">50000</span>;</div><div class="line">       <span class="keyword">float</span> f = <span class="number">5.67f</span>;</div><div class="line">       <span class="keyword">double</span> d = .<span class="number">1234</span>;</div><div class="line">       <span class="keyword">double</span> result = (f * b) + (i / c) - (d * s);</div><div class="line">       System.out.println((f * b) + <span class="string">" + "</span> + (i / c) + <span class="string">" - "</span> + (d * s));</div><div class="line">       System.out.println(<span class="string">"result = "</span> + result);</div><div class="line">&#125; &#125;</div></pre></td></tr></table></figure>
-<p>我们来分析：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">double</span> result = (f * b) + (i / c) - (d * s);</div></pre></td></tr></table></figure>
-<p>的类型提升过程，在第一个子表达式<code>f*b</code>中，变量b被 升为float类型，该子表达式的结果当然是float类型。 接下来，在子表达式i/c，中，变量c被 升为int类型，该子表达式的结果当然是int类型。然 后，子表达式<code>d*s</code>中的变量s被 升为double类型，该子表达式的结果当然也是double类型。 最后，考虑三个中间值，float类型，int类型，和double类型。float类型加int类型的结果是float 类型。然后float类型减去 升为double类型的double类型，该表达式的最后结果是double型。</p>
-<h3 id="Java中的break"><a href="#Java中的break" class="headerlink" title="Java中的break"></a>Java中的break</h3><p>Java中的break除了可以用来在switch或者循环中终止某个条件或者循环，还可以作为goto语句的一种形式来使用。Java中没有goto语句，因为goto让程序流程变得非结构化，可能让程序难以理解和维护，并且可以阻止某些编译器优化。但是，有些地方使用goto语句有助于流程控制，并且是合法的。例如，从嵌套很深的循环中退出来，goto语句就很有帮助。因此，Java定义了break语句的一种扩展形式来处理这种情况。通过给某个代码块加上标签，那么<strong>其内部的break语句</strong>就可以在某些情况下跳转到该标签。这个代码块不必非要是循环或者switch，它可以是任意的代码块。标签的指定如下所示：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Using break as a civilized form of goto.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Break</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">       <span class="keyword">boolean</span> t = <span class="keyword">true</span>;</div><div class="line">       first: &#123;</div><div class="line">         second: &#123;</div><div class="line">           third: &#123;</div><div class="line">            System.out.println(<span class="string">"Before the break."</span>);</div><div class="line">            <span class="keyword">if</span>(t) <span class="keyword">break</span> second; <span class="comment">// break out of second block</span></div><div class="line">            System.out.println(<span class="string">"This won't execute"</span>);</div><div class="line">&#125; </div><div class="line">           System.out.println(<span class="string">"This won't execute"</span>);</div><div class="line">         &#125;</div><div class="line">         System.out.println(<span class="string">"This is after second block."</span>);</div><div class="line">       &#125;</div><div class="line">&#125; &#125;</div></pre></td></tr></table></figure>
-<p>改程序的输出如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Before the <span class="built_in">break</span>.</div><div class="line">This is after second block.</div></pre></td></tr></table></figure>
-<p>这个示例中有三个嵌套的代码块，每一个都有它自己的标签。break语句使得循环往外层跳转，直接跳过了second标签的的代码块，直接执行了first标签的代码块。</p>
-<h3 id="Java中的方法重载"><a href="#Java中的方法重载" class="headerlink" title="Java中的方法重载"></a>Java中的方法重载</h3><p>方法重载就是说如果两个方法有相同的方法名字，但是其参数不同（参数个数不同或者参数类型不同），那么Java会根据调用时候不同的参数类型来匹配不同的方法来调用。然而有时候其类型匹配不是很精确：比如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">  <span class="comment">// Automatic type conversions apply to overloading.</span></div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">OverloadDemo</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</div><div class="line">     System.out.println(<span class="string">"No parameters"</span>);</div><div class="line">    &#125; </div><div class="line">    <span class="comment">// Overload test for two integer parameters. </span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">int</span> a，<span class="keyword">int</span> b)</span> </span>&#123; </div><div class="line">      System.out.println(<span class="string">"a and b: "</span> + a + <span class="string">" "</span> + b);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// overload test for a double parameter</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">double</span> a)</span> </span>&#123;</div><div class="line">      System.out.println(<span class="string">"Inside test(double) a: "</span> + a);</div><div class="line">    &#125;</div><div class="line">&#125; </div><div class="line"> <span class="class"><span class="keyword">class</span> <span class="title">Overload</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">      OverloadDemo ob = <span class="keyword">new</span> OverloadDemo();</div><div class="line">      <span class="keyword">int</span> i = <span class="number">88</span>;</div><div class="line">      ob.test(); ob.test(<span class="number">10</span>，<span class="number">20</span>); </div><div class="line">      ob.test(i); <span class="comment">// this will invoke test(double)</span></div><div class="line">      ob.test(<span class="number">123.2</span>); <span class="comment">// this will invoke test(double)</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>输出结果是：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">No parameters</div><div class="line">a and b: 10 20</div><div class="line">Inside <span class="built_in">test</span>(double) a: 88</div><div class="line">Inside <span class="built_in">test</span>(double) a: 123.2</div></pre></td></tr></table></figure>
-<p>这里，我们的<code>test(i)</code>中i是int型，但是在调用时，我们发现调用<code>test(double)</code>类型，这是因为在调用<code>test(int)</code>型的时候Java找不到相应的类型，所以就将int扩大为了double，然后就调用了<code>test(double)</code>，如果我们这里定义了一个<code>test(int)</code>，那么就会调用这个<code>test(int)</code>而不会将int扩大为double。</p>
-<h3 id="super关键字"><a href="#super关键字" class="headerlink" title="super关键字"></a>super关键字</h3><p>在继承中，super可以用来表示父类，可以调用父类特有的方法。还有一种应用情况是：它可以用来调用父类中被子类所隐藏的属性，比如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</div><div class="line"><span class="keyword">int</span> i; &#125; </div><div class="line">    <span class="comment">// Create a subclass by extending class A.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</div><div class="line">      <span class="keyword">int</span> i; <span class="comment">// this i hides the i in A</span></div><div class="line">      B(<span class="keyword">int</span> a, <span class="keyword">int</span> b) &#123;</div><div class="line">       <span class="keyword">super</span>.i = a; <span class="comment">// i in A</span></div><div class="line">       i = b; <span class="comment">// i in B</span></div><div class="line">&#125; </div><div class="line">      <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</div><div class="line">       System.out.println(<span class="string">"i in superclass: "</span> + <span class="keyword">super</span>.i);</div><div class="line">       System.out.println(<span class="string">"i in subclass: "</span> + i);</div><div class="line">&#125; &#125; </div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">UseSuper</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">       B subOb = <span class="keyword">new</span> B(<span class="number">1</span>, <span class="number">2</span>);</div><div class="line">       subOb.show();</div><div class="line">      &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>该程序的输出为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">i <span class="keyword">in</span> superclass: 1</div><div class="line">i <span class="keyword">in</span> subclass: 2</div></pre></td></tr></table></figure>
-<p>尽管B中的实例变量i隐藏了A中的i，使用super就可以访问超类中定义的i。其实， super也可以用来调用超类中被子类隐藏的方法。 </p>
-<h3 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h3><p>在类的层次结构中，构造函数的调用顺序是从父类到子类。并且父类的构造方法的调用要放在子类构造方法的第一行中。如果子类中没有用到super()，那么每个父类默认的或者无参数的构造函数将执行。例如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Create a super class.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</div><div class="line">      A() &#123;</div><div class="line">       System.out.println(<span class="string">"Inside A's constructor."</span>);</div><div class="line">&#125; &#125; </div><div class="line">    <span class="comment">// Create a subclass by extending class A.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</div><div class="line">      B() &#123;</div><div class="line">       System.out.println(<span class="string">"Inside B's constructor."</span>);</div><div class="line">&#125; &#125; </div><div class="line">    <span class="comment">// Create another subclass by extending B.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">C</span> <span class="keyword">extends</span> <span class="title">B</span> </span>&#123;</div><div class="line">      C() &#123;</div><div class="line">       System.out.println(<span class="string">"Inside C's constructor."</span>);</div><div class="line">&#125; &#125; </div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">CallingCons</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">C c = <span class="keyword">new</span> C(); &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>该程序的输出如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Inside A’s constructor</div><div class="line">Inside B’s constructor</div><div class="line">Inside C’s constructor</div></pre></td></tr></table></figure>
-<p>由此可见，构造函数以派生的顺序被调用。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/10/chat-computer-science-basic/" itemprop="url">计算机基础</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-10T10:10:40+08:00">
-                2017-09-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="补码"><a href="#补码" class="headerlink" title="补码"></a>补码</h3><p>我们先来看一个有趣的例子：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-f48d5ace81b3d0cb.png" alt="溢出128"></p>
-<p>在这里我们定义了一个<code>signed char</code>类型的数据，将其赋值为128，然后系统给我们一个警告，意思就是说它隐式地将数值给转换成了<strong>-128</strong>，这究竟是为什么呢？</p>
-<p>其实在计算机中数值都是以补码的形式存储的：</p>
-<blockquote>
-<p>正数的补码是其自身，负数的补码是其对应的正数的反码加1。</p>
-</blockquote>
-<p>我们先看一下-42在计算机中是如何表示的：<br>它是先将其对象的正数42，0010 1010然后取反1101 0101，然后再加1，得到1101 0110。</p>
-<p>我们知道signed char是占八位的。其存储范围是：0000 0000到1111 1111。那么128的补码还是128，其二进制表示为：1000 0000。但是这里有个问题，因为其类型是有符号的，所以最高位是符号位，也就是说这个数不能用来表示128了，那么它表示多少呢？我们就要看看它是谁的补码就是好了。我们先将<code>1000 0000</code>取反，然后的到<code>0111 1111</code>，加一得到<code>1000 0000</code>，再乘以-1,得到-128。如果不太明白，我我们可以将128变大，变成129：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-d236d51fa77178ad.png" alt="溢出129"></p>
-<p>129为整数，其补码是其自身，1000 0001，又因为其最高位是符号位，所以其表示的是一个负数，它表示多少呢？先将其取反<code>0111 1110</code>，然后+1得到<code>0111 1111</code>，这时127，最后乘以-1得到-127。</p>
-<h3 id="switch语句为什么比if-else快？"><a href="#switch语句为什么比if-else快？" class="headerlink" title="switch语句为什么比if else快？"></a>switch语句为什么比if else快？</h3><p>因为编译器在编译switch语句的时候会检查每个case常量，并且会创建出一个”跳转表”，这个表用来在表达式的基础上选择执行路径，其时间复杂度是O(1)，而if else的时间复杂度是O(n)，所以switch case要比if else快很多。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1793,7 +1782,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-count">37</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
