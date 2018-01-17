@@ -307,6 +307,128 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2018/01/17/frame-work-sdWebImage1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/17/frame-work-sdWebImage1/" itemprop="url">SDWebImage学习笔记（二）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-17T10:44:35+08:00">
+                2018-01-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="内存缓存大小的限制"><a href="#内存缓存大小的限制" class="headerlink" title="内存缓存大小的限制"></a>内存缓存大小的限制</h2><p>在设计缓存框架是的时候，如果内存我们使用的类是NSDictionary，或则NSArray这种通用类的话，如果内存占用率过高，导致系统RAM中少于12M内存（这个数值可能会随着系统版本和手机机型的不同而不同），那么系统的看门狗（watch dog）会将我们的App杀死。这时，我们要限制占用内存的大小。获取系统内存大小的方案如下：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;mach/mach.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;mach/mach_host.h&gt;</span></span></div><div class="line"><span class="keyword">static</span> natural_t minFreeMemLeft = <span class="number">1024</span>*<span class="number">1024</span>*<span class="number">12</span>; <span class="comment">// reserve 12MB RAM</span></div><div class="line"><span class="comment">// inspired by http://stackoverflow.com/questions/5012886/knowing-available-ram-on-an-ios-device</span></div><div class="line"><span class="keyword">static</span> natural_t get_free_memory(<span class="keyword">void</span>)</div><div class="line">&#123;</div><div class="line">    mach_port_t host_port;</div><div class="line">    mach_msg_type_number_t host_size;</div><div class="line">    vm_size_t pagesize;</div><div class="line"></div><div class="line">    host_port = mach_host_self();</div><div class="line">    host_size = <span class="keyword">sizeof</span>(vm_statistics_data_t) / <span class="keyword">sizeof</span>(integer_t);</div><div class="line">    host_page_size(host_port, &amp;pagesize);</div><div class="line"></div><div class="line">    vm_statistics_data_t vm_stat;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (host_statistics(host_port, HOST_VM_INFO, (host_info_t)&amp;vm_stat, &amp;host_size) != KERN_SUCCESS)</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Failed to fetch vm statistics"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/* Stats in bytes */</span></div><div class="line">    natural_t mem_free = vm_stat.free_count * pagesize;</div><div class="line">    <span class="keyword">return</span> mem_free;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里我们定义了最小的内存空间12M，然后在框架中，如果我们使用<code>get_free_memory</code>获取可用内存小于<code>minFreeMemLeft</code>，那么我们就移除内存缓存：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)storeImage:(<span class="built_in">UIImage</span> *)image imageData:(<span class="built_in">NSData</span> *)data forKey:(<span class="built_in">NSString</span> *)key toDisk:(<span class="built_in">BOOL</span>)toDisk</div><div class="line">&#123;</div><div class="line">    <span class="keyword">if</span> (!image || !key)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (get_free_memory() &lt; minFreeMemLeft)</div><div class="line">    &#123;</div><div class="line">        [memCache removeAllObjects];</div><div class="line">    &#125;</div><div class="line">    [memCache setObject:image forKey:key];</div><div class="line">    <span class="comment">//.....</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>如果既想避免占用内存过高而被Kill掉，同时也想避免在每个方法中都去判断当前内存可用空间的大小，那么使用<code>NSCache</code>替代上文中提到的NSDictionary或者NSArray来做内存缓存的类，因为NSCache在内存吃紧的情况下会自动清除部分缓存。</p>
+</blockquote>
+<h2 id="关于图片的Alpha通道"><a href="#关于图片的Alpha通道" class="headerlink" title="关于图片的Alpha通道"></a>关于图片的Alpha通道</h2><p>图片的Alpha通道会造成离屏渲染从而带来FPS的下降，所以没有特别必要的情况下应该尽量避免使用Alpha通道，如果从网络上下载下来的图片含有Alpha通道该怎样处理呢？我们可以在强制解码阶段来将Alpha通道去除：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">+ (<span class="built_in">UIImage</span> *)decodedImageWithImage:(<span class="built_in">UIImage</span> *)image</div><div class="line">&#123;</div><div class="line">    <span class="built_in">CGImageRef</span> imageRef = image.CGImage;</div><div class="line">    <span class="built_in">CGColorSpaceRef</span> colorSpace = <span class="built_in">CGColorSpaceCreateDeviceRGB</span>();</div><div class="line">    <span class="comment">// 使用kCGImageAlphaNoneSkipLast，去除了Alpha通道</span></div><div class="line">    <span class="built_in">CGContextRef</span> context = <span class="built_in">CGBitmapContextCreate</span>(<span class="literal">NULL</span>,</div><div class="line">                                                 <span class="built_in">CGImageGetWidth</span>(imageRef),</div><div class="line">                                                 <span class="built_in">CGImageGetHeight</span>(imageRef),</div><div class="line">                                                 <span class="number">8</span>,</div><div class="line">                                                 kCGImageAlphaNoneSkipLast | kCGBitmapByteOrder32Little);</div><div class="line">    <span class="built_in">CGColorSpaceRelease</span>(colorSpace);</div><div class="line">    <span class="keyword">if</span> (!context) <span class="keyword">return</span> <span class="literal">nil</span>;</div><div class="line"></div><div class="line">    <span class="built_in">CGRect</span> rect = (<span class="built_in">CGRect</span>)&#123;<span class="built_in">CGPointZero</span>,&#123;<span class="built_in">CGImageGetWidth</span>(imageRef), <span class="built_in">CGImageGetHeight</span>(imageRef)&#125;&#125;;</div><div class="line">    <span class="built_in">CGContextDrawImage</span>(context, rect, imageRef);</div><div class="line">    <span class="built_in">CGImageRef</span> decompressedImageRef = <span class="built_in">CGBitmapContextCreateImage</span>(context);</div><div class="line">    <span class="built_in">CGContextRelease</span>(context);</div><div class="line"></div><div class="line">    <span class="built_in">UIImage</span> *decompressedImage = [[<span class="built_in">UIImage</span> alloc] initWithCGImage:decompressedImageRef scale:image.scale orientation:image.imageOrientation];</div><div class="line">    <span class="built_in">CGImageRelease</span>(decompressedImageRef);</div><div class="line">    <span class="keyword">return</span> SDWIReturnAutoreleased(decompressedImage);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果想要保存原图片的Alpha通道，那么可以先获取原图片的Alpha通道信息，然后在调用CGBitmapContextCreate的时候将Alpha信息传递过去：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CGImageAlphaInfo</span> alphaInfo = <span class="built_in">CGImageGetAlphaInfo</span>(imageRef);</div><div class="line"><span class="built_in">CGContextRef</span> context = <span class="built_in">CGBitmapContextCreate</span>(<span class="literal">NULL</span>,</div><div class="line">                                             <span class="built_in">CGImageGetWidth</span>(imageRef),</div><div class="line">                                             <span class="built_in">CGImageGetHeight</span>(imageRef),</div><div class="line">                                             <span class="number">8</span>,</div><div class="line">                                             alphaInfo | kCGBitmapByteOrder32Little);</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/12/20/note-concurrency-jmm-0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1058,7 +1180,8 @@
 <p>如果任务执行的时间非常短（比如给对象的属性赋值），并且资源的竞争很激烈，那么最好使用OSSpinLock，否则使用dispatch_semaphore较好</p>
 </blockquote>
 <h3 id="NSCondition和NSConditionLock"><a href="#NSCondition和NSConditionLock" class="headerlink" title="NSCondition和NSConditionLock"></a>NSCondition和NSConditionLock</h3><p>条件锁是为了解决生产者消费者问题而产生的一类锁。也就是说在生产者消费者模式中，生产者的生产量达到了消费者可以消费的水平时就释放锁，否则就持有锁。消费者只有在生产者释放锁之后才可以进行消费，并且在消费完成之后就也释放对生产者的锁，然后生产者就可以重新进行生产。也就是说条件锁解决了多个相互关联任务之间的执行顺序问题。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="http://www.cocoachina.com/ios/20161129/18216.html" target="_blank" rel="external">http://www.cocoachina.com/ios/20161129/18216.html</a><br><a href="https://stackoverflow.com/questions/195853/spinlock-versus-semaphore" target="_blank" rel="external">https://stackoverflow.com/questions/195853/spinlock-versus-semaphore</a><br><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1" target="_blank" rel="external">https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1</a></p>
+<h3 id="synchronized"><a href="#synchronized" class="headerlink" title="@synchronized"></a>@synchronized</h3><p>用@synchronized包住需要进行同步的代码是非常简单的方法同时也不必考虑加锁之后不能释放锁的误操作，但是利用这种方式加锁和开锁需要较大的性能损耗，</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="http://www.cocoachina.com/ios/20161129/18216.html" target="_blank" rel="external">http://www.cocoachina.com/ios/20161129/18216.html</a><br><br><a href="https://stackoverflow.com/questions/195853/spinlock-versus-semaphore" target="_blank" rel="external">https://stackoverflow.com/questions/195853/spinlock-versus-semaphore</a><br><br><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1" target="_blank" rel="external">https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1</a><br></p>
 
           
         
@@ -1620,118 +1743,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/27/servlet-introduce/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/27/servlet-introduce/" itemprop="url">Servlet简介</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-27T22:48:54+08:00">
-                2017-09-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="相关资料下载地址"><a href="#相关资料下载地址" class="headerlink" title="相关资料下载地址"></a>相关资料下载地址</h3><p><a href="http://grepcode.com/file/repo1.maven.org/maven2/javax.servlet/servlet-api/2.2/javax/servlet/Servlet.java?av=f" target="_blank" rel="external">http://grepcode.com/file/repo1.maven.org/maven2/javax.servlet/servlet-api/2.2/javax/servlet/Servlet.java?av=f</a></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1782,7 +1793,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-count">38</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -1837,7 +1848,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

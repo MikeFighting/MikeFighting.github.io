@@ -307,6 +307,118 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/27/servlet-introduce/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/27/servlet-introduce/" itemprop="url">Servlet简介</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-27T22:48:54+08:00">
+                2017-09-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="相关资料下载地址"><a href="#相关资料下载地址" class="headerlink" title="相关资料下载地址"></a>相关资料下载地址</h3><p><a href="http://grepcode.com/file/repo1.maven.org/maven2/javax.servlet/servlet-api/2.2/javax/servlet/Servlet.java?av=f" target="_blank" rel="external">http://grepcode.com/file/repo1.maven.org/maven2/javax.servlet/servlet-api/2.2/javax/servlet/Servlet.java?av=f</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/10/java-detials/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2509,202 +2621,6 @@ message:<span class="string">@"AVCam doesn't have permission to use Camera, plea
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/24/avfoundation-edit/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/24/avfoundation-edit/" itemprop="url">AVFoundation--视频编辑</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-24T10:26:09+08:00">
-                2017-08-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>AV Foundation框架提供了很多类来方便对视频和音频的资源处理。AV Foundation框架的核心API是合成。一个合成仅仅是对一种或多种不同媒体资源track的组合。<code>AVMutableComposition</code>类提供了一个插入，移除以及管理track临时顺序的接口。你可以使用一个mutable composition来将一个新的asset和已经存在的asset集合组合在一起。如果你仅仅需要将很多的asset按序组装到一起，这些就够了。如果你想在合成的过程中执行任何定制的视频，音频处理，你需要分别加入音频混合（audio mix）和视频合成。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-78492783e7c8d858.png" alt="Mutable Composition"></p>
-<p>使用<code>AVMutableAudioMix</code>类，你可以在合成的过程中定制音频。同时，你可以指定一个音轨（audio track）的最大音量，或者设定一个音量坡度（volume ramp）。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-c1cb33719c5023b8.png" alt="AudioMix"></p>
-<p>对于视频合成中的video track如果要编辑的话，你可以使用<code>AVMutableVideoComposition</code>类来进行处理。对于单一的视频合成来说，你可以对输出的视频文件指明渲染的大小，比例，以及时长。通过一个视频的合成指令（<code>AVMutableVideoCompositionInstruction</code>类提供），你可以改变视频的背景色并且使用layer指令。在合成过程中，你可以使用这些layer指令(<code>AVMutableVideoCompositionLayerInstruction</code>类)来对video track实现旋转，旋转坡度（transform ramps），透明度，透明度坡度（opacity ramp）。视频合成类也可以让你使用核心动画来产生响应的效果（使用<code>animationTool</code>属性）。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-615e5cde04c0c133.png" alt="Video Composition"></p>
-<p>使用<code>AVAssetExportSession</code>，你可以将音频混合（audio mix）和视频合成同时组合到你的合成中去。用你的composition初始化这个export session，然后将音频混合和视频混合分别赋值给<code>audioMix</code>和<code>videoComposition</code>属性即可。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-eea273fda859f11e.png" alt="Audio Mix And Video Composition"></p>
-<h2 id="创建一个Composition"><a href="#创建一个Composition" class="headerlink" title="创建一个Composition"></a>创建一个Composition</h2><p>使用<code>AVMutableComposition</code>类来创建你自己的composition。为了添加媒体数据到你的composition，你必须通过<code>AVMutableCompositionTrack</code>类来添加一个或者多个composition tracks。最简单的情况就是用video track和audio track来创建一个mutable composition。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div></pre></td><td class="code"><pre><div class="line">AVMutableComposition *mutableComposition = [AVMutableComposition composition];</div><div class="line">// Create the video composition track.</div><div class="line">AVMutableCompositionTrack *mutableCompositionVideoTrack = [mutableComposition</div><div class="line">addMutableTrackWithMediaType:AVMediaTypeVideo</div><div class="line">preferredTrackID:kCMPersistentTrackID_Invalid];</div><div class="line">// Create the audio composition track.</div><div class="line">AVMutableCompositionTrack *mutableCompositionAudioTrack = [mutableComposition</div><div class="line">addMutableTrackWithMediaType:AVMediaTypeAudio</div><div class="line">preferredTrackID:kCMPersistentTrackID_Invalid];</div><div class="line">```   </div><div class="line"></div><div class="line">### 初始化一个Composition Track时的选项</div><div class="line"></div><div class="line">当你要往一个composition中添加一个新的track的时候，你必须提供一个media type和一个track ID。尽管视频和音频是最常用的media type，你还可以设置其它的media type，比如`AVMediaTypeSubtitle`（字幕）`AVMediaTypeText`（文本）。</div><div class="line"></div><div class="line">每一个和试听数据相关的track都有一个唯一标示叫做 track ID。如果你将这个track ID赋值为`kCMPersistentTrackID_Invalid`，那么在关联的时候系统会自动给你创建一个唯一标识。</div><div class="line"></div><div class="line">## 给一个Composition添加音视频数据</div><div class="line"></div><div class="line">一旦你使用一个或者多个track创建一个composition，那么你就可以开始将你的媒体数据media数据添加到合适的tracks上。为了将媒体数据添加到一个composition track，你需要使用AVAsset对象（媒体数据存储在这个对象内部）。你可以在某个track上使用mutable composition track接口来将多个具有相同隐含媒体类型的`track`放到一起。接下来的例子说明了怎样将两种video asset track按序放到某种composition track中：</div><div class="line"></div><div class="line">```objc</div><div class="line"></div><div class="line">// You can retrieve AVAssets from a number of places, like the camera roll for</div><div class="line">example.</div><div class="line">AVAsset *videoAsset = &lt;#AVAsset with at least one video track#&gt;;</div><div class="line">AVAsset *anotherVideoAsset = &lt;#another AVAsset with at least one video track#&gt;;</div><div class="line"></div><div class="line">// Get the first video track from each asset.</div><div class="line">AVAssetTrack *videoAssetTrack = [[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0]; </div><div class="line">AVAssetTrack *anotherVideoAssetTrack = [[anotherVideoAsset</div><div class="line">tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];</div><div class="line"></div><div class="line">// Add them both to the composition.</div><div class="line">[mutableCompositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,videoAssetTrack.timeRange.duration)</div><div class="line">ofTrack:videoAssetTrack atTime:kCMTimeZero error:nil];</div><div class="line"></div><div class="line">[mutableCompositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,anotherVideoAssetTrack.timeRange.duration) ofTrack:anotherVideoAssetTrack atTime:videoAssetTrack.timeRange.duration error:nil]; </div><div class="line"></div><div class="line">```   </div><div class="line"></div><div class="line">### 检索兼容的Composition Track</div><div class="line"></div><div class="line">如果可能的话，你应该对每一种媒体类型仅有一个composition track。可兼容asset track的统一可以将资源的利用降低到最少。当序列地展示媒体数据的时候，你应该将任何相同类型的媒体数据都放到同一个compsition track中。你可以查询一个mutable composition来找出和你需要的asset track相兼容的任何composition track：</div><div class="line"></div><div class="line">```objc</div><div class="line">AVMutableCompositionTrack *compatibleCompositionTrack = [mutableComposition</div><div class="line">mutableTrackCompatibleWithTrack:&lt;#the AVAssetTrack you want to insert#&gt;];</div><div class="line">if (compatibleCompositionTrack) &#123;</div><div class="line">    // Implementation continues.</div><div class="line">&#125; </div><div class="line">```   </div><div class="line"></div><div class="line">*注：将多个视频片段放到同一个composition track，在过个媒体片段转换时可能会隐性的造成掉帧现象，这种情况在嵌入式设备中尤其明显。对你的视频片段选择合适的合成track完全取决于你App的设计以及其将要展示的平台*</div><div class="line"></div><div class="line">###  生成音量坡度（Volume Ramp）</div><div class="line"></div><div class="line">在你的composition中，一个简单的`AVMutableAudioMix`对象可以单独对所有的音频track进行常用的音频处理。在你合成的过程中，使用`audioMix`类方法来创建一个audio mix，然后使用`AVMutableAudioMixInputParameters`实例来将这个audio mix和特定的track相关联。接下来的例子将会说明说明如何在一个指定的`audio track`上设置一个音量坡度来让音量在合成的过程中缓慢的消失。</div><div class="line"></div><div class="line">```objc</div><div class="line">AVMutableAudioMix *mutableAudioMix = [AVMutableAudioMix audioMix];</div><div class="line">// Create the audio mix input parameters object.</div><div class="line">AVMutableAudioMixInputParameters *mixParameters = [AVMutableAudioMixInputParameters audioMixInputParametersWithTrack:mutableCompositionAudioTrack]; </div><div class="line">// Set the volume ramp to slowly fade the audio out over the duration of the</div><div class="line">composition.</div><div class="line">[mixParameters setVolumeRampFromStartVolume:1.f toEndVolume:0.f</div><div class="line">timeRange:CMTimeRangeMake(kCMTimeZero, mutableComposition.duration)];</div><div class="line">// Attach the input parameters to the audio mix.</div><div class="line">mutableAudioMix.inputParameters = @[mixParameters];</div><div class="line">```    </div><div class="line"></div><div class="line">### 运用透明度坡度（Opacity Ramp）</div><div class="line"></div><div class="line">视频合成指令也可以用于视频和成Layer指令。一个`AVMutableVideoCompsitionLayerInstruction`对象可以对某个composition内部的某个video track使用旋转，旋转坡度，透明度，透明度坡度。某个视频合成指令的`layerInstructions`数组中layer指令的顺序决定了合成指令的过程中，来自source track的视频帧怎样被分层堆放，怎样被合成。在接下来的代码片段说明了怎样设置透明度坡度来在第一个视频结束切换第二个视频的时候产生缓慢消失的效果。</div><div class="line"></div><div class="line">```objc</div><div class="line">AVAsset *firstVideoAssetTrack = &lt;#AVAssetTrack representing the first video segment played in the composition#&gt;; </div><div class="line">AVAsset *secondVideoAssetTrack = &lt;#AVAssetTrack representing the second video</div><div class="line">  segment played in the composition#&gt;;</div><div class="line">  </div><div class="line">// Create the first video composition instruction.</div><div class="line">AVMutableVideoCompositionInstruction *firstVideoCompositionInstruction =</div><div class="line">[AVMutableVideoCompositionInstruction videoCompositionInstruction];</div><div class="line"></div><div class="line">// Set its time range to span the duration of the first video track.</div><div class="line">  firstVideoCompositionInstruction.timeRange = CMTimeRangeMake(kCMTimeZero,</div><div class="line">  firstVideoAssetTrack.timeRange.duration);</div><div class="line">  </div><div class="line">// Create the layer instruction and associate it with the composition video track. </div><div class="line">  AVMutableVideoCompositionLayerInstruction *firstVideoLayerInstruction =</div><div class="line">  [AVMutableVideoCompositionLayerInstruction</div><div class="line">  videoCompositionLayerInstructionWithAssetTrack:mutableCompositionVideoTrack];</div><div class="line">  </div><div class="line">// Create the opacity ramp to fade out the first video track over its entire duration.</div><div class="line"> [firstVideoLayerInstruction setOpacityRampFromStartOpacity:1.f toEndOpacity:0.f</div><div class="line">  timeRange:CMTimeRangeMake(kCMTimeZero, firstVideoAssetTrack.timeRange.duration)];</div><div class="line">  </div><div class="line">// Create the second video composition instruction so that the second video track isn't transparent.</div><div class="line"> AVMutableVideoCompositionInstruction *secondVideoCompositionInstruction =</div><div class="line"> [AVMutableVideoCompositionInstruction videoCompositionInstruction];</div><div class="line">  </div><div class="line">// Set its time range to span the duration of the second video track.</div><div class="line">secondVideoCompositionInstruction.timeRange =</div><div class="line">  CMTimeRangeMake(firstVideoAssetTrack.timeRange.duration,</div><div class="line">  CMTimeAdd(firstVideoAssetTrack.timeRange.duration,</div><div class="line">  secondVideoAssetTrack.timeRange.duration));</div><div class="line">  </div><div class="line">// Create the second layer instruction and associate it with the composition video track.</div><div class="line"> AVMutableVideoCompositionLayerInstruction *secondVideoLayerInstruction =</div><div class="line">  [AVMutableVideoCompositionLayerInstruction</div><div class="line">  videoCompositionLayerInstructionWithAssetTrack:mutableCompositionVideoTrack];</div><div class="line">  </div><div class="line">// Attach the first layer instruction to the first video composition instruction.</div><div class="line">firstVideoCompositionInstruction.layerInstructions = @[firstVideoLayerInstruction]; </div><div class="line"></div><div class="line">// Attach the second layer instruction to the second video composition instruction. </div><div class="line">secondVideoCompositionInstruction.layerInstructions = @[secondVideoLayerInstruction]; </div><div class="line"></div><div class="line">// Attach both of the video composition instructions to the video composition.</div><div class="line">  mutableVideoComposition.instructions = @[firstVideoCompositionInstruction,</div><div class="line">  secondVideoCompositionInstruction];</div><div class="line">```   </div><div class="line"></div><div class="line">### 加入核心动画效果</div><div class="line"></div><div class="line">通过使用`animationTool`属性，你可以在合成视频的时候添加核心动画效果。通过这个animation tool，你可以完成给视频添加水印，添加标题或者动画覆盖。在视频合成过程中，核心动画有两种不同的使用方式：你可以在它自己composition track的视频帧中添加一个Core Animation layer,或者你可以直接使用（Core Animation layer）来渲染核心动画效果。接下来的代码展示了怎样使用第二种方式在视频的中间来添加一个水印。</div><div class="line"></div><div class="line">```objc </div><div class="line">CALayer *watermarkLayer = &lt;#CALayer representing your desired watermark image#&gt;;</div><div class="line">CALayer *parentLayer = [CALayer layer];</div><div class="line">CALayer *videoLayer = [CALayer layer];</div><div class="line">parentLayer.frame = CGRectMake(0, 0, mutableVideoComposition.renderSize.width,</div><div class="line">mutableVideoComposition.renderSize.height);</div><div class="line">videoLayer.frame = CGRectMake(0, 0, mutableVideoComposition.renderSize.width,</div><div class="line">mutableVideoComposition.renderSize.height);</div><div class="line">[parentLayer addSublayer:videoLayer];</div><div class="line">watermarkLayer.position = CGPointMake(mutableVideoComposition.renderSize.width/2,</div><div class="line"> mutableVideoComposition.renderSize.height/4);</div><div class="line">[parentLayer addSublayer:watermarkLayer];</div><div class="line">mutableVideoComposition.animationTool = [AVVideoCompositionCoreAnimationTool</div><div class="line">videoCompositionCoreAnimationToolWithPostProcessingAsVideoLayer:videoLayer</div><div class="line">inLayer:parentLayer];</div><div class="line">```   </div><div class="line"></div><div class="line">## 综合：综合各种Assets并且保存到Camera Roll中</div><div class="line"></div><div class="line">接下来的代码例子说明了如何将两个视频asset track和一个音频asset track综合来创建一个简单的video file。它的主要功能有</div><div class="line"></div><div class="line">* 创建一个`AVMutableComposition`对象并且添加很多的`AVMutableCompositionTrack`对象</div><div class="line">* 给可兼容的composition track通过`AVAssetTrack`对象添加时间范围</div><div class="line">* 检查一个video asset的`preferredTransform`属性来确定视频的方向</div><div class="line">* 在一个合成过程中使用`AVMutableVideoCompositionLayerInstruction`对象来对一个视频track实现旋转效果</div><div class="line">* 给一个video composition对象设置合适的`renderSize`和`frameDuration`属性值。</div><div class="line">* 在导出视频文件的时候使用合成结合另一个视频合成</div><div class="line">* 将视频文件导出到`Camera Roll`文件中</div><div class="line"></div><div class="line">*注：为了展示最关键的代码，该实例略去了一个完整的应用所需要的功能点，比如：内存管理，注销观察者（对KVO的观察或者对某个通知的监听）。为了能够很好的使用AV Foundation，你需要对Cocoa有丰富的经验，以便处理可能遗漏的功能点。*</div><div class="line"></div><div class="line">### 创建Composition </div><div class="line"></div><div class="line">为了将几个不同的assets创建放到一起，你可以使用一个`AVMutableComposition`对象。创建这个composition并且将一个音频和视频track添加进去。</div><div class="line"></div><div class="line">```objc</div><div class="line">AVMutableComposition *mutableComposition = [AVMutableComposition composition];</div><div class="line">AVMutableCompositionTrack *videoCompositionTrack = [mutableComposition</div><div class="line">addMutableTrackWithMediaType:AVMediaTypeVideo</div><div class="line">preferredTrackID:kCMPersistentTrackID_Invalid];</div><div class="line">AVMutableCompositionTrack *audioCompositionTrack = [mutableComposition</div><div class="line">addMutableTrackWithMediaType:AVMediaTypeAudio</div><div class="line">preferredTrackID:kCMPersistentTrackID_Invalid];</div><div class="line">```  </div><div class="line"></div><div class="line">### 添加Assets</div><div class="line"></div><div class="line">一个空的composition没有什么作用。添加两个video asset track和audio asset track到这个composition中。</div><div class="line"></div><div class="line">```objc</div><div class="line">AVAssetTrack *firstVideoAssetTrack = [[firstVideoAsset</div><div class="line">tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];</div><div class="line">AVAssetTrack *secondVideoAssetTrack = [[secondVideoAsset</div><div class="line">tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];</div><div class="line">[videoCompositionTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,</div><div class="line">firstVideoAssetTrack.timeRange.duration) ofTrack:firstVideoAssetTrack</div><div class="line">atTime:kCMTimeZero error:nil];</div><div class="line">[videoCompositionTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero,</div><div class="line">secondVideoAssetTrack.timeRange.duration) ofTrack:secondVideoAssetTrack</div><div class="line">atTime:firstVideoAssetTrack.timeRange.duration error:nil];</div><div class="line">[audioCompositionTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, CMTimeAdd(firstVideoAssetTrack.timeRange.duration, secondVideoAssetTrack.timeRange.duration)) ofTrack:[[audioAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0] atTime:kCMTimeZero error:nil]; </div><div class="line">```  </div><div class="line"></div><div class="line">*注：假设你有两个assets，它们每一个至少包含了一个video track，第三个asset中至少包含了一个audio track。这个视频可以从Camera Roll中获取，audio track可以从音乐库或者视频自己的audio tack中获取。*</div><div class="line"></div><div class="line">### 检测视频方向</div><div class="line"></div><div class="line">一旦你将音频和视频track添加到这个composition中，你需要确保两个video track的方向正确的。默认情况下，所有的视频track假定都是水平模式的。如果你的video track在竖直模式拍摄，那么当它们输出的时候是不能被正确输出的。同样的，如果你试图将一个竖直模式的视频和一个水平模式的视频合成一个视频，那么这个输出的session就会失败。</div><div class="line"></div><div class="line">```objc</div><div class="line">BOOL isFirstVideoPortrait = NO;</div><div class="line">CGAffineTransform firstTransform = firstVideoAssetTrack.preferredTransform;</div><div class="line"></div><div class="line">// Check the first video track's preferred transform to determine if it was recorded in portrait mode. </div><div class="line">if (firstTransform.a == 0 &amp;&amp; firstTransform.d == 0 &amp;&amp; (firstTransform.b == 1.0 ||</div><div class="line"> firstTransform.b == -1.0) &amp;&amp; (firstTransform.c == 1.0 || firstTransform.c ==</div><div class="line">-1.0)) &#123;</div><div class="line">    isFirstVideoPortrait = YES;</div><div class="line">&#125; </div><div class="line">BOOL isSecondVideoPortrait = NO;</div><div class="line">CGAffineTransform secondTransform = secondVideoAssetTrack.preferredTransform;</div><div class="line"></div><div class="line">// Check the second video track's preferred transform to determine if it was</div><div class="line">recorded in portrait mode.</div><div class="line">if (secondTransform.a == 0 &amp;&amp; secondTransform.d == 0 &amp;&amp; (secondTransform.b == 1.0</div><div class="line"> || secondTransform.b == -1.0) &amp;&amp; (secondTransform.c == 1.0 || secondTransform.c</div><div class="line">== -1.0)) &#123;</div><div class="line">    isSecondVideoPortrait = YES;</div><div class="line">&#125; </div><div class="line">if ((isFirstVideoAssetPortrait &amp;&amp; !isSecondVideoAssetPortrait) ||</div><div class="line">(!isFirstVideoAssetPortrait &amp;&amp; isSecondVideoAssetPortrait)) &#123;</div><div class="line">    UIAlertView *incompatibleVideoOrientationAlert = [[UIAlertView alloc]</div><div class="line">initWithTitle:@"Error!" message:@"Cannot combine a video shot in portrait mode</div><div class="line">with a video shot in landscape mode." delegate:self cancelButtonTitle:@"Dismiss"</div><div class="line">otherButtonTitles:nil];</div><div class="line">    [incompatibleVideoOrientationAlert show];</div><div class="line">return; </div><div class="line">&#125; </div><div class="line">```   </div><div class="line"></div><div class="line">### 使用视频合成层指令</div><div class="line"></div><div class="line">一旦你知道视频片段有可兼容的视频方向，那么你就可以对每个视频段使用必要的图层指令来，并且将这些图层指令添加到视频合成中。</div><div class="line"></div><div class="line">```objc    </div><div class="line">BOOL isFirstVideoPortrait = NO;</div><div class="line">CGAffineTransform firstTransform = firstVideoAssetTrack.preferredTransform;</div><div class="line">// Check the first video track's preferred transform to determine if it was recorded in portrait mode. </div><div class="line">if (firstTransform.a == 0 &amp;&amp; firstTransform.d == 0 &amp;&amp; (firstTransform.b == 1.0 ||</div><div class="line"> firstTransform.b == -1.0) &amp;&amp; (firstTransform.c == 1.0 || firstTransform.c ==</div><div class="line">-1.0)) &#123;</div><div class="line">    isFirstVideoPortrait = YES;</div><div class="line">&#125; </div><div class="line">BOOL isSecondVideoPortrait = NO;</div><div class="line">CGAffineTransform secondTransform = secondVideoAssetTrack.preferredTransform;</div><div class="line">// Check the second video track's preferred transform to determine if it was</div><div class="line">recorded in portrait mode.</div><div class="line">if (secondTransform.a == 0 &amp;&amp; secondTransform.d == 0 &amp;&amp; (secondTransform.b == 1.0</div><div class="line"> || secondTransform.b == -1.0) &amp;&amp; (secondTransform.c == 1.0 || secondTransform.c</div><div class="line">== -1.0)) &#123;</div><div class="line">    isSecondVideoPortrait = YES;</div><div class="line">&#125; </div><div class="line">if ((isFirstVideoAssetPortrait &amp;&amp; !isSecondVideoAssetPortrait) ||</div><div class="line">(!isFirstVideoAssetPortrait &amp;&amp; isSecondVideoAssetPortrait)) &#123;</div><div class="line">    UIAlertView *incompatibleVideoOrientationAlert = [[UIAlertView alloc]</div><div class="line">initWithTitle:@"Error!" message:@"Cannot combine a video shot in portrait mode</div><div class="line">with a video shot in landscape mode." delegate:self cancelButtonTitle:@"Dismiss"</div><div class="line">otherButtonTitles:nil];</div><div class="line">    [incompatibleVideoOrientationAlert show];</div><div class="line">return; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>所有的<code>AVAssetTrack</code>对象都有一个<code>preferredTransform</code>属性，该属性中包含了这个asset track对象的方向信息。只要这个asset track在屏幕上展示，那么这个<code>transform</code>都将会被使用。在上面的代码中，这个<code>layer instruction transform</code>被设置成了这个<code>asset track</code>的transform，以便于这个视频在新的合成中一旦调整渲染尺寸，仍然可以正常展示。</p>
-<h3 id="设置渲染尺寸和帧时长"><a href="#设置渲染尺寸和帧时长" class="headerlink" title="设置渲染尺寸和帧时长"></a>设置渲染尺寸和帧时长</h3><p>为了将视频的方向固定，你必须响应地调整<code>renderSize</code>属性。你也应该对<code>frameDuration</code>属性挑选一个合适的值。比如每秒钟30次（或者30帧每秒）。默认情况下，renderScale属性被设置为1.0，这在本次合成过程中是合适的。</p>
-<pre><code class="objc">  <span class="built_in">CGSize</span> naturalSizeFirst, naturalSizeSecond;
-  <span class="comment">// If the first video asset was shot in portrait mode, then so was the second one</span>
-   <span class="keyword">if</span> we made it here.
-  <span class="keyword">if</span> (isFirstVideoAssetPortrait) {
-  <span class="comment">// Invert the width and height for the video tracks to ensure that they display</span>
-  properly.
-      naturalSizeFirst = <span class="built_in">CGSizeMake</span>(firstVideoAssetTrack.naturalSize.height,
-  firstVideoAssetTrack.naturalSize.width);
-      naturalSizeSecond = <span class="built_in">CGSizeMake</span>(secondVideoAssetTrack.naturalSize.height,
-  secondVideoAssetTrack.naturalSize.width);
-} <span class="keyword">else</span> { 
-  <span class="comment">// If the videos weren't shot in portrait mode, we can just use their natural</span>
-  sizes.
-      naturalSizeFirst = firstVideoAssetTrack.naturalSize;
-      naturalSizeSecond = secondVideoAssetTrack.naturalSize;
-  }
-  <span class="keyword">float</span> renderWidth, renderHeight;
-  <span class="comment">// Set the renderWidth and renderHeight to the max of the two videos widths and</span>
-  heights.
-  <span class="keyword">if</span> (naturalSizeFirst.width &gt; naturalSizeSecond.width) {
-      renderWidth = naturalSizeFirst.width;
-} <span class="keyword">else</span> { 
-      renderWidth = naturalSizeSecond.width;
-  }
-  <span class="keyword">if</span> (naturalSizeFirst.height &gt; naturalSizeSecond.height) {
-      renderHeight = naturalSizeFirst.height;
-} <span class="keyword">else</span> { 
-      renderHeight = naturalSizeSecond.height;
-  }
-
- mutableVideoComposition.renderSize = <span class="built_in">CGSizeMake</span>(renderWidth, renderHeight);
-  <span class="comment">// Set the frame duration to an appropriate value (i.e. 30 frames per second for</span>
-  video).
- mutableVideoComposition.frameDuration = <span class="built_in">CMTimeMake</span>(<span class="number">1</span>,<span class="number">30</span>);
-</code></pre>
-<h3 id="导出合成，并且将它保存到Camera-Roll中"><a href="#导出合成，并且将它保存到Camera-Roll中" class="headerlink" title="导出合成，并且将它保存到Camera Roll中"></a>导出合成，并且将它保存到Camera Roll中</h3><p>在该过程的最后一个步骤设计到将整个合成保存到一个单独的视频文件，并且将视频存储到Camera Roll中。你可以使用<code>AVAssetExportSession</code>对象来创建这个新的video文件，然后你将它传递到输出文件期望的<code>URL</code>中。然后使用<code>ALAssetLibrary</code>对象来保存这个结果视频文件到Camera Roll中。</p>
-<pre><code class="objc"><span class="comment">// Create a static date formatter so we only have to initialize it once.</span>
-  <span class="keyword">static</span> <span class="built_in">NSDateFormatter</span> *kDateFormatter;
-  <span class="keyword">if</span> (!kDateFormatter) {
-      kDateFormatter = [[<span class="built_in">NSDateFormatter</span> alloc] init];
-      kDateFormatter.dateStyle = <span class="built_in">NSDateFormatterMediumStyle</span>;
-      kDateFormatter.timeStyle = <span class="built_in">NSDateFormatterShortStyle</span>;
-} 
-
-<span class="comment">// Create the export session with the composition and set the preset to the highest quality. </span>
-  <span class="built_in">AVAssetExportSession</span> *exporter = [[<span class="built_in">AVAssetExportSession</span> alloc]
-  initWithAsset:mutableComposition presetName:<span class="built_in">AVAssetExportPresetHighestQuality</span>];
-
-<span class="comment">// Set the desired output URL for the file created by the export process.</span>
-exporter.outputURL = [[[[<span class="built_in">NSFileManager</span> defaultManager] URLForDirectory:<span class="built_in">NSDocumentDirectory</span> inDomain:<span class="built_in">NSUserDomainMask</span> appropriateForURL:<span class="literal">nil</span> 
-create:@YES error:<span class="literal">nil</span>] URLByAppendingPathComponent:[kDateFormatter stringFromDate:[<span class="built_in">NSDate</span> date]]] URLByAppendingPathExtension:<span class="built_in">CFBridgingRelease</span>(UTTypeCopyPreferredTagWithClass((<span class="built_in">CFStringRef</span>)<span class="built_in">AVFileTypeQuickTimeMovie</span>, 
-   kUTTagClassFilenameExtension))];
-
-<span class="comment">// Set the output file type to be a QuickTime movie.</span>
-  exporter.outputFileType = <span class="built_in">AVFileTypeQuickTimeMovie</span>;
-  exporter.shouldOptimizeForNetworkUse = <span class="literal">YES</span>;
-  exporter.videoComposition = mutableVideoComposition;
-
-<span class="comment">// Asynchronously export the composition to a video file and save this file to the camera roll once export completes. </span>
- [exporter exportAsynchronouslyWithCompletionHandler:^{
-      <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^{
-          <span class="keyword">if</span> (exporter.status == <span class="built_in">AVAssetExportSessionStatusCompleted</span>) {
-
- ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc] init];
-              <span class="keyword">if</span> ([assetsLibrary
-  videoAtPathIsCompatibleWithSavedPhotosAlbum:exporter.outputURL]) {
-
-[assetsLibrary writeVideoAtPathToSavedPhotosAlbum:exporter.outputURL completionBlock:<span class="literal">NULL</span>]; 
-         } 
-      } 
-   }); 
-}];
-</code></pre>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2755,7 +2671,7 @@ create:@YES error:<span class="literal">nil</span>] URLByAppendingPathComponent:
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-count">38</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -2810,7 +2726,7 @@ create:@YES error:<span class="literal">nil</span>] URLByAppendingPathComponent:
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
