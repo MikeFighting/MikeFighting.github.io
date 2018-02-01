@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next mist use-motion" lang="en">
+<html class="theme-next muse use-motion" lang="en">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -60,17 +60,11 @@
   
 
   
-    
-      
-    
-
-    
-  
 
   
     
     
-    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
   
 
 
@@ -83,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Write the Code,Change the World" />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -116,7 +110,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Mist',
+    scheme: 'Muse',
     sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
     fancybox: true,
     motion: true,
@@ -142,7 +136,7 @@
 
 
 
-  <title>击水湘江 - Born To Fight!</title>
+  <title>击水湘江</title>
   
 
 
@@ -215,16 +209,6 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
-            
-            About
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
             
@@ -246,43 +230,9 @@
       
 
       
-        <li class="menu-item menu-item-search">
-          
-            <a href="javascript:;" class="popup-trigger">
-          
-            
-              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
-            
-            Search
-          </a>
-        </li>
-      
     </ul>
   
 
-  
-    <div class="site-search">
-      
-  <div class="popup search-popup local-search-popup">
-  <div class="local-search-header clearfix">
-    <span class="search-icon">
-      <i class="fa fa-search"></i>
-    </span>
-    <span class="popup-btn-close">
-      <i class="fa fa-times-circle"></i>
-    </span>
-    <div class="local-search-input-wrapper">
-      <input autocomplete="off"
-             placeholder="Searching..." spellcheck="false"
-             type="text" id="local-search-input">
-    </div>
-  </div>
-  <div id="local-search-result"></div>
-</div>
-
-
-
-    </div>
   
 </nav>
 
@@ -381,7 +331,7 @@
 </code></pre>
 <p>这response可能是用户输入的,可能会输入不确定的数值<code>Do you konw?</code>那么肯定会得到错误的结果，在OC中遇到这种情况我们怎么处理呢？我们有如下的值可以表示错误：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-65ce6dec3ca6cade.png" alt="Wrong!"><br>但是你必须从不同的接口中去选择相应的错误类型，并且要记住这些错误类型。为了解决这个问题，Swift中引入了Optional的概念，将这种可能是nil的值进行打包。它可以表示上述所有错误的类型，同时，<strong>如果我们使用Optional，就一定要对它进行拆包，使用<code>!</code>号，如果不拆包会造成编译器错误</strong>，如下所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-03cea3691052ac9b.png" alt="Need Unwrap"><br><strong>也可以使用Optional Binding将判断是否有值和拆包结合在一起使用：<code>if let</code></strong>。</p>
 <pre><code class="Swift"><span class="keyword">var</span> neighbors = [<span class="string">"Alex"</span>, <span class="string">"Anna"</span>, <span class="string">"Madison"</span>, <span class="string">"Dave"</span>] <span class="keyword">let</span> index = findIndexOfString(<span class="string">"Anna"</span>, neighbors)  <span class="keyword">if</span> <span class="keyword">let</span> indexValue = index { 
-    <span class="built_in">println</span>(<span class="string">"Hello, <span class="subst">\(neighbors[indexValue])</span>"</span>)
+    <span class="built_in">println</span>(<span class="string">"Hello, \(neighbors[indexValue])"</span>)
 } <span class="keyword">else</span> {
     <span class="built_in">println</span>(<span class="string">"Must've moved away"</span>)
 }
@@ -504,7 +454,7 @@ clients.<span class="built_in">sort</span>({(a: <span class="type">String</span>
 <span class="type">HUNGRY</span>
 </code></pre>
 <p>我们还可以调用<code>reduce</code>方法将其和成一个字符串</p>
-<pre><code class="Swift"><span class="keyword">let</span> reducedResult = result.<span class="built_in">reduce</span>(<span class="string">"HULK"</span>){<span class="string">"<span class="subst">\($<span class="number">0</span>)</span> <span class="subst">\($<span class="number">1</span>)</span>"</span>}
+<pre><code class="Swift"><span class="keyword">let</span> reducedResult = result.<span class="built_in">reduce</span>(<span class="string">"HULK"</span>){<span class="string">"\($0) \($1)"</span>}
 </code></pre>
 <p>这时结果如下：</p>
 <pre><code class="Swift"><span class="type">HULK</span> <span class="type">ANGRY</span> <span class="type">HUNGRY</span>
@@ -528,7 +478,7 @@ numbers.<span class="built_in">map</span> (indexes.addIndex) <span class="commen
 <span class="function"><span class="keyword">func</span> <span class="title">logTemperatureDifferences</span><span class="params">(initial: Int)</span></span> {
     <span class="keyword">var</span> prev = initial
     onTemperatureChange = { next <span class="keyword">in</span>
-        <span class="built_in">println</span>(<span class="string">"Changed <span class="subst">\(next - prev)</span>°F"</span>)
+        <span class="built_in">println</span>(<span class="string">"Changed \(next - prev)°F"</span>)
 prev = next 
 }
 </code></pre>
@@ -536,7 +486,7 @@ prev = next
 <pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">logTemperatureDifferences</span><span class="params">(initial: Int)</span></span> {
     <span class="keyword">var</span> prev = initial
     <span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(next: Int)</span></span> {
-        <span class="built_in">println</span>(<span class="string">"Changed <span class="subst">\(next - prev)</span>°F"</span>)
+        <span class="built_in">println</span>(<span class="string">"Changed \(next - prev)°F"</span>)
 prev = next } 
     onTemperatureChange = log
 </code></pre>
@@ -584,7 +534,7 @@ currentTemp = temp    } <span class="comment">// error: requires explicit 'sel
   <span class="built_in">println</span>(<span class="string">"on time"</span>)
 <span class="keyword">case</span> .<span class="type">Delayed</span>(<span class="keyword">let</span> minutes)
                         :
-<span class="built_in">println</span>(<span class="string">"delayed by <span class="subst">\(minutes)</span> minutes"</span>)
+<span class="built_in">println</span>(<span class="string">"delayed by \(minutes) minutes"</span>)
 </code></pre>
 <p>我们可以对这个<code>delay</code>做各种各样的匹配：</p>
 <pre><code class="Swift"><span class="keyword">switch</span> trainStatus {
@@ -631,9 +581,9 @@ currentTemp = temp    } <span class="comment">// error: requires explicit 'sel
 <pre><code class="Swift"><span class="keyword">let</span> color = (<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>)
 <span class="keyword">switch</span> color {
   <span class="keyword">case</span> (<span class="number">0.0</span>, <span class="number">0.5</span>...<span class="number">1.0</span>, <span class="keyword">let</span> blue, <span class="number">_</span>):
-    <span class="built_in">println</span>(<span class="string">"Green and <span class="subst">\(blue * <span class="number">100</span>)</span>% blue"</span>)
+    <span class="built_in">println</span>(<span class="string">"Green and \(blue * 100)% blue"</span>)
   <span class="keyword">case</span> <span class="keyword">let</span> (r, g, b, <span class="number">1.0</span>) <span class="keyword">where</span> r == g &amp;&amp; g == b:
-    <span class="built_in">println</span>(<span class="string">"Opaque grey <span class="subst">\(r * <span class="number">100</span>)</span>%"</span>)
+    <span class="built_in">println</span>(<span class="string">"Opaque grey \(r * 100)%"</span>)
 </code></pre>
 <p>我们甚至可以对其中的各个数值做以相应的模式匹配。</p>
 <h3 id="Pattern-Matching的应用PList校验"><a href="#Pattern-Matching的应用PList校验" class="headerlink" title="Pattern Matching的应用PList校验"></a>Pattern Matching的应用PList校验</h3><p>比如我们有下面的方法来校验Plist中的内容是否有效</p>
@@ -1296,7 +1246,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
           
             <h2 id="Sequences"><a href="#Sequences" class="headerlink" title="Sequences"></a>Sequences</h2><p><code>Sequence</code>协议位于系统架构的底层，其定义是<br>   <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>&#123;</div><div class="line">   </div><div class="line"> associatedtype <span class="type">Iterator</span>: <span class="type">IteratorProtocol</span></div><div class="line"> <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span>-&gt; <span class="type">Iterator</span></div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h2 id="Iterators"><a href="#Iterators" class="headerlink" title="Iterators"></a>Iterators</h2><pre><code><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">IteratorProtocol</span></span>&#123;</div><div class="line">associatedtype <span class="type">Element</span></div><div class="line"><span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span>-&gt; <span class="type">Element</span>?</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</div><div class="line">   <span class="keyword">let</span> string:<span class="type">String</span></div><div class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></div><div class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</div><div class="line">       <span class="keyword">self</span>.string = string</div><div class="line">       offset = string.startIndex</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></div><div class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String</span>? &#123;</div><div class="line"></div><div class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</div><div class="line">       offset = string.index(after: offset)</div><div class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</div><div class="line">       <span class="keyword">return</span> offSetString;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</div><div class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</div><div class="line">    <span class="built_in">print</span>(content)</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> string: <span class="type">String</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</div><div class="line">       </div><div class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</div><div class="line">       </div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"for in<span class="subst">\(<span class="keyword">prefix</span>)</span>"</span>)</div><div class="line">   &#125;</div><div class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</div></pre></td></tr></table></figure></p>
+</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</div><div class="line">   <span class="keyword">let</span> string:<span class="type">String</span></div><div class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></div><div class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</div><div class="line">       <span class="keyword">self</span>.string = string</div><div class="line">       offset = string.startIndex</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></div><div class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String</span>? &#123;</div><div class="line"></div><div class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</div><div class="line">       offset = string.index(after: offset)</div><div class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</div><div class="line">       <span class="keyword">return</span> offSetString;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</div><div class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</div><div class="line">    <span class="built_in">print</span>(content)</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> string: <span class="type">String</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</div><div class="line">       </div><div class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</div><div class="line">       </div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"for in\(prefix)"</span>)</div><div class="line">   &#125;</div><div class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</div></pre></td></tr></table></figure></p>
 <p>如上所示，我么要想对一个Type实现for in 操作，需要两步：</p>
 <ol>
 <li>创建一个遍历器：让其遵守<code>IteratorProtocol</code>协议</li>
@@ -1962,7 +1912,7 @@ git push heroku master
 <div class="theme-info">
   Theme -
   <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Mist
+    NexT.Muse
   </a>
 </div>
 
@@ -2070,6 +2020,10 @@ git push heroku master
 
 
   
+    
+
+    
+  
 
 
 
@@ -2084,323 +2038,6 @@ git push heroku master
 
   
 
-  <script type="text/javascript">
-    // Popup Window;
-    var isfetched = false;
-    var isXml = true;
-    // Search DB path;
-    var search_path = "";
-    if (search_path.length === 0) {
-      search_path = "search.xml";
-    } else if (/json$/i.test(search_path)) {
-      isXml = false;
-    }
-    var path = "/" + search_path;
-    // monitor main search box;
-
-    var onPopupClose = function (e) {
-      $('.popup').hide();
-      $('#local-search-input').val('');
-      $('.search-result-list').remove();
-      $('#no-result').remove();
-      $(".local-search-pop-overlay").remove();
-      $('body').css('overflow', '');
-    }
-
-    function proceedsearch() {
-      $("body")
-        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
-        .css('overflow', 'hidden');
-      $('.search-popup-overlay').click(onPopupClose);
-      $('.popup').toggle();
-      var $localSearchInput = $('#local-search-input');
-      $localSearchInput.attr("autocapitalize", "none");
-      $localSearchInput.attr("autocorrect", "off");
-      $localSearchInput.focus();
-    }
-
-    // search function;
-    var searchFunc = function(path, search_id, content_id) {
-      'use strict';
-
-      // start loading animation
-      $("body")
-        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
-          '<div id="search-loading-icon">' +
-          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
-          '</div>' +
-          '</div>')
-        .css('overflow', 'hidden');
-      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
-
-      $.ajax({
-        url: path,
-        dataType: isXml ? "xml" : "json",
-        async: true,
-        success: function(res) {
-          // get the contents from search data
-          isfetched = true;
-          $('.popup').detach().appendTo('.header-inner');
-          var datas = isXml ? $("entry", res).map(function() {
-            return {
-              title: $("title", this).text(),
-              content: $("content",this).text(),
-              url: $("url" , this).text()
-            };
-          }).get() : res;
-          var input = document.getElementById(search_id);
-          var resultContent = document.getElementById(content_id);
-          var inputEventFunction = function() {
-            var searchText = input.value.trim().toLowerCase();
-            var keywords = searchText.split(/[\s\-]+/);
-            if (keywords.length > 1) {
-              keywords.push(searchText);
-            }
-            var resultItems = [];
-            if (searchText.length > 0) {
-              // perform local searching
-              datas.forEach(function(data) {
-                var isMatch = false;
-                var hitCount = 0;
-                var searchTextCount = 0;
-                var title = data.title.trim();
-                var titleInLowerCase = title.toLowerCase();
-                var content = data.content.trim().replace(/<[^>]+>/g,"");
-                var contentInLowerCase = content.toLowerCase();
-                var articleUrl = decodeURIComponent(data.url);
-                var indexOfTitle = [];
-                var indexOfContent = [];
-                // only match articles with not empty titles
-                if(title != '') {
-                  keywords.forEach(function(keyword) {
-                    function getIndexByWord(word, text, caseSensitive) {
-                      var wordLen = word.length;
-                      if (wordLen === 0) {
-                        return [];
-                      }
-                      var startPosition = 0, position = [], index = [];
-                      if (!caseSensitive) {
-                        text = text.toLowerCase();
-                        word = word.toLowerCase();
-                      }
-                      while ((position = text.indexOf(word, startPosition)) > -1) {
-                        index.push({position: position, word: word});
-                        startPosition = position + wordLen;
-                      }
-                      return index;
-                    }
-
-                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
-                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
-                  });
-                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
-                    isMatch = true;
-                    hitCount = indexOfTitle.length + indexOfContent.length;
-                  }
-                }
-
-                // show search results
-
-                if (isMatch) {
-                  // sort index by position of keyword
-
-                  [indexOfTitle, indexOfContent].forEach(function (index) {
-                    index.sort(function (itemLeft, itemRight) {
-                      if (itemRight.position !== itemLeft.position) {
-                        return itemRight.position - itemLeft.position;
-                      } else {
-                        return itemLeft.word.length - itemRight.word.length;
-                      }
-                    });
-                  });
-
-                  // merge hits into slices
-
-                  function mergeIntoSlice(text, start, end, index) {
-                    var item = index[index.length - 1];
-                    var position = item.position;
-                    var word = item.word;
-                    var hits = [];
-                    var searchTextCountInSlice = 0;
-                    while (position + word.length <= end && index.length != 0) {
-                      if (word === searchText) {
-                        searchTextCountInSlice++;
-                      }
-                      hits.push({position: position, length: word.length});
-                      var wordEnd = position + word.length;
-
-                      // move to next position of hit
-
-                      index.pop();
-                      while (index.length != 0) {
-                        item = index[index.length - 1];
-                        position = item.position;
-                        word = item.word;
-                        if (wordEnd > position) {
-                          index.pop();
-                        } else {
-                          break;
-                        }
-                      }
-                    }
-                    searchTextCount += searchTextCountInSlice;
-                    return {
-                      hits: hits,
-                      start: start,
-                      end: end,
-                      searchTextCount: searchTextCountInSlice
-                    };
-                  }
-
-                  var slicesOfTitle = [];
-                  if (indexOfTitle.length != 0) {
-                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
-                  }
-
-                  var slicesOfContent = [];
-                  while (indexOfContent.length != 0) {
-                    var item = indexOfContent[indexOfContent.length - 1];
-                    var position = item.position;
-                    var word = item.word;
-                    // cut out 100 characters
-                    var start = position - 20;
-                    var end = position + 80;
-                    if(start < 0){
-                      start = 0;
-                    }
-                    if (end < position + word.length) {
-                      end = position + word.length;
-                    }
-                    if(end > content.length){
-                      end = content.length;
-                    }
-                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
-                  }
-
-                  // sort slices in content by search text's count and hits' count
-
-                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
-                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
-                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
-                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
-                      return sliceRight.hits.length - sliceLeft.hits.length;
-                    } else {
-                      return sliceLeft.start - sliceRight.start;
-                    }
-                  });
-
-                  // select top N slices in content
-
-                  var upperBound = parseInt('1');
-                  if (upperBound >= 0) {
-                    slicesOfContent = slicesOfContent.slice(0, upperBound);
-                  }
-
-                  // highlight title and content
-
-                  function highlightKeyword(text, slice) {
-                    var result = '';
-                    var prevEnd = slice.start;
-                    slice.hits.forEach(function (hit) {
-                      result += text.substring(prevEnd, hit.position);
-                      var end = hit.position + hit.length;
-                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
-                      prevEnd = end;
-                    });
-                    result += text.substring(prevEnd, slice.end);
-                    return result;
-                  }
-
-                  var resultItem = '';
-
-                  if (slicesOfTitle.length != 0) {
-                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
-                  } else {
-                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
-                  }
-
-                  slicesOfContent.forEach(function (slice) {
-                    resultItem += "<a href='" + articleUrl + "'>" +
-                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
-                      "...</p>" + "</a>";
-                  });
-
-                  resultItem += "</li>";
-                  resultItems.push({
-                    item: resultItem,
-                    searchTextCount: searchTextCount,
-                    hitCount: hitCount,
-                    id: resultItems.length
-                  });
-                }
-              })
-            };
-            if (keywords.length === 1 && keywords[0] === "") {
-              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
-            } else if (resultItems.length === 0) {
-              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
-            } else {
-              resultItems.sort(function (resultLeft, resultRight) {
-                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
-                  return resultRight.searchTextCount - resultLeft.searchTextCount;
-                } else if (resultLeft.hitCount !== resultRight.hitCount) {
-                  return resultRight.hitCount - resultLeft.hitCount;
-                } else {
-                  return resultRight.id - resultLeft.id;
-                }
-              });
-              var searchResultList = '<ul class=\"search-result-list\">';
-              resultItems.forEach(function (result) {
-                searchResultList += result.item;
-              })
-              searchResultList += "</ul>";
-              resultContent.innerHTML = searchResultList;
-            }
-          }
-
-          if ('auto' === 'auto') {
-            input.addEventListener('input', inputEventFunction);
-          } else {
-            $('.search-icon').click(inputEventFunction);
-            input.addEventListener('keypress', function (event) {
-              if (event.keyCode === 13) {
-                inputEventFunction();
-              }
-            });
-          }
-
-          // remove loading animation
-          $(".local-search-pop-overlay").remove();
-          $('body').css('overflow', '');
-
-          proceedsearch();
-        }
-      });
-    }
-
-    // handle and trigger popup window;
-    $('.popup-trigger').click(function(e) {
-      e.stopPropagation();
-      if (isfetched === false) {
-        searchFunc(path, 'local-search-input', 'local-search-result');
-      } else {
-        proceedsearch();
-      };
-    });
-
-    $('.popup-btn-close').click(onPopupClose);
-    $('.popup').click(function(e){
-      e.stopPropagation();
-    });
-    $(document).on('keyup', function (event) {
-      var shouldDismissSearchPopup = event.which === 27 &&
-        $('.search-popup').is(':visible');
-      if (shouldDismissSearchPopup) {
-        onPopupClose();
-      }
-    });
-  </script>
-
 
 
 
@@ -2414,9 +2051,6 @@ git push heroku master
   
 
   
-  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.1"></script>
-  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.1"></script>
-
 
   
 
