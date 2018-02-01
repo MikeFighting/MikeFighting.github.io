@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: ,
+    lazyload: ,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Swift," />
+
+
+<meta name="description" content="Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，Swift将很多在运行时才可以确定的信息，在编译期就决定了。这就让Swift更加快速。方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（S">
+<meta name="keywords" content="Swift">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为什么Swift比OC快？">
+<meta property="og:url" content="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，Swift将很多在运行时才可以确定的信息，在编译期就决定了。这就让Swift更加快速。方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（S">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-08-04T15:04:28.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="为什么Swift比OC快？">
+<meta name="twitter:description" content="Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，Swift将很多在运行时才可以确定的信息，在编译期就决定了。这就让Swift更加快速。方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（S">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>为什么Swift比OC快？ | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">为什么Swift比OC快？</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-01T19:34:23+08:00">2017-08-01</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/08/01/Why-Swift-IS-swift/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count fb-comments-count" data-href="https://mikefighting.github.io/2017/08/01/Why-Swift-IS-swift/" itemprop="commentCount">0</span> comments
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Swift相比OC以及其它语言，有很多的优化点，这篇文章将从方法调度的角度去说明为什么Swift要比OC更快。OC是一门动态的语言，很多实际执行需要在运行时才可以确定，Swift不一样，<strong>Swift将很多在运行时才可以确定的信息，在编译期就决定了</strong>。这就让Swift更加快速。<br>方法调度就是程序在触发方法时选择需要执行指令的过程，它在每次方法执行时都会发生。如果这种调度发生在编译期，我们称它为静态调度（Static Dispatch），如果调度发生在运行时，那么我们称它为动态调度（Dynamic Dispatch）。静态调度往往要比动态调度要快。那么问题来了，为什么我们需要动态调度呢？全部用静态调度不就得了？<br>问题就在于我们很多时候我们需要用到多态，看看下面这段非常简单的代码<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">eat</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"animal eat"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"animal sleep"</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span>: <span class="title">Animal</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"dog sleep"</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rabbit</span>: <span class="title">Animal</span> </span>&#123;</div><div class="line">    </div><div class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">eat</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"rabbit sleep"</span>);</div><div class="line">    &#125;</div><div class="line">   <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</div><div class="line">        <span class="built_in">print</span>(<span class="string">"rabbit sleep"</span>)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> animal:<span class="type">Animal</span>?</div><div class="line"><span class="keyword">var</span> somThingTrue = <span class="literal">false</span></div><div class="line"><span class="comment">//执行很多业务逻辑</span></div><div class="line"><span class="keyword">if</span> somThingTrue &#123;</div><div class="line">    animal = <span class="type">Rabbit</span>()</div><div class="line">    </div><div class="line">&#125;<span class="keyword">else</span>&#123;</div><div class="line"></div><div class="line">    animal = <span class="type">Dog</span>()</div><div class="line">&#125;</div><div class="line">animal?.eat()</div></pre></td></tr></table></figure></p>
+<p>上面的代码中<code>animal?.eat()</code>就不能够在编译期确定，因为其中需要很多的业务逻辑(比如根据用户的不同，或者网络请求结果的不同)来确定就究竟创建出来的对象是Rabbit还是Dog，也就无法最终确定要调用那个对象的eat()方法。相似的代码在OC中是怎样执行的呢？在OC中编译器会将这个方法翻译成<code>objc_msgSend(target,@selector(eat),nil)</code>这个方法，然后到了运行时，会分为以下几步进行调用：</p>
+<ol>
+<li>找到方法target中isa对应的Class（如果是类方法要到其metaClass中找）。</li>
+<li>从其中的<code>struct objc_method_list **methodLists</code>找到对应的方法实现。</li>
+<li>如果没有找到就到superClass的<code>methodLists</code>中找。</li>
+</ol>
+<p>如果在Swift中，它是怎样做方法调度的呢？</p>
+<ol>
+<li>找到target对应的class</li>
+<li><p>从class的V-Table中的那得到函数的实现<br>Swift中的类会创建一个V-Table，这个Table是一个数组，其中存放的是函数指针。子类会按照父类V-Table中函数的存放，如果子类没有覆盖某个方法，那么就会拷贝父类方法的地址，如上面的例子会得到下面的V-Table。</p>
+<h2 id="Animal"><a href="#Animal" class="headerlink" title=" Animal"></a> Animal</h2><p> Index0 eat 0x0001<br> Index1 sleep 0x0004</p>
+<h2 id="Dog"><a href="#Dog" class="headerlink" title=" Dog"></a> Dog</h2><p> Index0 eat 0x0001 (copied)<br> Index1 sleep 0x0008 (overrideen)</p>
+<h2 id="Rabbit"><a href="#Rabbit" class="headerlink" title=" Rabbit"></a> Rabbit</h2><p> Index0 eat 0x0002 (overrideen)<br> Index1 sleep 0x0003 (overrideen)</p>
+<p>可以注意到Dog因为没有覆盖父类的<code>eat</code>方法，所以其copy了父类的<code>0x0010</code>指针。因为Swift是Type Safe的，所以在调用它的时候它不会变成<code>Robot</code>或者其它的类（如果不能通过编译），所以无论是调用上面结构中的Animal，Dog，还是Rabbit类，它都是调用相同的Index，得到对应的方法实现。<strong>将函数指针和Index所做的映射在编译期就确定了，这就大大减少了运行时的工作量，提高了运行速度。</strong>所以在运行时它没有必要知道是哪个类型的实例调用了这个方法，只需要找到相应的V-Table即可，至于是其中的哪个Index已经在编译期确定了，没必要再去查找Index的值。<br>然而Swift的方法调度不仅仅是动态方法调度，还有很多静态方法调度。<br><strong>如果我们将某个方法标记为final或者private，或者我们不用类，而使用结构体，枚举，这时就不需要动态调度，只需要静态调度即可，这样速度会更快。</strong></p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Swift/" rel="tag"># Swift</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/30/wwdc-understand-swift-performance/" rel="next" title="理解Swift的性能">
+                <i class="fa fa-chevron-left"></i> 理解Swift的性能
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/02/wwdc-better-app-with-value-type/" rel="prev" title="怎样用好Value Type?">
+                怎样用好Value Type? <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Animal"><span class="nav-number">1.</span> <span class="nav-text"> Animal</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dog"><span class="nav-number">2.</span> <span class="nav-text"> Dog</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rabbit"><span class="nav-number">3.</span> <span class="nav-text"> Rabbit</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2156998"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

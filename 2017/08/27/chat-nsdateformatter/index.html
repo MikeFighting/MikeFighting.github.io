@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: ,
+    lazyload: ,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Objective-C," />
+
+
+<meta name="description" content="性能对比之所以要聊DateFormatter是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期： 1234567891011121314151617181920212223242526272829p">
+<meta name="keywords" content="Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何优雅地使用DateFormatter？">
+<meta property="og:url" content="https://mikefighting.github.io/2017/08/27/chat-nsdateformatter/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="性能对比之所以要聊DateFormatter是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期： 1234567891011121314151617181920212223242526272829p">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-09-15T11:03:39.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何优雅地使用DateFormatter？">
+<meta name="twitter:description" content="性能对比之所以要聊DateFormatter是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期： 1234567891011121314151617181920212223242526272829p">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/08/27/chat-nsdateformatter/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>如何优雅地使用DateFormatter？ | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/27/chat-nsdateformatter/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">如何优雅地使用DateFormatter？</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-27T09:48:45+08:00">2017-08-27</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/08/27/chat-nsdateformatter/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count fb-comments-count" data-href="https://mikefighting.github.io/2017/08/27/chat-nsdateformatter/" itemprop="commentCount">0</span> comments
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h2><p>之所以要聊<code>DateFormatter</code>是因为某次给项目做性能检测，发现创建DateFormatter太消耗性能，我们来做个对比，新建100000个日期。我们使用两种方式：第一种每次创建日期的时候新建一个NSDateFormatter，第二种共用一个NSDateFormatter，来生成日期：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithMultipleInstantiation</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">    </div><div class="line">        <span class="keyword">var</span> dateStrings:[<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">            df.dateStyle = .medium</div><div class="line">            df.timeStyle = .full</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithSingleInstance</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">    </div><div class="line">        <span class="keyword">var</span> dateStrings: [<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">        df.dateStyle = .medium</div><div class="line">        df.timeStyle = .full</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))   </div><div class="line">        &#125;   </div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后我们调用这两个方法：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"testWithMultipleInstantiation--<span class="subst">\(testWithMultipleInstantiation()</span>)"</span>)</div><div class="line"><span class="built_in">print</span>(<span class="string">"testWithSingleInstance--<span class="subst">\(testWithSingleInstance()</span>)"</span>)</div></pre></td></tr></table></figure>
+<p>打印结果是：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">testWithMultipleInstantiation--<span class="number">7.83139349098201</span></div><div class="line">testWithSingleInstance--<span class="number">0.742719032976311</span></div></pre></td></tr></table></figure>
+<p>从中可以明显看到创建<code>DateFormatter</code>是很消耗性能的，多次创建DateFormatter比单次创建大约要慢11倍。如果我们要用DateFormatter，那么尽量创建一次，然后多次使用。</p>
+<p>然后我们再做进一步的实验：创建一次<code>DateFormatter</code>，但是改变这个NSDateFormatter的<code>dateStyle</code>和<code>timeStyle</code>。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">testWithSingleInstanceChangeFormatter</span><span class="params">()</span></span> -&gt;<span class="type">CFTimeInterval</span> &#123;</div><div class="line">        </div><div class="line">        <span class="keyword">var</span> dateStrings: [<span class="type">String</span>] = []</div><div class="line">        dateStrings.reserveCapacity(<span class="number">100000</span>)</div><div class="line">        <span class="keyword">let</span> startTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">let</span> df = <span class="type">DateFormatter</span>()</div><div class="line">        <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">100000</span> &#123;</div><div class="line">            </div><div class="line">            df.dateStyle = .medium</div><div class="line">            df.timeStyle = .full</div><div class="line">            df.dateStyle = .full</div><div class="line">            df.timeStyle = .medium</div><div class="line">            dateStrings.append(df.string(from: <span class="type">Date</span>()))</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">let</span> endTime = <span class="type">CACurrentMediaTime</span>()</div><div class="line">        <span class="keyword">return</span> endTime - startTime</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>然后调用这个方法：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span>(<span class="string">"ChangeFormatter--<span class="subst">\(testWithSingleInstanceChangeFormatter()</span>)"</span>)</div></pre></td></tr></table></figure>
+<p>这时输出的结果是：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="type">ChangeFormatter</span>--<span class="number">5.77827541399165</span></div></pre></td></tr></table></figure>
+<p>从中我们可以看到，其对性能的消耗和多次创建DateFormatter相差并不多。最后我们得到这样一个结论：</p>
+<blockquote>
+<ol>
+<li>每次使用DateFormatter时都新建是最消耗性能的</li>
+<li>创建一个DateFormatter然后改变其<code>dateStyle</code>和<code>timeStyle</code>等和1中的性能消耗差不多</li>
+<li>为每一种日期类型创建一种DateFormatter并且不改变其<code>dateStyle</code>和<code>timeStyle</code>等属性是性能最优的</li>
+</ol>
+</blockquote>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>通过上面的结论，我们发现如果对DateFormatter做成单例，那么就必须保证每个DateFormatter的格式是相同的，因为改变DateFormatter的格式也是很消耗性能的。我们要做多个单例，每种单例是一种formatter，然后分别使用吗？显然太过于麻烦。<strong>我们可以使用缓存策略，将每种格式的DateFormatter缓存一份，下次如果有相同格式的Formatter，直接从缓存中取就可以了，这就避免了多次创建和多次改变格式的问题。</strong>为了解决这个问题，我使用NSCache做了一个DateFormatter的缓存池：<a href="https://github.com/MikeFighting/MFDateFormatterPool" target="_blank" rel="external">MFDateFormatterPool</a>，已经上传到了GitHub上，分为OC和Swift两个版本，如有问题可以联系我（Swift版稍后会加上）。</p>
+<p><em>其它：NSDateFormatter在IOS7之前是非线程安全的，多线程可能引起崩溃，</em></p>
+<h3 id="延伸阅读："><a href="#延伸阅读：" class="headerlink" title="延伸阅读："></a>延伸阅读：</h3><p><a href="https://www.raywenderlich.com/31166/25-ios-app-performance-tips-tricks#reuseobjects" target="_blank" rel="external">https://www.raywenderlich.com/31166/25-ios-app-performance-tips-tricks#reuseobjects</a><br><a href="http://www.chibicode.org/?p=41" target="_blank" rel="external">http://www.chibicode.org/?p=41</a><br><a href="https://stackoverflow.com/questions/18195051/crash-in-nsdateformatter-setdateformat-method" target="_blank" rel="external">https://stackoverflow.com/questions/18195051/crash-in-nsdateformatter-setdateformat-method</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/26/why-java-popular/" rel="next" title="Java为什么会流行？">
+                <i class="fa fa-chevron-left"></i> Java为什么会流行？
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/04/wwdc-understand-foundation/" rel="prev" title="理解Foundation框架">
+                理解Foundation框架 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#性能对比"><span class="nav-number">1.</span> <span class="nav-text">性能对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#延伸阅读："><span class="nav-number">2.1.</span> <span class="nav-text">延伸阅读：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2156998"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

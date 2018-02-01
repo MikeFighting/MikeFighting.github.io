@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: ,
+    lazyload: ,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Java," />
+
+
+<meta name="description" content="下面是TIOBE对计算机语言流行度的最新排名：  我们可以看到Java名列第一，并且Java一直排名很靠前。为什么Java会如此流行呢？要了解Java为什么这么流行，我们先从它的起源说起。 Java诞生的前奏计算机业内一般认为：B语言导致了C语言的诞生，C语言演变出了C++，而C++会被Java语言所打败。是什么导致了Java的诞生？想要解决这个问题，我们先来看看Java的前辈们。 C语言的诞生C">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java为什么会流行？">
+<meta property="og:url" content="https://mikefighting.github.io/2017/08/26/why-java-popular/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="下面是TIOBE对计算机语言流行度的最新排名：  我们可以看到Java名列第一，并且Java一直排名很靠前。为什么Java会如此流行呢？要了解Java为什么这么流行，我们先从它的起源说起。 Java诞生的前奏计算机业内一般认为：B语言导致了C语言的诞生，C语言演变出了C++，而C++会被Java语言所打败。是什么导致了Java的诞生？想要解决这个问题，我们先来看看Java的前辈们。 C语言的诞生C">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-d7123c8e5701f435.png">
+<meta property="og:updated_time" content="2017-08-26T02:10:39.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java为什么会流行？">
+<meta name="twitter:description" content="下面是TIOBE对计算机语言流行度的最新排名：  我们可以看到Java名列第一，并且Java一直排名很靠前。为什么Java会如此流行呢？要了解Java为什么这么流行，我们先从它的起源说起。 Java诞生的前奏计算机业内一般认为：B语言导致了C语言的诞生，C语言演变出了C++，而C++会被Java语言所打败。是什么导致了Java的诞生？想要解决这个问题，我们先来看看Java的前辈们。 C语言的诞生C">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-d7123c8e5701f435.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/08/26/why-java-popular/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>Java为什么会流行？ | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/26/why-java-popular/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java为什么会流行？</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-26T09:17:48+08:00">2017-08-26</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/08/26/why-java-popular/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count fb-comments-count" data-href="https://mikefighting.github.io/2017/08/26/why-java-popular/" itemprop="commentCount">0</span> comments
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>下面是TIOBE对计算机语言流行度的最新排名：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-d7123c8e5701f435.png" alt="Language Rate"></p>
+<p>我们可以看到Java名列第一，并且Java一直排名很靠前。为什么Java会如此流行呢？要了解Java为什么这么流行，我们先从它的起源说起。</p>
+<h3 id="Java诞生的前奏"><a href="#Java诞生的前奏" class="headerlink" title="Java诞生的前奏"></a>Java诞生的前奏</h3><p>计算机业内一般认为：B语言导致了C语言的诞生，C语言演变出了C++，而C++会被Java语言所打败。是什么导致了Java的诞生？想要解决这个问题，我们先来看看Java的前辈们。</p>
+<h4 id="C语言的诞生"><a href="#C语言的诞生" class="headerlink" title="C语言的诞生"></a>C语言的诞生</h4><p>C语言的产生是人们追求结构化、高效率、高级语言的结果，它可以替代汇编进行开发，它的出现改变了人们之前的编程方法和思路。</p>
+<p>C语言的出现解决了之前语言的各种不足，比如：FORTRAN高效但不适用于编写系统程序。BASIC虽然容易学习，但是功能不够强大。汇编高效，但是学习成本很大，且很难调试。</p>
+<p>另外，C语言之前的语言没有考虑结构化设计。它们大量使用<code>GOTO</code>语句来对程序进行控制。这样做的结果是<strong>程序极其混乱</strong>，各种跳转和条件分支交织在一起极大地影响了程序的可读性。人们解决该问题的愿望非常强烈，且日益迫切。20世界70年代初，计算机革命开始，人们对于软件的需求日益增加，使用当时的语言开发软件已经无法满足需求。人们在此期间进行了很多的尝试，但是没有发明出更好的语言。直到一个新机遇的到来：<strong>计算机硬件资源的富余</strong>。由于计算机硬件的增多，程序员可以随意的使用计算机，随意进行各种尝试，这就给了他们开发自己工具的机会。后来Ken Thompson发明了B语言，B语言演化到了C语言。1989年美国国家标准化组织制定了C语言的标准，C语言被正式标准化。C语言是由程序员对编程实践的总结而发明出来的，它能够解决早期语言的种种缺陷。</p>
+<h4 id="C-的诞生"><a href="#C-的诞生" class="headerlink" title="C++的诞生"></a>C++的诞生</h4><p>C语言被用的好好的，为何出现了C++呢？原因是C语言太复杂了。当一个工程项目达到一定规模之后，使用结构化编程方法，编程人员就无法对它的复杂性进行有效管理。20世纪80年代初期，许多工程项目的复杂性都超过了结构化方法的极限。为了解决这个问题，面向对象诞生了。面向对象的特性：继承，封装，多态是用来帮助组织复杂程序的编程方法。因此出现了C++，C++的产生是基于C的，它包含了C的所有特征，属性和优点。</p>
+<h4 id="Java出现的时机到了"><a href="#Java出现的时机到了" class="headerlink" title="Java出现的时机到了"></a>Java出现的时机到了</h4><p>在20世纪80年代末到90年代初，使用面向对象的C++语言占主导地位。然而，推动计算机语言进化的力量正在酝酿。万维网（WWW）和Internet在随后的几年达到了临界状态，这就促成了编程的另一场革命。</p>
+<h3 id="Java诞生"><a href="#Java诞生" class="headerlink" title="Java诞生"></a>Java诞生</h3><p>由于嵌入式系统的发展，人们对一种独立于平台的语言更加渴望，这种语言可以嵌入微波炉，遥控器等各种家用电器设备的软件。用作控制器芯片的CPU是多种多样的，但是C和C++只能对特定目标进行编译。比如某个CPU要编译C++代码，那么就要创建一个针对该CPU的C++编译器，而创建编译器是一项耗时耗长，耗资大的工作。为了解决这个问题，Gosling和其他人一直在开发一种可移植，跨平台的语言。该语言能够生成运行于不同环境，不同CPU芯片上的代码。经过不懈的努力，在1991年被James Gosling，Patrick Naughton，Chris Warth，Ed Frank和Mike Sheridan发明出来。第一版花了18个月。刚开始叫Oak，于1995年更名为Java。</p>
+<h3 id="Java流行"><a href="#Java流行" class="headerlink" title="Java流行"></a>Java流行</h3><p>在万维网（WWW）出现之前Java处于有用、摸摸无闻的用于电子消费品编程的状态。然而由于万维网的出现，Java被推到了计算机语言的设计的最前沿，<strong>因为万维网也需要可移植的程序。</strong></p>
+<p>因特网是由不同的、分布式的系统组成，其中包含各种类型的计算机，操作系统和CPU。尽管许多类型的平台都可以与因特网连接，但是用户仍然希望他们能够运行同样的程序。</p>
+<p>1993年，Java设计小组的成员发现解决嵌入式控制器可移植性的方法，也可以用来解决因特网的代码的可移植性问题。也就是Java不仅可以用来解决小范围的问题，也可以用来解决大范围的问题。这样他们将Java的重心由电子消费品，转移到Internet编程上。</p>
+<h3 id="Java对Internet为什么重要"><a href="#Java对Internet为什么重要" class="headerlink" title="Java对Internet为什么重要"></a>Java对Internet为什么重要</h3><p>在网路中，在服务器和个人计算机间传递的信息有两大对象：被动的信息和动态的、主动运行的程序。比如阅读电子邮件是被动的数据，被服务器用来正确的显示服务器传递数据的程序是动态的。这中动态性是好的，但是其安全性和可移植行有严重的缺陷。在Java产生以前，赛百空间有一半的对象实体无法进入网络世界，是Java为它们打开了便利之门，而且在这个过程中定义了一种全新的程序形式:applet(小应用程序)。 </p>
+<h4 id="Java小应用程序"><a href="#Java小应用程序" class="headerlink" title="Java小应用程序"></a>Java小应用程序</h4><p>Java可以用来生成两类程序：应用程序（Application）和小应用程序(Java applet)。应用程序不必说，小应用程序是可以再Internet中传输并在兼容Java的Web浏览器中运行的应用程序。小应用程序实际上就是小型的Java程序，它能够像图像文件、声音文件和视频片段那样通过网络动态下载。小程序的特点是，它是动态的智能的程序，可以对用户的输入作出反应，并变化。</p>
+<h4 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h4><p>每次当你下载一个程序的时候，你都要冒着被病毒入侵的危险。Java出现之前，很多用户不经常下载可执行的程序文件。即使下载了，在运行它之前也要进行病毒检查。经管如此，很多用户还是担心他们的系统被病毒感染，除此之外，有些恶意程序可以搜索你计算机本地文件系统内容来收集你的私人信息，比如信用卡号码、银行账号和密码等。Java在网络程序和你的计算机之间提供了一道防火墙，消除了用户的顾虑。这道防火墙就是Java运行环境。Java程序被限制在了运行环境中，不允许它访问计算机的其他部分。</p>
+<h4 id="可移植性"><a href="#可移植性" class="headerlink" title="可移植性"></a>可移植性</h4><p>链接到Internet上的计算机和操作系统不尽相同，要使它们都能动态地下载同一个程序，就需要有能够生成可移植性执行代码的方法。这个方法就是：Java编译器的输出并不是可执行的代码，而是字节码（bytecode）。字节码是一套设计用来在Java运行时环境下执行的高度优化的指令集，该Java运行时系统成为Java虚拟机（JavaVirtual Machine, JVM）。在标准形式下，JVM就是一个字节码解释器。只要某个平台安装了Java虚拟机，它就可以解释Java代码。当然对Java程序进行解释也有助于它的安全性。因为每个Java程序的运行都在Java虚拟机的控制之下，Java虚拟机可以包含这个程序，并且不让它在系统之外产生副作用。</p>
+<h4 id="Java虚拟机的增强"><a href="#Java虚拟机的增强" class="headerlink" title="Java虚拟机的增强"></a>Java虚拟机的增强</h4><p>尽管Java被设计为解释执行的程序，但是这没有妨碍它将动态字节码编译为本机代码。SUN公司在Java 2发行版中提供了一个字节码编译器–JIT(Just In Time)。它可以根据需要，一部分一部分地将字节码实时编译为可执行代码。它不能将整个Java程序一次性全部编译为可执行的代码，因为Java要执行各种检查，而这些检查只有在运行时才执行。这种编译执行的方法使性能得到较大的提高。</p>
+<p>经过上面的探讨我们发现，推动计算机语言发展的因素有两个：</p>
+<blockquote>
+<ul>
+<li>适应正在变化的环境和需求</li>
+<li>实现编程艺术的完善和提高</li>
+</ul>
+</blockquote>
+<p>Java之所以流行主要因为万维网的发展和其自身安全性和可移植性的特点。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/24/avfoundation-capture/" rel="next" title="AVFoundation--媒体捕获">
+                <i class="fa fa-chevron-left"></i> AVFoundation--媒体捕获
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/27/chat-nsdateformatter/" rel="prev" title="如何优雅地使用DateFormatter？">
+                如何优雅地使用DateFormatter？ <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java诞生的前奏"><span class="nav-number">1.</span> <span class="nav-text">Java诞生的前奏</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#C语言的诞生"><span class="nav-number">1.1.</span> <span class="nav-text">C语言的诞生</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#C-的诞生"><span class="nav-number">1.2.</span> <span class="nav-text">C++的诞生</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java出现的时机到了"><span class="nav-number">1.3.</span> <span class="nav-text">Java出现的时机到了</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java诞生"><span class="nav-number">2.</span> <span class="nav-text">Java诞生</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java流行"><span class="nav-number">3.</span> <span class="nav-text">Java流行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java对Internet为什么重要"><span class="nav-number">4.</span> <span class="nav-text">Java对Internet为什么重要</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java小应用程序"><span class="nav-number">4.1.</span> <span class="nav-text">Java小应用程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安全性"><span class="nav-number">4.2.</span> <span class="nav-text">安全性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可移植性"><span class="nav-number">4.3.</span> <span class="nav-text">可移植性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java虚拟机的增强"><span class="nav-number">4.4.</span> <span class="nav-text">Java虚拟机的增强</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2156998"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

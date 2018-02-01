@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: ,
+    lazyload: ,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Others," />
+
+
+<meta name="description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    public void OnMessage(Push.PushMessage pushMessage) {     t">
+<meta name="keywords" content="Others">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聊聊if else">
+<meta property="og:url" content="https://mikefighting.github.io/2017/09/05/chat-if-else/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    public void OnMessage(Push.PushMessage pushMessage) {     t">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-12027b6db51d7301.png">
+<meta property="og:updated_time" content="2017-09-27T12:59:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="聊聊if else">
+<meta name="twitter:description" content="if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。 为什么太多的if else不好？我们先看一个例子：    public void OnMessage(Push.PushMessage pushMessage) {     t">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-12027b6db51d7301.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/09/05/chat-if-else/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>聊聊if else | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/05/chat-if-else/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">聊聊if else</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-05T07:04:01+08:00">2017-09-05</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/09/05/chat-if-else/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count fb-comments-count" data-href="https://mikefighting.github.io/2017/09/05/chat-if-else/" itemprop="commentCount">0</span> comments
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="http://upload-images.jianshu.io/upload_images/1513759-12027b6db51d7301.png" alt="if else"><br>if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。</p>
+<h2 id="为什么太多的if-else不好？"><a href="#为什么太多的if-else不好？" class="headerlink" title="为什么太多的if else不好？"></a>为什么太多的if else不好？</h2><p>我们先看一个例子：</p>
+<pre><code class="swift">   <span class="keyword">public</span> void <span class="type">OnMessage</span>(<span class="type">Push</span>.<span class="type">PushMessage</span> pushMessage) {
+    <span class="keyword">try</span> {
+        <span class="type">String</span> message = pushMessage.messageContent;
+        <span class="type">Log</span>.v(<span class="string">"keyes"</span>, <span class="string">"pushMessage = "</span> + message);
+        <span class="keyword">if</span> (message != null) {
+            <span class="type">JsonObject</span> data = new <span class="type">JsonParser</span>().parse(message).getAsJsonObject();
+            <span class="keyword">if</span> (data.<span class="keyword">get</span>(<span class="string">"type"</span>) != null) {
+                <span class="type">String</span> type = data.<span class="keyword">get</span>(<span class="string">"type"</span>).getAsString();
+                <span class="keyword">if</span> (<span class="string">"100"</span>.equals(type)) {<span class="comment">//XX消息</span>
+                    <span class="type">EventBus</span>.getDefault().post(new <span class="type">GrabActionEvent</span>());
+                    <span class="type">PopBean</span> bean = <span class="type">PushUtils</span>.dealPushMessage(mContext, message);
+                    <span class="type">IDealWithPush</span> dealWithPush = <span class="type">AppStateUtils</span>.getAppState(mContext);
+                    dealWithPush.dealPush(mContext, bean);
+                } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"106"</span>.equals(type)) {<span class="comment">// </span>
+                    <span class="type">String</span> nick = data.<span class="keyword">get</span>(<span class="string">"nick"</span>).getAsString();
+                    <span class="type">WPushNotify</span>.notification(<span class="number">106</span>, nick, <span class="string">"正在访问您的信息，请立即回复"</span>);
+                } <span class="keyword">else</span> {
+                    <span class="type">Gson</span> temp = new <span class="type">Gson</span>();
+                    <span class="keyword">final</span> <span class="type">SystemNotification</span> bean = temp.fromJson(pushMessage.messageContent, <span class="type">SystemNotification</span>.<span class="keyword">class</span>);
+                    <span class="keyword">if</span> (bean.getType() == <span class="number">103</span>) {
+                        <span class="comment">//应用在后台，不需要刷新UI,通知栏提示新消息</span>
+                        <span class="keyword">if</span> (!<span class="type">AppInfoUtils</span>.isRunningForeground(<span class="type">HyApplication</span>.getApplication())) {
+                            <span class="type">WPushNotify</span>.notification(bean);
+                        }
+                        saveDataToDB(bean);
+                        <span class="type">EventBus</span>.getDefault().post(bean);
+                    } <span class="keyword">else</span> <span class="keyword">if</span> (bean.getType() == <span class="number">104</span>) {
+                        <span class="type">List</span>&lt;<span class="type">Activity</span>&gt; list = <span class="type">HyApplication</span>.getInstance().getActivityList();
+                        <span class="keyword">if</span> (list != null &amp;&amp; list.size() &gt; <span class="number">0</span>) {
+                            <span class="type">Activity</span> activity = list.<span class="keyword">get</span>(list.size() - <span class="number">1</span>);
+                            <span class="keyword">if</span> (!<span class="type">TextUtils</span>.isEmpty(bean.getDescribe())) {
+                                new <span class="type">LogoutDialog</span>(activity, bean.getDescribe());
+                            } <span class="keyword">else</span> {
+                                new <span class="type">LogoutDialog</span>(activity, activity.getString(<span class="type">R</span>.string.force_exit));
+                            }
+                        }
+                    } <span class="keyword">else</span> <span class="keyword">if</span> (bean.getType() == <span class="number">108</span>) {<span class="comment">//沉默用户唤醒</span>
+                        <span class="type">String</span> title = bean.getTitle();
+                        <span class="type">String</span> describe = bean.getDescribe();
+                        <span class="type">WPushNotify</span>.notification(<span class="number">108</span>, title, describe);
+                    }
+                }
+            }
+        }
+    } <span class="keyword">catch</span> (<span class="type">Exception</span> e) {
+        <span class="type">LogUtils</span>.e(<span class="string">"push"</span>, e.getMessage());
+    }
+
+    <span class="type">Log</span>.i(<span class="string">"song"</span>, pushMessage.messageContent);
+
+}
+</code></pre>
+<p>这个方法里面仅仅嵌套了好多层if else，看上去会比较复杂难懂，再看一个例子：</p>
+<pre><code class="swift"><span class="keyword">if</span>(isSkipPPUForQA &amp;&amp; <span class="type">StringUtils</span>.isNotBlank(request.getParameter(<span class="string">"userId"</span>))){
+    <span class="keyword">super</span>.doFilter(request, response, chain);
+}<span class="keyword">else</span> {
+    <span class="keyword">try</span> {
+        <span class="keyword">if</span>(<span class="string">"/app/school/article/share"</span>.equals(request.getRequestURI())){
+            <span class="keyword">super</span>.doFilter(request, response, chain);
+        }<span class="keyword">else</span>{
+            <span class="keyword">if</span>(!filterReqUrl(request)) {
+                long ppuUserId = <span class="type">PassportService</span>.passportService.getLoginUserId(<span class="type">RemoteValid</span>.<span class="type">SAPCE_ONE_HOUR</span>, request, response);
+                <span class="keyword">if</span> (ppuUserId &lt; <span class="number">2</span>) {
+response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">PPU_UNVALID</span>.getCodeStr(), <span class="string">"登录认证信息已过期，请重新登录"</span>));
+                    log.error(<span class="string">"ppu返回的userId:"</span> + ppuUserId + <span class="string">",ppu过期,ppu="</span> + <span class="type">PPUCookieUtil</span>.getPpuCookie(request) + <span class="string">",url="</span> + request.getRequestURI());
+                    log.error(<span class="string">"imei="</span> + request.getParameter(<span class="string">"imei"</span>) + <span class="string">",version="</span> + request.getParameter(<span class="string">"version"</span>) + <span class="string">",platform="</span> + request.getParameter(<span class="string">"platform"</span>));
+                } <span class="keyword">else</span> {
+                    boolean flag = isTouchSingleDeviceLimitWithoutLogin(ppuUserId, request);
+                    <span class="keyword">if</span> (flag) {
+                        <span class="type">String</span> singleDeviceLoginContent = configComp.getValueByConfigTable(<span class="type">ConfigEnum</span>.<span class="type">APP_SINGLE_DEVICE_LOGIN_CONTENT</span>);
+                        boolean isH5 = <span class="string">"1"</span>.equals(request.getParameter(<span class="string">"isH5"</span>));
+                        <span class="keyword">if</span>(isH5){
+                            <span class="type">String</span> jsAjaxHeader = request.getHeader(<span class="string">"X-Requested-With"</span>);
+                            <span class="keyword">if</span>(<span class="string">"XMLHttpRequest"</span>.equals(jsAjaxHeader)){response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">SINGLE_DEVICE_LOGIN</span>.getCodeStr(), singleDeviceLoginContent));
+                            }<span class="keyword">else</span> {
+                             renderSingleDeviceHtml(response,<span class="string">"/single_device_error"</span>);
+                            }
+                        }<span class="keyword">else</span> {
+                            response.getWriter().write(this.generateResponse(<span class="type">AppResultStateEnum</span>.<span class="type">SINGLE_DEVICE_LOGIN</span>.getCodeStr(), singleDeviceLoginContent));
+                        }
+                        log.error(<span class="string">"触发单设备登录限制错误"</span>);
+                    } <span class="keyword">else</span> {
+                        request.addParameter(<span class="string">"userId"</span>, new <span class="type">String</span>[]{ppuUserId + <span class="string">""</span>});
+                        <span class="keyword">super</span>.doFilter(request, response, chain);
+                    }
+                }
+            }
+        }
+    } <span class="keyword">catch</span> (<span class="type">Exception</span> e) {
+        logger.error(<span class="string">"业务处理异常,url="</span>,e);
+    }
+}
+</code></pre>
+<p>第一，这个方法中嵌套了七层的if else，层次太多。第二这个方法太长。嵌套层次过多和方法过长都是Bad Smell。那么究竟很多的if else有哪些弊端呢？</p>
+<ul>
+<li><p><strong>僵化</strong>：如果再有更多情况的时候，我们需要在原来的地方写更多的if…else if条件。也就是说你需要去改动原来的代码，然后重新编译，重新部署，这是很浪费时间的。并且这违背了面向对象中的<strong>开放封闭原则</strong>：对扩展开放，对修改封闭。同时由于这个类需要处理各种业务，职责太多，所以也违背了<strong>职责单一原则。</strong></p>
+</li>
+<li><p><strong>效率低下</strong>：很多系统的类，比如<code>HashMaps</code>，<code>Properties</code>等，都非常注意基于数据的条件判断。</p>
+</li>
+<li><p><strong>难阅读</strong>：像这种层层if else嵌套的情况，如果其他人需要来看，并且维护这份代码，由于难阅读，他们会感觉吃力。试想下，如果段代码很长，一个屏看不完，那肯定是维护的灾难。</p>
+</li>
+<li><p><strong>难维护</strong>：if else不像switch case，它的每个分支都和其它分支有关系，如果需求变更，在修改某个分支之前要看懂其它所有分支，确保不会对其它分支造成影响。</p>
+</li>
+<li><p><strong>难调试</strong>：很多if else，调试过程中需要一步步跟进，会影响调试效率。</p>
+</li>
+<li><p><strong>难测试</strong>：每次我们写测试用例的Case，针对每个有很多if else的方法，我们要对每个分支都写一个测试，这样下来这个测试用例将会变得非常长。</p>
+</li>
+</ul>
+<blockquote>
+<p>在任何面向对象语言中，都需要考虑移除分支控制逻辑（<code>if</code>以及<code>switch</code>，<code>case</code>）。移除的常用做法是将这些控制逻辑的方法移到一个类中。 <a href="https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements" target="_blank" rel="external">Quora,Simon Hayes</a></p>
+</blockquote>
+<p>那么我们怎样来解决这种情况，因为遇到不同的情况需要用不同的解决方案，我们逐个来分析：</p>
+<h2 id="常见的嵌套类if-else处理方式"><a href="#常见的嵌套类if-else处理方式" class="headerlink" title="常见的嵌套类if else处理方式"></a>常见的嵌套类if else处理方式</h2><p>比如第一个if else的例子，通常</p>
+<h2 id="平行类的if-else处理方式"><a href="#平行类的if-else处理方式" class="headerlink" title="平行类的if else处理方式"></a>平行类的if else处理方式</h2><p><strong>如果我们有几个判断条件是平级if，那么我们可以使用命令模式来解决这种问题。</strong>比如我们现在有如下的if else：</p>
+<pre><code class="swift"><span class="keyword">if</span> (value.equals(<span class="string">"A"</span>)) { doCommandA() }
+<span class="keyword">else</span> <span class="keyword">if</span> (value.equals(<span class="string">"B"</span>)) { doCommandB() } 
+<span class="keyword">else</span> <span class="keyword">if</span> etc.
+</code></pre>
+<p>这时，我们可以使用<strong>命令模式</strong>来解决，先创建一个接口：</p>
+<pre><code class="swift"><span class="keyword">public</span> interface <span class="type">Command</span> {
+     void exec();
+}
+</code></pre>
+<p>然后<code>CommandA</code>和<code>CommandB</code>类实现这个接口：</p>
+<pre><code class="swift"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommandA</span>() <span class="title">implements</span> <span class="title">Command</span> </span>{
+
+     void exec() {
+          <span class="comment">// ... </span>
+     }
+}
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommandB</span>() <span class="title">implements</span> <span class="title">Command</span> </span>{
+
+     void exec() {
+          <span class="comment">// ...</span>
+     }
+}
+</code></pre>
+<p>然后创建一个<code>Map&lt;String,Command&gt;</code>,并且往其中添加Command实例：</p>
+<pre><code class="swift">commandMap.put(<span class="string">"A"</span>, new <span class="type">CommandA</span>());
+commandMap.put(<span class="string">"B"</span>, new <span class="type">CommandB</span>());
+</code></pre>
+<p>然后所有的<strong>if/else if</strong>，就都会变成：</p>
+<pre><code class="swift">commandMap.<span class="keyword">get</span>(value).exec();
+</code></pre>
+<p>如果某个Command有任何的改变只需要改动某个具体的类即可，如果有新加的Command，那么只需要添加响应的Command即可。命令模式就是加了一个<strong>中间件：命令容器</strong>(就是这里的Map，根据情况可能会是List或者其它)来实现解耦。</p>
+<h2 id="复杂处理算法的if-else"><a href="#复杂处理算法的if-else" class="headerlink" title="复杂处理算法的if else"></a>复杂处理算法的if else</h2><p>如果我们if之后的代码处理的业务逻辑很相似，并且这种处理算法可能会经常变动，比如：</p>
+<pre><code class="swift"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>{
+    <span class="keyword">public</span> double calculateInsurance(double income, <span class="type">InputType</span> type) {
+        <span class="keyword">if</span> (type == smallType) {
+            <span class="keyword">return</span> income*<span class="number">0.365</span>;
+        } <span class="keyword">else</span> <span class="keyword">if</span> (type == mediumType) {
+            <span class="keyword">return</span> (income-<span class="number">10000</span>)*<span class="number">0.2</span>+<span class="number">35600</span>;
+        } <span class="keyword">else</span> <span class="keyword">if</span> (type == bigType) {
+            <span class="keyword">return</span> (income-<span class="number">30000</span>)*<span class="number">0.1</span>+<span class="number">76500</span>;
+        } <span class="keyword">else</span> {
+            <span class="keyword">return</span> (income-<span class="number">60000</span>)*<span class="number">0.02</span>+<span class="number">105600</span>;
+        }
+    }
+}
+</code></pre>
+<p>那么我们就可以将每个if分支中的代码单独分离到各个类中，然后再抽出一个父类，这样我们每个条件分支中就不会有很多代码了：</p>
+<pre><code class="swift"><span class="keyword">public</span> abstract <span class="class"><span class="keyword">class</span> <span class="title">InsuranceStrategy</span> </span>{
+    <span class="keyword">public</span> double calculateInsuranceVeryHigh(double income) {
+        <span class="keyword">return</span> (income - getAdjustment()) * getWeight() + getConstant();
+    }
+    <span class="keyword">public</span> abstract int getConstant();
+    <span class="keyword">public</span> abstract double getWeight();
+    <span class="keyword">public</span> abstract int getAdjustment();
+}
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InsuranceStrategyMedium</span> <span class="title">extends</span> <span class="title">InsuranceStrategy</span> </span>{
+    @<span class="type">Override</span>
+    <span class="keyword">public</span> int getConstant() {
+        <span class="keyword">return</span> <span class="number">35600</span>;
+    }
+    @<span class="type">Override</span>
+    <span class="keyword">public</span> double getWeight() {
+        <span class="keyword">return</span> <span class="number">0.2</span>;
+    }
+    @<span class="type">Override</span>
+    <span class="keyword">public</span> int getAdjustment() {
+        <span class="keyword">return</span> <span class="number">10000</span>;
+    }
+}
+
+<span class="comment">/*InsuranceStrategyLow和InsuranceStrategyHigh的处理方式相似，此处略去*/</span>
+<span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>{
+    <span class="keyword">private</span> <span class="type">InsuranceStrategy</span> strategy;
+    <span class="keyword">public</span> double calculateInsurance(double income, <span class="type">InputType</span> type) {
+        <span class="keyword">if</span> (type == smallType) {
+            strategy = new <span class="type">InsuranceStrategyLow</span>();
+        } <span class="keyword">else</span> <span class="keyword">if</span> (type == mediumType) {
+            strategy = new <span class="type">InsuranceStrategyMedium</span>();
+        } <span class="keyword">else</span> <span class="keyword">if</span> (type == bigType) {
+            strategy = new <span class="type">InsuranceStrategyHigh</span>();
+        } <span class="keyword">else</span> {
+            strategy = new <span class="type">InsuranceStrategyVeryHigh</span>();
+        }
+
+        <span class="keyword">return</span> strategy.calculate(income);
+    }
+}
+</code></pre>
+<p>这样最终不还是有if else吗？是的，最终还是有if else，但是if else的逻辑变得非常清晰，只是用于创建一个新的类。并且我们将经常变化的算法部分封装到了子类中，如果某个子类中的算法变了，只需要变动某个子类（<strong>封装变化</strong>），然后重新编译就可以了，不需要将整个项目重新编译，部署。</p>
+<h2 id="区间类的if-else"><a href="#区间类的if-else" class="headerlink" title="区间类的if else"></a>区间类的if else</h2><p>如果客户端的if条件表示的是不同的范围，然后根据不同范围来选择不同的对象来处理，比如：</p>
+<pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>{
+
+    <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span> </span>{
+
+        Request request = <span class="keyword">new</span> Request();
+        request.addSalaryAmount = <span class="number">9999</span>;
+        <span class="keyword">if</span> (request.addSalaryAmount &lt;= <span class="number">100</span>){
+            DivisionManager divisionManager = <span class="keyword">new</span> DivisionManager();
+            divisionManager.accept();
+        }<span class="keyword">else</span> <span class="keyword">if</span> (request.addSalaryAmount &lt;= <span class="number">1000</span>){
+            Chief chief = <span class="keyword">new</span> Chief();
+            chief.accept();
+        }<span class="keyword">else</span> <span class="keyword">if</span> (request.addSalaryAmount &lt;= <span class="number">10000</span>){
+            GeneralManager generalManager  = <span class="keyword">new</span> GeneralManager();
+            generalManager.accept();
+        }<span class="keyword">else</span> {
+            System.out.println(<span class="string">"金额太大没人能批准"</span>);
+        }
+    }
+}
+</code></pre>
+<p>上面这个例子中，不同的条件分支是让不同的对象来处理这种条件。并且以后可能Request对象会添加其他的请求属性，比如offWork（请假），并且这种请求属性同样需要<code>DivisionManager</code>，<code>Chief</code>，<code>GeneralManager</code>。然而其中的处理顺序变了，并不是现在的请求等级。可能是先由<code>Chief</code>处理，再有<code>GeneralManager</code>处理，最后有<code>DivisionManager</code>来处理，那怎么办呢？难道还要写一套if else吗？<br>这时候我们就可以用责任链模式来将这一长串if else嵌套进每一个对象中去，我们可以这样做：</p>
+<pre><code class="java"><span class="class"><span class="keyword">interface</span> <span class="title">ManagerCommand</span></span>{
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span></span>;
+}
+
+<span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">CommManager</span> <span class="keyword">implements</span> <span class="title">ManagerCommand</span> </span>{
+    <span class="keyword">public</span> CommManager superior;
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSuperior</span><span class="params">(CommManager superior)</span> </span>{
+        <span class="keyword">this</span>.superior = superior;
+    }
+}
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DivisionManager</span> <span class="keyword">extends</span> <span class="title">CommManager</span> </span>{
+
+    <span class="meta">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span> </span>{
+
+        <span class="keyword">if</span> (requestAmount&lt;<span class="number">100</span>){
+            System.out.println(<span class="string">"部门经理批准"</span>);
+        }<span class="keyword">else</span> <span class="keyword">if</span> ( <span class="keyword">this</span>.superior != <span class="keyword">null</span>){
+            <span class="keyword">this</span>.superior.accept(requestAmount);
+        }
+    }
+}
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chief</span> <span class="keyword">extends</span> <span class="title">CommManager</span></span>{
+
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span>  <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span>  </span>{
+        <span class="keyword">if</span> (requestAmount &lt; <span class="number">1000</span>){
+        System.out.println(<span class="string">"总监同意"</span>);
+        }<span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.superior != <span class="keyword">null</span>){
+            <span class="keyword">this</span>.superior.accept(requestAmount);
+        }
+    }
+}
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GeneralManager</span> <span class="keyword">extends</span> <span class="title">CommManager</span></span>{
+
+    <span class="meta">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span> </span>{
+
+        <span class="keyword">if</span> (requestAmount&lt;<span class="number">10000</span>){
+            System.out.println(<span class="string">"总经理批准"</span>);
+        }<span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.superior != <span class="keyword">null</span>){
+            <span class="keyword">this</span>.superior.accept(requestAmount);
+        }
+    }
+}
+</code></pre>
+<p>最后在Client端调用的时候，我们可以这样写：</p>
+<pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>{
+
+    <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span> </span>{
+
+        Request request = <span class="keyword">new</span> Request();
+        request.addSalaryAmount = <span class="number">999</span>;
+        DivisionManager divisionManager = <span class="keyword">new</span> DivisionManager();
+        Chief chief = <span class="keyword">new</span> Chief();
+        GeneralManager generalManager = <span class="keyword">new</span> GeneralManager();
+        divisionManager.setSuperior(chief);
+        chief.setSuperior(generalManager);
+        divisionManager.accept(request.addSalaryAmount);
+    }
+}
+</code></pre>
+<p>这种写法的好处是：<strong>将条件和处理该条件的对象解耦，每个处理条件的对象都不知道其他对象，我们可以随时地增加或者修改处理一个请求的结构。这增加了给对象指派职责的灵活性</strong>。</p>
+<blockquote>
+<p>小结：其实上述的每种方式都是利用<strong>多态</strong>来解决分支带来的僵化，<a href="https://www.youtube.com/watch?v=4F72VULWFvc" target="_blank" rel="external">谷歌有一个视频对这个问题阐述得很好。</a>。</p>
+</blockquote>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://stackoverflow.com/questions/10175805/how-to-avoid-a-lot-of-if-else-conditions" target="_blank" rel="external">https://stackoverflow.com/questions/10175805/how-to-avoid-a-lot-of-if-else-conditions</a></li>
+<li><a href="https://stackoverflow.com/questions/271526/avoiding-null-statements?rq=1" target="_blank" rel="external">https://stackoverflow.com/questions/271526/avoiding-null-statements?rq=1</a></li>
+<li><a href="https://stackoverflow.com/questions/14136721/converting-many-if-else-statements-to-a-cleaner-approach" target="_blank" rel="external">https://stackoverflow.com/questions/14136721/converting-many-if-else-statements-to-a-cleaner-approach</a></li>
+<li><a href="https://www.youtube.com/watch?v=4F72VULWFvc" target="_blank" rel="external">https://www.youtube.com/watch?v=4F72VULWFvc</a></li>
+<li><a href="https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements" target="_blank" rel="external">https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements</a></li>
+<li><a href="https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-swift/1199677#1199677" target="_blank" rel="external">https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-swift/1199677#1199677</a></li>
+<li><a href="https://industriallogic.com/xp/refactoring/conditionalWithStrategy.html" target="_blank" rel="external">https://industriallogic.com/xp/refactoring/conditionalWithStrategy.html</a></li>
+<li>大话设计模式</li>
+<li>重构改善既有代码的设计</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Others/" rel="tag"># Others</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/04/wwdc-understand-foundation/" rel="next" title="理解Foundation框架">
+                <i class="fa fa-chevron-left"></i> 理解Foundation框架
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/06/google-the-clean-code-talks-inheritance/" rel="prev" title="代码整洁之道-继承，多态和测试">
+                代码整洁之道-继承，多态和测试 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么太多的if-else不好？"><span class="nav-number">1.</span> <span class="nav-text">为什么太多的if else不好？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见的嵌套类if-else处理方式"><span class="nav-number">2.</span> <span class="nav-text">常见的嵌套类if else处理方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#平行类的if-else处理方式"><span class="nav-number">3.</span> <span class="nav-text">平行类的if else处理方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#复杂处理算法的if-else"><span class="nav-number">4.</span> <span class="nav-text">复杂处理算法的if else</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#区间类的if-else"><span class="nav-number">5.</span> <span class="nav-text">区间类的if else</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2156998"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

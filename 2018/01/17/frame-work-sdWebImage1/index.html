@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: ,
+    lazyload: ,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Note," />
+
+
+<meta name="description" content="内存缓存大小的限制在设计缓存框架是的时候，如果内存我们使用的类是NSDictionary，或则NSArray这种通用类的话，如果内存占用率过高，导致系统RAM中少于12M内存（这个数值可能会随着系统版本和手机机型的不同而不同），那么系统的看门狗（watch dog）会将我们的App杀死。这时，我们要限制占用内存的大小。获取系统内存大小的方案如下： 1234567891011121314151617">
+<meta name="keywords" content="Note">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SDWebImage学习笔记（二）">
+<meta property="og:url" content="https://mikefighting.github.io/2018/01/17/frame-work-sdWebImage1/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="内存缓存大小的限制在设计缓存框架是的时候，如果内存我们使用的类是NSDictionary，或则NSArray这种通用类的话，如果内存占用率过高，导致系统RAM中少于12M内存（这个数值可能会随着系统版本和手机机型的不同而不同），那么系统的看门狗（watch dog）会将我们的App杀死。这时，我们要限制占用内存的大小。获取系统内存大小的方案如下： 1234567891011121314151617">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-01-17T03:27:35.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SDWebImage学习笔记（二）">
+<meta name="twitter:description" content="内存缓存大小的限制在设计缓存框架是的时候，如果内存我们使用的类是NSDictionary，或则NSArray这种通用类的话，如果内存占用率过高，导致系统RAM中少于12M内存（这个数值可能会随着系统版本和手机机型的不同而不同），那么系统的看门狗（watch dog）会将我们的App杀死。这时，我们要限制占用内存的大小。获取系统内存大小的方案如下： 1234567891011121314151617">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2018/01/17/frame-work-sdWebImage1/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>SDWebImage学习笔记（二） | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2018/01/17/frame-work-sdWebImage1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SDWebImage学习笔记（二）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-17T10:44:35+08:00">2018-01-17</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/01/17/frame-work-sdWebImage1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count fb-comments-count" data-href="https://mikefighting.github.io/2018/01/17/frame-work-sdWebImage1/" itemprop="commentCount">0</span> comments
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="内存缓存大小的限制"><a href="#内存缓存大小的限制" class="headerlink" title="内存缓存大小的限制"></a>内存缓存大小的限制</h2><p>在设计缓存框架是的时候，如果内存我们使用的类是NSDictionary，或则NSArray这种通用类的话，如果内存占用率过高，导致系统RAM中少于12M内存（这个数值可能会随着系统版本和手机机型的不同而不同），那么系统的看门狗（watch dog）会将我们的App杀死。这时，我们要限制占用内存的大小。获取系统内存大小的方案如下：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;mach/mach.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;mach/mach_host.h&gt;</span></span></div><div class="line"><span class="keyword">static</span> natural_t minFreeMemLeft = <span class="number">1024</span>*<span class="number">1024</span>*<span class="number">12</span>; <span class="comment">// reserve 12MB RAM</span></div><div class="line"><span class="comment">// inspired by http://stackoverflow.com/questions/5012886/knowing-available-ram-on-an-ios-device</span></div><div class="line"><span class="keyword">static</span> natural_t get_free_memory(<span class="keyword">void</span>)</div><div class="line">&#123;</div><div class="line">    mach_port_t host_port;</div><div class="line">    mach_msg_type_number_t host_size;</div><div class="line">    vm_size_t pagesize;</div><div class="line"></div><div class="line">    host_port = mach_host_self();</div><div class="line">    host_size = <span class="keyword">sizeof</span>(vm_statistics_data_t) / <span class="keyword">sizeof</span>(integer_t);</div><div class="line">    host_page_size(host_port, &amp;pagesize);</div><div class="line"></div><div class="line">    vm_statistics_data_t vm_stat;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (host_statistics(host_port, HOST_VM_INFO, (host_info_t)&amp;vm_stat, &amp;host_size) != KERN_SUCCESS)</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Failed to fetch vm statistics"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/* Stats in bytes */</span></div><div class="line">    natural_t mem_free = vm_stat.free_count * pagesize;</div><div class="line">    <span class="keyword">return</span> mem_free;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里我们定义了最小的内存空间12M，然后在框架中，如果我们使用<code>get_free_memory</code>获取可用内存小于<code>minFreeMemLeft</code>，那么我们就移除内存缓存：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)storeImage:(<span class="built_in">UIImage</span> *)image imageData:(<span class="built_in">NSData</span> *)data forKey:(<span class="built_in">NSString</span> *)key toDisk:(<span class="built_in">BOOL</span>)toDisk</div><div class="line">&#123;</div><div class="line">    <span class="keyword">if</span> (!image || !key)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (get_free_memory() &lt; minFreeMemLeft)</div><div class="line">    &#123;</div><div class="line">        [memCache removeAllObjects];</div><div class="line">    &#125;</div><div class="line">    [memCache setObject:image forKey:key];</div><div class="line">    <span class="comment">//.....</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>如果既想避免占用内存过高而被Kill掉，同时也想避免在每个方法中都去判断当前内存可用空间的大小，那么使用<code>NSCache</code>替代上文中提到的NSDictionary或者NSArray来做内存缓存的类，因为NSCache在内存吃紧的情况下会自动清除部分缓存。</p>
+</blockquote>
+<h2 id="关于图片的Alpha通道"><a href="#关于图片的Alpha通道" class="headerlink" title="关于图片的Alpha通道"></a>关于图片的Alpha通道</h2><p>图片的Alpha通道会造成离屏渲染从而带来FPS的下降，所以没有特别必要的情况下应该尽量避免使用Alpha通道，如果从网络上下载下来的图片含有Alpha通道该怎样处理呢？我们可以在强制解码阶段来将Alpha通道去除：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">+ (<span class="built_in">UIImage</span> *)decodedImageWithImage:(<span class="built_in">UIImage</span> *)image</div><div class="line">&#123;</div><div class="line">    <span class="built_in">CGImageRef</span> imageRef = image.CGImage;</div><div class="line">    <span class="built_in">CGColorSpaceRef</span> colorSpace = <span class="built_in">CGColorSpaceCreateDeviceRGB</span>();</div><div class="line">    <span class="comment">// 使用kCGImageAlphaNoneSkipLast，去除了Alpha通道</span></div><div class="line">    <span class="built_in">CGContextRef</span> context = <span class="built_in">CGBitmapContextCreate</span>(<span class="literal">NULL</span>,</div><div class="line">                                                 <span class="built_in">CGImageGetWidth</span>(imageRef),</div><div class="line">                                                 <span class="built_in">CGImageGetHeight</span>(imageRef),</div><div class="line">                                                 <span class="number">8</span>,</div><div class="line">                                                 kCGImageAlphaNoneSkipLast | kCGBitmapByteOrder32Little);</div><div class="line">    <span class="built_in">CGColorSpaceRelease</span>(colorSpace);</div><div class="line">    <span class="keyword">if</span> (!context) <span class="keyword">return</span> <span class="literal">nil</span>;</div><div class="line"></div><div class="line">    <span class="built_in">CGRect</span> rect = (<span class="built_in">CGRect</span>)&#123;<span class="built_in">CGPointZero</span>,&#123;<span class="built_in">CGImageGetWidth</span>(imageRef), <span class="built_in">CGImageGetHeight</span>(imageRef)&#125;&#125;;</div><div class="line">    <span class="built_in">CGContextDrawImage</span>(context, rect, imageRef);</div><div class="line">    <span class="built_in">CGImageRef</span> decompressedImageRef = <span class="built_in">CGBitmapContextCreateImage</span>(context);</div><div class="line">    <span class="built_in">CGContextRelease</span>(context);</div><div class="line"></div><div class="line">    <span class="built_in">UIImage</span> *decompressedImage = [[<span class="built_in">UIImage</span> alloc] initWithCGImage:decompressedImageRef scale:image.scale orientation:image.imageOrientation];</div><div class="line">    <span class="built_in">CGImageRelease</span>(decompressedImageRef);</div><div class="line">    <span class="keyword">return</span> SDWIReturnAutoreleased(decompressedImage);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果想要保存原图片的Alpha通道，那么可以先获取原图片的Alpha通道信息，然后在调用CGBitmapContextCreate的时候将Alpha信息传递过去：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CGImageAlphaInfo</span> alphaInfo = <span class="built_in">CGImageGetAlphaInfo</span>(imageRef);</div><div class="line"><span class="built_in">CGContextRef</span> context = <span class="built_in">CGBitmapContextCreate</span>(<span class="literal">NULL</span>,</div><div class="line">                                             <span class="built_in">CGImageGetWidth</span>(imageRef),</div><div class="line">                                             <span class="built_in">CGImageGetHeight</span>(imageRef),</div><div class="line">                                             <span class="number">8</span>,</div><div class="line">                                             alphaInfo | kCGBitmapByteOrder32Little);</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Note/" rel="tag"># Note</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/20/note-concurrency-jmm-0/" rel="next" title="Java内存模型">
+                <i class="fa fa-chevron-left"></i> Java内存模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#内存缓存大小的限制"><span class="nav-number">1.</span> <span class="nav-text">内存缓存大小的限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于图片的Alpha通道"><span class="nav-number">2.</span> <span class="nav-text">关于图片的Alpha通道</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2156998"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

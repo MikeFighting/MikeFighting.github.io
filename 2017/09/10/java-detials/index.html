@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: ,
+    lazyload: ,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Java," />
+
+
+<meta name="description" content="Java中的类型转换兼容的自动转换在编程中把一种类型的值赋给另一种类型的变量是合法的。如果这两种类型是兼容的，那么Java会自动对其进行类型转换。例如：把int类型的值赋给long类型的变量就可以。然而如果两种类型不兼容，那么就不会发生这种隐式的类型转换。例如，没有将double类型转化为byte类型的定义。这种不兼容的转化只能自己强制进行。满足以下两个条件时，Java会自动给你进行类型转换：">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="可能被遗漏的Java细节">
+<meta property="og:url" content="https://mikefighting.github.io/2017/09/10/java-detials/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="Java中的类型转换兼容的自动转换在编程中把一种类型的值赋给另一种类型的变量是合法的。如果这两种类型是兼容的，那么Java会自动对其进行类型转换。例如：把int类型的值赋给long类型的变量就可以。然而如果两种类型不兼容，那么就不会发生这种隐式的类型转换。例如，没有将double类型转化为byte类型的定义。这种不兼容的转化只能自己强制进行。满足以下两个条件时，Java会自动给你进行类型转换：">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-09-12T01:09:05.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="可能被遗漏的Java细节">
+<meta name="twitter:description" content="Java中的类型转换兼容的自动转换在编程中把一种类型的值赋给另一种类型的变量是合法的。如果这两种类型是兼容的，那么Java会自动对其进行类型转换。例如：把int类型的值赋给long类型的变量就可以。然而如果两种类型不兼容，那么就不会发生这种隐式的类型转换。例如，没有将double类型转化为byte类型的定义。这种不兼容的转化只能自己强制进行。满足以下两个条件时，Java会自动给你进行类型转换：">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/09/10/java-detials/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>可能被遗漏的Java细节 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/10/java-detials/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">可能被遗漏的Java细节</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-10T16:15:27+08:00">2017-09-10</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/09/10/java-detials/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count fb-comments-count" data-href="https://mikefighting.github.io/2017/09/10/java-detials/" itemprop="commentCount">0</span> comments
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Java中的类型转换"><a href="#Java中的类型转换" class="headerlink" title="Java中的类型转换"></a>Java中的类型转换</h3><h4 id="兼容的自动转换"><a href="#兼容的自动转换" class="headerlink" title="兼容的自动转换"></a>兼容的自动转换</h4><p>在编程中把一种类型的值赋给另一种类型的变量是合法的。如果这两种类型是兼容的，那么Java会自动对其进行类型转换。例如：把int类型的值赋给long类型的变量就可以。然而如果两种类型不兼容，那么就不会发生这种隐式的类型转换。例如，没有将double类型转化为byte类型的定义。这种不兼容的转化只能自己强制进行。<br>满足以下两个条件时，Java会自动给你进行类型转换：</p>
+<ul>
+<li>这两种类型是兼容的。</li>
+<li>目的类型的范围要比源类型的范围大。</li>
+</ul>
+<p>数字类型，包括整数和浮点类型都是彼此兼容的，但是，数字类型和字符类型（char）或布尔类型（bollean）是不兼容的。</p>
+<h4 id="不兼容的强制转换"><a href="#不兼容的强制转换" class="headerlink" title="不兼容的强制转换"></a>不兼容的强制转换</h4><p>虽然自动转换很好，但是它不能满足所有的需求。例如，你需要将一个int类型的变量付给一个byte类型的变量，你就需要使用(target-type)value这种转换了。下面演示将int转换为byte，如果整数超出了byte类型的取值范围，那么它的值将会因为对byte类型的值取%而减少。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> a;</div><div class="line"><span class="keyword">byte</span> b;</div><div class="line"><span class="comment">// ...</span></div><div class="line">b = (<span class="keyword">byte</span>)a;</div></pre></td></tr></table></figure>
+<p>当把浮点数转换为整数类型时会发生一种不同的转换：截断。你知道整数没有小数部分，当你把浮点数转化为整数的时候，其小数部分将会被舍弃。例如，如果将值1.23赋给一个整数，那么其结果是1，0.23被舍弃了。如果浮点数值太而不能适合目标整数类型，那么它的值将会因为对目标类型值域取模而减少。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"> <span class="comment">// Demonstrate casts.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Conversion</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">       <span class="keyword">byte</span> b;</div><div class="line">       <span class="keyword">int</span> i = <span class="number">257</span>;</div><div class="line">       <span class="keyword">double</span> d = <span class="number">323.142</span>;</div><div class="line">       System.out.println(<span class="string">"\nConversion of int to byte."</span>);</div><div class="line">       b = (<span class="keyword">byte</span>) i;</div><div class="line">       System.out.println(<span class="string">"i and b "</span> + i + <span class="string">" "</span> + b);</div><div class="line">       System.out.println(<span class="string">"\nConversion of double to int."</span>);</div><div class="line">       i = (<span class="keyword">int</span>) d;</div><div class="line">       System.out.println(<span class="string">"d and i "</span> + d + <span class="string">" "</span> + i);</div><div class="line">       System.out.println(<span class="string">"\nConversion of double to byte."</span>);</div><div class="line">       b = (<span class="keyword">byte</span>) d;</div><div class="line">       System.out.println(<span class="string">"d and b "</span> + d + <span class="string">" "</span> + b);</div><div class="line">&#125; &#125;</div></pre></td></tr></table></figure>
+<p>该程序的输出如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Conversion of <span class="keyword">int</span> to <span class="keyword">byte</span>.</div><div class="line">i and b <span class="number">257</span> <span class="number">1</span></div><div class="line">Conversion of <span class="keyword">double</span> to <span class="keyword">int</span>.</div><div class="line">d and i <span class="number">323.142</span> <span class="number">323</span></div><div class="line">Conversion of <span class="keyword">double</span> to <span class="keyword">byte</span>.</div><div class="line">d and b <span class="number">323.142</span> <span class="number">67</span></div></pre></td></tr></table></figure>
+<p>当值257被强制转换为byte变量时，其结果是257除以256(256是byte类型的变化范围)的余数。当把变量d转换为int类型时，它的小数部分被舍弃了。当吧变量d转换为byte类型时，它的小数部分被舍弃了，而且它的值减少为256的模，即67。</p>
+<h4 id="表达式中的类型提升"><a href="#表达式中的类型提升" class="headerlink" title="表达式中的类型提升"></a>表达式中的类型提升</h4><p>在表达式中，有时候中间值的精度会比较高，它有可能超过任何一个操作数的范围。例如，考虑下面的表达式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">byte</span> a = <span class="number">40</span>;</div><div class="line"><span class="keyword">byte</span> b = <span class="number">50</span>;</div><div class="line"><span class="keyword">byte</span> c = <span class="number">100</span>;</div><div class="line"><span class="keyword">int</span> d = a * b / c;</div></pre></td></tr></table></figure>
+<p>其中间结果<code>a*b</code>很容易超出它的任何一个byte型操作数的范围。为了处理这种问题，当分析表达式时，Java会自动提升各个byte或者short型的操作数为int型。这意味着表达式<code>a*b</code>是使用整数而不是字节型来运算的。这样，尽管变量a和b都被指定为byte型，50*40的中间表达式的结果2000是合法的。</p>
+<p>自动类型提升很好，但是有时候会引起令人疑惑的编译错误。例如，这个看起来正确的程序却会引起问题：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">byte</span> b = <span class="number">50</span>;</div><div class="line">b = b * <span class="number">2</span>; <span class="comment">// Error! Cannot assign an int to a byte!</span></div></pre></td></tr></table></figure>
+<p>这里看上去完全合法，但由于当表达式求值的时候，操作数被自动提升为了int型，所以需要强制转换才可以赋值（但是你必须考虑好溢出的情况）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">byte</span> b = <span class="number">50</span>;</div><div class="line">b = (<span class="keyword">byte</span>)(b * <span class="number">2</span>);</div></pre></td></tr></table></figure>
+<p>这样就不会有编译器错误了。</p>
+<h4 id="类型提升的约定"><a href="#类型提升的约定" class="headerlink" title="类型提升的约定"></a>类型提升的约定</h4><p>除了将byte型和short型提升到int型以外，Java还定义了其它的类型提升规则。如果一个操作数是long型，那么整个表达式将被提升到long型；如果一个操作数是float型，整个表达式将被提升到float型；如果一个操作数是double型，计算结构就是double型。我们用个例子来说明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Promote</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">       <span class="keyword">byte</span> b = <span class="number">42</span>;</div><div class="line">       <span class="keyword">char</span> c = <span class="string">'a'</span>;</div><div class="line">       <span class="keyword">short</span> s = <span class="number">1024</span>;</div><div class="line">       <span class="keyword">int</span> i = <span class="number">50000</span>;</div><div class="line">       <span class="keyword">float</span> f = <span class="number">5.67f</span>;</div><div class="line">       <span class="keyword">double</span> d = .<span class="number">1234</span>;</div><div class="line">       <span class="keyword">double</span> result = (f * b) + (i / c) - (d * s);</div><div class="line">       System.out.println((f * b) + <span class="string">" + "</span> + (i / c) + <span class="string">" - "</span> + (d * s));</div><div class="line">       System.out.println(<span class="string">"result = "</span> + result);</div><div class="line">&#125; &#125;</div></pre></td></tr></table></figure>
+<p>我们来分析：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">double</span> result = (f * b) + (i / c) - (d * s);</div></pre></td></tr></table></figure>
+<p>的类型提升过程，在第一个子表达式<code>f*b</code>中，变量b被 升为float类型，该子表达式的结果当然是float类型。 接下来，在子表达式i/c，中，变量c被 升为int类型，该子表达式的结果当然是int类型。然 后，子表达式<code>d*s</code>中的变量s被 升为double类型，该子表达式的结果当然也是double类型。 最后，考虑三个中间值，float类型，int类型，和double类型。float类型加int类型的结果是float 类型。然后float类型减去 升为double类型的double类型，该表达式的最后结果是double型。</p>
+<h3 id="Java中的break"><a href="#Java中的break" class="headerlink" title="Java中的break"></a>Java中的break</h3><p>Java中的break除了可以用来在switch或者循环中终止某个条件或者循环，还可以作为goto语句的一种形式来使用。Java中没有goto语句，因为goto让程序流程变得非结构化，可能让程序难以理解和维护，并且可以阻止某些编译器优化。但是，有些地方使用goto语句有助于流程控制，并且是合法的。例如，从嵌套很深的循环中退出来，goto语句就很有帮助。因此，Java定义了break语句的一种扩展形式来处理这种情况。通过给某个代码块加上标签，那么<strong>其内部的break语句</strong>就可以在某些情况下跳转到该标签。这个代码块不必非要是循环或者switch，它可以是任意的代码块。标签的指定如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Using break as a civilized form of goto.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Break</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">       <span class="keyword">boolean</span> t = <span class="keyword">true</span>;</div><div class="line">       first: &#123;</div><div class="line">         second: &#123;</div><div class="line">           third: &#123;</div><div class="line">            System.out.println(<span class="string">"Before the break."</span>);</div><div class="line">            <span class="keyword">if</span>(t) <span class="keyword">break</span> second; <span class="comment">// break out of second block</span></div><div class="line">            System.out.println(<span class="string">"This won't execute"</span>);</div><div class="line">&#125; </div><div class="line">           System.out.println(<span class="string">"This won't execute"</span>);</div><div class="line">         &#125;</div><div class="line">         System.out.println(<span class="string">"This is after second block."</span>);</div><div class="line">       &#125;</div><div class="line">&#125; &#125;</div></pre></td></tr></table></figure>
+<p>改程序的输出如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Before the <span class="built_in">break</span>.</div><div class="line">This is after second block.</div></pre></td></tr></table></figure>
+<p>这个示例中有三个嵌套的代码块，每一个都有它自己的标签。break语句使得循环往外层跳转，直接跳过了second标签的的代码块，直接执行了first标签的代码块。</p>
+<h3 id="Java中的方法重载"><a href="#Java中的方法重载" class="headerlink" title="Java中的方法重载"></a>Java中的方法重载</h3><p>方法重载就是说如果两个方法有相同的方法名字，但是其参数不同（参数个数不同或者参数类型不同），那么Java会根据调用时候不同的参数类型来匹配不同的方法来调用。然而有时候其类型匹配不是很精确：比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">  <span class="comment">// Automatic type conversions apply to overloading.</span></div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">OverloadDemo</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</div><div class="line">     System.out.println(<span class="string">"No parameters"</span>);</div><div class="line">    &#125; </div><div class="line">    <span class="comment">// Overload test for two integer parameters. </span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">int</span> a，<span class="keyword">int</span> b)</span> </span>&#123; </div><div class="line">      System.out.println(<span class="string">"a and b: "</span> + a + <span class="string">" "</span> + b);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// overload test for a double parameter</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">double</span> a)</span> </span>&#123;</div><div class="line">      System.out.println(<span class="string">"Inside test(double) a: "</span> + a);</div><div class="line">    &#125;</div><div class="line">&#125; </div><div class="line"> <span class="class"><span class="keyword">class</span> <span class="title">Overload</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">      OverloadDemo ob = <span class="keyword">new</span> OverloadDemo();</div><div class="line">      <span class="keyword">int</span> i = <span class="number">88</span>;</div><div class="line">      ob.test(); ob.test(<span class="number">10</span>，<span class="number">20</span>); </div><div class="line">      ob.test(i); <span class="comment">// this will invoke test(double)</span></div><div class="line">      ob.test(<span class="number">123.2</span>); <span class="comment">// this will invoke test(double)</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出结果是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">No parameters</div><div class="line">a and b: 10 20</div><div class="line">Inside <span class="built_in">test</span>(double) a: 88</div><div class="line">Inside <span class="built_in">test</span>(double) a: 123.2</div></pre></td></tr></table></figure>
+<p>这里，我们的<code>test(i)</code>中i是int型，但是在调用时，我们发现调用<code>test(double)</code>类型，这是因为在调用<code>test(int)</code>型的时候Java找不到相应的类型，所以就将int扩大为了double，然后就调用了<code>test(double)</code>，如果我们这里定义了一个<code>test(int)</code>，那么就会调用这个<code>test(int)</code>而不会将int扩大为double。</p>
+<h3 id="super关键字"><a href="#super关键字" class="headerlink" title="super关键字"></a>super关键字</h3><p>在继承中，super可以用来表示父类，可以调用父类特有的方法。还有一种应用情况是：它可以用来调用父类中被子类所隐藏的属性，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</div><div class="line"><span class="keyword">int</span> i; &#125; </div><div class="line">    <span class="comment">// Create a subclass by extending class A.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</div><div class="line">      <span class="keyword">int</span> i; <span class="comment">// this i hides the i in A</span></div><div class="line">      B(<span class="keyword">int</span> a, <span class="keyword">int</span> b) &#123;</div><div class="line">       <span class="keyword">super</span>.i = a; <span class="comment">// i in A</span></div><div class="line">       i = b; <span class="comment">// i in B</span></div><div class="line">&#125; </div><div class="line">      <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</div><div class="line">       System.out.println(<span class="string">"i in superclass: "</span> + <span class="keyword">super</span>.i);</div><div class="line">       System.out.println(<span class="string">"i in subclass: "</span> + i);</div><div class="line">&#125; &#125; </div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">UseSuper</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">       B subOb = <span class="keyword">new</span> B(<span class="number">1</span>, <span class="number">2</span>);</div><div class="line">       subOb.show();</div><div class="line">      &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该程序的输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">i <span class="keyword">in</span> superclass: 1</div><div class="line">i <span class="keyword">in</span> subclass: 2</div></pre></td></tr></table></figure>
+<p>尽管B中的实例变量i隐藏了A中的i，使用super就可以访问超类中定义的i。其实， super也可以用来调用超类中被子类隐藏的方法。 </p>
+<h3 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h3><p>在类的层次结构中，构造函数的调用顺序是从父类到子类。并且父类的构造方法的调用要放在子类构造方法的第一行中。如果子类中没有用到super()，那么每个父类默认的或者无参数的构造函数将执行。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Create a super class.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</div><div class="line">      A() &#123;</div><div class="line">       System.out.println(<span class="string">"Inside A's constructor."</span>);</div><div class="line">&#125; &#125; </div><div class="line">    <span class="comment">// Create a subclass by extending class A.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</div><div class="line">      B() &#123;</div><div class="line">       System.out.println(<span class="string">"Inside B's constructor."</span>);</div><div class="line">&#125; &#125; </div><div class="line">    <span class="comment">// Create another subclass by extending B.</span></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">C</span> <span class="keyword">extends</span> <span class="title">B</span> </span>&#123;</div><div class="line">      C() &#123;</div><div class="line">       System.out.println(<span class="string">"Inside C's constructor."</span>);</div><div class="line">&#125; &#125; </div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">CallingCons</span> </span>&#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">C c = <span class="keyword">new</span> C(); &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该程序的输出如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Inside A’s constructor</div><div class="line">Inside B’s constructor</div><div class="line">Inside C’s constructor</div></pre></td></tr></table></figure>
+<p>由此可见，构造函数以派生的顺序被调用。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/10/chat-computer-science-basic/" rel="next" title="计算机基础">
+                <i class="fa fa-chevron-left"></i> 计算机基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/27/servlet-introduce/" rel="prev" title="Servlet简介">
+                Servlet简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java中的类型转换"><span class="nav-number">1.</span> <span class="nav-text">Java中的类型转换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#兼容的自动转换"><span class="nav-number">1.1.</span> <span class="nav-text">兼容的自动转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不兼容的强制转换"><span class="nav-number">1.2.</span> <span class="nav-text">不兼容的强制转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#表达式中的类型提升"><span class="nav-number">1.3.</span> <span class="nav-text">表达式中的类型提升</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类型提升的约定"><span class="nav-number">1.4.</span> <span class="nav-text">类型提升的约定</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java中的break"><span class="nav-number">2.</span> <span class="nav-text">Java中的break</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java中的方法重载"><span class="nav-number">3.</span> <span class="nav-text">Java中的方法重载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#super关键字"><span class="nav-number">4.</span> <span class="nav-text">super关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构造函数"><span class="nav-number">5.</span> <span class="nav-text">构造函数</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2156998"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

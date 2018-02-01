@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: ,
+    lazyload: ,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Note," />
+
+
+<meta name="description" content="在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现顺序死锁。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现资源死锁。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样避免死锁呢? 死锁我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。 死锁之">
+<meta name="keywords" content="Note">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java中的活跃性">
+<meta property="og:url" content="https://mikefighting.github.io/2017/12/12/note-java-concurrency-in-practice-2/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现顺序死锁。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现资源死锁。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样避免死锁呢? 死锁我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。 死锁之">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-56118e0094e4a64d.png">
+<meta property="og:updated_time" content="2017-12-17T00:30:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java中的活跃性">
+<meta name="twitter:description" content="在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现顺序死锁。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现资源死锁。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样避免死锁呢? 死锁我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。 死锁之">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-56118e0094e4a64d.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/12/12/note-java-concurrency-in-practice-2/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>Java中的活跃性 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/12/12/note-java-concurrency-in-practice-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java中的活跃性</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-12T13:15:34+08:00">2017-12-12</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/12/note-java-concurrency-in-practice-2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count fb-comments-count" data-href="https://mikefighting.github.io/2017/12/12/note-java-concurrency-in-practice-2/" itemprop="commentCount">0</span> comments
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在多线程开发中，我们往往为了安全性而去加锁，如果锁过多，就可能出现<strong>顺序死锁</strong>。如果不适用锁，使用信号量和线程池来限制对资源的访问，那么又可能出现<strong>资源死锁</strong>。那么究竟怎样判断死锁？死锁的种类都有哪些？怎样避免死锁呢?</p>
+<h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><p>我们如果把每个线程都想像成有向图中的一个点，如果线程A等待线程B所占用的资源，那么就从A向B画一条直线，如果最终这个图形成了一个环形，那么就出现了资源的相互依赖，就造成了死锁。</p>
+<h2 id="死锁之后的处理形式"><a href="#死锁之后的处理形式" class="headerlink" title="死锁之后的处理形式"></a>死锁之后的处理形式</h2><p>死锁之后该怎么处理分为两种方式，第一种方式就是什么都不做不了，应用程序将到此结束（也可能是某个子系统停止或者性能降低），直到重新启动，才会解除本次死锁。第二种方式就是干涉死锁。比如数据库操作在两个事务之间出现了死锁，那么数据库服务器会选择一个牺牲者并且放弃这个事务。作为牺牲者的事务将放弃它的所有资源，从而使其它事务继续进行。让后等待其它任务执行完成之后再去执行这个被牺牲了的任务。</p>
+<h2 id="顺序死锁"><a href="#顺序死锁" class="headerlink" title="顺序死锁"></a>顺序死锁</h2><p>如果有left和right两把锁，同时有A线程和B线程去访问，如果按照下面的顺序就可能造成死锁。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-56118e0094e4a64d.png" alt="order_dead_lock"></p>
+<p>线程A持有了left锁，再获取了right锁的时候才可以进行下一步的执行，并且只有获得了right锁才可以释放掉left锁。线程B已经获取了right锁，在获取了left锁的时候才可以进行下一步的执行，也只有获取了right锁才可能释放掉right锁。所以就造成了最后的死锁。这个死锁引起的原因就是锁的顺序不一致，也就是说在使用锁进行同步的过程中如果有两把锁，那么锁的顺序需要保持一致，否则就可能造成死锁。代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LeftRightDeadLock</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object left = <span class="keyword">new</span> Object();</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object right = <span class="keyword">new</span> Object();</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">leftRight</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span>(left) &#123;</div><div class="line">            <span class="keyword">synchronized</span>(right) &#123;</div><div class="line">                doSomething();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rightLeft</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span>(right) &#123;</div><div class="line">            <span class="keyword">synchronized</span>(left) &#123;</div><div class="line">                doSomethingElse();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="动态的锁顺序死锁"><a href="#动态的锁顺序死锁" class="headerlink" title="动态的锁顺序死锁"></a>动态的锁顺序死锁</h2><p>有些时候我们没有很明确的在两个不同的方法中使用两把锁，但是仍然可能造成死锁，这种死锁往往不容易被发现，比如我们要给将账户A的钱转给账户B，那么我们可以使用下面的方法来确保转账的原子性，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transferMoney</span><span class="params">(Account fromAccount, Account toAccount,</span></span></div><div class="line">DollarAmount amount) <span class="keyword">throws</span> InsufficientFundsException &#123;</div><div class="line"><span class="keyword">synchronized</span> (fromAccount) &#123;</div><div class="line">    <span class="keyword">synchronized</span> (toAccount) &#123;</div><div class="line"><span class="keyword">if</span> (fromAccount.getBalance().compareTo(amount) &lt; <span class="number">0</span>) &#123;</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> InsufficientFundsException();</div><div class="line">    &#125;</div><div class="line"><span class="keyword">else</span> &#123;</div><div class="line">    fromAccount.debit(amount); toAccount.credit(amount);</div><div class="line">        &#125;</div><div class="line">     &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个死锁的原因就是可能调用方在两个线程中使用的参数顺序可能相反，这就造成死锁，因为我们不能确定调用方是怎么调用我们写的接口的。比如下面的调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">A: transferMoney(myAccount, yourAccount,<span class="number">10</span>);</div><div class="line">B: transferMoney(yourAccount, myAccount,<span class="number">20</span>);</div></pre></td></tr></table></figure>
+<p>这时就造成了死锁，并且这种死锁是在一般情况下是不会发生的，这就造成了难以排查的错误。这时该如何去做呢？我们的目的是想让外界两个参数的改变不会影响到内部锁的顺序，所以，我们可以拿两个入参的<code>identityHashCode</code>去作为判断条件，根据hash值的大小来改变加锁的顺序。当然，这里面可能有哈希碰撞的情况（这种情况发生的几率是非常低的），如果有这种情况的出现，那么就给这两个同步操作外部再加一个锁，这样来确保这个操作的原子性，就不会有死锁的情况了。这里面如果加锁的两个对象有唯一的键值，那么就可以直接用其键值，这样就不必再使用额外的锁了。</p>
+<h2 id="协作对象之间发生的死锁"><a href="#协作对象之间发生的死锁" class="headerlink" title="协作对象之间发生的死锁"></a>协作对象之间发生的死锁</h2><p>比如下面的Taxi和Dispatcher对象都使用了锁，并且它们之前是相互协作的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Taxi</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> Point location, destination; <span class="keyword">private</span> <span class="keyword">final</span> Dispatcher dispatcher;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Taxi</span><span class="params">(Dispatcher dispatcher)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.dispatcher = dispatcher;</div><div class="line">    &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> Point <span class="title">getLocation</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> location;</div><div class="line">   &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">setLocation</span><span class="params">(Point location)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.location = location;</div><div class="line"><span class="keyword">if</span> (location.equals(destination)) &#123;</div><div class="line">    dispatcher .notifyAvailable (<span class="keyword">this</span> );</div><div class="line"> &#125;</div><div class="line"></div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dispatcher</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Taxi&gt; taxis; <span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Taxi&gt; availableTaxis;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Dispatcher</span><span class="params">()</span> </span>&#123;</div><div class="line">       taxis = <span class="keyword">new</span> HashSet&lt;Taxi&gt;(); availableTaxis = <span class="keyword">new</span> HashSet&lt;Taxi&gt;();</div><div class="line">    &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">notifyAvailable</span><span class="params">(Taxi taxi)</span> </span>&#123;</div><div class="line">        availableTaxis .add(taxi);</div><div class="line">    &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> Image <span class="title">getImage</span><span class="params">()</span> </span>&#123;</div><div class="line">    Image image = <span class="keyword">new</span> Image();</div><div class="line">    <span class="keyword">for</span> (Taxi t : taxis) &#123;</div><div class="line">     image.drawMarker(t.getLocation()); <span class="keyword">return</span> image;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在这里面<code>setLocation</code>方法需要先获取<code>Taxi</code>的锁，再获取<code>Dispatcher</code>的锁。而<code>getImage</code>方法需要先获取<code>Dispatcher</code>的锁，然后再获取<code>Taxi</code>的锁，这样就可能造成上文中所说的顺序锁的问题。并且这种锁是更加难以排查的。所以最好不要使用<code>synchronize</code>(管程)。</p>
+<blockquote>
+<p>在持有锁的过程中调用某个外部方法，那么将可能会出现活跃性的问题。</p>
+</blockquote>
+<h2 id="丢失信号死锁"><a href="#丢失信号死锁" class="headerlink" title="丢失信号死锁"></a>丢失信号死锁</h2><p>多线程访问某个资源，在有条件谓词作为前置条件，如果条件为假，那么我们会调用wait方法将线程阻塞。如果某个线程将条件变为了真，并且这个wait的线程没有收到这个信号。那么原来wait的线程将会永远等待下去，进而导致死锁。也就是说，线程A通知了一个条件队列，而线程B随后进入这个条件队列，但是线程B将被阻塞而不能执行，因为其需要等待另外一个通知的到来。</p>
+<h2 id="开放调用"><a href="#开放调用" class="headerlink" title="开放调用"></a>开放调用</h2><p>之所以出现上述协作对象之间发生的死锁，是因为在调用另外一个对象的方法的过程中，已经持有了一把锁。这种调用称作不开放，所谓的开放调用就是指：在调用某个方法的时候不需要持有锁。通常来说开放调用要比非开放调用更加安全，更加不容易产生死锁，所以我们要尽可能地使用开放调用。我们可以使用开放调用的方法来解决上述遇到的问题：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ThreadSafe</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Taxi</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>)</div><div class="line"><span class="keyword">private</span> Point location, destination; <span class="keyword">private</span> <span class="keyword">final</span> Dispatcher dispatcher;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> Point <span class="title">getLocation</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> location;</div><div class="line">    &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLocation</span><span class="params">(Point location)</span> </span>&#123;</div><div class="line">    <span class="keyword">boolean</span> reachedDestination; <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">    <span class="keyword">this</span>.location = location;</div><div class="line">    reachedDestination = location.equals(destination);</div><div class="line">&#125;</div><div class="line"><span class="keyword">if</span> (reachedDestination) &#123;</div><div class="line">    dispatcher .notifyAvailable (<span class="keyword">this</span> );</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@ThreadSafe</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dispatcher</span> </span>&#123;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Taxi&gt; taxis;</div><div class="line"><span class="meta">@GuardedBy</span>(<span class="string">"this"</span>) <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Taxi&gt; availableTaxis;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">notifyAvailable</span><span class="params">(Taxi taxi)</span> </span>&#123;</div><div class="line">availableTaxis .add(taxi); &#125;</div><div class="line"><span class="function"><span class="keyword">public</span> Image <span class="title">getImage</span><span class="params">()</span> </span>&#123;</div><div class="line">    Set&lt;Taxi&gt; copy;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">copy = <span class="keyword">new</span> HashSet&lt;Taxi&gt;(taxis);</div><div class="line">&#125;</div><div class="line">Image image = <span class="keyword">new</span> Image(); <span class="keyword">for</span> (Taxi t : copy)</div><div class="line">image.drawMarker(t.getLocation()); <span class="keyword">return</span> image;</div></pre></td></tr></table></figure>
+<p>这样就可以将多个锁区分开来，从而在多个对象调用的时候就不会死锁了。</p>
+<h2 id="资源死锁"><a href="#资源死锁" class="headerlink" title="资源死锁"></a>资源死锁</h2><p>资源死锁的起因也是由于访问资源的原子性和访问资源的顺序所造成的互相牵制。比如：线程A已经建立了和数据库D1的链接，正在尝试连接数据库D2；与此同时，线程B已经建立了和数据库D2的连接，正在尝试连接数据库D1。这时就造成了资源死锁。（当然这和数据库同时连接的个数，以及资源的大小有关。资源越大，连接的个数越多，那么出现死锁的可能性就越少。）<br>在资源死锁中，还有一种线程饥饿死锁的情况，比如下面的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDeadlock</span> </span>&#123;</div><div class="line">ExecutorService exec = Executors.newSingleThreadExecutor();</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RenderPageTask</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">String</span>&gt; </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        Future&lt;String&gt; header, footer;</div><div class="line">        header = exec.submit(<span class="keyword">new</span> LoadFileTask(<span class="string">"header.html"</span>));</div><div class="line">        footer = exec.submit(<span class="keyword">new</span> LoadFileTask(<span class="string">"footer.html"</span>));</div><div class="line">        String page = renderBody();</div><div class="line">        <span class="comment">// Will deadlock -- task waiting for result of subtask</span></div><div class="line">        <span class="keyword">return</span> header.get() + page + footer.get();</div><div class="line">   &#125;</div><div class="line"> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这会出现死锁，因为<code>header.get()</code>和<code>fotter.get()</code>是阻塞的，它将会等待exec执行完毕，而exec想要执行必须要等到<code>header.get() + page + footer.get();</code>执行完毕，这样就造成了线程饥饿死锁。(RenderPageTask是任务1，header.get() + page + footer.get()是任务2)。</p>
+<h2 id="饥饿"><a href="#饥饿" class="headerlink" title="饥饿"></a>饥饿</h2><p>饥饿就是指某个线程始终不能获取其所需要的资源，导致它不能继续执行，引起饥饿的最常见资源就是CPU的时钟周期。Java中提供了10中线程的优先级，然而对应到操作系统中，可能某些优先级会重合（因为操作系统可能没有这么多的优先级）。并且设置线程的优先级可能不会起到明显的效果，反而可能因为优先级翻转而造成死锁，所以我们尽量不要去改动线程的优先级。但是这种情况也不是绝对的，比如有一个CPU密集的后台任务在执行，那么这个任务很可能会和主线程去抢占CPU资源，从而导致主线程响应性降低，为了解决这个问题，我们可以将后台线程的优先级降低，从而提高主线程的响应性。</p>
+<blockquote>
+<p>尽量避免使用线程优先级，因为这会增加平台依赖性，并且可能会导致活跃性问题。在大多数并发应用程序中，都应该使用默认的线程优先级。</p>
+</blockquote>
+<h2 id="活锁"><a href="#活锁" class="headerlink" title="活锁"></a>活锁</h2><p>活锁是指没有发生死锁，但是程序一直在重试，并且重试一直错误，导致程序不能正常往下执行。（产生这种情况的原因是对错误的估计不对：本来是不能解决的错误，却以为可以通过重试解决）。<br>同时，多个线程之间的协作也可能造成死锁，因为可能两个协作的线程都对彼此进行响应，响应完之后使得任何一个线程都不能继续执行，解决这种活锁的问题可以通过在重试机制中引入随机性，也就是说某个重试完之后，另一个线程在随机的时间段之后再进行重试，从而避免了和之前线程的碰撞。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Note/" rel="tag"># Note</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/01/note-java-concurrency-in-practice-1/" rel="next" title="Java结构化并发应用程序">
+                <i class="fa fa-chevron-left"></i> Java结构化并发应用程序
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/14/note-java-concurrency-in-practice-2-2/" rel="prev" title="Java并发编程-性能">
+                Java并发编程-性能 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁"><span class="nav-number">1.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁之后的处理形式"><span class="nav-number">2.</span> <span class="nav-text">死锁之后的处理形式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序死锁"><span class="nav-number">3.</span> <span class="nav-text">顺序死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态的锁顺序死锁"><span class="nav-number">4.</span> <span class="nav-text">动态的锁顺序死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#协作对象之间发生的死锁"><span class="nav-number">5.</span> <span class="nav-text">协作对象之间发生的死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#丢失信号死锁"><span class="nav-number">6.</span> <span class="nav-text">丢失信号死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开放调用"><span class="nav-number">7.</span> <span class="nav-text">开放调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#资源死锁"><span class="nav-number">8.</span> <span class="nav-text">资源死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#饥饿"><span class="nav-number">9.</span> <span class="nav-text">饥饿</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#活锁"><span class="nav-number">10.</span> <span class="nav-text">活锁</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2156998"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

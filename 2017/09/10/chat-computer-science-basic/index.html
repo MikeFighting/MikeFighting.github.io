@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: ,
+    lazyload: ,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Others," />
+
+
+<meta name="description" content="补码我们先来看一个有趣的例子：  在这里我们定义了一个signed char类型的数据，将其赋值为128，然后系统给我们一个警告，意思就是说它隐式地将数值给转换成了-128，这究竟是为什么呢？ 其实在计算机中数值都是以补码的形式存储的：  正数的补码是其自身，负数的补码是其对应的正数的反码加1。  我们先看一下-42在计算机中是如何表示的：它是先将其对象的正数42，0010 1010然后取反110">
+<meta name="keywords" content="Others">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机基础">
+<meta property="og:url" content="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="补码我们先来看一个有趣的例子：  在这里我们定义了一个signed char类型的数据，将其赋值为128，然后系统给我们一个警告，意思就是说它隐式地将数值给转换成了-128，这究竟是为什么呢？ 其实在计算机中数值都是以补码的形式存储的：  正数的补码是其自身，负数的补码是其对应的正数的反码加1。  我们先看一下-42在计算机中是如何表示的：它是先将其对象的正数42，0010 1010然后取反110">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-f48d5ace81b3d0cb.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-d236d51fa77178ad.png">
+<meta property="og:updated_time" content="2017-12-26T14:55:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算机基础">
+<meta name="twitter:description" content="补码我们先来看一个有趣的例子：  在这里我们定义了一个signed char类型的数据，将其赋值为128，然后系统给我们一个警告，意思就是说它隐式地将数值给转换成了-128，这究竟是为什么呢？ 其实在计算机中数值都是以补码的形式存储的：  正数的补码是其自身，负数的补码是其对应的正数的反码加1。  我们先看一下-42在计算机中是如何表示的：它是先将其对象的正数42，0010 1010然后取反110">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-f48d5ace81b3d0cb.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>计算机基础 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">计算机基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-10T10:10:40+08:00">2017-09-10</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/09/10/chat-computer-science-basic/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count fb-comments-count" data-href="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/" itemprop="commentCount">0</span> comments
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="补码"><a href="#补码" class="headerlink" title="补码"></a>补码</h3><p>我们先来看一个有趣的例子：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-f48d5ace81b3d0cb.png" alt="溢出128"></p>
+<p>在这里我们定义了一个<code>signed char</code>类型的数据，将其赋值为128，然后系统给我们一个警告，意思就是说它隐式地将数值给转换成了<strong>-128</strong>，这究竟是为什么呢？</p>
+<p>其实在计算机中数值都是以补码的形式存储的：</p>
+<blockquote>
+<p>正数的补码是其自身，负数的补码是其对应的正数的反码加1。</p>
+</blockquote>
+<p>我们先看一下-42在计算机中是如何表示的：<br>它是先将其对象的正数42，0010 1010然后取反1101 0101，然后再加1，得到1101 0110。</p>
+<p>我们知道signed char是占八位的。其存储范围是：0000 0000到1111 1111。那么128的补码还是128，其二进制表示为：1000 0000。但是这里有个问题，因为其类型是有符号的，所以最高位是符号位，也就是说这个数不能用来表示128了，那么它表示多少呢？我们就要看看它是谁的补码就是好了。我们先将<code>1000 0000</code>取反，然后的到<code>0111 1111</code>，加一得到<code>1000 0000</code>，再乘以-1,得到-128。如果不太明白，我我们可以将128变大，变成129：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-d236d51fa77178ad.png" alt="溢出129"></p>
+<p>129为整数，其补码是其自身，1000 0001，又因为其最高位是符号位，所以其表示的是一个负数，它表示多少呢？先将其取反<code>0111 1110</code>，然后+1得到<code>0111 1111</code>，这时127，最后乘以-1得到-127。</p>
+<h3 id="switch语句为什么比if-else快？"><a href="#switch语句为什么比if-else快？" class="headerlink" title="switch语句为什么比if else快？"></a>switch语句为什么比if else快？</h3><p>因为编译器在编译switch语句的时候会检查每个case常量，并且会创建出一个”跳转表”，这个表用来在表达式的基础上选择执行路径，其时间复杂度是O(1)，而if else的时间复杂度是O(n)，所以switch case要比if else快很多。</p>
+<h3 id="寄存器是什么？"><a href="#寄存器是什么？" class="headerlink" title="寄存器是什么？"></a>寄存器是什么？</h3><p>寄存器是一种存储信息的硬件，它和内存一样可以用来存储，但是和内存不同的是，它的速度极其快（比RAM的主存要快得多，它还有一些辅助功能，它常常被用做软件和外设之间通信的桥梁，起到缓冲的作用，同时CPU中寄存器速度非常快，这就让经常需要用到的数据放到寄存器中，而不需要每次都从主存中去读取，从而提高了程序的执行速度。软件将信息写入寄存器，然后外设将信息从寄存器中读出去。如果外设有信息需要软件进行处理，那么它也需要先将信息放到寄存器中，然后有软件从中读取。寄存器的主要功能包括：</p>
+<ul>
+<li>某些功能的配置和初始化，特别是在初始化阶段</li>
+<li>缓存存储</li>
+<li>不同种类的输入输出</li>
+<li>状态报告，比如某个硬件的状态发生了变化</li>
+</ul>
+<p>常见的寄存器包括：MAR(Memory Address Register)，这个寄存器主要用来存放下一条即将执行的指令，CPU根据MAR中指令的地址取出指令，然后放到MDR(Memory Data Register中，然后CIR(Current Instruction Regitster)将指令从MDR中拷贝一份。MBR(Memory Buffer Register)，用来存放要放入存储器的数据和从存储器中读出的数据。<a href="https://www.youtube.com/watch?time_continue=220&amp;v=TBADs7knuWM" target="_blank" rel="external">相关资料可以参考YouTube</a></p>
+<h3 id="CPU为什么需要三级缓存？"><a href="#CPU为什么需要三级缓存？" class="headerlink" title="CPU为什么需要三级缓存？"></a>CPU为什么需要三级缓存？</h3><p>CPU和内存的速度不匹配是计算机领域的一个重要问题，如果内存中采用和CPU中相同型号的寄存器，那么其代价又会太高，并且根据局部性原理，这种需求是没有必要的。存储器的<strong>价格，速度，容量</strong>是人们考虑的主要因素，但是它们之间也存在这制约因素：速度越快，价格就越高；容量越大，价格越高；容量越大，速度越低。根据局部性原理(Principle of Locality)我们的程序中常用的数据又基本都是固定的。所以就在CPU和内存之间采用了三级缓存（它内部存储的）来提高获取数据的速度，如果数据能在L1，L2，L3中找到的话就直接从中取，如果没有再从内存取，如果内存没有，再从外存取，这样就会提高获取数据的速度。<strong>这里要注意每个处理器都有其自己的缓存区，最后他们共享一块内存，这就会造成数据不一致的严重问题。</strong></p>
+<h3 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h3><p>在多任务执行的时候，上下文切换是指从一个线程或者进程切换到另外一个线程或者进程，这里的上下文是指：<strong>CPU寄存器和程序计数器中的内容。</strong>它的具体内容包含以下三个步骤：</p>
+<ol>
+<li>挂起当前进程，将当前的CPU状态保存至内存</li>
+<li>从内存中获取接下来将要执行进程的上下文，并且将其存入CPU寄存器中</li>
+<li>返回程序计数器指定的位置（例如进程被终止的点）并且继续执行进程</li>
+</ol>
+<p>这里的切换包含进程切换和线程切换两种情况，它们之间的相同点和不同点为：</p>
+<h4 id="一、进程切换"><a href="#一、进程切换" class="headerlink" title="一、进程切换"></a>一、进程切换<br></h4><p>虚拟内存空间不能保持相同；调用操作系统内核；寄存器内容的切入切出和内核操作的转移是最消耗性能的；</p>
+<h4 id="二、线程切换"><a href="#二、线程切换" class="headerlink" title="二、线程切换"></a>二、线程切换<br></h4><p>虚拟内存空间保持相同；调用操作系统内核；寄存器内容的切入切出和内核操作的转移是最消耗性能的；</p>
+<p>这其中还有一个隐含的性能消耗点是：处理器缓存系统的失效。在虚拟内存空间切换的过程中会导致处理器的Translation Lookaside Buffer (TLB) 失效，这会造成很大的内存损耗。造成上下文切换的原因有：进程自动让出其时间片，或者调度器给它分配的时间片到了，或者硬件发生了中断操作，加锁，或者其它的软件操作也会造成上下文切换。上下文切换很消耗大量的CPU时间造成较大的性能损耗。</p>
+<h3 id="什么是线程？"><a href="#什么是线程？" class="headerlink" title="什么是线程？"></a>什么是线程？</h3><p>线程是寄存器的一组状态，这组状态用来规定程序的执行顺序，执行地址，以及下条指令的地址。</p>
+<p>参考资料:</p>
+<ol>
+<li><p><a href="https://stackoverflow.com/questions/5440128/thread-context-switch-vs-process-context-switch" target="_blank" rel="external">线程上下文切换和进程上下文</a></p>
+</li>
+<li><p><a href="http://www.linfo.org/context_switch.html" target="_blank" rel="external">上下文切换的定义</a></p>
+</li>
+<li><p><a href="https://stackoverflow.com/questions/5201852/what-is-a-thread-really" target="_blank" rel="external">线程的定义</a></p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Others/" rel="tag"># Others</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/08/chat-uitableView/" rel="next" title="聊聊UITableView">
+                <i class="fa fa-chevron-left"></i> 聊聊UITableView
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/10/java-detials/" rel="prev" title="可能被遗漏的Java细节">
+                可能被遗漏的Java细节 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#补码"><span class="nav-number">1.</span> <span class="nav-text">补码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#switch语句为什么比if-else快？"><span class="nav-number">2.</span> <span class="nav-text">switch语句为什么比if else快？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#寄存器是什么？"><span class="nav-number">3.</span> <span class="nav-text">寄存器是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU为什么需要三级缓存？"><span class="nav-number">4.</span> <span class="nav-text">CPU为什么需要三级缓存？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#上下文切换"><span class="nav-number">5.</span> <span class="nav-text">上下文切换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、进程切换"><span class="nav-number">5.1.</span> <span class="nav-text">一、进程切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、线程切换"><span class="nav-number">5.2.</span> <span class="nav-text">二、线程切换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是线程？"><span class="nav-number">6.</span> <span class="nav-text">什么是线程？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2156998"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
