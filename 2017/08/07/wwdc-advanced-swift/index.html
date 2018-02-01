@@ -236,21 +236,9 @@
         </li>
       
         
-        <li class="menu-item menu-item-categories">
-          <a href="/categories/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
             <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-commonweal">
-          <a href="/404/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />Commonweal 404</a>
         </li>
       
 
@@ -404,7 +392,7 @@ newLongDescription longDescription: <span class="type">String</span>) { ... }
 </code></pre>
 <p>这样我们的<code>Boards</code>类就遵守了<code>Pullable</code>协议，当我们来检查某个对象是否遵守了某个协议时，我们可以这样做：</p>
 <pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">performPull</span><span class="params">(object: Thing)</span></span> { <span class="keyword">if</span> <span class="keyword">let</span> pullableObject = object <span class="keyword">as</span> <span class="type">Pullable</span> { pullableObject.pull()    }<span class="keyword">else</span>{ 
-     <span class="built_in">print</span>(<span class="string">"You are not sure how to print a <span class="subst">\(object.name)</span>."</span>)
+     <span class="built_in">print</span>(<span class="string">"You are not sure how to print a \(object.name)."</span>)
    } 
 }
 </code></pre>
@@ -443,17 +431,17 @@ newLongDescription longDescription: <span class="type">String</span>) { ... }
 <h2 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h2><p> 比如以下三个方法，其参数的形式是一样的，但是其参数类型不同，我们想把它变成一个函数，这时候我们最常想到的做法就是使用<code>Any</code>来表示任何类型的参数和任何类型的返回值。</p>
 <pre><code class="Swift"><span class="comment">// 之前的三个函数</span>
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: String)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
 }
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Int)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
 }
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Float)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
 } 
 <span class="comment">// 变为一个函数</span>
 <span class="function"><span class="keyword">func</span> <span class="title">peek</span><span class="params">(interestingValue: Any)</span></span> {
-  <span class="built_in">println</span>(<span class="string">"[peek] <span class="subst">\(interestingValue)</span>"</span>)
+  <span class="built_in">println</span>(<span class="string">"[peek] \(interestingValue)"</span>)
 }
 </code></pre>
 <p>但是这有个问题，在我们要调用返回值的某个方法时候编译器会报错，因为我们的返回值<code>Any</code>并没有所调用的方法，也就是说我们需要一次强转，强转在代码层面是很难看的，也很麻烦，这时候我们就可以使用泛型来解决这个问题，如果我们使用了泛型，那么编译器会将输入的参数和输出的参数给我们推断出来，这样就不必强转了。并且当编译器可以推断出来是那种type的时候它会给我们做各种优化。</p>
@@ -730,6 +718,10 @@ intStack.push(<span class="number">42</span>)
       <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="击水湘江" />
             
               <p class="site-author-name" itemprop="name">击水湘江</p>
               <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
