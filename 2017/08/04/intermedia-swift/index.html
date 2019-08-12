@@ -6,10 +6,10 @@
 
 
 <html class="theme-next muse use-motion" lang="en">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#222">
 
 
@@ -23,8 +23,8 @@
 
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
 
 
@@ -47,9 +47,9 @@
 
 
 
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
 
-<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
@@ -100,7 +100,7 @@
 
 
   
-  <meta name="keywords" content="WWDC," />
+  <meta name="keywords" content="WWDC,">
 
 
 <meta name="description" content="本文源于对：WWDC2014–Intermediate Swift的总结。 为什么需要Optional?我们队某个对象的操作可能会返回错误的结果：比如我们将某个字符串转为Int型，执行下面的指令： let age = response.toInt()  这response可能是用户输入的,可能会输入不确定的数值Do you konw?那么肯定会得到错误的结果，在OC中遇到这种情况我们怎么处理呢？我">
@@ -116,7 +116,7 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-040ccbafce764e18.png">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-71bbd45dcf36f0a3.png">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-bd1edb7b7a89a7bc.png">
-<meta property="og:updated_time" content="2017-08-04T00:45:35.000Z">
+<meta property="og:updated_time" content="2017-08-04T00:45:34.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Swift中级">
 <meta name="twitter:description" content="本文源于对：WWDC2014–Intermediate Swift的总结。 为什么需要Optional?我们队某个对象的操作可能会返回错误的结果：比如我们将某个字符串转为Int型，执行下面的指令： let age = response.toInt()  这response可能是用户输入的,可能会输入不确定的数值Do you konw?那么肯定会得到错误的结果，在OC中遇到这种情况我们怎么处理呢？我">
@@ -127,7 +127,7 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/2017/08/04/intermedia-swift/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/08/04/intermedia-swift/">
 
 
 
@@ -192,7 +192,7 @@
     
 
     <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
+      <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
         <span class="site-title">击水湘江</span>
         <span class="logo-line-after"><i></i></span>
@@ -221,25 +221,25 @@
         
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
         </li>
       
         
         <li class="menu-item menu-item-about">
           <a href="/about/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
         </li>
       
         
         <li class="menu-item menu-item-tags">
           <a href="/tags/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
         </li>
       
 
@@ -287,7 +287,7 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -355,7 +355,7 @@
 </code></pre>
 <p>这response可能是用户输入的,可能会输入不确定的数值<code>Do you konw?</code>那么肯定会得到错误的结果，在OC中遇到这种情况我们怎么处理呢？我们有如下的值可以表示错误：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-65ce6dec3ca6cade.png" alt="Wrong!"><br>但是你必须从不同的接口中去选择相应的错误类型，并且要记住这些错误类型。为了解决这个问题，Swift中引入了Optional的概念，将这种可能是nil的值进行打包。它可以表示上述所有错误的类型，同时，<strong>如果我们使用Optional，就一定要对它进行拆包，使用<code>!</code>号，如果不拆包会造成编译器错误</strong>，如下所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-03cea3691052ac9b.png" alt="Need Unwrap"><br><strong>也可以使用Optional Binding将判断是否有值和拆包结合在一起使用：<code>if let</code></strong>。</p>
 <pre><code class="Swift"><span class="keyword">var</span> neighbors = [<span class="string">"Alex"</span>, <span class="string">"Anna"</span>, <span class="string">"Madison"</span>, <span class="string">"Dave"</span>] <span class="keyword">let</span> index = findIndexOfString(<span class="string">"Anna"</span>, neighbors)  <span class="keyword">if</span> <span class="keyword">let</span> indexValue = index { 
-    <span class="built_in">println</span>(<span class="string">"Hello, \(neighbors[indexValue])"</span>)
+    <span class="built_in">println</span>(<span class="string">"Hello, <span class="subst">\(neighbors[indexValue])</span>"</span>)
 } <span class="keyword">else</span> {
     <span class="built_in">println</span>(<span class="string">"Must've moved away"</span>)
 }
@@ -478,7 +478,7 @@ clients.<span class="built_in">sort</span>({(a: <span class="type">String</span>
 <span class="type">HUNGRY</span>
 </code></pre>
 <p>我们还可以调用<code>reduce</code>方法将其和成一个字符串</p>
-<pre><code class="Swift"><span class="keyword">let</span> reducedResult = result.<span class="built_in">reduce</span>(<span class="string">"HULK"</span>){<span class="string">"\($0) \($1)"</span>}
+<pre><code class="Swift"><span class="keyword">let</span> reducedResult = result.<span class="built_in">reduce</span>(<span class="string">"HULK"</span>){<span class="string">"<span class="subst">\($<span class="number">0</span>)</span> <span class="subst">\($<span class="number">1</span>)</span>"</span>}
 </code></pre>
 <p>这时结果如下：</p>
 <pre><code class="Swift"><span class="type">HULK</span> <span class="type">ANGRY</span> <span class="type">HUNGRY</span>
@@ -502,7 +502,7 @@ numbers.<span class="built_in">map</span> (indexes.addIndex) <span class="commen
 <span class="function"><span class="keyword">func</span> <span class="title">logTemperatureDifferences</span><span class="params">(initial: Int)</span></span> {
     <span class="keyword">var</span> prev = initial
     onTemperatureChange = { next <span class="keyword">in</span>
-        <span class="built_in">println</span>(<span class="string">"Changed \(next - prev)°F"</span>)
+        <span class="built_in">println</span>(<span class="string">"Changed <span class="subst">\(next - prev)</span>°F"</span>)
 prev = next 
 }
 </code></pre>
@@ -510,7 +510,7 @@ prev = next
 <pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">logTemperatureDifferences</span><span class="params">(initial: Int)</span></span> {
     <span class="keyword">var</span> prev = initial
     <span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(next: Int)</span></span> {
-        <span class="built_in">println</span>(<span class="string">"Changed \(next - prev)°F"</span>)
+        <span class="built_in">println</span>(<span class="string">"Changed <span class="subst">\(next - prev)</span>°F"</span>)
 prev = next } 
     onTemperatureChange = log
 </code></pre>
@@ -558,7 +558,7 @@ currentTemp = temp    } <span class="comment">// error: requires explicit 'sel
   <span class="built_in">println</span>(<span class="string">"on time"</span>)
 <span class="keyword">case</span> .<span class="type">Delayed</span>(<span class="keyword">let</span> minutes)
                         :
-<span class="built_in">println</span>(<span class="string">"delayed by \(minutes) minutes"</span>)
+<span class="built_in">println</span>(<span class="string">"delayed by <span class="subst">\(minutes)</span> minutes"</span>)
 </code></pre>
 <p>我们可以对这个<code>delay</code>做各种各样的匹配：</p>
 <pre><code class="Swift"><span class="keyword">switch</span> trainStatus {
@@ -605,9 +605,9 @@ currentTemp = temp    } <span class="comment">// error: requires explicit 'sel
 <pre><code class="Swift"><span class="keyword">let</span> color = (<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>)
 <span class="keyword">switch</span> color {
   <span class="keyword">case</span> (<span class="number">0.0</span>, <span class="number">0.5</span>...<span class="number">1.0</span>, <span class="keyword">let</span> blue, <span class="number">_</span>):
-    <span class="built_in">println</span>(<span class="string">"Green and \(blue * 100)% blue"</span>)
+    <span class="built_in">println</span>(<span class="string">"Green and <span class="subst">\(blue * <span class="number">100</span>)</span>% blue"</span>)
   <span class="keyword">case</span> <span class="keyword">let</span> (r, g, b, <span class="number">1.0</span>) <span class="keyword">where</span> r == g &amp;&amp; g == b:
-    <span class="built_in">println</span>(<span class="string">"Opaque grey \(r * 100)%"</span>)
+    <span class="built_in">println</span>(<span class="string">"Opaque grey <span class="subst">\(r * <span class="number">100</span>)</span>%"</span>)
 </code></pre>
 <p>我们甚至可以对其中的各个数值做以相应的模式匹配。</p>
 <h3 id="Pattern-Matching的应用PList校验"><a href="#Pattern-Matching的应用PList校验" class="headerlink" title="Pattern Matching的应用PList校验"></a>Pattern Matching的应用PList校验</h3><p>比如我们有下面的方法来校验Plist中的内容是否有效</p>
@@ -739,9 +739,7 @@ stateFromPlist([<span class="string">"name"</span>: <span class="string">"Califo
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image"
-                src="/images/avatar.gif"
-                alt="击水湘江" />
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
             
               <p class="site-author-name" itemprop="name">击水湘江</p>
               <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
@@ -754,7 +752,7 @@ stateFromPlist([<span class="string">"name"</span>: <span class="string">"Califo
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">38</span>
+                    <span class="site-state-item-count">39</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -845,7 +843,7 @@ stateFromPlist([<span class="string">"name"</span>: <span class="string">"Califo
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

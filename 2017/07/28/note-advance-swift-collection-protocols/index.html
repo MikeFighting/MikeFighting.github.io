@@ -6,10 +6,10 @@
 
 
 <html class="theme-next muse use-motion" lang="en">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#222">
 
 
@@ -23,8 +23,8 @@
 
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
 
 
@@ -47,9 +47,9 @@
 
 
 
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
 
-<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
@@ -100,7 +100,7 @@
 
 
   
-  <meta name="keywords" content="Notes," />
+  <meta name="keywords" content="Notes,">
 
 
 <meta name="description" content="SequencesSequence协议位于系统架构的底层，其定义是   123456protocol Sequence &amp;#123;    associatedtype Iterator: IteratorProtocol func makeIterator()-&amp;gt; Iterator   &amp;#125; Iterators12345protocol IteratorProtocol&amp;#123;">
@@ -121,7 +121,7 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/">
 
 
 
@@ -186,7 +186,7 @@
     
 
     <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
+      <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
         <span class="site-title">击水湘江</span>
         <span class="logo-line-after"><i></i></span>
@@ -215,25 +215,25 @@
         
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
         </li>
       
         
         <li class="menu-item menu-item-about">
           <a href="/about/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
         </li>
       
         
         <li class="menu-item menu-item-tags">
           <a href="/tags/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
         </li>
       
 
@@ -281,7 +281,7 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -345,7 +345,7 @@
       
         <h2 id="Sequences"><a href="#Sequences" class="headerlink" title="Sequences"></a>Sequences</h2><p><code>Sequence</code>协议位于系统架构的底层，其定义是<br>   <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>&#123;</div><div class="line">   </div><div class="line"> associatedtype <span class="type">Iterator</span>: <span class="type">IteratorProtocol</span></div><div class="line"> <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span>-&gt; <span class="type">Iterator</span></div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h2 id="Iterators"><a href="#Iterators" class="headerlink" title="Iterators"></a>Iterators</h2><pre><code><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">IteratorProtocol</span></span>&#123;</div><div class="line">associatedtype <span class="type">Element</span></div><div class="line"><span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span>-&gt; <span class="type">Element</span>?</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</div><div class="line">   <span class="keyword">let</span> string:<span class="type">String</span></div><div class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></div><div class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</div><div class="line">       <span class="keyword">self</span>.string = string</div><div class="line">       offset = string.startIndex</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></div><div class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String</span>? &#123;</div><div class="line"></div><div class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</div><div class="line">       offset = string.index(after: offset)</div><div class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</div><div class="line">       <span class="keyword">return</span> offSetString;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</div><div class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</div><div class="line">    <span class="built_in">print</span>(content)</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> string: <span class="type">String</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</div><div class="line">       </div><div class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</div><div class="line">       </div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"for in\(prefix)"</span>)</div><div class="line">   &#125;</div><div class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</div></pre></td></tr></table></figure></p>
+</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</div><div class="line">   <span class="keyword">let</span> string:<span class="type">String</span></div><div class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></div><div class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</div><div class="line">       <span class="keyword">self</span>.string = string</div><div class="line">       offset = string.startIndex</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></div><div class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String</span>? &#123;</div><div class="line"></div><div class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</div><div class="line">       offset = string.index(after: offset)</div><div class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</div><div class="line">       <span class="keyword">return</span> offSetString;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</div><div class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</div><div class="line">    <span class="built_in">print</span>(content)</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> string: <span class="type">String</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</div><div class="line">       </div><div class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</div><div class="line">       </div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"for in<span class="subst">\(<span class="keyword">prefix</span>)</span>"</span>)</div><div class="line">   &#125;</div><div class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</div></pre></td></tr></table></figure></p>
 <p>如上所示，我么要想对一个Type实现for in 操作，需要两步：</p>
 <ol>
 <li>创建一个遍历器：让其遵守<code>IteratorProtocol</code>协议</li>
@@ -479,9 +479,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image"
-                src="/images/avatar.gif"
-                alt="击水湘江" />
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
             
               <p class="site-author-name" itemprop="name">击水湘江</p>
               <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
@@ -494,7 +492,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">38</span>
+                    <span class="site-state-item-count">39</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -585,7 +583,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

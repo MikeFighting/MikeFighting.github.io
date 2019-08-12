@@ -6,10 +6,10 @@
 
 
 <html class="theme-next muse use-motion" lang="en">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#222">
 
 
@@ -23,8 +23,8 @@
 
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
 
 
@@ -47,9 +47,9 @@
 
 
 
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
 
-<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
@@ -100,7 +100,7 @@
 
 
   
-  <meta name="keywords" content="Others," />
+  <meta name="keywords" content="Others,">
 
 
 <meta name="description" content="补码我们先来看一个有趣的例子：  在这里我们定义了一个signed char类型的数据，将其赋值为128，然后系统给我们一个警告，意思就是说它隐式地将数值给转换成了-128，这究竟是为什么呢？ 其实在计算机中数值都是以补码的形式存储的：  正数的补码是其自身，负数的补码是其对应的正数的反码加1。  我们先看一下-42在计算机中是如何表示的：它是先将其对象的正数42，0010 1010然后取反110">
@@ -113,7 +113,8 @@
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-f48d5ace81b3d0cb.png">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-d236d51fa77178ad.png">
-<meta property="og:updated_time" content="2017-12-26T14:55:34.000Z">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-54707f7dafa478cf.png">
+<meta property="og:updated_time" content="2019-08-10T08:12:48.061Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="计算机基础">
 <meta name="twitter:description" content="补码我们先来看一个有趣的例子：  在这里我们定义了一个signed char类型的数据，将其赋值为128，然后系统给我们一个警告，意思就是说它隐式地将数值给转换成了-128，这究竟是为什么呢？ 其实在计算机中数值都是以补码的形式存储的：  正数的补码是其自身，负数的补码是其对应的正数的反码加1。  我们先看一下-42在计算机中是如何表示的：它是先将其对象的正数42，0010 1010然后取反110">
@@ -124,7 +125,7 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/">
 
 
 
@@ -189,7 +190,7 @@
     
 
     <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
+      <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
         <span class="site-title">击水湘江</span>
         <span class="logo-line-after"><i></i></span>
@@ -218,25 +219,25 @@
         
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
         </li>
       
         
         <li class="menu-item menu-item-about">
           <a href="/about/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
         </li>
       
         
         <li class="menu-item menu-item-tags">
           <a href="/tags/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
         </li>
       
 
@@ -284,7 +285,7 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -377,6 +378,13 @@
 <h4 id="二、线程切换"><a href="#二、线程切换" class="headerlink" title="二、线程切换"></a>二、线程切换<br></h4><p>虚拟内存空间保持相同；调用操作系统内核；寄存器内容的切入切出和内核操作的转移是最消耗性能的；</p>
 <p>这其中还有一个隐含的性能消耗点是：处理器缓存系统的失效。在虚拟内存空间切换的过程中会导致处理器的Translation Lookaside Buffer (TLB) 失效，这会造成很大的内存损耗。造成上下文切换的原因有：进程自动让出其时间片，或者调度器给它分配的时间片到了，或者硬件发生了中断操作，加锁，或者其它的软件操作也会造成上下文切换。上下文切换很消耗大量的CPU时间造成较大的性能损耗。</p>
 <h3 id="什么是线程？"><a href="#什么是线程？" class="headerlink" title="什么是线程？"></a>什么是线程？</h3><p>线程是寄存器的一组状态，这组状态用来规定程序的执行顺序，执行地址，以及下条指令的地址。</p>
+<h3 id="什么是指令重排？"><a href="#什么是指令重排？" class="headerlink" title="什么是指令重排？"></a>什么是指令重排？</h3><p>指令重排就是在执行程序的过程中，在确保不影响程序输出结果的情况下，为了提升性能，编译器和处理器对指令做的重排序：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-54707f7dafa478cf.png" alt="ReSortInstruction"></p>
+<p>指令重排可以带来性能的提升，它在单线程的情况下是不会出问题的，这一点是由<strong>程序的顺序规则来保证的</strong>，如果是在多线程就会出现各种意想不到的问题。比如:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="keyword">int</span> x = <span class="number">0</span>, y = <span class="number">0</span>;</div><div class="line"><span class="keyword">static</span> <span class="keyword">int</span> a = <span class="number">0</span>, b = <span class="number">0</span>;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException</span>&#123;</div><div class="line"></div><div class="line">    Thread one = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            a = <span class="number">1</span>;  <span class="comment">// A1</span></div><div class="line">            x = b;  <span class="comment">// A2</span></div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    Thread two = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            b = <span class="number">2</span>;  <span class="comment">//B1</span></div><div class="line">            y = a;  <span class="comment">//B2</span></div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    one.start();</div><div class="line">    two.start();</div><div class="line">    one.join();</div><div class="line">    two.join();</div><div class="line">    System.out.println(<span class="string">"x ="</span> + x + <span class="string">";"</span> + <span class="string">"y ="</span> + y);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段代码不仅可以输出：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">x = <span class="number">0</span> ; y = <span class="number">1</span></div><div class="line">x = <span class="number">2</span> ; y = <span class="number">0</span></div><div class="line">x = <span class="number">2</span> ; y = <span class="number">1</span></div></pre></td></tr></table></figure>
+<p>但是在A1和A2，B1和B2重排序之后还可以输出：<code>x = 0 ; y = 0</code>的情况。</p>
 <p>参考资料:</p>
 <ol>
 <li><p><a href="https://stackoverflow.com/questions/5440128/thread-context-switch-vs-process-context-switch" target="_blank" rel="external">线程上下文切换和进程上下文</a></p>
@@ -491,9 +499,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image"
-                src="/images/avatar.gif"
-                alt="击水湘江" />
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
             
               <p class="site-author-name" itemprop="name">击水湘江</p>
               <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
@@ -506,7 +512,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">38</span>
+                    <span class="site-state-item-count">39</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -577,7 +583,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#补码"><span class="nav-number">1.</span> <span class="nav-text">补码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#switch语句为什么比if-else快？"><span class="nav-number">2.</span> <span class="nav-text">switch语句为什么比if else快？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#寄存器是什么？"><span class="nav-number">3.</span> <span class="nav-text">寄存器是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU为什么需要三级缓存？"><span class="nav-number">4.</span> <span class="nav-text">CPU为什么需要三级缓存？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#上下文切换"><span class="nav-number">5.</span> <span class="nav-text">上下文切换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、进程切换"><span class="nav-number">5.1.</span> <span class="nav-text">一、进程切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、线程切换"><span class="nav-number">5.2.</span> <span class="nav-text">二、线程切换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是线程？"><span class="nav-number">6.</span> <span class="nav-text">什么是线程？</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#补码"><span class="nav-number">1.</span> <span class="nav-text">补码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#switch语句为什么比if-else快？"><span class="nav-number">2.</span> <span class="nav-text">switch语句为什么比if else快？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#寄存器是什么？"><span class="nav-number">3.</span> <span class="nav-text">寄存器是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU为什么需要三级缓存？"><span class="nav-number">4.</span> <span class="nav-text">CPU为什么需要三级缓存？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#上下文切换"><span class="nav-number">5.</span> <span class="nav-text">上下文切换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、进程切换"><span class="nav-number">5.1.</span> <span class="nav-text">一、进程切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、线程切换"><span class="nav-number">5.2.</span> <span class="nav-text">二、线程切换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是线程？"><span class="nav-number">6.</span> <span class="nav-text">什么是线程？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是指令重排？"><span class="nav-number">7.</span> <span class="nav-text">什么是指令重排？</span></a></li></ol></div>
             
 
           </div>
@@ -597,7 +603,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

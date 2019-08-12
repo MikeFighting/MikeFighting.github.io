@@ -6,10 +6,10 @@
 
 
 <html class="theme-next muse use-motion" lang="en">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#222">
 
 
@@ -23,8 +23,8 @@
 
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
 
 
@@ -47,9 +47,9 @@
 
 
 
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
 
-<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
@@ -100,7 +100,7 @@
 
 
   
-  <meta name="keywords" content="Note," />
+  <meta name="keywords" content="Note,">
 
 
 <meta name="description" content="JVM不能保证64位的long型和double型具有顺序一致性CPU和内存中的通信是通过总线进行的，总线的宽度是固定的，如果有多个CPU同时请求总线进行读/写总线事务的话，会由总线仲裁（Bus Arbitration）进行裁决，然后获胜的CPU才可以进行数据传递。并且在某个CPU占用了总线之后，其它CPU要请求总线仲裁是要被拒的。这种机制就保证了CPU对内存的访问是以串行的方式进行的。如果有一个3">
@@ -111,7 +111,7 @@
 <meta property="og:site_name" content="击水湘江">
 <meta property="og:description" content="JVM不能保证64位的long型和double型具有顺序一致性CPU和内存中的通信是通过总线进行的，总线的宽度是固定的，如果有多个CPU同时请求总线进行读/写总线事务的话，会由总线仲裁（Bus Arbitration）进行裁决，然后获胜的CPU才可以进行数据传递。并且在某个CPU占用了总线之后，其它CPU要请求总线仲裁是要被拒的。这种机制就保证了CPU对内存的访问是以串行的方式进行的。如果有一个3">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-01-17T06:17:28.000Z">
+<meta property="og:updated_time" content="2019-08-10T08:14:07.651Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存模型">
 <meta name="twitter:description" content="JVM不能保证64位的long型和double型具有顺序一致性CPU和内存中的通信是通过总线进行的，总线的宽度是固定的，如果有多个CPU同时请求总线进行读/写总线事务的话，会由总线仲裁（Bus Arbitration）进行裁决，然后获胜的CPU才可以进行数据传递。并且在某个CPU占用了总线之后，其它CPU要请求总线仲裁是要被拒的。这种机制就保证了CPU对内存的访问是以串行的方式进行的。如果有一个3">
@@ -121,7 +121,7 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/2017/12/20/note-concurrency-jmm-0/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/12/20/note-concurrency-jmm-0/">
 
 
 
@@ -186,7 +186,7 @@
     
 
     <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
+      <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
         <span class="site-title">击水湘江</span>
         <span class="logo-line-after"><i></i></span>
@@ -215,25 +215,25 @@
         
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
         </li>
       
         
         <li class="menu-item menu-item-about">
           <a href="/about/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
         </li>
       
         
         <li class="menu-item menu-item-tags">
           <a href="/tags/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
         </li>
       
 
@@ -281,7 +281,7 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -344,15 +344,30 @@
 
       
         <h2 id="JVM不能保证64位的long型和double型具有顺序一致性"><a href="#JVM不能保证64位的long型和double型具有顺序一致性" class="headerlink" title="JVM不能保证64位的long型和double型具有顺序一致性"></a>JVM不能保证64位的long型和double型具有顺序一致性</h2><p>CPU和内存中的通信是通过总线进行的，总线的宽度是固定的，如果有多个CPU同时请求总线进行读/写总线事务的话，会由总线仲裁（Bus Arbitration）进行裁决，然后获胜的CPU才可以进行数据传递。并且在某个CPU占用了总线之后，其它CPU要请求总线仲裁是要被拒的。这种机制就保证了CPU对内存的访问是以串行的方式进行的。如果有一个32位的处理器，但是要进行64位的写数据操作，这时CPU会将数据分为两个32位的写操作，并且这两个32位数据在请求总线仲裁的时候可能被分配到了不同的总线事务中，所以此时这个64位的写操作就不具有原子性了。这时如果处理器A写入了高32位，在写入低32位期间，处理器B对该数据进行了访问，那么就会产生错误的数据。（Java5之前读写都可以被拆分，Java5之后写操作可以被拆分，但是读操作必须是原子的）。</p>
-<h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><h3 id="volatile对变量读写的影响"><a href="#volatile对变量读写的影响" class="headerlink" title="volatile对变量读写的影响"></a>volatile对变量读写的影响</h3><p>某个变量如果被声明为volatile，那么对它的读操作和写操作就具有原子性，但是如果是复合操作，那么就不具有原子性，比如：</p>
+<h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><h3 id="volatile对变量读写的影响"><a href="#volatile对变量读写的影响" class="headerlink" title="volatile对变量读写的影响"></a>volatile对变量读写的影响</h3><p>volatile也被称为轻量级锁，如果某个变量被声明为volatile，那么对它的读操作和写操作就具有原子性，<strong>但是如果是复合操作，那么就不具有原子性</strong>，比如：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">VolatileFeaturesExample</span> </span>&#123;</div><div class="line">    <span class="keyword">volatile</span> <span class="keyword">long</span> v1 = <span class="number">0L</span>;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(<span class="keyword">long</span> l)</span></span>&#123;</div><div class="line">        v1 = l;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">get</span><span class="params">()</span></span>&#123;</div><div class="line">        returen v1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAndIncrement</span><span class="params">()</span></span>&#123;</div><div class="line">        v1 ++;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>在这里set和get方法的语义和加了锁是一样的，其中getAndIncrement其实可以分为以下三个部分：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAndIncrement</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">long</span> tempt = get();</div><div class="line">    temp += <span class="number">1L</span>;</div><div class="line">    set(tempt);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这其中get和set方法是加锁的，但是<code>tempt += 1L;</code>就不具有原子性了，也就是说volatile让单个读和写操作具有原子性，但是对于复合操作是没有原子性的。</p>
+<p>这其中get和set方法是加锁的，但是<code>tempt += 1L;</code>在执行的时候可以有多个线程同时操作（比如两个线程同时判断了get()的值，然后在线程A对其进行改变的过程中，线程B也对其进行修改），所以不具有原子性，也就是说volatile让单个读和写操作具有原子性，但是对于复合操作是没有原子性的。</p>
 <h3 id="volatile变量读写的内存语义"><a href="#volatile变量读写的内存语义" class="headerlink" title="volatile变量读写的内存语义"></a>volatile变量读写的内存语义</h3><blockquote>
-<p>对volatile变量执行写操作，会将线程的本地内存值刷新到主存中；对volatile变量执行度操作，会将变量所在线程的本地内存置为无效，线程然后会从主内存中读取该volatile变量。</p>
+<p>什么是内存语义？内存语义就是说某段代码，在进行内存实际操作的时候是怎样的。 对volatile变量执行写操作，会将线程的本地内存值刷新到主存中；对volatile变量执行读操作，操作系统会将变量所在线程的本地内存置为无效，然后该线程就会从主内存中读取该volatile变量。这样就保证了写线程的操作对读线程是可见的了。</p>
 </blockquote>
-
+<h3 id="volatile内存语义的实现原理"><a href="#volatile内存语义的实现原理" class="headerlink" title="volatile内存语义的实现原理"></a>volatile内存语义的实现原理</h3><p>volatile内存</p>
+<p><div id="container"></div></p>
+<p><link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css"></p>
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+id: 'SDWebImage2', // 可选。默认为 location.href
+owner: 'MikeFighting',
+repo: 'https://github.com/MikeFighting/BlogComment',
+oauth: {
+client_id: '8e2f9680af3a9d41bc50',
+client_secret: '7f7c1e9cce7dfbd453018631ab6233bbaf73ad86',
+},
+})
+gitment.render('container')
+</script>
       
     </div>
     
@@ -457,9 +472,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image"
-                src="/images/avatar.gif"
-                alt="击水湘江" />
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
             
               <p class="site-author-name" itemprop="name">击水湘江</p>
               <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
@@ -472,7 +485,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">38</span>
+                    <span class="site-state-item-count">39</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -543,7 +556,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM不能保证64位的long型和double型具有顺序一致性"><span class="nav-number">1.</span> <span class="nav-text">JVM不能保证64位的long型和double型具有顺序一致性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile"><span class="nav-number">2.</span> <span class="nav-text">volatile</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile对变量读写的影响"><span class="nav-number">2.1.</span> <span class="nav-text">volatile对变量读写的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile变量读写的内存语义"><span class="nav-number">2.2.</span> <span class="nav-text">volatile变量读写的内存语义</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM不能保证64位的long型和double型具有顺序一致性"><span class="nav-number">1.</span> <span class="nav-text">JVM不能保证64位的long型和double型具有顺序一致性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile"><span class="nav-number">2.</span> <span class="nav-text">volatile</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile对变量读写的影响"><span class="nav-number">2.1.</span> <span class="nav-text">volatile对变量读写的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile变量读写的内存语义"><span class="nav-number">2.2.</span> <span class="nav-text">volatile变量读写的内存语义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile内存语义的实现原理"><span class="nav-number">2.3.</span> <span class="nav-text">volatile内存语义的实现原理</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -563,7 +576,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

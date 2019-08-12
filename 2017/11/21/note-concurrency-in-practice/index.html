@@ -6,10 +6,10 @@
 
 
 <html class="theme-next muse use-motion" lang="en">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#222">
 
 
@@ -23,8 +23,8 @@
 
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
 
 
@@ -47,9 +47,9 @@
 
 
 
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
 
-<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
@@ -100,7 +100,7 @@
 
 
   
-  <meta name="keywords" content="Notes," />
+  <meta name="keywords" content="Notes,">
 
 
 <meta name="description" content="多个线程安全类的方法在一起一定是线程安全的吗？  尽管线程安全类的每个方法都是原子的，但是当很多原子操作合并为一个复合操作的时候，需要额外加锁，否则就会出现竞态条件（race condition）造成线程不安全。但是这里额外的加锁可能会导致性能损耗并且可能引起死锁。如： 12if (!vector.contains(element))    vector.add(element); 这里conta">
@@ -111,7 +111,7 @@
 <meta property="og:site_name" content="击水湘江">
 <meta property="og:description" content="多个线程安全类的方法在一起一定是线程安全的吗？  尽管线程安全类的每个方法都是原子的，但是当很多原子操作合并为一个复合操作的时候，需要额外加锁，否则就会出现竞态条件（race condition）造成线程不安全。但是这里额外的加锁可能会导致性能损耗并且可能引起死锁。如： 12if (!vector.contains(element))    vector.add(element); 这里conta">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-12-25T11:56:49.000Z">
+<meta property="og:updated_time" content="2017-12-25T11:56:48.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java多线程基础">
 <meta name="twitter:description" content="多个线程安全类的方法在一起一定是线程安全的吗？  尽管线程安全类的每个方法都是原子的，但是当很多原子操作合并为一个复合操作的时候，需要额外加锁，否则就会出现竞态条件（race condition）造成线程不安全。但是这里额外的加锁可能会导致性能损耗并且可能引起死锁。如： 12if (!vector.contains(element))    vector.add(element); 这里conta">
@@ -121,7 +121,7 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/2017/11/21/note-concurrency-in-practice/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/11/21/note-concurrency-in-practice/">
 
 
 
@@ -186,7 +186,7 @@
     
 
     <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
+      <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
         <span class="site-title">击水湘江</span>
         <span class="logo-line-after"><i></i></span>
@@ -215,25 +215,25 @@
         
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
         </li>
       
         
         <li class="menu-item menu-item-about">
           <a href="/about/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
         </li>
       
         
         <li class="menu-item menu-item-tags">
           <a href="/tags/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
         </li>
       
 
@@ -281,7 +281,7 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -507,9 +507,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image"
-                src="/images/avatar.gif"
-                alt="击水湘江" />
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
             
               <p class="site-author-name" itemprop="name">击水湘江</p>
               <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
@@ -522,7 +520,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">38</span>
+                    <span class="site-state-item-count">39</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -613,7 +611,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

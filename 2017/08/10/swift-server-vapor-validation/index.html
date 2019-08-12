@@ -6,10 +6,10 @@
 
 
 <html class="theme-next muse use-motion" lang="en">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#222">
 
 
@@ -23,8 +23,8 @@
 
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
 
 
@@ -47,9 +47,9 @@
 
 
 
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
 
-<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
@@ -100,7 +100,7 @@
 
 
   
-  <meta name="keywords" content="Server-Swift," />
+  <meta name="keywords" content="Server-Swift,">
 
 
 <meta name="description" content="服务端在有数据请求时需要对数据进行校验然后返回响应的校验结果，比如要求必须输入邮箱，必须输入电话等，Validation工具给我们提供了非常方便的常用操作，接下来就对其使用过程做以总结（本文用到的是Validation 1.2.0版本）。 Vapor中添加Validation依赖包在Package.swift文件中添加如下的依赖，比如： .Package(url: &amp;quot;https:/">
@@ -123,7 +123,7 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/2017/08/10/swift-server-vapor-validation/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/2017/08/10/swift-server-vapor-validation/">
 
 
 
@@ -188,7 +188,7 @@
     
 
     <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
+      <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
         <span class="site-title">击水湘江</span>
         <span class="logo-line-after"><i></i></span>
@@ -217,25 +217,25 @@
         
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
         </li>
       
         
         <li class="menu-item menu-item-about">
           <a href="/about/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
         </li>
       
         
         <li class="menu-item menu-item-tags">
           <a href="/tags/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
         </li>
       
 
@@ -283,7 +283,7 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -358,7 +358,7 @@
                 <span class="keyword">throw</span> <span class="type">Abort</span>.badRequest
             }
             <span class="keyword">let</span> validInput = <span class="keyword">try</span> input.tested(by: <span class="type">OnlyAlphanumeric</span>())
-            <span class="keyword">return</span> <span class="string">"validated:\(validInput)"</span>
+            <span class="keyword">return</span> <span class="string">"validated:<span class="subst">\(validInput)</span>"</span>
 }
 </code></pre>
 <p>我们运行程序，然后在PostMan中输入<a href="http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：" target="_blank" rel="external">http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：</a></p>
@@ -372,7 +372,7 @@
                 <span class="keyword">throw</span> <span class="type">Abort</span>.badRequest
             }
             <span class="keyword">let</span> validaInput = <span class="keyword">try</span> input.tested(by: <span class="type">EmailValidator</span>())
-            <span class="keyword">return</span> <span class="string">"validated:\(validaInput)"</span>
+            <span class="keyword">return</span> <span class="string">"validated:<span class="subst">\(validaInput)</span>"</span>
     }
 </code></pre>
 <p>然后我们输入URL：<a href="http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：" target="_blank" rel="external">http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：</a></p>
@@ -431,7 +431,7 @@
 
     <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">validate</span><span class="params">(<span class="number">_</span> input: T)</span></span> <span class="keyword">throws</span> {
         <span class="keyword">guard</span> input == expectation <span class="keyword">else</span> {
-            <span class="keyword">throw</span> error(<span class="string">"\(input) does not equal expectation \(expectation)"</span>)
+            <span class="keyword">throw</span> error(<span class="string">"<span class="subst">\(input)</span> does not equal expectation <span class="subst">\(expectation)</span>"</span>)
         }
     }
 }
@@ -543,9 +543,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image"
-                src="/images/avatar.gif"
-                alt="击水湘江" />
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
             
               <p class="site-author-name" itemprop="name">击水湘江</p>
               <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
@@ -558,7 +556,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">38</span>
+                    <span class="site-state-item-count">39</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -649,7 +647,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

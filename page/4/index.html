@@ -6,10 +6,10 @@
 
 
 <html class="theme-next muse use-motion" lang="en">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#222">
 
 
@@ -23,8 +23,8 @@
 
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
 
 
@@ -47,9 +47,9 @@
 
 
 
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
 
-<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
@@ -100,7 +100,7 @@
 
 
   
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Hexo, NexT">
 
 
 <meta name="description" content="努力让明天的自己爱上今天的自己！">
@@ -119,7 +119,7 @@
 
 
 
-  <link rel="canonical" href="https://mikefighting.github.io/page/4/"/>
+  <link rel="canonical" href="https://mikefighting.github.io/page/4/">
 
 
 
@@ -185,7 +185,7 @@
     
 
     <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
+      <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
         <span class="site-title">击水湘江</span>
         <span class="logo-line-after"><i></i></span>
@@ -214,25 +214,25 @@
         
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
         </li>
       
         
         <li class="menu-item menu-item-about">
           <a href="/about/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
         </li>
       
         
         <li class="menu-item menu-item-tags">
           <a href="/tags/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
-            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
         </li>
       
 
@@ -276,11 +276,164 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/04/avfoundation-introduction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/04/avfoundation-introduction/" itemprop="url">AVFoundation--简介</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-04T23:37:34+08:00">2017-08-04</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>AVFoundation是很多处理基于时间的音视频文件的框架之一。你可以用它来检查，创建，编辑或者对媒体文件重编码。可以从设备中得到输入流，以及在实时捕捉和播放的时候对视频进行处理。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-d41cc62c5bec457a.png" alt="AVFoundation"></p>
+<ul>
+<li>如果你仅仅需要播放视频，在IOS上你可以使用Media Player框架中的<code>MPMoviePlayerController</code>或者<code>MPMoviePlayerViewController</code>，如果是基于Web的视频，那么你可以使用<code>UIWebView</code>。</li>
+<li>为了录制视频，并且几乎不需要关注其格式，那么你可以使用UIKit框架中的<code>UIImagePickerController</code>。</li>
+</ul>
+<p>然而请注意：在AVFoundation中使用的一些原始数据（包括基于时间的数据结构以及携带及包含媒体信息的封装对象）都是在<code>Core Media</code>框架中声明的。</p>
+<h1 id="AVFoundation框架简介"><a href="#AVFoundation框架简介" class="headerlink" title="AVFoundation框架简介"></a>AVFoundation框架简介</h1><p>AV Foundation中有两个方面的API(处理视频的和处理音频的)。</p>
+<ul>
+<li>使用<code>AVAudioPlayer</code>来播放音频文件</li>
+<li>使用<code>AVAudioRecorder</code>来录制音频文件</li>
+</ul>
+<p>你可以通过<code>AVAudioSessin</code>对象来对配置音频的播放行为，相关配置可以参考：<code>Audio Session Programming Guide</code>。</p>
+<p>AVFoundation中用来代表媒体信息的关键类是AVAsset。该框架的大部分功能都是有AVAsset来表现的。理解AVAsset将有助于理解整个框架是如何工作的。AVAsset是一片或者多片媒体数据的集合。它统一提供这个集合的信息，包括其标题，时长，自然表现大小（natural presentation size）等。一个AVAsset不合具体的数据格式相绑定。AVAsset是其它用URL来创建asset实例的父类。<br>asset中的每一个独立媒体片是一个统一的类型并且其成为<code>track</code>。</p>
+<h2 id="使用Assets"><a href="#使用Assets" class="headerlink" title="使用Assets"></a>使用Assets</h2><p>AVAsset是AVFoundation的基础类。AVFoundation框架的设计很大程度上都是通过这个类来表现的。它提供了视频的名称，时间，正常展示的大小(natural presentation size)。AVAsset没有和具体的数据形式相绑定。AVAsset是从一个<code>URL</code>来创建出Asset实例的父类，并且可以创建出新的组合。每个asset中独立的视频片段都是统一的类型叫做<code>track</code>。一般情况下：一个track代表音频成分，一个track代表视频成分。很重要的一点是：初始化一个asset并不意味着立即就可以用。它还需要一些时间来计算。但是这种计算不会阻塞主线程，他会异步的执行。</p>
+<h2 id="播放"><a href="#播放" class="headerlink" title="播放"></a>播放</h2><p><code>presentation state</code>是由<code>player item</code>对象管理的，某个track的<code>presentation state</code>是由<code>player item track</code>对象管理的。你可以使用<code>player</code>对象来播放，并且直接将其输出到<code>Core Animation</code>上。可以使用一个<code>player queue</code>有续地来管理一系列的<code>player items</code>。</p>
+<h2 id="读，写以及重新编码Asset"><a href="#读，写以及重新编码Asset" class="headerlink" title="读，写以及重新编码Asset"></a>读，写以及重新编码<code>Asset</code></h2><p>AV Foundation让你给一个Asset用不同的方式创建出新的展示。你可以仅仅对一个已经存在的asset进行重编码（ios4.1之后），你可以在一个asset的内容上执行不同的操作，然后将结果用新的asset来存储。将一种表现转化成其他类型的表现，可以使用<code>asset reader</code>和<code>asset writer</code>来串联两个视频动画。</p>
+<h2 id="缩略图"><a href="#缩略图" class="headerlink" title="缩略图"></a>缩略图</h2><p>使用<code>AVAssetImageGenerator</code>对象可以来创建缩略图。编辑，AV Foundation使用<code>compositions</code>来从现有的媒体片段中新建assets。可以设置相对volume，音频<code>track ramp</code>，设置透明度。</p>
+<h2 id="Media捕捉和使用Camera"><a href="#Media捕捉和使用Camera" class="headerlink" title="Media捕捉和使用Camera"></a>Media捕捉和使用Camera</h2><p>可以使用<code>preview player</code>来展示camera录制的内容。</p>
+<h2 id="AV-Foundation和多线程并发"><a href="#AV-Foundation和多线程并发" class="headerlink" title="AV Foundation和多线程并发"></a>AV Foundation和多线程并发</h2><p>有两点需要注意的：</p>
+<ul>
+<li>UI相关的通知应该在主线程中触发。</li>
+<li>需要自己明确指定类和方法所在线程的话会在响应的线程中年触发通知</li>
+</ul>
+<p>如果要开发多线程的应用，那么你应该使用<code>isMainThread</code>或者<code>[[NSThread currentThread] isEqual:&lt;#A stored thread reference#&gt;]</code>来提前测试是否该线程是你期望的要执行的线程。如果要跨线程，你可能需要如下方法</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">performSelectorOnMainThread:withObject:waitUntilDone: </div><div class="line">performSelector:onThread:withObject:waitUntilDone:modes:</div><div class="line"><span class="built_in">dispatch_async</span></div></pre></td></tr></table></figure>
+<p>为了更好的开发AVFoundation，你需要具备如下前提知识：</p>
+<ul>
+<li>全面理解基础的Cocoa开发工具及技术</li>
+<li>基本理解Block</li>
+<li>基本理解KVC和KVO</li>
+<li>对于视频回播，需要理解合理动画，对于基本的回播，需要理解AV Kit框架参考手册</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/04/intermedia-swift/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -352,7 +505,7 @@
 </code></pre>
 <p>这response可能是用户输入的,可能会输入不确定的数值<code>Do you konw?</code>那么肯定会得到错误的结果，在OC中遇到这种情况我们怎么处理呢？我们有如下的值可以表示错误：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-65ce6dec3ca6cade.png" alt="Wrong!"><br>但是你必须从不同的接口中去选择相应的错误类型，并且要记住这些错误类型。为了解决这个问题，Swift中引入了Optional的概念，将这种可能是nil的值进行打包。它可以表示上述所有错误的类型，同时，<strong>如果我们使用Optional，就一定要对它进行拆包，使用<code>!</code>号，如果不拆包会造成编译器错误</strong>，如下所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-03cea3691052ac9b.png" alt="Need Unwrap"><br><strong>也可以使用Optional Binding将判断是否有值和拆包结合在一起使用：<code>if let</code></strong>。</p>
 <pre><code class="Swift"><span class="keyword">var</span> neighbors = [<span class="string">"Alex"</span>, <span class="string">"Anna"</span>, <span class="string">"Madison"</span>, <span class="string">"Dave"</span>] <span class="keyword">let</span> index = findIndexOfString(<span class="string">"Anna"</span>, neighbors)  <span class="keyword">if</span> <span class="keyword">let</span> indexValue = index { 
-    <span class="built_in">println</span>(<span class="string">"Hello, \(neighbors[indexValue])"</span>)
+    <span class="built_in">println</span>(<span class="string">"Hello, <span class="subst">\(neighbors[indexValue])</span>"</span>)
 } <span class="keyword">else</span> {
     <span class="built_in">println</span>(<span class="string">"Must've moved away"</span>)
 }
@@ -475,7 +628,7 @@ clients.<span class="built_in">sort</span>({(a: <span class="type">String</span>
 <span class="type">HUNGRY</span>
 </code></pre>
 <p>我们还可以调用<code>reduce</code>方法将其和成一个字符串</p>
-<pre><code class="Swift"><span class="keyword">let</span> reducedResult = result.<span class="built_in">reduce</span>(<span class="string">"HULK"</span>){<span class="string">"\($0) \($1)"</span>}
+<pre><code class="Swift"><span class="keyword">let</span> reducedResult = result.<span class="built_in">reduce</span>(<span class="string">"HULK"</span>){<span class="string">"<span class="subst">\($<span class="number">0</span>)</span> <span class="subst">\($<span class="number">1</span>)</span>"</span>}
 </code></pre>
 <p>这时结果如下：</p>
 <pre><code class="Swift"><span class="type">HULK</span> <span class="type">ANGRY</span> <span class="type">HUNGRY</span>
@@ -499,7 +652,7 @@ numbers.<span class="built_in">map</span> (indexes.addIndex) <span class="commen
 <span class="function"><span class="keyword">func</span> <span class="title">logTemperatureDifferences</span><span class="params">(initial: Int)</span></span> {
     <span class="keyword">var</span> prev = initial
     onTemperatureChange = { next <span class="keyword">in</span>
-        <span class="built_in">println</span>(<span class="string">"Changed \(next - prev)°F"</span>)
+        <span class="built_in">println</span>(<span class="string">"Changed <span class="subst">\(next - prev)</span>°F"</span>)
 prev = next 
 }
 </code></pre>
@@ -507,7 +660,7 @@ prev = next
 <pre><code class="Swift"><span class="function"><span class="keyword">func</span> <span class="title">logTemperatureDifferences</span><span class="params">(initial: Int)</span></span> {
     <span class="keyword">var</span> prev = initial
     <span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(next: Int)</span></span> {
-        <span class="built_in">println</span>(<span class="string">"Changed \(next - prev)°F"</span>)
+        <span class="built_in">println</span>(<span class="string">"Changed <span class="subst">\(next - prev)</span>°F"</span>)
 prev = next } 
     onTemperatureChange = log
 </code></pre>
@@ -555,7 +708,7 @@ currentTemp = temp    } <span class="comment">// error: requires explicit 'sel
   <span class="built_in">println</span>(<span class="string">"on time"</span>)
 <span class="keyword">case</span> .<span class="type">Delayed</span>(<span class="keyword">let</span> minutes)
                         :
-<span class="built_in">println</span>(<span class="string">"delayed by \(minutes) minutes"</span>)
+<span class="built_in">println</span>(<span class="string">"delayed by <span class="subst">\(minutes)</span> minutes"</span>)
 </code></pre>
 <p>我们可以对这个<code>delay</code>做各种各样的匹配：</p>
 <pre><code class="Swift"><span class="keyword">switch</span> trainStatus {
@@ -602,9 +755,9 @@ currentTemp = temp    } <span class="comment">// error: requires explicit 'sel
 <pre><code class="Swift"><span class="keyword">let</span> color = (<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>)
 <span class="keyword">switch</span> color {
   <span class="keyword">case</span> (<span class="number">0.0</span>, <span class="number">0.5</span>...<span class="number">1.0</span>, <span class="keyword">let</span> blue, <span class="number">_</span>):
-    <span class="built_in">println</span>(<span class="string">"Green and \(blue * 100)% blue"</span>)
+    <span class="built_in">println</span>(<span class="string">"Green and <span class="subst">\(blue * <span class="number">100</span>)</span>% blue"</span>)
   <span class="keyword">case</span> <span class="keyword">let</span> (r, g, b, <span class="number">1.0</span>) <span class="keyword">where</span> r == g &amp;&amp; g == b:
-    <span class="built_in">println</span>(<span class="string">"Opaque grey \(r * 100)%"</span>)
+    <span class="built_in">println</span>(<span class="string">"Opaque grey <span class="subst">\(r * <span class="number">100</span>)</span>%"</span>)
 </code></pre>
 <p>我们甚至可以对其中的各个数值做以相应的模式匹配。</p>
 <h3 id="Pattern-Matching的应用PList校验"><a href="#Pattern-Matching的应用PList校验" class="headerlink" title="Pattern Matching的应用PList校验"></a>Pattern Matching的应用PList校验</h3><p>比如我们有下面的方法来校验Plist中的内容是否有效</p>
@@ -685,7 +838,7 @@ stateFromPlist([<span class="string">"name"</span>: <span class="string">"Califo
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -961,7 +1114,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -1098,7 +1251,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -1235,7 +1388,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -1303,7 +1456,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
           
             <h2 id="Sequences"><a href="#Sequences" class="headerlink" title="Sequences"></a>Sequences</h2><p><code>Sequence</code>协议位于系统架构的底层，其定义是<br>   <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>&#123;</div><div class="line">   </div><div class="line"> associatedtype <span class="type">Iterator</span>: <span class="type">IteratorProtocol</span></div><div class="line"> <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span>-&gt; <span class="type">Iterator</span></div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h2 id="Iterators"><a href="#Iterators" class="headerlink" title="Iterators"></a>Iterators</h2><pre><code><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">IteratorProtocol</span></span>&#123;</div><div class="line">associatedtype <span class="type">Element</span></div><div class="line"><span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span>-&gt; <span class="type">Element</span>?</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</div><div class="line">   <span class="keyword">let</span> string:<span class="type">String</span></div><div class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></div><div class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</div><div class="line">       <span class="keyword">self</span>.string = string</div><div class="line">       offset = string.startIndex</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></div><div class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String</span>? &#123;</div><div class="line"></div><div class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</div><div class="line">       offset = string.index(after: offset)</div><div class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</div><div class="line">       <span class="keyword">return</span> offSetString;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</div><div class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</div><div class="line">    <span class="built_in">print</span>(content)</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> string: <span class="type">String</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</div><div class="line">       </div><div class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</div><div class="line">       </div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"for in\(prefix)"</span>)</div><div class="line">   &#125;</div><div class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</div></pre></td></tr></table></figure></p>
+</code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</div><div class="line">   <span class="keyword">let</span> string:<span class="type">String</span></div><div class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></div><div class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</div><div class="line">       <span class="keyword">self</span>.string = string</div><div class="line">       offset = string.startIndex</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></div><div class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String</span>? &#123;</div><div class="line"></div><div class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</div><div class="line">       offset = string.index(after: offset)</div><div class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</div><div class="line">       <span class="keyword">return</span> offSetString;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</div><div class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</div><div class="line">    <span class="built_in">print</span>(content)</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> string: <span class="type">String</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</div><div class="line">       </div><div class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</div><div class="line">       </div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"for in<span class="subst">\(<span class="keyword">prefix</span>)</span>"</span>)</div><div class="line">   &#125;</div><div class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</div></pre></td></tr></table></figure></p>
 <p>如上所示，我么要想对一个Type实现for in 操作，需要两步：</p>
 <ol>
 <li>创建一个遍历器：让其遵守<code>IteratorProtocol</code>协议</li>
@@ -1386,7 +1539,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -1556,7 +1709,7 @@ let result = [1,2,3,12,1,3,4,5,6,4,6].unique()
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -1772,7 +1925,7 @@ git push heroku master
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -1913,9 +2066,7 @@ git push heroku master
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image"
-                src="/images/avatar.gif"
-                alt="击水湘江" />
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
             
               <p class="site-author-name" itemprop="name">击水湘江</p>
               <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
@@ -1928,7 +2079,7 @@ git push heroku master
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">38</span>
+                    <span class="site-state-item-count">39</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -2003,7 +2154,7 @@ git push heroku master
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
