@@ -359,9 +359,11 @@
 <p>假设做数学习题所用的时间是1小时，写英语单词的时间为每单元1小时，所以说如果有小明一个人来做需要10个小时才能完成。小明很贪玩，到了周日晚上才发现自己作业没有写，小明急了，于是就找同学帮他写英语单词，因为英语单词是抄写9份，所以他找了9个小伙伴给他抄，他自己做数学习题（假设数学题不能多个人来做），这样本来是个小时完成的任务，小明最后用了2小时完成了，按照Amdahl定律，其F是0.1，N是10，所以最后的数值是5.26倍。然后我们假设小明有无数个小伙伴都来帮他抄写英语单词，那么最后他需要的时间就接近于1小时，做以按照Amdahl定律，其F实0.1，N是正无穷，所以最后数值是10，也就是说他的速度是原来的10倍。也就是说无论他找多少个小伙伴都不能突破一小时的时间，<strong>因为这一小时只能是串行执行的，不能由其他的处理器来协助完成。</strong></p>
 <p>然而要能够使用Amdahl定律需要首先估算出串行执行的部分所占的比例。<br>同时如果增加了处理器的个数，那么每个处理器的利用率都会下降，其中串行所占比例越重的系统，其利用率下降的越厉害。</p>
 <h2 id="内存的同步"><a href="#内存的同步" class="headerlink" title="内存的同步"></a>内存的同步</h2><p>在使用<code>synchronized</code>和<code>volatile</code>以提供可见性的同时也引入了需要内存同步的问题，因为其使用了内存栅栏（Memory Barrier），使用内存栅栏是可以刷新缓存，使得缓存无效的。某个线程的同步会影响到其它线程的性能，因为同不会增加内存总线上的通信量，总线的带宽是有限的，并且所有处理器都共享这个带宽。但是现在的JVM会对代码做相应的优化，比如下面两段代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">synchronized</span> (<span class="keyword">new</span> Object()) &#123;</div><div class="line">           <span class="comment">// do something</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (<span class="keyword">new</span> Object()) &#123;</span><br><span class="line">           <span class="comment">// do something</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这里永远不会有任何两个线程会去竞争这个锁的，因为每次进入这个方法都会新建一把锁。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getStoogeNames</span><span class="params">()</span> </span>&#123;</div><div class="line">List&lt;String&gt; stooges = <span class="keyword">new</span> Vector&lt;String&gt;();</div><div class="line">stooges.add(<span class="string">"Moe"</span>);</div><div class="line">stooges.add(<span class="string">"Larry"</span>);</div><div class="line">stooges.add(<span class="string">"Curly"</span>);</div><div class="line"><span class="keyword">return</span> stooges.toString();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getStoogeNames</span><span class="params">()</span> </span>&#123;</span><br><span class="line">List&lt;String&gt; stooges = <span class="keyword">new</span> Vector&lt;String&gt;();</span><br><span class="line">stooges.add(<span class="string">"Moe"</span>);</span><br><span class="line">stooges.add(<span class="string">"Larry"</span>);</span><br><span class="line">stooges.add(<span class="string">"Curly"</span>);</span><br><span class="line"><span class="keyword">return</span> stooges.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这里使用<code>Vector</code>可能会进行四次获取锁和释放锁的操作，但是由于这个<code>stooges</code>是一个局部变量，局部变量是属于线程栈的，每个线程中的不一样，所以没有必要加锁。在这两种情况下，如果编译器够智能，就会进行优化从而去掉锁。并且如果编译器没有进行逸出分析，那么也可能进行锁的粒度粗化。也就是说将原来需要加四次锁的地方改为加一次锁。也就是说再非竞争同步的时候，我们就不必担心，JVM已经帮我们做了优化，我们需要关心的就是可能引发竞争的地方。</p>
 <blockquote>
 <p>在并发程序中，对可伸缩性的最主要威胁就是独占方式的资源锁。</p>
@@ -374,9 +376,9 @@
 <h2 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h2><p>上下文切换是什么？<br>锁竞争的过程中会发生上下文切换，越多的上下文切换将会造成越低的吞吐量。如果某个执行IO操作的线程被阻塞了，同时这个线程还持有一把锁，那么如果有越来越多的线程来请求这个锁，也将被阻塞而挂起，这就会增加上下文切换的次数。所以要尽量减少持有锁的时间来减少上下文切换。</p>
 <p>参考资料：</p>
 <ol>
-<li><p><a href="https://stackoverflow.com/questions/5440128/thread-context-switch-vs-process-context-switch" target="_blank" rel="external">线程上下文切换和进程上下文</a></p>
+<li><p><a href="https://stackoverflow.com/questions/5440128/thread-context-switch-vs-process-context-switch" target="_blank" rel="noopener">线程上下文切换和进程上下文</a></p>
 </li>
-<li><p><a href="http://www.linfo.org/context_switch.html" target="_blank" rel="external">上下文切换的定义</a></p>
+<li><p><a href="http://www.linfo.org/context_switch.html" target="_blank" rel="noopener">上下文切换的定义</a></p>
 </li>
 <li></li>
 </ol>
@@ -498,7 +500,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">39</span>
+                    <span class="site-state-item-count">56</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -533,7 +535,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Objective-C,">
+
+
+<meta name="description" content="Objective-C中利用Method Swizzle实现AOP编程是相对简单的，只需要调用runtime框架的method_exchangeImplementations方法，将相应方法的实现进行调换即可。然而在实际的使用中可能会遇到一些问题，本文总结了在项目中使用AOP时遇到的问题，并分析了常用框架中AOP的处理方法。 为什么要使用AOP？需求背景：在某版的开发中Listing页面的改版较大">
+<meta name="keywords" content="Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AOP实践小结">
+<meta property="og:url" content="https://mikefighting.github.io/2018/06/05/oc-think-in-aop/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="Objective-C中利用Method Swizzle实现AOP编程是相对简单的，只需要调用runtime框架的method_exchangeImplementations方法，将相应方法的实现进行调换即可。然而在实际的使用中可能会遇到一些问题，本文总结了在项目中使用AOP时遇到的问题，并分析了常用框架中AOP的处理方法。 为什么要使用AOP？需求背景：在某版的开发中Listing页面的改版较大">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1513759-ba27b7fbc5747446.png">
+<meta property="og:updated_time" content="2018-12-24T08:58:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AOP实践小结">
+<meta name="twitter:description" content="Objective-C中利用Method Swizzle实现AOP编程是相对简单的，只需要调用runtime框架的method_exchangeImplementations方法，将相应方法的实现进行调换即可。然而在实际的使用中可能会遇到一些问题，本文总结了在项目中使用AOP时遇到的问题，并分析了常用框架中AOP的处理方法。 为什么要使用AOP？需求背景：在某版的开发中Listing页面的改版较大">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1513759-ba27b7fbc5747446.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2018/06/05/oc-think-in-aop/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>AOP实践小结 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2018/06/05/oc-think-in-aop/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">AOP实践小结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-05T15:55:07+08:00">2018-06-05</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://upload-images.jianshu.io/upload_images/1513759-ba27b7fbc5747446.png" alt="AOPLogo"><br>Objective-C中利用Method Swizzle实现AOP编程是相对简单的，只需要调用runtime框架的<code>method_exchangeImplementations</code>方法，将相应方法的实现进行调换即可。然而在实际的使用中可能会遇到一些问题，本文总结了在项目中使用AOP时遇到的问题，并分析了常用框架中AOP的处理方法。</p>
+<h2 id="为什么要使用AOP？"><a href="#为什么要使用AOP？" class="headerlink" title="为什么要使用AOP？"></a>为什么要使用AOP？</h2><p>需求背景：在某版的开发中Listing页面的改版较大，产品将UI分为A，B，C三个版本，需要根据后续的数据分析来对A，B，C三个版本进行相应的取舍。所以就需要我们在之前Listing页的<strong>所有埋点</strong>中都加入一个版本号。因为Listing经过了很多的迭代，总共统计下来有100+的埋点，很难将每个埋点中都加入一个字段。基于此，采用了面向切面的思想，Hook住公共埋点最终要调用的方法，然后在这个方法的参数中添加一个版本的字段，这种方式可谓“一劳永逸”，只需要在一个一个地方加一段代码就可以解决Listing页面的所有埋点问题。</p>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><h3 id="问题一、添加和移除"><a href="#问题一、添加和移除" class="headerlink" title="问题一、添加和移除"></a>问题一、添加和移除</h3><p>因为主App涉及到很多的业务线，所有的业务线最终都要调用这个方法来进行埋点。如果我Hook住了这个方法，那么其它业务线的埋点最终也会调用我写的埋点方法，这显然是不好的，同时如果我们的页面从Listing页进入Detail页面就就不需要这个版本号，这时也需要这个Hook移除。也就是说要调用两次<code>method_exchangeImplementations</code>，第一次用来添加注入代码，第二用来移除注入的代码。那么接口就变成了这样子：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// YPDataLog+YPAddition.m</span></span><br><span class="line">- (<span class="keyword">void</span>)yp_addAspect &#123;</span><br><span class="line">    SEL orignSelector = <span class="comment">//;</span></span><br><span class="line">    SEL newSelector = <span class="comment">//;</span></span><br><span class="line">    <span class="built_in">BOOL</span> responsed = [<span class="keyword">self</span> respondsToSelector:orignSelector];</span><br><span class="line">    <span class="built_in">NSAssert</span>(responsed = <span class="literal">YES</span>, <span class="string">@"The log method has been changed"</span>);</span><br><span class="line">    <span class="keyword">if</span> (responsed) &#123;</span><br><span class="line">        [<span class="keyword">self</span> p_swizzleWithClass:[<span class="keyword">self</span> <span class="keyword">class</span>]</span><br><span class="line">                originalSelector:orignSelector</span><br><span class="line">                 swizzleSelector:newSelector];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)yp_removeAspect &#123;</span><br><span class="line">     [<span class="keyword">self</span> yp_addAspect];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时问题就出现了，<strong>因为这个方法是有副作用的</strong>：用户在调用<code>yp_addAspect</code>和<code>yp_removeAspect</code>时候必须要保证是一一对应。也就是说要调用一个<code>yp_addAspect</code>，然后调用<code>yp_removeAspect</code>，如果连续调用了两次<code>yp_addAspect</code>，再接着调用<code>yp_removeAspect</code>那么，就会造成错误，这就给用户使用这个方法带来了麻烦。</p>
+<h3 id="问题二、非线程安全"><a href="#问题二、非线程安全" class="headerlink" title="问题二、非线程安全"></a>问题二、非线程安全</h3><p>比如我们注入的方法是这样的：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)yp_logPage   :   (<span class="built_in">NSString</span> *)pagetype</span><br><span class="line">         logAction   :   (<span class="built_in">NSString</span> *)actionType</span><br><span class="line">            params   :   (<span class="built_in">NSArray</span>  *)paramtes &#123;</span><br><span class="line"></span><br><span class="line">      <span class="comment">//步骤1. 添加相应的参数</span></span><br><span class="line">      <span class="built_in">NSMutableArray</span> *mutableArray = [<span class="built_in">NSMutableArray</span>  arrayWithArray:paramtes];</span><br><span class="line">      <span class="built_in">NSString</span> *version <span class="comment">// 获取相应的A，B，C版本号;</span></span><br><span class="line">      [mutableArray addObject:version ?: <span class="string">@""</span>];</span><br><span class="line"></span><br><span class="line">      <span class="comment">//步骤2. 调用之前的方法</span></span><br><span class="line">      [<span class="keyword">self</span>   yp_logPage:pageType</span><br><span class="line">               logAciton:actionType</span><br><span class="line">                  params:mutableArray];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在线程A调用这个方法，执行到步骤1的时候，线程B调用了<code>- (void)yp_removeAspect</code>，这时方法已经被调换回来了。这时线程A仍然会调用：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[<span class="keyword">self</span>    yp_logPage:pageType</span><br><span class="line">          logAciton:actionType</span><br><span class="line">             params:paramtes];</span><br></pre></td></tr></table></figure>
+
+<p>这时就发生循环调用，因为在这个循环中会调用步骤一并创建相应的<code>NSMutableArray</code>，所有会造成栈溢出并最终崩溃。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>为了解决问题一，我们需要给这个hook添加一个标示，用来标注该方法是否已经被hook，如果已经被hook，那么再调用<code>yp_addAspect</code>就直接返回，如果没有调用<code>yp_addAspect</code>方法而先调用了<code>yp_removeAspect</code>方法，我们直接使用断言提醒用户就可以达到相应的目的。<br></p>
+<p>对于问题二，由于调用我们没有办法限定调用<code>yp_logPage:logAciton:params</code>是在主线程中还是在子线程中，所以<strong>要保证该方法的调用和<code>yp_removeAspect</code>之间的互斥该怎么做到呢？。</strong><br></p>
+<h3 id="方案一：加锁"><a href="#方案一：加锁" class="headerlink" title="方案一：加锁"></a>方案一：加锁</h3><p>为了保证互斥加锁不就行了?加锁只能保证<code>yp_removeAspect</code>和<code>yp_logPage:logAction:params:</code>中的<strong>执行</strong>是互斥的，这同样是非线程安全的。考虑下面的执行路径：</p>
+<ol>
+<li>如果线程A调用了<code>yp_removeAspect</code>，同时线程B进入了<code>yp_logPage:logAction:params:</code></li>
+<li>因为线程A持有锁，所以线程B被阻塞</li>
+<li>线程A执行完removeAspect，线程B获取锁被唤醒</li>
+<li>线程B调用<code>yp_logPage:logAction:params:</code>,进入死循环</li>
+</ol>
+<p>所以在这两个方法上加锁解决不了非线程安全问题。</p>
+<h3 id="方案二：全局标识"><a href="#方案二：全局标识" class="headerlink" title="方案二：全局标识"></a>方案二：全局标识</h3><p>利用标识是否可以解决呢？如果在调用<code>yp_logPage:logAction:params:</code>中我们发现swizzle切换了，那么就调用该类原来的方法<code>logPage:logAction:params:</code>。来看看伪代码：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)yp_removeAspect &#123;</span><br><span class="line"></span><br><span class="line">    SEL orignSelector = <span class="comment">//;</span></span><br><span class="line">    SEL newSelector = <span class="comment">//;</span></span><br><span class="line">    <span class="built_in">BOOL</span> responsed = [<span class="keyword">self</span> respondsToSelector:orignSelector];</span><br><span class="line">    <span class="built_in">NSAssert</span>(responsed = <span class="literal">YES</span>, <span class="string">@"The log method has been changed"</span>);</span><br><span class="line">    <span class="keyword">if</span> (responsed) &#123;</span><br><span class="line">        [<span class="keyword">self</span> p_swizzleWithClass:[<span class="keyword">self</span> <span class="keyword">class</span>]</span><br><span class="line">                originalSelector:orignSelector</span><br><span class="line">                 swizzleSelector:newSelector];</span><br><span class="line">        <span class="keyword">self</span>.isHooked = <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)yp_logPage   :   (<span class="built_in">NSString</span> *)pagetype</span><br><span class="line">         logAction   :   (<span class="built_in">NSString</span> *)actionType</span><br><span class="line">            params   :   (<span class="built_in">NSArray</span>  *)paramtes &#123;</span><br><span class="line"></span><br><span class="line">      <span class="comment">//步骤1. 添加相应的参数</span></span><br><span class="line">      <span class="comment">// ...</span></span><br><span class="line">      <span class="comment">//步骤2. 调用之前的方法</span></span><br><span class="line">      <span class="keyword">if</span>(<span class="keyword">self</span>.isHooked) &#123;</span><br><span class="line">      [<span class="keyword">self</span>   yp_logPage:pageType</span><br><span class="line">               logAciton:actionType</span><br><span class="line">                  params:paramtes];</span><br><span class="line">      &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">         [<span class="keyword">self</span>   logPage:pagetType</span><br><span class="line">               logAciton:actionType</span><br><span class="line">                  params:paramtes];</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在多线程之间做标示时，要注意：</p>
+<blockquote>
+<p>这个标示要被声明成volatile类型的，以确保其在各个线程之间是可见的。</p>
+</blockquote>
+<p>这时仍然是非线程安全的，因为比如线程A执行完了swizzle之后时间片刚好到了，被操作系统换出，然后线程B执行<code>yp_logPage:logAction:params</code>的时候，if语句仍然是成立的。</p>
+<h3 id="方案三：方案一二结合"><a href="#方案三：方案一二结合" class="headerlink" title="方案三：方案一二结合"></a>方案三：方案一二结合</h3><p>利用加锁和标示结合的方式可以解决问题，在方案一加锁的同时，在内部再利用标示进行判断。这种方式可以解决问题，但是开销太大，我们知道埋点方法的调用是很频繁的，这种频繁的加锁解锁会造成很大的上下文切换开销，同时绝大部分的埋点方法调用都是在主线程所以没有必要加锁解锁。同时，这种在直接在接口上加锁的方式太简单粗暴了，粒度太大。</p>
+<h3 id="方案四：GCD和标示"><a href="#方案四：GCD和标示" class="headerlink" title="方案四：GCD和标示"></a>方案四：GCD和标示</h3><p>既然百分之九十以上的埋点都是在主线程中调用的，我们可以调用利用让在子线程的方法切换到主线程就行了，同时在内部加标示判断即可，这样既防止了开销，又保证了线程安全。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)yp_logPage   :   (<span class="built_in">NSString</span> *)pagetype</span><br><span class="line">         logAction   :   (<span class="built_in">NSString</span> *)actionType</span><br><span class="line">            params   :   (<span class="built_in">NSArray</span>  *)paramtes &#123;</span><br><span class="line"></span><br><span class="line"><span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">      <span class="comment">//....</span></span><br><span class="line">      <span class="keyword">if</span>(<span class="keyword">self</span>.isHooked)&#123;</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">      &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我在2.7GHz，i5处理器的的Mac Pro上的6s模拟器上模拟了10000条多线程的日志输出，发现用Lock的形式和切换到主线程的形式，用时分别是：4.494608s和3.382740s，可以看出使用GCD进行切换的形式性能更优。这里模拟的每条日志都是在GCD的线程池中抽取的线程中执行的，而项目中的实际埋点大多都是在主线程中调用的，所以性能的提高会更高。这里要注意：</p>
+<blockquote>
+<p>虽然埋点方法的调用是在主线程中的，但是最终将埋点写入文件（等到了时间阈值统一上传，以减少网络IO和流量损耗）时应该在子线程中，因为磁盘IO造成的性能损耗是很大的。</p>
+</blockquote>
+<h2 id="常用框架的处理"><a href="#常用框架的处理" class="headerlink" title="常用框架的处理"></a>常用框架的处理</h2><p>下面们说说常见的框架是如何来进行AOP的。</p>
+<h3 id="DZNEmptyDataSet中AOP的实现"><a href="#DZNEmptyDataSet中AOP的实现" class="headerlink" title="DZNEmptyDataSet中AOP的实现"></a>DZNEmptyDataSet中AOP的实现</h3><p>DZNEmptyDataSet可以说是做空白页的鼻祖，它hook的是tableView和collectionView的reloadData方法，然后在这个方法内部去判断是否没有数据，如果没有就展示相应的空白页面。它其实没有调用<code>method_exchangeImplementations</code>方法，而是先将原来的方法的实现替换掉：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Swizzle by injecting additional implementation</span></span><br><span class="line">   Method method = class_getInstanceMethod(baseClass, selector);</span><br><span class="line">   IMP dzn_newImplementation = method_setImplementation(method, (IMP)dzn_original_implementation);</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Store the new implementation in the lookup table</span></span><br><span class="line">   <span class="built_in">NSDictionary</span> *swizzledInfo = @&#123;DZNSwizzleInfoOwnerKey: baseClass,</span><br><span class="line">                                  DZNSwizzleInfoSelectorKey: <span class="built_in">NSStringFromSelector</span>(selector),</span><br><span class="line">                                  DZNSwizzleInfoPointerKey: [<span class="built_in">NSValue</span> valueWithPointer:dzn_newImplementation]&#125;;</span><br><span class="line">   [_impLookupTable setObject:swizzledInfo forKey:key];</span><br></pre></td></tr></table></figure>
+
+<p>这里在调用<code>method_setImplementation</code>是方法原来的实现（这也就决定了这个方法是不可重入的，因为再次调用，他就将返回之前注入的实现），它会将这个方法原来的实现的指针<code>dzn_newImplementation</code>以NSValue的形式存放到<code>_impLookupTable</code>这个字典中，在然后在新注入的方法执行完之后，以函数指针的形式调用原来的方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> dzn_original_implementation(<span class="keyword">id</span> <span class="keyword">self</span>, SEL _cmd)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Fetch original implementation from lookup table</span></span><br><span class="line">    Class baseClass = dzn_baseClassToSwizzleForTarget(<span class="keyword">self</span>);</span><br><span class="line">    <span class="built_in">NSString</span> *key = dzn_implementationKey(baseClass, _cmd);</span><br><span class="line">    <span class="built_in">NSDictionary</span> *swizzleInfo = [_impLookupTable objectForKey:key];</span><br><span class="line">    <span class="built_in">NSValue</span> *impValue = [swizzleInfo valueForKey:DZNSwizzleInfoPointerKey];</span><br><span class="line"></span><br><span class="line">    IMP impPointer = [impValue pointerValue];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We then inject the additional implementation for reloading the empty dataset</span></span><br><span class="line">    <span class="comment">// Doing it before calling the original implementation does update the 'isEmptyDataSetVisible' flag on time.</span></span><br><span class="line">    [<span class="keyword">self</span> dzn_reloadEmptyDataSet];</span><br><span class="line">    <span class="comment">// If found, call original implementation</span></span><br><span class="line">    <span class="keyword">if</span> (impPointer) &#123;</span><br><span class="line">        ((<span class="keyword">void</span>(*)(<span class="keyword">id</span>,SEL))impPointer)(<span class="keyword">self</span>,_cmd);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在if语句中就是利用<code>((void(*)(id,SEL))impPointer)(self,_cmd);</code>这个函数指针的形式调用回了原来的函数。从中可以看出，它其实也是利用字典来对<strong>这些不可重入的方法做以限制</strong>。</p>
+<h3 id="Aspects框架的实现"><a href="#Aspects框架的实现" class="headerlink" title="Aspects框架的实现"></a>Aspects框架的实现</h3><p>Aspects框架可以说是iOS中实现AOP的经典框架了。因为它要Hook住所有用户想要Hook住除了下面方法之外的所有方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">retain</span></span><br><span class="line">release</span><br><span class="line">autorelease</span><br><span class="line">forwardInvocation:</span><br></pre></td></tr></table></figure>
+
+<p>所以它采用了一种非常巧妙的方式：</p>
+<ol>
+<li>调用<code>class_replaceMethod</code>替换掉原来需要被Hook的方法。</li>
+<li>调用<code>class_replaceMethod</code>替换掉系统的<code>- (void)forwardInvocation:(NSInvocation *)anInvocation</code>方法。</li>
+</ol>
+<p>因为我们在第一步替换掉了原来的方法，所以在runtime的时候系统会发现找不到原来的方法，这时系统会自动调用<code>forwardInvocation</code>这个消息转发的方法，因为它刚好被替换了，所以，无论你调用任何方法，到最后都会被Hook在<code>forwardInvocation</code>方法中，这也就解决了Hook住所有方法的目的，也正是Aspects框架的精巧所在，关于Aspects框架中Block的详细讲解请看在<a href="https://mikefighting.github.io/2018/07/04/advance-block-use-in-aspects/">Aspects框架中Block的使用</a>中的说明。</p>
+<h3 id="为什么不能直接利用Aspects框架？"><a href="#为什么不能直接利用Aspects框架？" class="headerlink" title="为什么不能直接利用Aspects框架？"></a>为什么不能直接利用Aspects框架？</h3><p>问题在于我们的埋点最后传参的数组是NSArray，而不是NSMutableArray，这也就导致没有办法给它添加参数，为了说明白这一点，我们看一个例子：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    <span class="comment">// Do any additional setup after loading the view, typically from a nib.</span></span><br><span class="line">    <span class="built_in">NSArray</span> *someArray = @[<span class="string">@"A"</span>,<span class="string">@"B"</span>,<span class="string">@"C"</span>];</span><br><span class="line">    [<span class="keyword">self</span> p_addPamas:someArray];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"someArray:%@"</span>,someArray);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)p_addPamas:(<span class="built_in">NSArray</span>*)params &#123;</span><br><span class="line">    <span class="built_in">NSMutableArray</span> *resultParams = [<span class="built_in">NSMutableArray</span> arrayWithArray:params];</span><br><span class="line">    [resultParams addObject:<span class="string">@"E"</span>];</span><br><span class="line">    [resultParams addObject:<span class="string">@"F"</span>];</span><br><span class="line">    params = resultParams;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可能我们会采用这种方式来添加<code>E</code>，<code>F</code>来给NSArray添加两个元素，但是结果输出的却是：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">someArray:(</span><br><span class="line">    A,</span><br><span class="line">    B,</span><br><span class="line">    C</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>这是为什么呢？因为我们<code>p_addPamas:</code>的入参是一个指针，对这个指针形参有如下的性质：</p>
+<blockquote>
+<p>改变形参的数值本身不会对实参造成影响，然而如果我们想改变实参，那么可以改变形参指针所指的内容，而不是指针本身。</p>
+</blockquote>
+<p>也就是说如果我们传入的pamas的数值是：<code>0x600000244fb0</code>，那么改变这个值是不能改变实参<code>someArray</code>的，除非我们改变了<code>0x600000244fb0</code>所指的内容，而此时这个NSArray又是不可变数组，所以不能往里面添加元素。试想下，如果是<code>NSMutableArray</code>，那么问题将会变得简单很多：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    <span class="comment">// Do any additional setup after loading the view, typically from a nib.</span></span><br><span class="line">    <span class="built_in">NSMutableArray</span> *someArray = [<span class="built_in">NSMutableArray</span> arrayWithArray:@[<span class="string">@"A"</span>,<span class="string">@"B"</span>,<span class="string">@"C"</span>]];</span><br><span class="line">    [<span class="keyword">self</span> p_addPamas:someArray];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"someArray:%@"</span>,someArray);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)p_addPamas:(<span class="built_in">NSMutableArray</span>*)params &#123;</span><br><span class="line">    [params addObject:<span class="string">@"E"</span>];</span><br><span class="line">    [params addObject:<span class="string">@"F"</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时我们只需要改变指针所指的内容就可以了。输出的结果是：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">someArray:(</span><br><span class="line">    A,</span><br><span class="line">    B,</span><br><span class="line">    C,</span><br><span class="line">    E,</span><br><span class="line">    F</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>所以直接使用Aspects框架不能给NSArray的形参中添加元素，因此需要自己写方法进行替换。</p>
+<h2 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h2><p>如果在版本迭代中这种AB测的埋点很多，粒度很细怎么办？比如某个组件需要加AB测，可能涉及到两三个埋点。这时可以将将相应的埋点字段放到一个Array中，然后在注入的方法判断Array中是否有该埋点，如果有就添加版本，如果没有就不添加。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>在Objective-C中使用Method Swizzle实现AOP时一定要注意多线程的问题，同时要保证该方法的执行顺序（因为这个方法本身就是带有副作用的）否则就可能出现难以排查的bug。使用<code>method_setImplementation</code>和<code>class_replaceMethod</code>同样可以达到方法调换的效果。Aspects框架使用替换原方法和替换<code>forwardInvocation:</code>方法巧妙得达到了Hook所有方法的目的。最后，试图改变形参的指针本身是不起作用的，然而可以改变指针所指的内存空间。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/14/note-buffer-overflow-example/" rel="next" title="缓冲区溢出实例解析">
+                <i class="fa fa-chevron-left"></i> 缓冲区溢出实例解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/04/advance-block-use-in-aspects/" rel="prev" title="Aspects框架中Block的使用">
+                Aspects框架中Block的使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要使用AOP？"><span class="nav-number">1.</span> <span class="nav-text">为什么要使用AOP？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到的问题"><span class="nav-number">2.</span> <span class="nav-text">遇到的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题一、添加和移除"><span class="nav-number">2.1.</span> <span class="nav-text">问题一、添加和移除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题二、非线程安全"><span class="nav-number">2.2.</span> <span class="nav-text">问题二、非线程安全</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方案一：加锁"><span class="nav-number">3.1.</span> <span class="nav-text">方案一：加锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方案二：全局标识"><span class="nav-number">3.2.</span> <span class="nav-text">方案二：全局标识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方案三：方案一二结合"><span class="nav-number">3.3.</span> <span class="nav-text">方案三：方案一二结合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方案四：GCD和标示"><span class="nav-number">3.4.</span> <span class="nav-text">方案四：GCD和标示</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用框架的处理"><span class="nav-number">4.</span> <span class="nav-text">常用框架的处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DZNEmptyDataSet中AOP的实现"><span class="nav-number">4.1.</span> <span class="nav-text">DZNEmptyDataSet中AOP的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Aspects框架的实现"><span class="nav-number">4.2.</span> <span class="nav-text">Aspects框架的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么不能直接利用Aspects框架？"><span class="nav-number">4.3.</span> <span class="nav-text">为什么不能直接利用Aspects框架？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其它"><span class="nav-number">5.</span> <span class="nav-text">其它</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">6.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

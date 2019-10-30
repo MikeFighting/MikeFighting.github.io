@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Objective-C,">
+
+
+<meta name="description" content="之前看过很多有关RunLoop的文章，其中要么是主要介绍RunLoop的基本概念，要么是主要讲解RunLoop的底层原理，很少用真正的实例来讲解RunLoop的，这其中有大部分原因是由于大家在项目中很少能用到RunLoop吧。基于这种原因，本文中将用很少的篇幅来对基础内容做以介绍，然后主要利用实例来加深大家对RunLoop的理解,本文中的代码已经上传GitHub,大家可以下载查看，有问题欢迎Iss">
+<meta name="keywords" content="Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实例化讲解RunLoop">
+<meta property="og:url" content="https://mikefighting.github.io/2016/04/25/understanding-run-loop/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="之前看过很多有关RunLoop的文章，其中要么是主要介绍RunLoop的基本概念，要么是主要讲解RunLoop的底层原理，很少用真正的实例来讲解RunLoop的，这其中有大部分原因是由于大家在项目中很少能用到RunLoop吧。基于这种原因，本文中将用很少的篇幅来对基础内容做以介绍，然后主要利用实例来加深大家对RunLoop的理解,本文中的代码已经上传GitHub,大家可以下载查看，有问题欢迎Iss">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-e6f4d26e1ae55d20.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/440">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-fa79f186a6e43047.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/440">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-09e30658d91e4b06.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/540">
+<meta property="og:updated_time" content="2018-12-04T11:31:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="实例化讲解RunLoop">
+<meta name="twitter:description" content="之前看过很多有关RunLoop的文章，其中要么是主要介绍RunLoop的基本概念，要么是主要讲解RunLoop的底层原理，很少用真正的实例来讲解RunLoop的，这其中有大部分原因是由于大家在项目中很少能用到RunLoop吧。基于这种原因，本文中将用很少的篇幅来对基础内容做以介绍，然后主要利用实例来加深大家对RunLoop的理解,本文中的代码已经上传GitHub,大家可以下载查看，有问题欢迎Iss">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-e6f4d26e1ae55d20.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/440">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2016/04/25/understanding-run-loop/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>实例化讲解RunLoop | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2016/04/25/understanding-run-loop/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">实例化讲解RunLoop</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-04-25T18:42:00+08:00">2016-04-25</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>之前看过很多有关RunLoop的文章，其中要么是主要介绍RunLoop的基本概念，要么是主要讲解RunLoop的底层原理，很少用真正的实例来讲解RunLoop的，这其中有大部分原因是由于大家在项目中很少能用到RunLoop吧。基于这种原因，本文中将用很少的篇幅来对基础内容做以介绍，然后主要利用实例来加深大家对RunLoop的理解,<a href="https://github.com/MikeFighting/PractiseRunLoop" target="_blank" rel="noopener">本文中的代码已经上传GitHub</a>,大家可以下载查看，有问题欢迎Issue我。本文主要分为如下几个部分:</p>
+<ul>
+<li>RunLoop的基础知识</li>
+<li>初识RunLoop，如何让RunLoop进驻线程</li>
+<li>深入理解Perform Selector</li>
+<li>一直”活着”的后台线程</li>
+<li>深入理解NSTimer</li>
+<li>让两个后台线程有依赖性的一种方式</li>
+<li>NSURLConnetction的内部实现</li>
+<li>AFNetWorking中是如何使用RunLoop的?</li>
+<li>其它:利用GCD实现定时器功能</li>
+<li>延伸阅读</li>
+</ul>
+<hr>
+<h2 id="RunLoop的基本概念"><a href="#RunLoop的基本概念" class="headerlink" title="RunLoop的基本概念"></a>RunLoop的基本概念</h2><p>什么是<code>RunLoop</code>？提到RunLoop，我们一般都会提到线程，这是为什么呢？先来看下<a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html#//apple_ref/doc/uid/10000057i-CH16-SW1" target="_blank" rel="noopener">官方对<code>RunLoop</code>的定义</a>:<code>RunLoop</code>系统中和线程相关的基础架构的组成部分(<strong>和线程相关</strong>)，一个RunLoop是一个事件处理环，系统利用这个事件处理环来安排事务，协调输入的各种事件。<code>RunLoop</code>的目的是让你的线程在有工作的时候忙碌，没有工作的时候休眠(<strong>和线程相关</strong>)。可能这样说你还不是特别清楚<code>RunLoop</code>究竟是用来做什么的，打个比方来说明:我们把线程比作一辆跑车，把这辆跑车的主人比作<code>RunLoop</code>，那么在没有’主人’的时候，这个跑车的生命是<strong>直线型</strong>的，其启动，运行完之后就会废弃(没有人对其进行控制，’撞坏’被收回)，当有了<code>RunLoop</code>这个主人之后，‘线程’这辆跑车的生命就有了保障，这个时候，跑车的生命是<strong>环形</strong>的，并且在主人有比赛任务的时候就会被<code>RunLoop</code>这个主人所唤醒,在没有任务的时候可以休眠(在IOS中，开启线程是很消耗性能的，开启主线程要消耗1M内存，开启一个后台线程需要消耗512k内存，我们应当在线程没有任务的时候休眠，来释放所占用的资源，以便CPU进行更加高效的工作)，这样可以增加跑车的效率,也就是说<code>RunLoop</code>是为线程所服务的。这个例子有点不是很贴切，<strong>线程和RunLoop之间是以键值对的形式一一对应的，其中key是thread，value是runLoop(这点可以从<a href="http://opensource.apple.com/tarballs/CF/CF-855.17.tar.gz" target="_blank" rel="noopener">苹果公开的源码中看出来</a>)</strong>，<strong>其实RunLoop是管理线程的一种机制，这种机制不仅在IOS上有，在Node.js中的EventLoop，Android中的Looper，都有类似的模式</strong>。刚才所说的比赛任务就是<strong>唤醒跑车这个线程</strong>的一个<code>source</code>;<code>RunLoop Mode</code>就是，一系列输入的<code>source</code>,<code>timer</code>以及<code>observer</code>，<code>RunLoop Mode</code>包含以下几种: <code>NSDefaultRunLoopMode</code>,<code>NSEventTrackingRunLoopMode</code>,<code>UIInitializationRunLoopMode</code>,<code>NSRunLoopCommonModes</code>,<code>NSConnectionReplyMode</code>,<code>NSModalPanelRunLoopMode</code>,至于这些mode各自的含义，读者可自己查询，网上不乏这类资源;</p>
+<h2 id="初识RunLoop，如何让RunLoop进驻线程"><a href="#初识RunLoop，如何让RunLoop进驻线程" class="headerlink" title="初识RunLoop，如何让RunLoop进驻线程"></a>初识RunLoop，如何让RunLoop进驻线程</h2><p>我们在主线程中添加如下代码:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"while begin"</span>);</span><br><span class="line"><span class="comment">// the thread be blocked here</span></span><br><span class="line"><span class="built_in">NSRunLoop</span> *runLoop = [<span class="built_in">NSRunLoop</span> currentRunLoop];</span><br><span class="line">[runLoop runMode:<span class="built_in">NSDefaultRunLoopMode</span> beforeDate:[<span class="built_in">NSDate</span> distantFuture]];</span><br><span class="line"><span class="comment">// this will not be executed</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"while end"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个时候我们可以看到主线程在执行完<code>[runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];</code> 之后被阻塞而没有执行下面的<code>NSLog(@&quot;while end&quot;)</code>;同时，我们利用GCD，将这段代码放到一个后台线程中:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</span><br><span class="line"><span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"while begin"</span>);</span><br><span class="line"><span class="built_in">NSRunLoop</span> *subRunLoop = [<span class="built_in">NSRunLoop</span> currentRunLoop];</span><br><span class="line">[subRunLoop runMode:<span class="built_in">NSDefaultRunLoopMode</span> beforeDate:[<span class="built_in">NSDate</span> distantFuture]];</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"while end"</span>);</span><br><span class="line">&#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这个时候我们发现这个while循环会一直在执行；这是为什么呢?我们先将这两个<code>RunLoop</code>分别打印出来:<br><img src="http://upload-images.jianshu.io/upload_images/1513759-e6f4d26e1ae55d20.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/440" alt="主线程的RunLoop"><br>由于这个日志比较长，我就只截取了上面的一部分。<br>我们再看我们新建的子线程中的<code>RunLoop</code>,打印出来之后:<br><img src="http://upload-images.jianshu.io/upload_images/1513759-fa79f186a6e43047.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/440" alt="backGroundThreadRunLoop.png"><br>从中可以看出来：我们新建的线程中:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sources0 = (null),</span><br><span class="line">sources1 = (null),</span><br><span class="line">observers = (null),</span><br><span class="line">timers = (null),</span><br></pre></td></tr></table></figure>
+
+<p> 我们看到虽然有Mode，但是我们没有给它<code>soures,observer,timer</code>，其实Mode中的这些<code>source,observer,timer</code>，统称为这个<code>Mode</code>的<code>item</code>，如果一个<code>Mode</code>中一个<code>item</code>都没有，则这个RunLoop会直接退出，不进入<strong>循环</strong>(其实线程之所以可以一直存在就是由于RunLoop将其带入了这个循环中)。下面我们为这个RunLoop添加个source:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line"><span class="built_in">NSPort</span> *macPort = [<span class="built_in">NSPort</span> port];</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"while begin"</span>);</span><br><span class="line"><span class="built_in">NSRunLoop</span> *subRunLoop = [<span class="built_in">NSRunLoop</span> currentRunLoop];</span><br><span class="line">[subRunLoop addPort:macPort forMode:<span class="built_in">NSDefaultRunLoopMode</span>];</span><br><span class="line">[subRunLoop runMode:<span class="built_in">NSDefaultRunLoopMode</span> beforeDate:[<span class="built_in">NSDate</span> distantFuture]];</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"while end"</span>);</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,subRunLoop);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这样我们可以看到能够实现了和主线程中相同的效果，线程在这个地方暂停了，为什么呢？我们明天让RunLoop在<code>distantFuture</code>之前都一直run的啊？相信大家已经猜出出来了。这个时候线程被<code>RunLoop</code>带到‘坑’里去了，这个‘坑’就是一个循环，在循环中这个线程可以在没有任务的时候休眠，在有任务的时候被唤醒；当然我们只用一个<code>while(1)</code>也可以让这个线程一直存在，但是这个线程会一直在唤醒状态，及时它没有任务也一直处于运转状态，这对于CPU来说是非常不高效的。<br><strong>小结:我们的RunLoop要想工作，必须要让它存在一个Item(source,observer或者timer)，主线程之所以能够一直存在，并且随时准备被唤醒就是应为系统为其添加了很多Item</strong></p>
+<h2 id="深入理解Perform-Selector"><a href="#深入理解Perform-Selector" class="headerlink" title="深入理解Perform Selector"></a>深入理解Perform Selector</h2><p>我们先在主线程中使用下<code>performselector</code>:<br></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)tryPerformSelectorOnMianThread&#123;</span><br><span class="line"></span><br><span class="line">[<span class="keyword">self</span> performSelector:<span class="keyword">@selector</span>(mainThreadMethod) withObject:<span class="literal">nil</span>]; &#125;</span><br><span class="line">- (<span class="keyword">void</span>)mainThreadMethod&#123;</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"execute %s"</span>,__func__);</span><br><span class="line"><span class="comment">// print: execute -[ViewController mainThreadMethod]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 这样我们在ViewDidLoad中调用<code>tryPerformSelectorOnMianThread</code>,就会立即执行，并且输出:print: execute -[ViewController mainThreadMethod];<br> 和上面的例子一样，我们使用GCD,让这个方法在后台线程中执行：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> - (<span class="keyword">void</span>)tryPerformSelectorOnBackGroundThread &#123;</span><br><span class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</span><br><span class="line">    [<span class="keyword">self</span> performSelector:<span class="keyword">@selector</span>(backGroundThread) onThread:[<span class="built_in">NSThread</span> currentThread] withObject:<span class="literal">nil</span> waitUntilDone:<span class="literal">NO</span>];</span><br><span class="line">&#125;);</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)backGroundThread&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%u"</span>,[<span class="built_in">NSThread</span> isMainThread]);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"execute %s"</span>,__FUNCTION__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同样的，我们调用<code>tryPerformSelectorOnBackGroundThread</code>这个方法，我们会发现，下面的<code>backGroundThread</code>不会被调用，这是什么原因呢？<br>这是因为，在调用<code>performSelector:onThread: withObject: waitUntilDone</code>的时候，系统会给我们创建一个Timer的<strong>source</strong>，加到对应的RunLoop上去，然而这个时候我们没有<code>RunLoop</code>,如果我们加上RunLoop:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> - (<span class="keyword">void</span>)tryPerformSelectorOnBackGroundThread&#123;</span><br><span class="line"><span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</span><br><span class="line">    [<span class="keyword">self</span> performSelector:<span class="keyword">@selector</span>(backGroundThread) onThread:[<span class="built_in">NSThread</span> currentThread] withObject:<span class="literal">nil</span> waitUntilDone:<span class="literal">NO</span>];</span><br><span class="line">    <span class="built_in">NSRunLoop</span> *runLoop = [<span class="built_in">NSRunLoop</span> currentRunLoop];</span><br><span class="line">    [runLoop run];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时就会发现我们的方法正常被调用了。那么为什么主线程中的<code>perfom selector</code>却能够正常调用呢？通过上面的例子相信你已经猜到了，主线程的RunLoop是一直存在的，所以我们在主线程中执行的时候，无需再添加RunLoop。从Apple的文档中我们也可以得到验证：</p>
+<blockquote>
+<p>Each request to perform a selector is queued on the target thread’s run loop and the requests are then processed sequentially in the order in which they were received. 每个执行perform selector的请求都以队列的形式被放到目标线程的run loop中。然后目标线程会根据进入run loop的顺序来一一执行。<br>当perform selector在后台线程中执行的时候，这个线程必须有一个开启的runLoop</p>
+</blockquote>
+<h2 id="一直”活着”的后台线程"><a href="#一直”活着”的后台线程" class="headerlink" title="一直”活着”的后台线程"></a>一直”活着”的后台线程</h2><p>现在有这样一个需求，每点击一下屏幕，让子线程做一个任务,然后大家一般会想到这样的方式:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ViewController</span> ()</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>) <span class="built_in">NSThread</span> *myThread;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ViewController</span></span></span><br><span class="line">- (<span class="keyword">void</span>)alwaysLiveBackGoundThread &#123;</span><br><span class="line">    <span class="built_in">NSThread</span> *thread = [[<span class="built_in">NSThread</span> alloc]initWithTarget:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(myThreadRun) object:<span class="string">@"etund"</span>];</span><br><span class="line">    <span class="keyword">self</span>.myThread = thread;</span><br><span class="line">    [<span class="keyword">self</span>.myThread start];</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)myThreadRun &#123;</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"my thread run"</span>);</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)touchesBegan:(<span class="built_in">NSSet</span>&lt;<span class="built_in">UITouch</span> *&gt; *)touches withEvent:(<span class="built_in">UIEvent</span> *)event&#123;</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,<span class="keyword">self</span>.myThread);</span><br><span class="line">[<span class="keyword">self</span> performSelector:<span class="keyword">@selector</span>(doBackGroundThreadWork) onThread:<span class="keyword">self</span>.myThread withObject:<span class="literal">nil</span> waitUntilDone:<span class="literal">NO</span>];</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)doBackGroundThreadWork&#123;</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"do some work %s"</span>,__FUNCTION__);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>这个方法中，我们利用一个强引用来获取了后台线程中的thread,然后在点击屏幕的时候，在这个线程上执行<code>doBackGroundThreadWork</code>这个方法，此时我们可以看到，在<code>touchesBegin</code>方法中，self.myThread是存在的，但是这是为是什么呢？这就要从线程的五大状态来说明了:<strong>新建状态、就绪状态、运行状态、阻塞状态、死亡状态</strong>，这个时候尽管内存中还有线程，但是这个线程在执行完任务之后已经死亡了，经过上面的论述，我们应该怎样处理呢？我们可以给这个线程的RunLoop添加一个source，那么这个线程就会检测这个source等待执行，而不至于死亡(<em>有工作的强烈愿望而不死亡</em>):</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> - (<span class="keyword">void</span>)myThreadRun&#123;</span><br><span class="line"></span><br><span class="line"> [[<span class="built_in">NSRunLoop</span> currentRunLoop] addPort:[[<span class="built_in">NSPort</span> alloc] init] forMode:<span class="built_in">NSDefaultRunLoopMode</span>]; </span><br><span class="line"> [[<span class="built_in">NSRunLoop</span> currentRunLoop] run]</span><br><span class="line">  <span class="built_in">NSLog</span>(<span class="string">@"my thread run"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个时候再次点击屏幕，我们就会发现，后台线程中执行的任务可以正常进行了。</p>
+<blockquote>
+<p>正常情况下，后台线程执行完任务之后就处于死亡状态，我们要避免这种情况的发生可以利用RunLoop，并且给它一个Source这样来保证线程依旧还在</p>
+</blockquote>
+<h2 id="深入理解NSTimer"><a href="#深入理解NSTimer" class="headerlink" title="深入理解NSTimer"></a>深入理解NSTimer</h2><p>我们平时使用NSTimer，一般是在主线程中的，代码大多如下:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)tryTimerOnMainThread&#123;</span><br><span class="line">    <span class="built_in">NSTimer</span> *myTimer = [<span class="built_in">NSTimer</span> scheduledTimerWithTimeInterval:<span class="number">0.5</span> target:<span class="keyword">self</span>   </span><br><span class="line">    selector:<span class="keyword">@selector</span>(timerAction) userInfo:<span class="literal">nil</span> repeats:<span class="literal">YES</span>];</span><br><span class="line">    [myTimer fire];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)timerAction&#123;</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"timer action"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个时候代码按照我们预定的结果运行，如果我们把这个Tiemr放到后台线程中呢?</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</span><br><span class="line"><span class="built_in">NSTimer</span> *myTimer = [<span class="built_in">NSTimer</span> scheduledTimerWithTimeInterval:<span class="number">0.5</span> target:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(timerAction) userInfo:<span class="literal">nil</span> repeats:<span class="literal">YES</span>];</span><br><span class="line">[myTimer fire];</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这个时候我们会发现，这个timer只执行了一次，就停止了。这是为什么呢？通过上面的讲解，想必你已经知道了，<strong>NSTimer,只有注册到RunLoop之后才会生效，这个注册是由系统自动给我们完成的</strong>,既然需要注册到RunLoop,那么我们就需要有一个<code>RunLoop</code>,我们在后台线程中加入如下的代码:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSRunLoop</span> *runLoop = [<span class="built_in">NSRunLoop</span> currentRunLoop];</span><br><span class="line">[runLoop run];</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就会发现程序正常运行了。在Timer注册到RunLoop之后，RunLoop会为其重复的时间点注册好事件，比如1：10，1：20，1：30这几个时间点。有时候我们会在这个线程中执行一个耗时操作，这个时候RunLoop为了节省资源，并不会在非常准确的时间点回调这个Timer，这就造成了误差(Timer有个冗余度属性叫做<code>tolerance</code>,它标明了当前点到后，容许有多少最大误差)，可以在执行一段循环之后调用一个耗时操作，很容易看到timer会有很大的误差，这说明在线程很闲的时候使用NSTiemr是比较傲你准确的，当线程很忙碌时候会有较大的误差。系统还有一个<code>CADisplayLink</code>,也可以实现定时效果，它是一个和屏幕的刷新率一样的定时器。如果在两次屏幕刷新之间执行一个耗时的任务，那其中就会有一个帧被跳过去，造成界面卡顿。另外GCD也可以实现定时器的效果，由于其和RunLoop没有关联，所以有时候使用它会更加的准确，这在<a href="#anchor8">最后会给予说明</a>。</p>
+<h2 id="让两个后台线程有依赖性的一种方式"><a href="#让两个后台线程有依赖性的一种方式" class="headerlink" title="让两个后台线程有依赖性的一种方式"></a>让两个后台线程有依赖性的一种方式</h2><p>给两个后台线程添加依赖可能有很多的方式，这里说明一种利用<code>RunLoop</code>实现的方式。原理很简单，我们先让一个线程工作，当工作完成之后唤醒另外的一线程,通过上面对<code>RunLoop</code>的说明，相信大家很容易能够理解这些代码:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)runLoopAddDependance&#123;</span><br><span class="line"><span class="keyword">self</span>.runLoopThreadDidFinishFlag = <span class="literal">NO</span>;</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"Start a New Run Loop Thread"</span>);</span><br><span class="line"><span class="built_in">NSThread</span> *runLoopThread = [[<span class="built_in">NSThread</span> alloc] initWithTarget:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(handleRunLoopThreadTask) object:<span class="literal">nil</span>];</span><br><span class="line">[runLoopThread start];</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"Exit handleRunLoopThreadButtonTouchUpInside"</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">dispatch_async</span>(dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>), ^&#123;</span><br><span class="line">    <span class="keyword">while</span> (!_runLoopThreadDidFinishFlag) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">self</span>.myThread = [<span class="built_in">NSThread</span> currentThread];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Begin RunLoop"</span>);</span><br><span class="line">        <span class="built_in">NSRunLoop</span> *runLoop = [<span class="built_in">NSRunLoop</span> currentRunLoop];</span><br><span class="line">        <span class="built_in">NSPort</span> *myPort = [<span class="built_in">NSPort</span> port];</span><br><span class="line">        [runLoop addPort:myPort forMode:<span class="built_in">NSDefaultRunLoopMode</span>];</span><br><span class="line">        [[<span class="built_in">NSRunLoop</span> currentRunLoop] runMode:<span class="built_in">NSDefaultRunLoopMode</span> beforeDate:[<span class="built_in">NSDate</span> distantFuture]];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"End RunLoop"</span>);</span><br><span class="line">        [<span class="keyword">self</span>.myThread cancel];</span><br><span class="line">        <span class="keyword">self</span>.myThread = <span class="literal">nil</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"> &#125;</span><br><span class="line">- (<span class="keyword">void</span>)handleRunLoopThreadTask &#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Enter Run Loop Thread"</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">NSInteger</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i ++) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"In Run Loop Thread, count = %ld"</span>, i);</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#if 0</span></span><br><span class="line"><span class="comment">// 错误示范</span></span><br><span class="line">_runLoopThreadDidFinishFlag = <span class="literal">YES</span>;</span><br><span class="line"><span class="comment">// 这个时候并不能执行线程完成之后的任务，因为Run Loop所在的线程并不知道runLoopThreadDidFinishFlag被重新赋值。Run Loop这个时候没有被任务事件源唤醒。</span></span><br><span class="line"><span class="comment">// 正确的做法是使用 "selector"方法唤醒Run Loop。 即如下:</span></span><br><span class="line"><span class="meta">#endif</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"Exit Normal Thread"</span>);</span><br><span class="line">[<span class="keyword">self</span> performSelector:<span class="keyword">@selector</span>(tryOnMyThread) onThread:<span class="keyword">self</span>.myThread withObject:<span class="literal">nil</span> waitUntilDone:<span class="literal">NO</span>];</span><br><span class="line"><span class="comment">// NSLog(@"Exit Run Loop Thread");</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="NSURLConnection的执行过程"><a href="#NSURLConnection的执行过程" class="headerlink" title="NSURLConnection的执行过程"></a>NSURLConnection的执行过程</h2><p>在使用NSURLConnection时，我们会传入一个Delegate,当我们调用了<code>[connection start]</code>之后，这个Delegate会不停的收到事件的回调。实际上，<strong>start这个函数的内部会获取CurrentRunloop</strong>，然后在其中的DefaultMode中添加4个source。如下图所示，CFMultiplexerSource是负责各种Delegate回调的，CFHTTPCookieStorage是处理各种Cookie的。如下图所示:<br><img src="http://upload-images.jianshu.io/upload_images/1513759-09e30658d91e4b06.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/540" alt="NSURLConnection的执行过程"><br>从中可以看出，当开始网络传输是，我们可以看到NSURLConnection创建了两个新的线程:com.apple.NSURLConnectionLoader和com.apple.CFSocket.private。其中CFSocket是处理底层socket链接的。NSURLConnectionLoader这个线程内部会使用RunLoop来接收底层socket的事件，并通过之前添加的source，来通知(<code>唤醒</code>)上层的Delegate。这样我们就可以理解我们平时封装网络请求时候常见的下面逻辑了:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (!_isEndRequest)</span><br><span class="line">&#123;</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"entered run loop"</span>);</span><br><span class="line">[[<span class="built_in">NSRunLoop</span> currentRunLoop] runMode:<span class="built_in">NSDefaultRunLoopMode</span> beforeDate:[<span class="built_in">NSDate</span> distantFuture]];</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"main finished，task be removed"</span>);</span><br><span class="line">- (<span class="keyword">void</span>)connectionDidFinishLoading:(<span class="built_in">NSURLConnection</span> *)connection</span><br><span class="line"> &#123;</span><br><span class="line">  _isEndRequest = <span class="literal">YES</span>;</span><br><span class="line"></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里我们就可以解决下面这些疑问了:<br></p>
+<ol>
+<li>为什么这个While循环不停的执行，还需要使用一个RunLoop? 程序执行一个while循环是不会耗费很大性能的，我们这里的目的是想让子线程在有任务的时候处理任务，没有任务的时候休眠，来节约CPU的开支。</li>
+<li>如果没有为RunLoop添加item,那么它就会立即退出，这里的item呢? 其实系统已经给我们默认添加了4个source了。</li>
+<li>既然<code>[[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];</code>让线程在这里停下来，那么为什么这个循环会持续的执行呢？因为这个一直在处理任务，并且接受系统对这个Delegate的回调，也就是这个回调<strong>唤醒</strong>了这个线程，让它在这里循环。</li>
+</ol>
+<h2 id="AFNetWorking中是如何使用RunLoop的-？"><a href="#AFNetWorking中是如何使用RunLoop的-？" class="headerlink" title="AFNetWorking中是如何使用RunLoop的 ？"></a>AFNetWorking中是如何使用RunLoop的 ？</h2><p>在AFN中AFURLConnectionOperation是基于NSURLConnection构建的，其希望能够在后台线程来接收Delegate的回调。<br>为此AFN创建了一个线程,然后在里面开启了一个RunLoop，然后添加<code>item</code></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">+ (<span class="keyword">void</span>)networkRequestThreadEntryPoint:(<span class="keyword">id</span>)__unused object &#123;</span><br><span class="line">  <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">    [[<span class="built_in">NSThread</span> currentThread] setName:<span class="string">@"AFNetworking"</span>];</span><br><span class="line">    <span class="built_in">NSRunLoop</span> *runLoop = [<span class="built_in">NSRunLoop</span> currentRunLoop];</span><br><span class="line">    [runLoop addPort:[<span class="built_in">NSMachPort</span> port] forMode:<span class="built_in">NSDefaultRunLoopMode</span>];</span><br><span class="line">    [runLoop run];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (<span class="built_in">NSThread</span> *)networkRequestThread &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">NSThread</span> *_networkRequestThread = <span class="literal">nil</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> oncePredicate;</span><br><span class="line">    <span class="built_in">dispatch_once</span>(&amp;oncePredicate, ^&#123;</span><br><span class="line">    _networkRequestThread = [[<span class="built_in">NSThread</span> alloc] initWithTarget:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(networkRequestThreadEntryPoint:) object:<span class="literal">nil</span>];</span><br><span class="line">    [_networkRequestThread start];</span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">return</span> _networkRequestThread;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里这个<code>NSMachPort</code>的作用和上文中的一样，就是让线程不至于在很快死亡，然后RunLoop不至于退出(如果要使用这个MachPort的话，调用者需要持有这个NSMachPort，然后在外部线程通过这个port发送信息到这个loop内部,它这里没有这么做)。然后和上面的做法相似，在需要后台执行这个任务的时候，会通过调用:<code>[NSObject performSelector:onThread:..]</code>来将这个任务扔给后台线程的RunLoop中来执行。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)start &#123;</span><br><span class="line">[<span class="keyword">self</span>.lock lock];</span><br><span class="line"><span class="keyword">if</span> ([<span class="keyword">self</span> isCancelled]) &#123;</span><br><span class="line">[<span class="keyword">self</span> performSelector:<span class="keyword">@selector</span>(cancelConnection) onThread:[[<span class="keyword">self</span> <span class="keyword">class</span>] networkRequestThread] withObject:<span class="literal">nil</span> waitUntilDone:<span class="literal">NO</span> modes:[<span class="keyword">self</span>.runLoopModes allObjects]];</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> ([<span class="keyword">self</span> isReady]) &#123;</span><br><span class="line"><span class="keyword">self</span>.state = AFOperationExecutingState;</span><br><span class="line">[<span class="keyword">self</span> performSelector:<span class="keyword">@selector</span>(operationDidStart) onThread:[[<span class="keyword">self</span> <span class="keyword">class</span>] networkRequestThread] withObject:<span class="literal">nil</span> waitUntilDone:<span class="literal">NO</span> modes:[<span class="keyword">self</span>.runLoopModes allObjects]];</span><br><span class="line">&#125;</span><br><span class="line">[<span class="keyword">self</span>.lock unlock];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="GCD定时器的实现"><a href="#GCD定时器的实现" class="headerlink" title="GCD定时器的实现"></a>GCD定时器的实现</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"> - (<span class="keyword">void</span>)gcdTimer&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// get the queue</span></span><br><span class="line"><span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"><span class="comment">// creat timer</span></span><br><span class="line"><span class="keyword">self</span>.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, <span class="number">0</span>, <span class="number">0</span>, queue);</span><br><span class="line"><span class="comment">// config the timer (starting time，interval)</span></span><br><span class="line"><span class="comment">// set begining time</span></span><br><span class="line">dispatch_time_t start = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(<span class="number">1.0</span> * <span class="built_in">NSEC_PER_SEC</span>));</span><br><span class="line"><span class="comment">// set the interval</span></span><br><span class="line">uint64_t interver = (uint64_t)(<span class="number">1.0</span> * <span class="built_in">NSEC_PER_SEC</span>);</span><br><span class="line">dispatch_source_set_timer(<span class="keyword">self</span>.timer, start, interver, <span class="number">0.0</span>);</span><br><span class="line">dispatch_source_set_event_handler(<span class="keyword">self</span>.timer, ^&#123;</span><br><span class="line"><span class="comment">// the tarsk needed to be processed async</span></span><br><span class="line"><span class="built_in">dispatch_async</span>(dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>), ^&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; i++) &#123;</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"gcdTimer"</span>);</span><br><span class="line">&#125;</span><br><span class="line">&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">dispatch_resume(<span class="keyword">self</span>.timer);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ol>
+<li><a href="http://chun.tips/blog/2014/10/20/zou-jin-run-loopde-shi-jie-%5B%3F%5D-:shi-yao-shi-run-loop%3F/" target="_blank" rel="noopener">http://chun.tips/blog/2014/10/20/zou-jin-run-loopde-shi-jie-%5B%3F%5D-:shi-yao-shi-run-loop%3F/</a></li>
+<li><a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html#//apple_ref/doc/uid/10000057i-CH16-SW1" target="_blank" rel="noopener">https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html#//apple_ref/doc/uid/10000057i-CH16-SW1</a></li>
+<li><a href="http://www.cocoachina.com/ios/20150601/11970.html" target="_blank" rel="noopener">http://www.cocoachina.com/ios/20150601/11970.html</a></li>
+<li><a href="http://www.jianshu.com/p/de2716807570" target="_blank" rel="noopener">http://www.jianshu.com/p/de2716807570</a></li>
+<li><a href="http://blog.csdn.net/enuola/article/details/9163051" target="_blank" rel="noopener">http://blog.csdn.net/enuola/article/details/9163051</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/17/setting-obs-step-by-step/" rel="next" title="Mac版OBS设置详解">
+                <i class="fa fa-chevron-left"></i> Mac版OBS设置详解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/18/ios-tips-sum0/" rel="prev" title="iOS开发Tips">
+                iOS开发Tips <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RunLoop的基本概念"><span class="nav-number">1.</span> <span class="nav-text">RunLoop的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初识RunLoop，如何让RunLoop进驻线程"><span class="nav-number">2.</span> <span class="nav-text">初识RunLoop，如何让RunLoop进驻线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#深入理解Perform-Selector"><span class="nav-number">3.</span> <span class="nav-text">深入理解Perform Selector</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一直”活着”的后台线程"><span class="nav-number">4.</span> <span class="nav-text">一直”活着”的后台线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#深入理解NSTimer"><span class="nav-number">5.</span> <span class="nav-text">深入理解NSTimer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#让两个后台线程有依赖性的一种方式"><span class="nav-number">6.</span> <span class="nav-text">让两个后台线程有依赖性的一种方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSURLConnection的执行过程"><span class="nav-number">7.</span> <span class="nav-text">NSURLConnection的执行过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AFNetWorking中是如何使用RunLoop的-？"><span class="nav-number">8.</span> <span class="nav-text">AFNetWorking中是如何使用RunLoop的 ？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD定时器的实现"><span class="nav-number">9.</span> <span class="nav-text">GCD定时器的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#延伸阅读"><span class="nav-number">10.</span> <span class="nav-text">延伸阅读</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

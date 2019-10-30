@@ -111,7 +111,7 @@
 <meta property="og:site_name" content="击水湘江">
 <meta property="og:description" content="本文源于对WWDC：UnderStanding Foundation的总结。 什么是Foundation? Foundation提供了构建基础类的框架 所有应用都是用的基础类型 它们供软件的更高层来组合使用    DictionryDictionary中提供了objectEnumerator和keyEnumerator两个方法，可以直接取到key或者value的Enumerator，然后就直接可以">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-09-04T02:17:50.000Z">
+<meta property="og:updated_time" content="2018-12-27T12:04:07.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="理解Foundation框架">
 <meta name="twitter:description" content="本文源于对WWDC：UnderStanding Foundation的总结。 什么是Foundation? Foundation提供了构建基础类的框架 所有应用都是用的基础类型 它们供软件的更高层来组合使用    DictionryDictionary中提供了objectEnumerator和keyEnumerator两个方法，可以直接取到key或者value的Enumerator，然后就直接可以">
@@ -358,20 +358,17 @@
 
  <span class="keyword">id</span> value = [e objectForKey:key];
  ....
-}
-</code></pre>
+}</code></pre>
 <h3 id="Fast-Enumeration"><a href="#Fast-Enumeration" class="headerlink" title="Fast Enumeration"></a>Fast Enumeration</h3><p>如果想获取某个Dictionary中的key，那么直接用Fast Enumeration就可以：</p>
 <pre><code class="objc"><span class="built_in">NSDictionary</span> *someDic = @{<span class="string">@"key"</span>:<span class="string">@"value"</span>};
 <span class="keyword">for</span> (<span class="keyword">id</span> key <span class="keyword">in</span> someDic) {
 
     <span class="built_in">NSLog</span>(<span class="string">@"key:%@"</span>,key);   
-}
-</code></pre>
+}</code></pre>
 <p>如果想要获取Key及其对应的Value，那么直接是用Block就可以：</p>
 <pre><code class="objc">[someDic enumerateKeysAndObjectsUsingBlock:^(<span class="keyword">id</span>  _Nonnull key, <span class="keyword">id</span>  _Nonnull obj, <span class="built_in">BOOL</span> * _Nonnull stop) {
 
-}];
-</code></pre>
+}];</code></pre>
 <h3 id="NSArray排序"><a href="#NSArray排序" class="headerlink" title="NSArray排序"></a>NSArray排序</h3><p>对一个NSArray进行排序，有以下几种方法：</p>
 <ol>
 <li>C function</li>
@@ -393,8 +390,7 @@
             result = <span class="built_in">NSOrderedSame</span>;
         }        
         <span class="keyword">return</span> result;
-    }];
-</code></pre>
+    }];</code></pre>
 <h3 id="Collection的过滤"><a href="#Collection的过滤" class="headerlink" title="Collection的过滤"></a>Collection的过滤</h3><p><strong>遍历一个Collection的同时再改变它，会引发异常。</strong><br>Collection的过滤步骤：</p>
 <ol>
 <li>将要筛选的Collection改为可变类型的</li>
@@ -408,8 +404,7 @@
     <span class="keyword">return</span> <span class="literal">NO</span>;
 
 }];
-[files removeObjectsAtIndexes:toRemove];
-</code></pre>
+[files removeObjectsAtIndexes:toRemove];</code></pre>
 <h3 id="Collection更多的特性"><a href="#Collection更多的特性" class="headerlink" title="Collection更多的特性"></a>Collection更多的特性</h3><ul>
 <li>查找</li>
 <li>对每个元素都调用某个方法</li>
@@ -426,33 +421,27 @@
 - (<span class="built_in">NSComparisonResult</span>)localizedStandardCompare:(<span class="built_in">NSString</span> *)string <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_6, <span class="number">4</span>_0); <span class="comment">// 2</span>
 - (<span class="built_in">NSComparisonResult</span>)localizedCompare:(<span class="built_in">NSString</span> *)string; <span class="comment">// 3</span>
 - (<span class="built_in">NSComparisonResult</span>)localizedCaseInsensitiveCompare:(<span class="built_in">NSString</span> *)string; <span class="comment">// 4</span>
-- (<span class="built_in">NSComparisonResult</span>)compare:(<span class="built_in">NSString</span> *)string options: (<span class="built_in">NSStringCompareOptions</span>)mask range:(<span class="built_in">NSRange</span>)rangeOfReceiverToCompare locale:(<span class="keyword">nullable</span> <span class="keyword">id</span>)locale; <span class="comment">// 5</span>
-</code></pre>
+- (<span class="built_in">NSComparisonResult</span>)compare:(<span class="built_in">NSString</span> *)string options: (<span class="built_in">NSStringCompareOptions</span>)mask range:(<span class="built_in">NSRange</span>)rangeOfReceiverToCompare locale:(<span class="keyword">nullable</span> <span class="keyword">id</span>)locale; <span class="comment">// 5</span></code></pre>
 <p>第二个方法和第三个方法是对那些做了本地化的字符串进行比对。第四个可以对字符串的一部分进行比较，并且可以指定是否是大小写敏感等。如果数组中有字符串需要排序，那么我们可以用到上文中提到的，让数组中的元素分别调用其自身的方法。</p>
 <pre><code class="objc"><span class="built_in">NSArray</span> *strings = [<span class="built_in">NSArray</span> arrayWithObjects:<span class="string">@"Larry"</span>,<span class="string">@"Curly"</span>,<span class="string">@"Moe"</span>, <span class="literal">nil</span>];
-<span class="built_in">NSArray</span> *sortedArray = [strings sortedArrayUsingSelector:<span class="keyword">@selector</span>(localizedCompare:)];
-</code></pre>
+<span class="built_in">NSArray</span> *sortedArray = [strings sortedArrayUsingSelector:<span class="keyword">@selector</span>(localizedCompare:)];</code></pre>
 <h3 id="字符串查找"><a href="#字符串查找" class="headerlink" title="字符串查找"></a>字符串查找</h3><p>字符串查找的方法如下：</p>
 <pre><code class="objc">- (<span class="built_in">NSRange</span>)rangeOfString:(<span class="built_in">NSString</span> *)searchString;
-- (<span class="built_in">NSRange</span>)rangeOfString:(<span class="built_in">NSString</span> *)searchString options:(<span class="built_in">NSStringCompareOptions</span>)mask range:(<span class="built_in">NSRange</span>)rangeOfReceiverToSearch locale:(<span class="keyword">nullable</span> <span class="built_in">NSLocale</span> *)locale <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_5, <span class="number">2</span>_0);
-</code></pre>
+- (<span class="built_in">NSRange</span>)rangeOfString:(<span class="built_in">NSString</span> *)searchString options:(<span class="built_in">NSStringCompareOptions</span>)mask range:(<span class="built_in">NSRange</span>)rangeOfReceiverToSearch locale:(<span class="keyword">nullable</span> <span class="built_in">NSLocale</span> *)locale <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_5, <span class="number">2</span>_0);</code></pre>
 <p>*注：如果有特殊字符，比如<code>Ó</code>，那么它在数组中是<code>O</code>，<code>´</code>两个分开存储，是占两个存储单位的，所以它自身rang的length是2。</p>
 <p>字符串的查找中还支持正则表达式：</p>
 <pre><code class="objc"><span class="built_in">NSString</span> *str = <span class="string">@"Going going gone!"</span>;
 <span class="built_in">NSRange</span> found = [str rangeOfString:<span class="string">@"go(\\w*)"</span>
                            options:<span class="built_in">NSRegularExpressionSearch</span>
-                             range:<span class="built_in">NSMakeRange</span>(<span class="number">0</span>, str.length)];
-</code></pre>
+                             range:<span class="built_in">NSMakeRange</span>(<span class="number">0</span>, str.length)];</code></pre>
 <p>这样我们就可以得到found的值：found.location = 6, found.length = 5;</p>
 <h3 id="字符串编码"><a href="#字符串编码" class="headerlink" title="字符串编码"></a>字符串编码</h3><p>字符串和Data之间编码的相互转换：</p>
 <pre><code class="objc"><span class="built_in">NSData</span> *someData = [<span class="built_in">NSData</span> dataWithContentsOfFile:<span class="string">@""</span>];
 <span class="built_in">NSString</span> *inString = [[<span class="built_in">NSString</span> alloc]initWithData:someData encoding:<span class="built_in">NSUTF8StringEncoding</span>];
 <span class="built_in">NSString</span> *outString = <span class="string">@"For Windows"</span>;
-<span class="built_in">NSData</span> *converted = [outString dataUsingEncoding:<span class="built_in">NSUTF16StringEncoding</span>];
-</code></pre>
+<span class="built_in">NSData</span> *converted = [outString dataUsingEncoding:<span class="built_in">NSUTF16StringEncoding</span>];</code></pre>
 <p>如果要将某个和文件系统相独立的字符串表示成文件系统调用时所指定的字符串表示，可以使用：</p>
-<pre><code class="objc"><span class="keyword">const</span> <span class="keyword">char</span> *fileName = [outString fileSystemRepresentation];
-</code></pre>
+<pre><code class="objc"><span class="keyword">const</span> <span class="keyword">char</span> *fileName = [outString fileSystemRepresentation];</code></pre>
 <p>将它表示成一个C类型的字符串，这个字符串在outString销毁的时候也跟着自动销毁。</p>
 <p>更多的特性：</p>
 <ul>
@@ -464,8 +453,7 @@
 <h3 id="NSDateFormatter："><a href="#NSDateFormatter：" class="headerlink" title="NSDateFormatter："></a>NSDateFormatter：</h3><p>如果不想将一个<code>NSDate</code>转换成字符串的时候出现时间，那么可以将<code>timeStyle</code>设置为：<code>NSDateFormatterNoStyle</code>。</p>
 <pre><code class="objc"><span class="built_in">NSDateFormatter</span> *fmt = [[<span class="built_in">NSDateFormatter</span> alloc]init];
 [fmt setTimeStyle:<span class="built_in">NSDateFormatterNoStyle</span>];
-[fmt setDateStyle:<span class="built_in">NSDateFormatterLongStyle</span>];
-</code></pre>
+[fmt setDateStyle:<span class="built_in">NSDateFormatterLongStyle</span>];</code></pre>
 <h3 id="Dates和Formatter小结"><a href="#Dates和Formatter小结" class="headerlink" title="Dates和Formatter小结"></a>Dates和Formatter小结</h3><ul>
 <li>将NSDate和NSCalendar混合使用来计算时间</li>
 <li>当展现日期和数字的时候使用foramtter</li>
@@ -477,24 +465,20 @@
 <span class="keyword">if</span> (!plist) {
     <span class="built_in">NSLog</span>(<span class="string">@"本地化失败"</span>);
 }
-[plist writeToFile:<span class="string">@"filePath"</span> atomically:<span class="literal">YES</span>];
-</code></pre>
+[plist writeToFile:<span class="string">@"filePath"</span> atomically:<span class="literal">YES</span>];</code></pre>
 <p>将Plist转化成NSData：</p>
 <pre><code class="objc"><span class="built_in">NSData</span> *readData = [<span class="built_in">NSData</span> dataWithContentsOfURL:urlOfFile];
-<span class="built_in">NSDictionary</span> *newColors = [<span class="built_in">NSPropertyListSerialization</span> propertyListWithData:readData options:<span class="number">0</span> format:<span class="literal">nil</span> error:&amp;error];
-</code></pre>
+<span class="built_in">NSDictionary</span> *newColors = [<span class="built_in">NSPropertyListSerialization</span> propertyListWithData:readData options:<span class="number">0</span> format:<span class="literal">nil</span> error:&amp;error];</code></pre>
 <h3 id="NSFileManager"><a href="#NSFileManager" class="headerlink" title="NSFileManager"></a>NSFileManager</h3><p>NSFileManager支持文件的复制，移动，链接，删除等。</p>
 <pre><code class="objc"><span class="built_in">NSFileManager</span> *mgr = [[<span class="built_in">NSFileManager</span> alloc]init];
 <span class="built_in">BOOL</span> res;
 res = [mgr copyItemAtURL:src toURL:des error:&amp;error];
 res = [mgr moveItemAtURL:src toURL:des error:&amp;error];
 res = [mgr linkItemAtURL:src toURL:des error:&amp;error];
-res = [mgr removeItemAtURL:src error:&amp;error];
-</code></pre>
+res = [mgr removeItemAtURL:src error:&amp;error];</code></pre>
 <p><code>linkItemAtURL</code>就是创建一个硬链接，硬链接就是给一个已经存在的文件重新创建另外一个名字，如果原来文件被删除了，那么硬链接的名字就会失效了。</p>
 <p>NSFileManager还可以遍历某个目录下所有的内容：</p>
-<pre><code class="objc"><span class="built_in">NSArray</span> *stuff = [mgr contentsOfDirectoryAtURL:dirURL includingPropertiesForKeys:[<span class="built_in">NSArray</span> array] options:<span class="number">0</span> error:&amp;error];
-</code></pre>
+<pre><code class="objc"><span class="built_in">NSArray</span> *stuff = [mgr contentsOfDirectoryAtURL:dirURL includingPropertiesForKeys:[<span class="built_in">NSArray</span> array] options:<span class="number">0</span> error:&amp;error];</code></pre>
 
       
     </div>
@@ -613,7 +597,7 @@ res = [mgr removeItemAtURL:src error:&amp;error];
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">39</span>
+                    <span class="site-state-item-count">56</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -648,7 +632,9 @@ res = [mgr removeItemAtURL:src error:&amp;error];
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

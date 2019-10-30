@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Objective-C,">
+
+
+<meta name="description" content="作为一名开发人员，无论是前端，后端，移动端，都可能会接触到正则表达式，最常见的场景就是注册登录了，我们需要对电话号码或者邮箱做校验，如果对用户名有特殊字符有限制的话还会对特殊字符做校验。我们通常的做法就是百度或者谷歌，最后复制粘贴完事，对于那一串奇奇怪怪的字符串感觉很头大。接下来的这篇文章会向你详细解释正则表达式的语法，分析正则表达式，并且附带上常用的表格，最后给出IOS中用到正则表达式的两个类N">
+<meta name="keywords" content="Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="正则表达式最佳实践">
+<meta property="og:url" content="https://mikefighting.github.io/2017/05/26/RegEx-in-objc/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="作为一名开发人员，无论是前端，后端，移动端，都可能会接触到正则表达式，最常见的场景就是注册登录了，我们需要对电话号码或者邮箱做校验，如果对用户名有特殊字符有限制的话还会对特殊字符做校验。我们通常的做法就是百度或者谷歌，最后复制粘贴完事，对于那一串奇奇怪怪的字符串感觉很头大。接下来的这篇文章会向你详细解释正则表达式的语法，分析正则表达式，并且附带上常用的表格，最后给出IOS中用到正则表达式的两个类N">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-47f810d76025ba94.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-a0b9b72716437239.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-c6cb378e6098d705.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-12-07T11:48:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="正则表达式最佳实践">
+<meta name="twitter:description" content="作为一名开发人员，无论是前端，后端，移动端，都可能会接触到正则表达式，最常见的场景就是注册登录了，我们需要对电话号码或者邮箱做校验，如果对用户名有特殊字符有限制的话还会对特殊字符做校验。我们通常的做法就是百度或者谷歌，最后复制粘贴完事，对于那一串奇奇怪怪的字符串感觉很头大。接下来的这篇文章会向你详细解释正则表达式的语法，分析正则表达式，并且附带上常用的表格，最后给出IOS中用到正则表达式的两个类N">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-47f810d76025ba94.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/05/26/RegEx-in-objc/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>正则表达式最佳实践 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/05/26/RegEx-in-objc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">正则表达式最佳实践</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-05-26T16:15:00+08:00">2017-05-26</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="http://upload-images.jianshu.io/upload_images/1513759-47f810d76025ba94.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Regular-Expressions"><br>作为一名开发人员，无论是前端，后端，移动端，都可能会接触到正则表达式，最常见的场景就是注册登录了，我们需要对电话号码或者邮箱做校验，如果对用户名有特殊字符有限制的话还会对特殊字符做校验。我们通常的做法就是<strong>百度</strong>或者<strong>谷歌</strong>，最后复制粘贴完事，对于那一串奇奇怪怪的字符串感觉很头大。接下来的这篇文章会向你详细解释正则表达式的语法，分析正则表达式，并且附带上常用的表格，最后给出IOS中用到正则表达式的两个类<code>NSRegularExpress</code>，<code>NSPredicate</code>，NSString。</p>
+<h2 id="主要内容包括"><a href="#主要内容包括" class="headerlink" title="主要内容包括"></a>主要内容包括</h2><p>一、简介<br>二、正则表达式的PlayGround<br>三、基本语法表及简介<br>四、正则表达式实例<br>五、正则表达式在IOS中<br>六、常用的正则表达式</p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>正则表达式就是一个用来检索或者替换合乎某种条件的一串字符集。</p>
+<h2 id="正则表达式的PlayGround"><a href="#正则表达式的PlayGround" class="headerlink" title="正则表达式的PlayGround"></a>正则表达式的PlayGround</h2><p>在学习正则表达式时，面对很多的长篇大论，可能比较枯燥无味，写代码跑项目又比较费时费力。<a href="http://www.regexpal.com/" target="_blank" rel="noopener">regexpal网站</a>（<strong>需要翻墙</strong>）刚好可以解决我们的问题，它可以随时测试我们写的正则是否有误，并且有语法检查和语法提示。在接下来的说明中，可以边看边操作了。<br><img src="http://upload-images.jianshu.io/upload_images/1513759-a0b9b72716437239.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="正则表达式的PlayGround"></p>
+<h2 id="基本语法表及简介"><a href="#基本语法表及简介" class="headerlink" title="基本语法表及简介"></a>基本语法表及简介</h2><p><img src="http://upload-images.jianshu.io/upload_images/1513759-c6cb378e6098d705.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="正则表达式常用指令集"></p>
+<ul>
+<li>纯文本形式，比如<code>a</code>就将匹配文本中的a,如果<code>Mike</code>就会匹配文本中的Mike，文本之间是<code>与</code>的关系。</li>
+<li><strong>\</strong> 其中<code>\</code>是转意字符，表示该字符后面的字母有特殊含义，比如下面要说的<code>\d</code>,<code>\b</code>等，因为在很多语言中，比如0C，Swift中<code>\</code>已经是转意字符，所以需要<code>\\b</code>来表示<code>\b</code>的含义。</li>
+<li><strong>[]</strong>匹配里面的任何一个字符，比如<code>p[abcde]</code>，将匹配pa，pb，pc，pd，pe。当然可以换成<code>p[a-e]</code>,其中<code>-</code>表示“至”的意思，<code>[0-9]</code>表示0到9间的任何一个数字。</li>
+<li><strong>{}</strong>如上表，表示的是匹配的次数，如{6}，表示匹配六次，{5,}表示匹配5次以上。比较难以理解的是{2,4}?，这表示最少匹配两次，最多匹配四次，但是，如果四个字母同时出现了，就算两个匹配，如果三个字母出现了，就匹配两次。如：正则<code>[A-Z]{2,3}?</code>，检测<code>MIKEF</code>,就会产生两个匹配<code>MI</code>和<code>KE</code>，可以在上文的网站中练习。</li>
+<li><strong>.</strong>匹配任何<em>一个字符</em>，比如<code>M.M</code>，匹配MuM，MdM，M@M，等。</li>
+<li><strong>\w</strong>匹配<code>很想单词的字符</code>，包含字母，数字，下划线，但是不包含标点符号，及其他字符，比如：<code>hello\w</code>，匹配hello_，hello8，但是不匹配<code>hello!</code>。</li>
+<li><strong>\d</strong>匹配数字，其和[0-9]是同意的。例如<code>\d\d?:\d\d</code>就是可以匹配时间，比如<code>12:30</code>和<code>9:20</code>等。digital单词的首字母</li>
+<li><strong>\b</strong>表示文字的边界，比如空格和标点符号。如<code>go\b</code>将会匹配go home和go!但是不会匹配gone，在需要匹配整个单词的时候往往有用。boundary单词的首字母</li>
+<li><strong>\s</strong>表示空格以及新的一行。比如<code>Hey\s</code>将会匹配<code>Hey man!</code>中的<code>Hey</code>。</li>
+<li><strong>^</strong>表示一行的开头，比如<code>^Hello</code>将会匹配<code>Hello Everyone!</code>但是不会匹配<code>He said Hello</code>。注意：在[]里面的<code>^</code>表示的非的意思，如：<code>[^DE]</code>表示的是：不是DE的任何字符。</li>
+<li><strong>$</strong>表示行的结尾，例如end$将会匹配<code>it was the end</code>但是不会匹配<code>the end is comming</code>。</li>
+<li><strong>*</strong>表示匹配其前面的字符0次或者很多次，如：<code>go\*d</code>,将会匹配good,goood,gooood,goooooood,gd等。</li>
+<li><strong>+</strong>表示匹配其前面的字符一次或者很多次，如：<code>go+d</code>将不会匹配<code>gd</code>。</li>
+</ul>
+<p>注：关于强匹配的概念，如果想了解的可以！<a href="http://www.regular-expressions.info/possessive.html,shang" target="_blank" rel="noopener">在正则ExpressionsInfo网站上学习</a>,<code>捕获</code>的意思就是被捕获的信息可以利用<code>$n</code>的形式来获取并且用来做替换。由于其使用不是很多，就不在赘述。</p>
+<h2 id="正则表达式实例"><a href="#正则表达式实例" class="headerlink" title="正则表达式实例"></a>正则表达式实例</h2><p>经过上面对正则表达式基本语法的讲解及练习，我们来使用试着写几个正则表达式。</p>
+<h3 id="英文名字校验，规则如下："><a href="#英文名字校验，规则如下：" class="headerlink" title="英文名字校验，规则如下："></a>英文名字校验，规则如下：</h3><ul>
+<li>名字: 标准的英文字母，1到10个字母组成，首字母大写</li>
+<li>Middle Name简写：标准英文字母，1个字母，大小写都可以</li>
+<li>姓：标准的英文字母，可能有<code>&#39;</code>(只能出现一个)，比如： O’Brien，长度在2到10个字母，首字母大写’</li>
+</ul>
+<p>根据上面的表格我们很容易写出这样的</p>
+<p>名字：<code>^[A-Z][a-z]{1,9}$</code>,其中^表示一行的开始[A-Z]表示第一个字母大写[a-z]表示中间的是小写字母，最后{1,9}表示1到9个字母，最后结尾是$<br>MiddleName: <code>^[a-x]|[A-Z]$</code>,其中|表示或的意思<br>姓：<code>^[A-Z]&#39;?[a-z]{1,9}$</code>，其中’?表示’可以出现一次也可以不出现</p>
+<h3 id="日期，规则如下："><a href="#日期，规则如下：" class="headerlink" title="日期，规则如下："></a>日期，规则如下：</h3><p>日期应该在1/1/1900到31/12/2099年之间，并且日期的格式必须是<code>dd/mm/yyyy</code>或<code>dd-mm-yyyy</code>或者<code>dd.mm.yyyy</code>这三种格式：参考上面的速查表，我们可以写出如下的正则表达式来</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">^0[1-9]|([1-2]\d)|3[01][/-.]0[1-9]|[1][012][/-.](19|20)\d\d$</span><br></pre></td></tr></table></figure>
+
+<p>其中日期：<code>0[1-9]|([1-2]\\d)|3[01]</code>,也就是穷举了所有的可能01,02,03…9,然后1或者2拼上\d，最后是3可能是30和31<br>月份：<code>0[1-9]|[1][012]</code>,和前面的日期类似，并且更少了，大于10的之后10,11,12几种情况<br>年份：<code>(19|20)\d\d</code>前面是可能出现的年分19和20，后面就是任意0-9的组合<br>分隔符：<code>[/-.]</code>只可能出现这三种情况，所以用[]括起来即可</p>
+<h3 id="日期加强版，规则如下："><a href="#日期加强版，规则如下：" class="headerlink" title="日期加强版，规则如下："></a>日期加强版，规则如下：</h3><p>格式是xx/xx/xx或xx.xx.xx或xx-xx-xx，分别是月，日，年，如：10-05-12表示12年10月5日，其中月分可以是英文全拼也可能是缩写，比如January-&gt;Jan，February-&gt;Feb，日期可能第几天，比如1st，2nd之类的，月日年之间可以有不定的几个空格，如March 13th, 2001：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(\d&#123;1,2&#125;[-/.]\d&#123;1,2&#125;[-/.]\d&#123;1,2&#125;)|(Jan(uary)?|Feb(ruary)?|Mar(ch)?|Apr(il)?|May|Jun(e)?|Jul(y)?|Aug(ust)?|Sep(tember)?|Oct(ober)?|Nov(ember)?|Dec(ember)?)\s*\d&#123;1,2&#125;(st|nd|rd|th)?+[,]\s*\d&#123;4&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以先用（）将其切开，在用|将其切开<br>先看全是数字的：<code>(\d{1,2}[-/.]\d{1,2}[-/.]\d{1,2})</code>表示两个数字，两个数字的组合，如：<code>10-05-12</code><br>然后看字母类型的<code>(Jan(uary)?|Feb(ruary)?|Mar(ch)?|Apr(il)?|May|Jun(e)?|Jul(y)?|Aug(ust)?|Sep(tember)?|Oct(ober)?|Nov(ember)?|Dec(ember)?</code>穷举了所有的月份信息，然后<code>\s*</code>表示任意多个空格，然后是日期<code>\d{1,2}(st|nd|rd|th)?</code>再加若干个空格：<code>\s*</code>最后是四位数字。</p>
+<h3 id="时间，规则如下："><a href="#时间，规则如下：" class="headerlink" title="时间，规则如下："></a>时间，规则如下：</h3><p>时间可以一位或者两位，数字，然后可以有若干个空格，最后是am或者pm，经过以上几个例子，我们不难写出：<code>\d{1,2}\s*[ab]m</code>这样的正则表达式</p>
+<h2 id="正则表达式在iOS中的应用"><a href="#正则表达式在iOS中的应用" class="headerlink" title="正则表达式在iOS中的应用"></a>正则表达式在iOS中的应用</h2><h3 id="NSRegularExpress"><a href="#NSRegularExpress" class="headerlink" title="NSRegularExpress"></a>NSRegularExpress</h3><p>在IOS开发中，我们经常使用这个类来做有关文本校验筛选工作，对于对象的校验经常使用<code>NSPredicate</code>，其使用非常简单，主要包含创建，查找，替换几个方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSError</span> *error = <span class="literal">NULL</span>;</span><br><span class="line"><span class="built_in">NSString</span> *pattern = <span class="string">@"正则表达式"</span>;</span><br><span class="line"><span class="built_in">NSString</span> *string = <span class="string">@"需要校验的文本"</span>;</span><br><span class="line"><span class="built_in">NSRange</span> range = <span class="built_in">NSMakeRange</span>(<span class="number">0</span>, string.length);</span><br><span class="line"><span class="built_in">NSRegularExpression</span> *regex = [<span class="built_in">NSRegularExpression</span> regularExpressionWithPattern:pattern options:<span class="built_in">NSRegularExpressionCaseInsensitive</span> error:&amp;error]; <span class="comment">// 创建RegularExpression对象</span></span><br><span class="line"><span class="built_in">NSArray</span> *matches = [regex matchesInString:string options:<span class="built_in">NSMatchingProgress</span> range:range]; <span class="comment">// 找到校验的结果matches中是NSTextCheckingResult对象，该对象中包含各种被查找对象的信息</span></span><br><span class="line"><span class="comment">// 下面两个方法还可以帮们替换掉找到的字符</span></span><br><span class="line">- (<span class="built_in">NSString</span> *)stringByReplacingMatchesInString:(<span class="built_in">NSString</span> *)string options:(<span class="built_in">NSMatchingOptions</span>)options range:(<span class="built_in">NSRange</span>)range withTemplate:(<span class="built_in">NSString</span> *)templ;</span><br><span class="line">- (<span class="built_in">NSUInteger</span>)replaceMatchesInString:(<span class="built_in">NSMutableString</span> *)string options:(<span class="built_in">NSMatchingOptions</span>)options range:(<span class="built_in">NSRange</span>)range withTemplate:(<span class="built_in">NSString</span> *)templ;</span><br></pre></td></tr></table></figure>
+
+<h3 id="NSPredicate和正则表达式结合"><a href="#NSPredicate和正则表达式结合" class="headerlink" title="NSPredicate和正则表达式结合"></a>NSPredicate和正则表达式结合</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSString</span>    *regularExpression = <span class="string">@"正则表达式"</span>;</span><br><span class="line"><span class="built_in">NSPredicate</span> *numberPre = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>,regularExpression];</span><br><span class="line"><span class="keyword">return</span> [numberPre evaluateWithObject:textString];</span><br></pre></td></tr></table></figure>
+
+<h3 id="NSString的方法"><a href="#NSString的方法" class="headerlink" title="NSString的方法"></a>NSString的方法</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-(<span class="built_in">NSRange</span>)rangeOfString:(<span class="built_in">NSString</span> *)aString options:(<span class="built_in">NSStringCompareOptions</span>)mask;</span><br><span class="line"><span class="built_in">NSRange</span> range = [searchedText rangeOfString:<span class="string">@"正则表达式"</span> options:<span class="built_in">NSRegularExpressionSearch</span>];</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用的正则表达式"><a href="#常用的正则表达式" class="headerlink" title="常用的正则表达式"></a>常用的正则表达式</h2><p>1.验证用户名和密码：”^[a-zA-Z]\w{5,15}$”<br>2.验证电话号码：（”^(\d{3,4}-)\d{7,8}$”）<br>eg：021-68686868  0511-6868686；<br>3.验证手机号码：”^1[3|4|5|7|8][0-9]\d{8}$”；<br>4.验证身份证号（15位或18位数字）：”\d{14}[[0-9],0-9xX]”；<br>5.验证Email地址：(“^\w+([-+.]\w+)<em>@\w+([-.]\w+)*.\w+([-.]\w+)</em>$”)；<br>6.只能输入由数字和26个英文字母组成的字符串：(“^[A-Za-z0-9]+$”) ;<br>7.整数或者小数：^[0-9]+([.]{0,1}[0-9]+){0,1}$<br>8.只能输入数字：”^[0-9]<em>$”。<br>9.只能输入n位的数字：”^\d{n}$”。<br>10.只能输入至少n位的数字：”^\d{n,}$”。<br>11.只能输入m~n位的数字：”^\d{m,n}$”。<br>12.只能输入零和非零开头的数字：”^(0|[1-9][0-9]</em>)$”。<br>13.只能输入有两位小数的正实数：”^[0-9]+(.[0-9]{2})?$”。<br>14.只能输入有1<del>3位小数的正实数：”^[0-9]+(.[0-9]{1,3})?$”。<br>15.只能输入非零的正整数：”^+?[1-9][0-9]<em>$”。<br>16.只能输入非零的负整数：”^-[1-9][]0-9″</em>$。<br>17.只能输入长度为3的字符：”^.{3}$”。<br>18.只能输入由26个英文字母组成的字符串：”^[A-Za-z]+$”。<br>19.只能输入由26个大写英文字母组成的字符串：”^[A-Z]+$”。<br>20.只能输入由26个小写英文字母组成的字符串：”^[a-z]+$”。<br>21.验证是否含有^%&amp;’,;=?$\”等字符：”[^%&amp;’,;=?$\x22]+”。<br>22.只能输入汉字：”^[\u4e00-\u9fa5]{0,}$”。<br>23.验证URL：”^http://([\w-]+.)+[\w-]+(/[\w-./?%&amp;=]*)?$”。<br>24.验证一年的12个月：”^(0?[1-9]|1[0-2])$”正确格式为：”01″～”09″和”10″～”12″。<br>25.验证一个月的31天：”^((0?[1-9])|((1|2)[0-9])|30|31)$”正确格式为；”01″～”09″、”10″～”29″和“30”</del>“31”。<br>26.获取日期正则表达式：\d{4}[年|-|.]\d{\1-\12}[月|-|.]\d{\1-\31}日?<br>评注：可用来匹配大多数年月日信息。<br>27.匹配双字节字符(包括汉字在内)：[^\x00-\xff]<br>评注：可以用来计算字符串的长度（一个双字节字符长度计2，ASCII字符计1）<br>28.匹配空白行的正则表达式：\n\s<em>\r<br>评注：可以用来删除空白行<br>29.匹配HTML标记的正则表达式：&lt;(\S</em>?)[^&gt;]<em>&gt;.</em>?&lt;/&gt;|&lt;.<em>? /&gt;<br>评注：网上流传的版本太糟糕，上面这个也仅仅能匹配部分，对于复杂的嵌套标记依旧无能为力<br>30.匹配首尾空白字符的正则表达式：^\s</em>|\s<em>$<br>评注：可以用来删除行首行尾的空白字符(包括空格、制表符、换页符等等)，非常有用的表达式<br>31.匹配网址URL的正则表达式：[a-zA-z]+://[^\s]</em><br>评注：网上流传的版本功能很有限，上面这个基本可以满足需求<br>32.匹配帐号是否合法(字母开头，允许5-16字节，允许字母数字下划线)：^[a-zA-Z][a-zA-Z0-9_]{4,15}$<br>评注：表单验证时很实用<br>33.匹配腾讯QQ号：[1-9][0-9]{4,}<br>评注：腾讯QQ号从10 000 开始<br>34.匹配中国邮政编码：[1-9]\d{5}(?!\d)<br>评注：中国邮政编码为6位数字<br>35.匹配ip地址：((2[0-4]\d|25[0-5]|[01]?\d\d?).){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)。</p>
+<h2 id="延伸阅读："><a href="#延伸阅读：" class="headerlink" title="延伸阅读："></a>延伸阅读：</h2><ol>
+<li><a href="https://www.raywenderlich.com/30288/nsregularexpression-tutorial-and-cheat-sheet" target="_blank" rel="noopener">https://www.raywenderlich.com/30288/nsregularexpression-tutorial-and-cheat-sheet</a></li>
+<li><a href="http://www.regexpal.com/" target="_blank" rel="noopener">http://www.regexpal.com/</a></li>
+<li><a href="http://nshipster.com/nspredicate/" target="_blank" rel="noopener">http://nshipster.com/nspredicate/</a></li>
+<li><a href="http://nshipster.com/nssortdescriptor/" target="_blank" rel="noopener">http://nshipster.com/nssortdescriptor/</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/26/understanding-web-view-js-bridge/" rel="next" title="WebViewJavaScriptBridge源码剖析">
+                <i class="fa fa-chevron-left"></i> WebViewJavaScriptBridge源码剖析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/05/understanding-must-override/" rel="prev" title="RunTime应用实例：MustOverride">
+                RunTime应用实例：MustOverride <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#主要内容包括"><span class="nav-number">1.</span> <span class="nav-text">主要内容包括</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">2.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正则表达式的PlayGround"><span class="nav-number">3.</span> <span class="nav-text">正则表达式的PlayGround</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本语法表及简介"><span class="nav-number">4.</span> <span class="nav-text">基本语法表及简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正则表达式实例"><span class="nav-number">5.</span> <span class="nav-text">正则表达式实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#英文名字校验，规则如下："><span class="nav-number">5.1.</span> <span class="nav-text">英文名字校验，规则如下：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日期，规则如下："><span class="nav-number">5.2.</span> <span class="nav-text">日期，规则如下：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日期加强版，规则如下："><span class="nav-number">5.3.</span> <span class="nav-text">日期加强版，规则如下：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#时间，规则如下："><span class="nav-number">5.4.</span> <span class="nav-text">时间，规则如下：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正则表达式在iOS中的应用"><span class="nav-number">6.</span> <span class="nav-text">正则表达式在iOS中的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NSRegularExpress"><span class="nav-number">6.1.</span> <span class="nav-text">NSRegularExpress</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSPredicate和正则表达式结合"><span class="nav-number">6.2.</span> <span class="nav-text">NSPredicate和正则表达式结合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSString的方法"><span class="nav-number">6.3.</span> <span class="nav-text">NSString的方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用的正则表达式"><span class="nav-number">7.</span> <span class="nav-text">常用的正则表达式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#延伸阅读："><span class="nav-number">8.</span> <span class="nav-text">延伸阅读：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

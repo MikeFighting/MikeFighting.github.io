@@ -372,8 +372,7 @@
     locationModel.districtDic = self.districtDic;
     return locationModel;
 }
-@end
-</code></pre>
+@end</code></pre>
 <p>这样我们就可以Copy对象了，将Copy的对象赋值给self.originInfo，就可以解决上述的bug。<br>但是这会消耗性能，因为需要在堆里开辟内存空间。NSCopying协议在OC中很常见，比如NSString，NSArray，NSDictionary等都遵守NSCopying协议。其中NSDictionary的Key，默认是实现了NSCopying协议的，因为在给NSDictionary赋值的时候，系统默认是Copy了它的Key，因为如果不Copy它的Key，如果你给字典赋值之后改变了这个Key，那么它将会使整个NSDictionary混乱，出现意想不到的Bug。当然这种Copy也会消耗性能。</p>
 <h2 id="不可变对象是否可以解决上述问题呢？"><a href="#不可变对象是否可以解决上述问题呢？" class="headerlink" title="不可变对象是否可以解决上述问题呢？"></a>不可变对象是否可以解决上述问题呢？</h2><p>在函数式编程中，我们会使用不可变的<code>Reference Type</code>来消除其可变所带来的问题，想象下如果你做数学题题目A中的X值被题目B改变了，那么会有怎样的结果？<br>在Swift中，我们可以使用let来使其不可变，但是这种不可变的数据结构有以下弊端：</p>
 <ol>
@@ -384,19 +383,16 @@
 <pre><code class="Swift"><span class="comment">// With mutability </span>
 home.oven.temperature.fahrenheit += <span class="number">10.0</span>
 
-<span class="comment">//Without mutability </span> <span class="keyword">let</span> temp = home.oven.temperature home.oven.temperature = <span class="type">Temperature</span>(fahrenheit: temp.fahrenheit + <span class="number">10.0</span>)
-</code></pre>
+<span class="comment">//Without mutability </span> <span class="keyword">let</span> temp = home.oven.temperature home.oven.temperature = <span class="type">Temperature</span>(fahrenheit: temp.fahrenheit + <span class="number">10.0</span>) </code></pre>
 <p>在上面的例子中，我们把Temperature类的某个属性改成了<code>let</code>，那么如果我们要更改这个数值，我们就需要在堆上开辟内存空间然后创建一个新的Temperature，最后更换掉整个Temperature类。<br>Cocoa[Touch]中有很多的不可变类比如：NSDate，NSURL，UIImage，NSNumber等<br>这更加安全了（不需要使用Copy），也不必担心接下来的程序会改变这个数值。</p>
 <pre><code class="Objective-C">NSArray&lt;NSString *&gt; *array = [NSArray arrayWithObject: NSHomeDirectory()];
 NSString *component;  while ((component = getNextSubdir()) { 
      array = [array arrayByAddingObject: component]; } 
-     url = [NSURL fileURLWithPathComponents: array];
-</code></pre>
+     url = [NSURL fileURLWithPathComponents: array];</code></pre>
 <h2 id="Value-Type将怎样解决这种问题呢？"><a href="#Value-Type将怎样解决这种问题呢？" class="headerlink" title="Value Type将怎样解决这种问题呢？"></a>Value Type将怎样解决这种问题呢？</h2><p>Swift中的所有基础类型都是Value Type的，像：Int，Double，String …<br>Swift中所有的Collection都是Value Type的，像：Array，Set，Dictianry…<br>Swift中的<code>Tuples，Struct，Enums</code>如果只包含Value Types那么他们自身也是Value Type的。<br>Value Type要是完全可以直接比较的，可以直接使用<code>==</code>，<strong>自定义的Value Type并且其必须要遵守<code>Equable</code>协议，覆盖<code>==</code>方法才可以使用的</strong>。</p>
 <pre><code class="Swift"><span class="keyword">var</span> a: [<span class="type">Int</span>] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]
 <span class="keyword">var</span> b: [<span class="type">Int</span>] = [<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>].sorted(by:&lt;)
-<span class="built_in">assert</span>(a == b) <span class="comment">// true</span>
-</code></pre>
+<span class="built_in">assert</span>(a == b) <span class="comment">// true</span></code></pre>
 <p>如果是自身的定义的Struct，那么需要遵守<code>Equable</code>协议，并且覆盖<code>==</code>方法来实现。比如：</p>
 <pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">Temperature</span>: <span class="title">Equatable</span> </span>{
   <span class="keyword">var</span> celsius: <span class="type">Double</span> = <span class="number">0</span>
@@ -407,34 +403,29 @@ NSString *component;  while ((component = getNextSubdir()) {
 }
 <span class="function"><span class="keyword">func</span> ==<span class="params">(lhs: Temperature, rhs: Temperature)</span></span> -&gt; <span class="type">Bool</span> {
   <span class="keyword">return</span> lhs.celsius == rhs.celsius
-}
-</code></pre>
+} </code></pre>
 <p>使用Value Type不用担心竞争条件。也就是不用担心资源抢夺，加锁等。看下面的代码：</p>
 <pre><code class="Swift"><span class="keyword">var</span> numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]
 scheduler.processNumbersAsynchronously(numbers) <span class="comment">//异步处理numbers</span>
 <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span>..&lt;numbers.<span class="built_in">count</span> { numbers[i] = numbers[i] * i }
-scheduler.processNumbersAsynchronously(numbers) <span class="comment">//异步处理numbers</span>
-</code></pre>
+scheduler.processNumbersAsynchronously(numbers) <span class="comment">//异步处理numbers</span></code></pre>
 <p>在Reference Type中这个<code>numbers</code>将会发生资源抢夺，但在Swift中是Value Type的，在执行<code>for i in 0..&lt;numbers.count { numbers[i] = numbers[i] * i }</code>的时候会发生Copy操作，所以不会发生资源抢夺。也就是说每次将Value Type赋值给其它的Value Type的时候会发生拷贝（逻辑拷贝）操作，但是这种Copy消耗的时间很微小，并且系统会将Copy推迟到写操作执行的时候，这就是Copy on Write。<em>在Swift中可以利用Protocol将Struct等ValueType封装，类似于OOP中的多态</em></p>
 <h2 id="Swift中的Value-Type和Reference-Type混用会怎样呢？"><a href="#Swift中的Value-Type和Reference-Type混用会怎样呢？" class="headerlink" title="Swift中的Value Type和Reference Type混用会怎样呢？"></a>Swift中的Value Type和Reference Type混用会怎样呢？</h2><p>我们来看Structh中含有结构体的情况：</p>
 <pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">ButtonWrapper</span> </span>{
    <span class="keyword">var</span> button: <span class="type">Button</span>
-}
-</code></pre>
+}</code></pre>
 <p>在这种情况下，复制ButtonWrapper的时候将会共享button这个Reference Type。这就违背了我们上文所说的Value Type在重新赋值的时候拷贝（深拷贝，和原来的Struct没有关系）。怎样才可以做到这一点呢？比如下面的</p>
 <h3 id="Value-Type-中含有不可变的Reference-Type"><a href="#Value-Type-中含有不可变的Reference-Type" class="headerlink" title="Value Type 中含有不可变的Reference Type"></a>Value Type 中含有不可变的Reference Type</h3><pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">Image</span>: <span class="title">Drawable</span> </span>{
   <span class="keyword">var</span> topLeft:<span class="type">CGPoint</span>
   <span class="keyword">var</span> image: <span class="type">UIImage</span>
 }
 <span class="keyword">var</span> image = <span class="type">Image</span>(topLeft:<span class="type">CGPoint</span>(x:<span class="number">0</span>,y:<span class="number">0</span>),image:<span class="type">UIImage</span>.<span class="keyword">init</span>(named: <span class="string">"someImage.png"</span>))
-<span class="keyword">var</span> image2 = image
-</code></pre>
+<span class="keyword">var</span> image2 = image</code></pre>
 <p>这时image和image2将会公用一个UIImage：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-fb29f1978b1a0b66.png" alt="ValueType Contains Reference Type"><br>在实现<code>Equatable</code>协议的时候，我们这么做：</p>
 <pre><code class="Swift"><span class="class"><span class="keyword">extension</span> <span class="title">Image</span>: <span class="title">Equatable</span> </span>{   }
 <span class="function"><span class="keyword">func</span> == <span class="params">(<span class="keyword">left</span>:Iamge, <span class="keyword">right</span>:Image)</span></span> -&gt; <span class="type">Bool</span> {
  <span class="keyword">return</span> <span class="keyword">left</span>.topLeft == <span class="keyword">right</span>.topLeft &amp;&amp; <span class="keyword">left</span>.image === <span class="keyword">right</span>.image
-}
-</code></pre>
+}</code></pre>
 <p>但是由于UIImage是不可变的，所以我们不必担心image2的image对象的改变会影响到image的image对象。<br><em>注：上面<code>===</code>表示引用相同，但是不表示其指向<code>Image</code>是相同的，如果要表示其相同，需要使用<code>==</code>操作。</em></p>
 <h3 id="Value-Type-中含有可变的Reference-Type"><a href="#Value-Type-中含有可变的Reference-Type" class="headerlink" title="Value Type 中含有可变的Reference Type"></a>Value Type 中含有可变的Reference Type</h3><p>下面我们来看一个可变的Reference Type。</p>
 <pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">BezierPath</span>: <span class="title">Drawable</span> </span>{
@@ -445,12 +436,10 @@ scheduler.processNumbersAsynchronously(numbers) <span class="comment">//异步�
   <span class="comment">// **注意这种写法是错误的**</span>
   <span class="function"><span class="keyword">func</span> <span class="title">addLineToPoint</span><span class="params">(point: CGPoint)</span></span> {
     path.addLineToPoint(point)
-} }
-</code></pre>
+} } </code></pre>
 <p>其内存结构是这样的：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-f574f73819356261.png" alt="Value Contains Reference Type"></p>
 <p>这时如果我们如果执行下面的代码</p>
-<pre><code class="Swift"><span class="keyword">var</span> bezierPath1 = bezierPath0
-</code></pre>
+<pre><code class="Swift"><span class="keyword">var</span> bezierPath1 = bezierPath0</code></pre>
 <p>就会发现意想不到的Bug，因为你对bezierPath1的任何改动都将会显示到bezierPath0上。<br>怎样解决这样的问题呢？这时我们需要使用<strong>Copy On Write</strong></p>
 <blockquote>
 <p>对Value Type中的Reference Type做改动将会破坏Value Type的”完全独立”特性。<br>所以我们必须将可变的Reference Type和不可变的操作分开<br>不可变操作总是安全的<br>可变操作必须首先Copy</p>
@@ -463,8 +452,7 @@ scheduler.processNumbersAsynchronously(numbers) <span class="comment">//异步�
     <span class="keyword">mutating</span> <span class="keyword">get</span> {      _path = _path.copy() <span class="keyword">as</span>! <span class="type">UIBezierPath</span> 
     <span class="keyword">return</span> _path 
 } } 
-}
-</code></pre>
+}</code></pre>
 <p>这样我们就可以将上述的错误代码改为：</p>
 <pre><code class="Swift"><span class="class"><span class="keyword">extension</span> <span class="title">BezierPath</span> </span>{ 
 <span class="keyword">var</span> isEmpty: <span class="type">Bool</span> {
@@ -473,16 +461,14 @@ scheduler.processNumbersAsynchronously(numbers) <span class="comment">//异步�
  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">addLineToPoint</span><span class="params">(point: CGPoint)</span></span> {
     pathForWriting.addLineToPoint(point)
   }
-}
-</code></pre>
+}</code></pre>
 <p>这样，我们在执行：</p>
 <pre><code class="Swift"><span class="keyword">var</span> path = <span class="type">BezierPath</span>()
 <span class="keyword">var</span> path2 = path
 <span class="keyword">if</span> path.empty { <span class="built_in">print</span>(<span class="string">"Path is empty"</span>) }
 <span class="keyword">var</span> path2 = path
 path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10</span>, y: <span class="number">20</span>))
-path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">100</span>, y: <span class="number">125</span>))
-</code></pre>
+path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">100</span>, y: <span class="number">125</span>))</code></pre>
 <p>这段代码的时候就会在addLineToPoint的时候执行Copy，这就不会出现改动path而影响path2的现象了。<br>但是还有一个问题，每次执行addLineToPoint的时候都需要执行Copy操作，有时候如果这个对象只有一个引用那么就不需要这种操作，所以我们可以利用<code>isUniquelyReferencedNonObjC()</code>方法来判断时候需要Copy,如果返回true，说明只有一个对象在用，就不必Copy，如果返回false，说明很多对象在用，这个时候就需要执行Copy操作了。<br>用法如下：</p>
 <pre><code class="Swift"><span class="class"><span class="keyword">struct</span> <span class="title">MyWrapper</span> </span>{
   <span class="keyword">var</span> _object: <span class="type">SomeSwiftObject</span>
@@ -493,8 +479,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
      }
      <span class="keyword">return</span> _object
     }
-} }
-</code></pre>
+} }</code></pre>
 <blockquote>
 <p>注：</p>
 <ol>
@@ -502,7 +487,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
 <li>比如需要对新的变化做特殊处理的时候，因为我们已经记忆了之前的过程，只需要对最新的Value Type改变，比如：本博客中的第一张图片，如果衣服颜色改变了，那么就只改变衣服颜色的那几个方格的值即可。</li>
 </ol>
 </blockquote>
-<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://developer.apple.com/videos/play/wwdc2015/414/" target="_blank" rel="external">https://developer.apple.com/videos/play/wwdc2015/414/</a></p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://developer.apple.com/videos/play/wwdc2015/414/" target="_blank" rel="noopener">https://developer.apple.com/videos/play/wwdc2015/414/</a></p>
 
       
     </div>
@@ -621,7 +606,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">39</span>
+                    <span class="site-state-item-count">56</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -656,7 +641,9 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

@@ -100,21 +100,26 @@
 
 
   
-  <meta name="keywords" content="Note,">
+  <meta name="keywords" content="Notes,">
 
 
-<meta name="description" content="JVM不能保证64位的long型和double型具有顺序一致性CPU和内存中的通信是通过总线进行的，总线的宽度是固定的，如果有多个CPU同时请求总线进行读/写总线事务的话，会由总线仲裁（Bus Arbitration）进行裁决，然后获胜的CPU才可以进行数据传递。并且在某个CPU占用了总线之后，其它CPU要请求总线仲裁是要被拒的。这种机制就保证了CPU对内存的访问是以串行的方式进行的。如果有一个3">
-<meta name="keywords" content="Note">
+<meta name="description" content="为什么需要内存模型?我们知道在并发编程中需要处理两个关键问题：线程之间的通信，以及线程之间的同步。线程之间的通信机制有两种：共享信息和消息传递。共享信息是指某个线程改变了共享信息，之后另外一个线程读取这个共享信息，这就完成了一次通信。从中我们可以看到这种通信是隐式进行的。但是在消息传递并发模式中，线程之间没有公共状态，它们之间必须通过发送消息来进行显示式通信。Java的并发采取的是共享信息的模式，">
+<meta name="keywords" content="Notes">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java内存模型">
 <meta property="og:url" content="https://mikefighting.github.io/2017/12/20/note-concurrency-jmm-0/index.html">
 <meta property="og:site_name" content="击水湘江">
-<meta property="og:description" content="JVM不能保证64位的long型和double型具有顺序一致性CPU和内存中的通信是通过总线进行的，总线的宽度是固定的，如果有多个CPU同时请求总线进行读/写总线事务的话，会由总线仲裁（Bus Arbitration）进行裁决，然后获胜的CPU才可以进行数据传递。并且在某个CPU占用了总线之后，其它CPU要请求总线仲裁是要被拒的。这种机制就保证了CPU对内存的访问是以串行的方式进行的。如果有一个3">
+<meta property="og:description" content="为什么需要内存模型?我们知道在并发编程中需要处理两个关键问题：线程之间的通信，以及线程之间的同步。线程之间的通信机制有两种：共享信息和消息传递。共享信息是指某个线程改变了共享信息，之后另外一个线程读取这个共享信息，这就完成了一次通信。从中我们可以看到这种通信是隐式进行的。但是在消息传递并发模式中，线程之间没有公共状态，它们之间必须通过发送消息来进行显示式通信。Java的并发采取的是共享信息的模式，">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-10T08:14:07.651Z">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-ba90c6662dcef457.png">
+<meta property="og:image" content="http://7xsbfz.com1.z0.glb.clouddn.com/Screen%20Shot%202018-01-05%20at%205.20.15%20PM.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-0408c80715604a7b.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-a710e691801ccc87.png">
+<meta property="og:updated_time" content="2018-05-14T08:42:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存模型">
-<meta name="twitter:description" content="JVM不能保证64位的long型和double型具有顺序一致性CPU和内存中的通信是通过总线进行的，总线的宽度是固定的，如果有多个CPU同时请求总线进行读/写总线事务的话，会由总线仲裁（Bus Arbitration）进行裁决，然后获胜的CPU才可以进行数据传递。并且在某个CPU占用了总线之后，其它CPU要请求总线仲裁是要被拒的。这种机制就保证了CPU对内存的访问是以串行的方式进行的。如果有一个3">
+<meta name="twitter:description" content="为什么需要内存模型?我们知道在并发编程中需要处理两个关键问题：线程之间的通信，以及线程之间的同步。线程之间的通信机制有两种：共享信息和消息传递。共享信息是指某个线程改变了共享信息，之后另外一个线程读取这个共享信息，这就完成了一次通信。从中我们可以看到这种通信是隐式进行的。但是在消息传递并发模式中，线程之间没有公共状态，它们之间必须通过发送消息来进行显示式通信。Java的并发采取的是共享信息的模式，">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-ba90c6662dcef457.png">
 
 
 
@@ -343,31 +348,43 @@
       
 
       
-        <h2 id="JVM不能保证64位的long型和double型具有顺序一致性"><a href="#JVM不能保证64位的long型和double型具有顺序一致性" class="headerlink" title="JVM不能保证64位的long型和double型具有顺序一致性"></a>JVM不能保证64位的long型和double型具有顺序一致性</h2><p>CPU和内存中的通信是通过总线进行的，总线的宽度是固定的，如果有多个CPU同时请求总线进行读/写总线事务的话，会由总线仲裁（Bus Arbitration）进行裁决，然后获胜的CPU才可以进行数据传递。并且在某个CPU占用了总线之后，其它CPU要请求总线仲裁是要被拒的。这种机制就保证了CPU对内存的访问是以串行的方式进行的。如果有一个32位的处理器，但是要进行64位的写数据操作，这时CPU会将数据分为两个32位的写操作，并且这两个32位数据在请求总线仲裁的时候可能被分配到了不同的总线事务中，所以此时这个64位的写操作就不具有原子性了。这时如果处理器A写入了高32位，在写入低32位期间，处理器B对该数据进行了访问，那么就会产生错误的数据。（Java5之前读写都可以被拆分，Java5之后写操作可以被拆分，但是读操作必须是原子的）。</p>
-<h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><h3 id="volatile对变量读写的影响"><a href="#volatile对变量读写的影响" class="headerlink" title="volatile对变量读写的影响"></a>volatile对变量读写的影响</h3><p>volatile也被称为轻量级锁，如果某个变量被声明为volatile，那么对它的读操作和写操作就具有原子性，<strong>但是如果是复合操作，那么就不具有原子性</strong>，比如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">VolatileFeaturesExample</span> </span>&#123;</div><div class="line">    <span class="keyword">volatile</span> <span class="keyword">long</span> v1 = <span class="number">0L</span>;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(<span class="keyword">long</span> l)</span></span>&#123;</div><div class="line">        v1 = l;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">get</span><span class="params">()</span></span>&#123;</div><div class="line">        returen v1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAndIncrement</span><span class="params">()</span></span>&#123;</div><div class="line">        v1 ++;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        <h2 id="为什么需要内存模型"><a href="#为什么需要内存模型" class="headerlink" title="为什么需要内存模型?"></a>为什么需要内存模型?</h2><p>我们知道在并发编程中需要处理两个关键问题：线程之间的通信，以及线程之间的同步。线程之间的通信机制有两种：共享信息和消息传递。共享信息是指某个线程改变了共享信息，之后另外一个线程读取这个共享信息，这就完成了一次通信。从中我们可以看到这种通信是隐式进行的。但是在消息传递并发模式中，线程之间没有公共状态，它们之间必须通过发送消息来进行显示式通信。Java的并发采取的是共享信息的模式，线程之间的通信总是隐式进行，通信过程对程序员不透明，如果编码时候不理解这种隐式通信机制，就会遇到各种内存可见性的问题。<br></p>
+<p>现代处理器为了提升数据存取的效率在CPU内部都加了L1,L2,L3这样的三级缓存(Cache)：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-ba90c6662dcef457.png" alt="cache"></p>
+<p>我们上文中提到的共享信息其实就是放到了主内存中的。线程A执行操作的时候如果发现Cache中没有就会从主存中拷贝一份副本，存储到本地，线程B需要数据的时候也从主存中拷贝一份副本到本地缓存中。如果线程A的操作完成之后将操作结果在线程B执行之前就刷新到主存中，那么线程B就可以<strong>看见</strong>最新的数值：</p>
+<p><img src="http://7xsbfz.com1.z0.glb.clouddn.com/Screen%20Shot%202018-01-05%20at%205.20.15%20PM.png" alt="share_memory_communication"></p>
+<p>但是既然Cache的存在是为了减少访问主存的次数，那么如果每次都这样先更新本地缓存，然后立即刷新到主存，那么使用Cache就不能带来性能的提升了。所以这里就是有一个问题，什么时候A线程对共享变量的操作对线程B是可见的？</p>
+<h2 id="什么是Java内存模型？"><a href="#什么是Java内存模型？" class="headerlink" title="什么是Java内存模型？"></a>什么是Java内存模型？</h2><p>针对上文中提出的问题，我们引入内存模型(JMM)的概念。内存模型其实就是一套规则，这套规则决定了一个线程对共享变量的写入何时对另一个线程可见。它的抽象结构示意图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-0408c80715604a7b.png" alt="JMM Function"></p>
+<h2 id="指令重排优点和缺点"><a href="#指令重排优点和缺点" class="headerlink" title="指令重排优点和缺点"></a>指令重排优点和缺点</h2><p>指令重排是编译器和处理器在为了提升程序的执行效率而对代码所做的优化，这种优化在单线程中没有问题，但是在多线程中，就可能违背了JMM对内存可见性的约束，关于这方面的内容，请参考我的另外一篇文章:<a href="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/">计算机基础知识</a>。所以编译器为了满足JMM的要求，就需要在合适的位置给其所编译的代码加上内存屏障来禁止特定类型的重构排序，这种内存屏障还可以确保某个操作是否立即刷新到主存，以保证对之后的操作是可见的。内存屏障有四种类型：LoadLoad，LoadStore，StoreStore，StoreLoad。它们分别插在：读读，读写，写写，写读之间用来确保之后和之前的操作不能进行指令重排，与此同时如果前面的操作是写操作，还要保证它对于后面的操作是可见的。</p>
+<h2 id="volatile同步原语"><a href="#volatile同步原语" class="headerlink" title="volatile同步原语"></a>volatile同步原语</h2><p>上面说了JMM的相关概念，下面就用volatile来举例说明，JMM是如何确保它的可见性和原子性的内存语义的。<br>volatile也被称为轻量级锁，如果某个变量被声明为volatile，那么对它的读操作和写操作就具有原子性，<strong>但是如果是复合操作，那么就不具有原子性</strong>，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VolatileFeaturesExample</span> </span>&#123;</span><br><span class="line">    <span class="keyword">volatile</span> <span class="keyword">long</span> v1 = <span class="number">0L</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(<span class="keyword">long</span> l)</span></span>&#123;</span><br><span class="line">        v1 = l;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">get</span><span class="params">()</span></span>&#123;</span><br><span class="line">        returen v1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAndIncrement</span><span class="params">()</span></span>&#123;</span><br><span class="line">        v1 ++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>在这里set和get方法的语义和加了锁是一样的，其中getAndIncrement其实可以分为以下三个部分：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAndIncrement</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">long</span> tempt = get();</div><div class="line">    temp += <span class="number">1L</span>;</div><div class="line">    set(tempt);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAndIncrement</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">long</span> tempt = get();</span><br><span class="line">    temp += <span class="number">1L</span>;</span><br><span class="line">    set(tempt);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这其中get和set方法是加锁的，但是<code>tempt += 1L;</code>在执行的时候可以有多个线程同时操作（比如两个线程同时判断了get()的值，然后在线程A对其进行改变的过程中，线程B也对其进行修改），所以不具有原子性，也就是说volatile让单个读和写操作具有原子性，但是对于复合操作是没有原子性的。</p>
-<h3 id="volatile变量读写的内存语义"><a href="#volatile变量读写的内存语义" class="headerlink" title="volatile变量读写的内存语义"></a>volatile变量读写的内存语义</h3><blockquote>
-<p>什么是内存语义？内存语义就是说某段代码，在进行内存实际操作的时候是怎样的。 对volatile变量执行写操作，会将线程的本地内存值刷新到主存中；对volatile变量执行读操作，操作系统会将变量所在线程的本地内存置为无效，然后该线程就会从主内存中读取该volatile变量。这样就保证了写线程的操作对读线程是可见的了。</p>
+<h3 id="volatile变量读写的内存语义"><a href="#volatile变量读写的内存语义" class="headerlink" title="volatile变量读写的内存语义"></a>volatile变量读写的内存语义</h3><p>什么是内存语义？内存语义就是说某段代码，在进行内存实际操作的时候是怎样的。 对volatile变量执行写操作，会将线程的本地内存值刷新到主存中；对volatile变量执行读操作，操作系统会将变量所在线程的本地内存置为无效，然后该线程就会从主内存中读取该volatile变量。这样就保证了写线程的操作对读线程是可见的了。这个过程其实就是两个线程之间进行通信的过程。</p>
+<blockquote>
+<p>也就是说避免指令重排是实现可见性的基础，如果不限制相应的指令重排就不会具有可见性，而避免指令重排就需要插入相关的内存屏障，内存屏障不仅保证了内存不被重拍，同时保证了内存的可见性。比如StoreStore屏障，它可以保证前一个写操作的数据可以刷新到主存，也就是说对下一个操作是可见的。</p>
 </blockquote>
-<h3 id="volatile内存语义的实现原理"><a href="#volatile内存语义的实现原理" class="headerlink" title="volatile内存语义的实现原理"></a>volatile内存语义的实现原理</h3><p>volatile内存</p>
-<p><div id="container"></div></p>
-<p><link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css"></p>
-<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
-<script>
-var gitment = new Gitment({
-id: 'SDWebImage2', // 可选。默认为 location.href
-owner: 'MikeFighting',
-repo: 'https://github.com/MikeFighting/BlogComment',
-oauth: {
-client_id: '8e2f9680af3a9d41bc50',
-client_secret: '7f7c1e9cce7dfbd453018631ab6233bbaf73ad86',
-},
-})
-gitment.render('container')
-</script>
+<h3 id="volatile内存语义的实现原理"><a href="#volatile内存语义的实现原理" class="headerlink" title="volatile内存语义的实现原理"></a>volatile内存语义的实现原理</h3><p>从上文可以看出，要确保volatile变量可见性的实现就必须要避免其前后的相关操作不进行指令重排，下面是JMM对编译器规定的指令重排规则：</p>
+<ol>
+<li>当第二个操作是volatile写的时候，不管第一个操作是不是volatile操作，都不能将两个操作重排序。</li>
+<li>当第一个操作是volatile读的时候，不管第二个操作是不是volatile操作，都不能将两个操作重排序。</li>
+<li>第一个操作是volatile写，第二个操作是volatile读的时候不能，不能将两个操作重排序。</li>
+</ol>
+<p>为了实现这个规则，编译器必须在volatile的前后插入内存屏障来做保证：</p>
+<ul>
+<li>在每个volatile写的前面加上StoreStore屏障。</li>
+<li>在每个volatile写的后面加上StoreLoad屏障。</li>
+<li>在每个volatile读的后面插入一个LoadLoad屏障。</li>
+<li>在每个volatile读的后面插入一个LoadStore屏障。</li>
+</ul>
+<p>因为上文中JMM规定第一个volatile读操作后面的任意操作都不能重排序，所以加入了两个屏障。又因为volatile写操作的要避免和之前的指令以及之后的voloaile读操作指令重拍，所以要在其后面加上StoreLoad屏障，其前面加上StoreStore屏障可以避免之前的写操作和volatile写做指令重排。如下图所示：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-a710e691801ccc87.png" alt="barriers"></p>
+<p>在上面volatile写后面加入StoreLoad屏障是为了防止和下面可能出现的volatile读/写重排序，为什么是可能出现呢？因为编译器有时没有办法确定其后面是否有必要插入StoreLoad屏障，因为如果volatile在方法的最后一行，然后就return了，这时就没有必要了，但是为了防止少插入的情况，编译器就在volatile写的后面都加上了LoadStore屏障，这是一种保守的做法。从上面我们可以看到volatile读和写的内存屏障插入策略是非常保守的，然而再实际情况下，编译器可以根据代码的实际情况，在不影响内存语义的情况下，减少某些不必要的屏障插入（这些优化也跟处理器类型有关）。</p>
+
       
     </div>
     
@@ -384,7 +401,7 @@ gitment.render('container')
       
         <div class="post-tags">
           
-            <a href="/tags/Note/" rel="tag"># Note</a>
+            <a href="/tags/Notes/" rel="tag"># Notes</a>
           
         </div>
       
@@ -407,8 +424,8 @@ gitment.render('container')
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/01/17/frame-work-sdWebImage1/" rel="prev" title="SDWebImage学习笔记（二）">
-                SDWebImage学习笔记（二） <i class="fa fa-chevron-right"></i>
+              <a href="/2018/01/17/frame-work-sdWebImage2/" rel="prev" title="SDWebImage学习笔记（三）">
+                SDWebImage学习笔记（三） <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -485,7 +502,7 @@ gitment.render('container')
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">39</span>
+                    <span class="site-state-item-count">56</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -520,7 +537,9 @@ gitment.render('container')
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -556,7 +575,7 @@ gitment.render('container')
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM不能保证64位的long型和double型具有顺序一致性"><span class="nav-number">1.</span> <span class="nav-text">JVM不能保证64位的long型和double型具有顺序一致性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile"><span class="nav-number">2.</span> <span class="nav-text">volatile</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile对变量读写的影响"><span class="nav-number">2.1.</span> <span class="nav-text">volatile对变量读写的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile变量读写的内存语义"><span class="nav-number">2.2.</span> <span class="nav-text">volatile变量读写的内存语义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile内存语义的实现原理"><span class="nav-number">2.3.</span> <span class="nav-text">volatile内存语义的实现原理</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要内存模型"><span class="nav-number">1.</span> <span class="nav-text">为什么需要内存模型?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是Java内存模型？"><span class="nav-number">2.</span> <span class="nav-text">什么是Java内存模型？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#指令重排优点和缺点"><span class="nav-number">3.</span> <span class="nav-text">指令重排优点和缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile同步原语"><span class="nav-number">4.</span> <span class="nav-text">volatile同步原语</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile变量读写的内存语义"><span class="nav-number">4.1.</span> <span class="nav-text">volatile变量读写的内存语义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile内存语义的实现原理"><span class="nav-number">4.2.</span> <span class="nav-text">volatile内存语义的实现原理</span></a></li></ol></li></ol></div>
             
 
           </div>

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Others,">
+
+
+<meta name="description" content="Cocoapods是iOS中的第三方框架管理工具，一台电脑为什么要安装多个版本的Cocoapods呢？在公司里可能存在不同的IOS开发团队分别对不同的业务线进行开发，各个团队之间所用的Cocoapod版本不同，这时你被外派到另外一个团队做开发。 Rubyems：简称gems是一个用于对rails组建近些年个打包的ruby打包系统，它提供了一个分发ruby程序喝库的标准格式，还提供了一个管理程序包的">
+<meta name="keywords" content="Others">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cocoapods多版本共存并自由切换">
+<meta property="og:url" content="https://mikefighting.github.io/2017/04/25/mutiple-cocoapods-coexist/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="Cocoapods是iOS中的第三方框架管理工具，一台电脑为什么要安装多个版本的Cocoapods呢？在公司里可能存在不同的IOS开发团队分别对不同的业务线进行开发，各个团队之间所用的Cocoapod版本不同，这时你被外派到另外一个团队做开发。 Rubyems：简称gems是一个用于对rails组建近些年个打包的ruby打包系统，它提供了一个分发ruby程序喝库的标准格式，还提供了一个管理程序包的">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-12-04T06:52:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Cocoapods多版本共存并自由切换">
+<meta name="twitter:description" content="Cocoapods是iOS中的第三方框架管理工具，一台电脑为什么要安装多个版本的Cocoapods呢？在公司里可能存在不同的IOS开发团队分别对不同的业务线进行开发，各个团队之间所用的Cocoapod版本不同，这时你被外派到另外一个团队做开发。 Rubyems：简称gems是一个用于对rails组建近些年个打包的ruby打包系统，它提供了一个分发ruby程序喝库的标准格式，还提供了一个管理程序包的">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/04/25/mutiple-cocoapods-coexist/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>Cocoapods多版本共存并自由切换 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/04/25/mutiple-cocoapods-coexist/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Cocoapods多版本共存并自由切换</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-04-25T07:43:00+08:00">2017-04-25</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Cocoapods是iOS中的第三方框架管理工具，一台电脑为什么要安装多个版本的Cocoapods呢？在公司里可能存在不同的IOS开发团队分别对不同的业务线进行开发，各个团队之间所用的Cocoapod版本不同，这时你被外派到另外一个团队做开发。</p>
+<p><strong>Rubyems</strong>：简称gems是一个用于对rails组建近些年个打包的ruby打包系统，它提供了一个分发ruby程序喝库的标准格式，还提供了一个管理程序包的工具。Rubyems的功能类似于linux下的apt-get，是个包管理器，可以从远程下载所需的包。<br><strong>gem</strong>：你可以这样理解，gem是一系列文件和包的总称，是一些rails项目依赖的软件或者环境，或者是依赖的关系库，当你的项目中缺少的时候，你可以用gem install 来进行安装，这种安装是通过RubyGems这个包管理工具来安装的，当然你也可以通过bundleer来安装。<br><strong>RVM</strong>：Ruby Version Manager,ruby版本管理工具，利用它可以很方便的安装多个版本的Ruby。</p>
+<h3 id="实现的原理"><a href="#实现的原理" class="headerlink" title="实现的原理"></a>实现的原理</h3><p>通过RVM来安装多个版本的ruby,再根据不同版本的ruby来安装相应版本的cocoapods，最后使用<code>rvm use</code>命令切换不同的ruby环境来使用不同版本的cocoapods.</p>
+<h3 id="常用的几个指令"><a href="#常用的几个指令" class="headerlink" title="常用的几个指令"></a>常用的几个指令</h3><p>*<code>ruby -v</code>查看rugy的版本()<br>*<code>rvm -v</code> (查看rvm的版本)<br>*<code>gem sources -l</code>(查看gem shources)<br>*<code>rvm list</code>(查看已安装的所有版本:ruby)<br>*<code>rvm use rubyVersion</code>(使用某个版本的ruby),例如:<code>rvm use ruby-2.3.3</code><br>*<code>rvm install rubyVersion</code>(安装某个版本的ruby),例如:<code>rvm install 2.3.3</code><br>*<code>rvm use rubyVersion --default</code>(将某个版本的ruby设置为默认版本),例如<code>rvm use 1.9.3 --default</code><br>*<code>rvm remove rubyVersion</code>(删除某个版本的ruby),例如:<code>rvm remove 1.9.3</code><br>*<code>rvm list known</code>查看所有可用的ruby版本<br>*<code>sudo gem install cocoapods -v &lt;Version&gt; -n /usr/local/bin</code>安装cocoapod<br>*<code>gem list</code>查看当前gem下的所有安装包</p>
+<h3 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h3><p>步骤一、 执行<code>rvm -v</code>，如果发现没有<code>rvm</code>则执行<code>curl -L get.rvm.io | bash -s stable &amp;&amp; source ~/.rvm/scripts/rvm</code>安装rvm.<br>步骤二、 执行<code>rvm list known</code>查看所有可用的ruby版本，然后执行<code>rvm install someVersion</code>来执相应版本的ruby； 或者从<a href="https://rvm.io/binaries" target="_blank" rel="noopener">ruby官网</a>上下载不同版本Ruby时，一定要下载osx操作系统的，否则在执行<code>rvm mount ~/Downloads/ruby-2.3.3.tar.bz2</code>时，将会出现<code>Libraries missing for ruby-2.3.3: xcrun. Refer to your system manual for installing libraries</code>，下载完之后到响应的目录下执行<code>rvm mount ruby-2.2.3.tar.bz2</code>就可以安装对应的ruby。<br>步骤三、重复执行步骤二，安装不同版本的ruby，</p>
+<h3 id="各种错误及处理方式"><a href="#各种错误及处理方式" class="headerlink" title="各种错误及处理方式"></a>各种错误及处理方式</h3><h4 id="cannot-execute-binary-file这种错误"><a href="#cannot-execute-binary-file这种错误" class="headerlink" title="cannot execute binary file这种错误"></a>cannot execute binary file这种错误</h4><p>执行完:<code>rvm use ruby-2.3.3</code>和<code>sudo gem install cocoapods</code>之后出现:<code>/Users/a58/.rvm/rubies/ruby-2.3.3/bin/ruby: /Users/a58/.rvm/rubies/ruby-2.3.3/bin/ruby: cannot execute binary file</code>这种错误。</p>
+<h4 id="Gemset’’does-not-exist"><a href="#Gemset’’does-not-exist" class="headerlink" title="Gemset’’does not exist"></a>Gemset’’does not exist</h4><p>执行完<code>rvm use ruby-2.2.3</code>,出现:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Gemset<span class="string">''</span>does not exist,<span class="string">'rvm ruby-2.2.3 do rvm gemset create '</span> first, or append <span class="string">'--create'</span>.</span><br></pre></td></tr></table></figure>
+
+<p>这种错误是由于没有设置<code>default</code>，在执行<code>rvm list</code>的时候会出现如下`</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Default ruby not set. Try 'rvm alias create default &lt;ruby&gt;'.</span></span><br></pre></td></tr></table></figure>
+
+<p>这样的提示。使用<code>rvm --create ruby-2.1.9</code> 之后这种提示消失。逐个将其他版本的ruby也使用<code>rvm --create rubyVersion</code>这个指令，然后就可以切换至不同版本的ruby了。</p>
+<h4 id="ERROR-Could-not-find-a-valid-gem"><a href="#ERROR-Could-not-find-a-valid-gem" class="headerlink" title="ERROR:Could not find a valid gem"></a>ERROR:Could not find a valid gem</h4><p>在执行<code>sudo gem install cocoapods</code>来安装cocoapods 的时候,</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ERROR:Could not find a valid gem <span class="string">'cocoapods'</span> (&gt;= 0), here is why:</span><br><span class="line">Unable to download data from https://ruby.taobao.org/ - SSL_connect returned=1 errno=0 state=SSLv3 <span class="built_in">read</span> server certificate B: certificate verify failed (https://ruby.taobao.org/specs.4.8.gz)</span><br></pre></td></tr></table></figure>
+
+<p>这是因为淘宝镜像最近出问题了，使用<code>gem sources -a http://rubygems-china.oss.aliyuncs.com</code>再安装一个镜像，然后可以执行<code>sudo gem install cocoapods</code>了，但是在执行<code>pod -v</code>,<code>pod search AFNetworking</code>,<code>pod setup</code>时却发现:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/Users/a58/.rvm/rubies/ruby-2.2.3/lib/ruby/2.2.0/rubygems/dependency.rb:315:<span class="keyword">in</span> <span class="string">'to_specs'</span>: Could not find <span class="string">'cocoapods'</span> (&gt;= 0) among 6 total gem(s) (Gem::LoadError)`。</span><br></pre></td></tr></table></figure>
+
+<h4 id="xcrun-error-active-developer-path…"><a href="#xcrun-error-active-developer-path…" class="headerlink" title="xcrun: error: active developer path…"></a>xcrun: error: active developer path…</h4><p>在执行<code>rvm install 2.1.0</code>时报错:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`xcrun: error: active developer path (<span class="string">"/Applications/Xcode.app/Contents/Developer"</span>) does not exist, use <span class="string">'xcode-select --switch path/to/Xcode.app'</span> to specify the Xcode that you wish to use <span class="keyword">for</span> <span class="built_in">command</span> line developer tools (or see <span class="string">'man xcode-select'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这是因为rvm寻找的路径是<code>/Applications/Xcode.app/Contents/Developer</code>，而我的Xcode被我修改成了<code>Xcode8.0</code>,找不到路径了，所以把Xcode的名字改过来就好了。</p>
+<h4 id="Error-running…"><a href="#Error-running…" class="headerlink" title="Error running…"></a>Error running…</h4><p>需要更新Homebrew</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Error running <span class="string">'requirements_osx_brew_update_system ruby-2.1.0'</span>,</span><br><span class="line">showing last 15 lines of /Users/a58/.rvm/<span class="built_in">log</span>/1487732911_ruby-2.1.0/update_system.log`</span><br></pre></td></tr></table></figure>
+
+<p>这个时候需要更新<code>Homebrew</code>,执行<code>brew update</code>来更新Homebrew，这时却发现<code>Error: /usr/local must be writable!</code>，然后点击<code>Command + Shift + G</code>,然后输入<code>/usr</code>这个时候就看到<strong>usr</strong>目录，找到下面的<strong>local</strong>文件夹，右击”Get Info”，将最下面的权限中的everyone改为可读写的，这时就可以执行<code>brew update</code>指令了。执行完之后再执行<code>rvm install ruby 2.2.2</code>，就可看到如下图所示，就说明ruby安装成功了: 执行<code>sudo gem install cocoapods</code>这个指令就可以成安装cocoapods了，接着执行<code>pod --version</code>，就可以查看当前的pod版本号了:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/Users/a58/.rvm/gems/ruby-2.2.2@global/gems/cocoapods-1.2.0/lib/cocoapods/executable.rb:89: warning: Insecure world writable dir /usr/<span class="built_in">local</span> <span class="keyword">in</span> PATH, mode 040777</span><br><span class="line">1.2.0</span><br></pre></td></tr></table></figure>
+
+<p>在执行完<code>brew update</code>之后再执行有关<code>pod</code>的指令还是会报错</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/Users/a58/.rvm/rubies/ruby-2.2.3/lib/ruby/2.2.0/rubygems/dependency.rb:315:<span class="keyword">in</span> <span class="string">'to_specs'</span>: Could not find <span class="string">'cocoapods'</span> (&gt;= 0) among 6 total gem(s) (Gem::LoadError)</span><br></pre></td></tr></table></figure>
+
+<p>这样的错误。然后把现有的cocoapod卸载，执行:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gem uninstall cocoapods</span><br></pre></td></tr></table></figure>
+
+<p>卸载完之后执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gem install cocoapods -v 1.2.0 -n /usr/<span class="built_in">local</span>/bin</span><br></pre></td></tr></table></figure>
+
+<p>这时依然会出现这个错误</p>
+<h4 id="在使用2-0-0版本的ruby安装pod的时候出现如下错误"><a href="#在使用2-0-0版本的ruby安装pod的时候出现如下错误" class="headerlink" title="在使用2.0.0版本的ruby安装pod的时候出现如下错误"></a>在使用2.0.0版本的ruby安装pod的时候出现如下错误</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ERROR:SSL verification error at depth 1: unable to get <span class="built_in">local</span> issuer certificate (20)</span><br><span class="line">ERROR:You must add /O=Digital Signature Trust Co./CN=DST Root CA X3 to your <span class="built_in">local</span> trusted store</span><br><span class="line">ERROR:SSL verification error at depth 2: self signed certificate <span class="keyword">in</span> certificate chain (19)</span><br><span class="line">ERROR:Root certificate is not trusted (/C=US/O=GeoTrust Inc./CN=GeoTrust Global CA)</span><br><span class="line">ERROR:While executing gem ... (Errno::EPERM)</span><br><span class="line">Operation not permitted - /usr/bin/pod</span><br></pre></td></tr></table></figure>
+
+<h4 id="Operation-not-permitted"><a href="#Operation-not-permitted" class="headerlink" title="Operation not permitted -"></a>Operation not permitted -</h4><p>在osx是10.11.6的时候,gem update –system会出错</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR:While executing gem ... (Errno::EPERM) Operation not permitted - /usr/bin/update_rubygems</span><br></pre></td></tr></table></figure>
+
+<p>这时候需要到<a href="https://rubygems.org/pages/download#formats" target="_blank" rel="noopener">rubyGem的官网</a>现在最新的zip文件，解压进入到rubygems-2.6.10文件中，然后执行<code>ruby setup.rb</code>就可以安装gem了。</p>
+<h4 id="missing-bin-ruby"><a href="#missing-bin-ruby" class="headerlink" title="missing bin/ruby"></a>missing bin/ruby</h4><p>删除某个版本的<code>ruby</code>的时候，出现：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby-2.2.3 [ missing bin/ruby ]</span><br></pre></td></tr></table></figure>
+
+<p>这时前往<code>/Users/用户名/.rvm/rubies/ruby-2.2.3</code>,然后删除对应的<code>ruby-2.2.3</code>即可。</p>
+<h4 id="rvm-instlall-2-2-3-报错"><a href="#rvm-instlall-2-2-3-报错" class="headerlink" title="rvm instlall 2.2.3 报错"></a>rvm instlall 2.2.3 报错</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`Empty path passed to certificates update, <span class="built_in">functions</span> stack: requirements_osx_update_openssl_cert_run rvm_requiremnts_fail_or_run_action __rvm_osx_ssl_certs_ensure_for_ruby __rvm_osx_ssl_certs_ensure_for_ruby_except_jruby external_import_setup external_import main`，</span><br></pre></td></tr></table></figure>
+
+<p>这时执行<code>rvm reinstall 2.2.3 --disable-binary</code>这个时候又出现错误:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dyld: lazy symbol binding failed: Symbol not found: _clock_gettime</span><br><span class="line">dyld: Symbol not found: _clock_gettime</span><br></pre></td></tr></table></figure>
+
+<p>其原因在于没有安装Xcode的CommandLineTools工具，执行下面的代码：<code>xcode-select --install</code>即可。</p>
+<h4 id="ERROR-While-executing-gem…-TypeError"><a href="#ERROR-While-executing-gem…-TypeError" class="headerlink" title="ERROR:While executing gem…(TypeError)"></a>ERROR:While executing gem…(TypeError)</h4><p>安装pod时候出现：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">`ERROR:While executing gem ... (TypeError)</span><br><span class="line">no implicit conversion of nil into String</span><br></pre></td></tr></table></figure>
+
+<p>执行：gem update –system</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Others/" rel="tag"># Others</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/10/useing-core-graphics-for-scratch/" rel="next" title="利用Core Graphics实现刮奖效果">
+                <i class="fa fa-chevron-left"></i> 利用Core Graphics实现刮奖效果
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/26/frame-work-sdwebimage0/" rel="prev" title="SDWebImage学习笔记（一）">
+                SDWebImage学习笔记（一） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现的原理"><span class="nav-number">1.</span> <span class="nav-text">实现的原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用的几个指令"><span class="nav-number">2.</span> <span class="nav-text">常用的几个指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现步骤"><span class="nav-number">3.</span> <span class="nav-text">实现步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#各种错误及处理方式"><span class="nav-number">4.</span> <span class="nav-text">各种错误及处理方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#cannot-execute-binary-file这种错误"><span class="nav-number">4.1.</span> <span class="nav-text">cannot execute binary file这种错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Gemset’’does-not-exist"><span class="nav-number">4.2.</span> <span class="nav-text">Gemset’’does not exist</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ERROR-Could-not-find-a-valid-gem"><span class="nav-number">4.3.</span> <span class="nav-text">ERROR:Could not find a valid gem</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xcrun-error-active-developer-path…"><span class="nav-number">4.4.</span> <span class="nav-text">xcrun: error: active developer path…</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Error-running…"><span class="nav-number">4.5.</span> <span class="nav-text">Error running…</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在使用2-0-0版本的ruby安装pod的时候出现如下错误"><span class="nav-number">4.6.</span> <span class="nav-text">在使用2.0.0版本的ruby安装pod的时候出现如下错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Operation-not-permitted"><span class="nav-number">4.7.</span> <span class="nav-text">Operation not permitted -</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#missing-bin-ruby"><span class="nav-number">4.8.</span> <span class="nav-text">missing bin/ruby</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rvm-instlall-2-2-3-报错"><span class="nav-number">4.9.</span> <span class="nav-text">rvm instlall 2.2.3 报错</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ERROR-While-executing-gem…-TypeError"><span class="nav-number">4.10.</span> <span class="nav-text">ERROR:While executing gem…(TypeError)</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

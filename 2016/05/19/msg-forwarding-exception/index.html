@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Objective-C,">
+
+
+<meta name="description" content="问题来源最近发现了一个在项目中常用的异常处理工具NullSafe，分析了它的实现原理，不小心发现了一个小Bug，现将其分享出来，关于这篇文章的Demo已经上传至GitHub，看完如有收获，欢迎Star，如有疑问欢迎issue，大家一起学习。在IOS开发中我们可能会遇到下面的情景:服务器给我们返回得某个字段是null,比如someValue:null，这个时候我们利用第三方工具转化之后会得到some">
+<meta name="keywords" content="Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS消应用实例--异常处理">
+<meta property="og:url" content="https://mikefighting.github.io/2016/05/19/msg-forwarding-exception/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="问题来源最近发现了一个在项目中常用的异常处理工具NullSafe，分析了它的实现原理，不小心发现了一个小Bug，现将其分享出来，关于这篇文章的Demo已经上传至GitHub，看完如有收获，欢迎Star，如有疑问欢迎issue，大家一起学习。在IOS开发中我们可能会遇到下面的情景:服务器给我们返回得某个字段是null,比如someValue:null，这个时候我们利用第三方工具转化之后会得到some">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-2e5449addfd826bb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-12-04T11:18:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS消应用实例--异常处理">
+<meta name="twitter:description" content="问题来源最近发现了一个在项目中常用的异常处理工具NullSafe，分析了它的实现原理，不小心发现了一个小Bug，现将其分享出来，关于这篇文章的Demo已经上传至GitHub，看完如有收获，欢迎Star，如有疑问欢迎issue，大家一起学习。在IOS开发中我们可能会遇到下面的情景:服务器给我们返回得某个字段是null,比如someValue:null，这个时候我们利用第三方工具转化之后会得到some">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-2e5449addfd826bb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2016/05/19/msg-forwarding-exception/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>iOS消应用实例--异常处理 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2016/05/19/msg-forwarding-exception/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iOS消应用实例--异常处理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-05-19T10:16:00+08:00">2016-05-19</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="问题来源"><a href="#问题来源" class="headerlink" title="问题来源"></a>问题来源</h3><p>最近发现了一个在项目中常用的异常处理工具NullSafe，分析了它的实现原理，不小心发现了一个小Bug，现将其分享出来，<a href="https://github.com/MikeFighting/NSNullHandler" target="_blank" rel="noopener">关于这篇文章的Demo已经上传至GitHub</a>，看完如有收获，欢迎Star，如有疑问欢迎issue，大家一起学习。在IOS开发中我们可能会遇到下面的情景:服务器给我们返回得某个字段是null,比如<code>someValue:null</code>，这个时候我们利用第三方工具转化之后会得到<code>someValue = &lt;null&gt;</code>,这个时候如果我们判断这个<code>someValue</code>的类型，会看到其为:NSNull。那么问题来了，如果这个someValue是要给控件赋值，比如:<code>someLabel.text = someVlaue</code>，这个时候相当于<code>someLabel.text = nil</code>,显然，是不会有问题的。<strong>但是有时候我们可能会给这个貌似是NSString的对象发送消息(因为我们在Model里定义了NSString * someValue)</strong>，比如:<code>[someValue length]</code>。这个时候由于<code>null</code>这个对象没有这个方法,也就是是说：<code>null 这个对象不能处理这个消息</code>所有就会Crash，让程序闪退。那么我们怎样处理来避免这种Crash呢？我们怎样处理这个消息呢？</p>
+<h3 id="OC的消息转发流程"><a href="#OC的消息转发流程" class="headerlink" title="OC的消息转发流程"></a>OC的消息转发流程</h3><p>首先我们来看一下<code>NSObject.h</code>中我们不常用到的几个方法,以及它们的含义:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断是否发现了这个method，如果发了，将其添加给该对象，并且返回YES,如果没有返回NO。</span></span><br><span class="line">+ (<span class="built_in">BOOL</span>)resolveClassMethod:(SEL)sel; </span><br><span class="line"><span class="comment">// 同上类似</span></span><br><span class="line">+ (<span class="built_in">BOOL</span>)resolveInstanceMethod:(SEL)sel;</span><br><span class="line"><span class="comment">// 这个方法来指定未被识别的消息首先要指向得对象</span></span><br><span class="line">- (<span class="keyword">id</span>)forwardingTargetForSelector:(SEL)aSelector;  </span><br><span class="line">+ (<span class="built_in">NSMethodSignature</span> *)instanceMethodSignatureForSelector:(SEL)aSelector;</span><br><span class="line"><span class="comment">// 遍历一个类的实例方法得到这个消息得NSMethodSignature，这个返回值包含了对这个method相关的描述，如果这个method不能找到，那么返回nil.</span></span><br><span class="line"><span class="comment">//遍历一个类的实例方法或者类方法来得到这个消息的NSMethodSignature</span></span><br><span class="line">- (<span class="built_in">NSMethodSignature</span> *)methodSignatureForSelector:(SEL)aSelector;</span><br><span class="line"><span class="comment">// NSObject的子类可以覆盖这个方法来讲消息转发给其它的对象。当一个对象发送一个消息，但是这个对象不能响应这个消息，那么RunTime会给这个对象一个来转发这个消息的机会。</span></span><br><span class="line">- (<span class="keyword">void</span>)forwardInvocation:(<span class="built_in">NSInvocation</span> *)anInvocation;</span><br></pre></td></tr></table></figure>
+
+<p>这个对象通过创建一个NSInvocation对象作为参数来调用这个forwardInvocation方法，然后改对象会调用这个方法来将消息转发给其它对象。<br>这个NSInvocation对象其实是有上一个方法methodSignatureForSelector中返回的NSMethodSignature来得到的，所以在重写这个方法之前我们必须重写methodSignatureForSelector方法。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个类的实例是否具有相应这个selector的能力，也就是说这个类有没有这样一个方法</span></span><br><span class="line">+ (<span class="built_in">BOOL</span>)instancesRespondToSelector:(SEL)aSelector;</span><br><span class="line"><span class="comment">// 遍历一个类的实例方法或者类方法 得到这个方法的IMP(函数指针，指向这个方法的具体实现)</span></span><br><span class="line">- (IMP)methodForSelector:(SEL)aSelector;</span><br><span class="line"><span class="comment">// 遍历一个类的实例方法列表，得到这个方法IMP</span></span><br><span class="line">+ (IMP)instanceMethodForSelector:(SEL)aSelector;</span><br><span class="line"><span class="comment">// 如果一个对象收到了一个消息，但是它不能处理这个消息，并且这个消息没有被转发，那么系统将会调用这个方法。</span></span><br><span class="line">- (<span class="keyword">void</span>)doesNotRecognizeSelector:(SEL)aSelector;</span><br><span class="line">同时这个方法会引发一个<span class="built_in">NSInvalidArgumentException</span>，并且引发error.</span><br></pre></td></tr></table></figure>
+
+<p>那么这几个方法，在系统中是怎样的调用顺序呢？我们来看下图:</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-2e5449addfd826bb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="IOS中消息处理得流程"></p>
+<p>从中可以看出在给一个对象发送消息的时候，如果对象没有对应的IML，那么会调用对象所属类的</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ (<span class="built_in">BOOL</span>)resolveInstanceMethod:(SEL)sel</span><br></pre></td></tr></table></figure>
+
+<p>方法，然后看对于这个SEL对象是否可以执行，如果不可以执行则会调用</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">id</span>)forwardingTargetForSelector:(SEL)aSelector</span><br></pre></td></tr></table></figure>
+
+<p>来找到一个对象处理这个方法(我们可以返回一个对象，这个对象可以处理这个方法)，如果这个方法返回的是<code>nil</code>，那么会调用这个对象的</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">NSMethodSignature</span> *)methodSignatureForSelector:(SEL)aSelector</span><br></pre></td></tr></table></figure>
+
+<p>这个方法，如果这方法调用之后，仍然没有找到对应的<code>NSMethodSignature</code>，那么会调用:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)doesNotRecognizeSelector:(SEL)aSelector</span><br></pre></td></tr></table></figure>
+
+<p>这个方法，并且抛出异常，如果这个时候返回了一个有效的<code>NSMethodSignature</code>，那么会调用</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)forwardInvocation:(<span class="built_in">NSInvocation</span> *)anInvocation</span><br></pre></td></tr></table></figure>
+
+<p>到这里消息的处理结束。</p>
+<p>那么对于NSNull这个对象，我们如何让它处理一个其自身不能处理的消息呢？这时候，我们肯定会想到，将这个消息传递给其它可以处理的对象。那么问题来了：我们如何能找到这样一个对象呢？这时候我们想到了<strong>RunTime</strong>,利用<code>RunTime</code>的<code>objc_getClassList</code>方法，我们可以获取整个项目中注册得所有类（只要在项目中添加了这个类文件，无论这个类是否被使用），<strong>这个时候我们可以过滤掉用不到的父类，以节约循环得次数，因为子类已经继承了父类的方法，所以具有处理这个消息得能力</strong>，之后首先利用上文提到的<code>instancesRespondToSelector</code>来判断这个类是否可以响应这个消息，如果可以响应，那么可以利用上文提到的<code>instanceMethodSignatureForSelector</code>来得到这个<code>NSMethodSignature</code>,并且返回。通过上述分析，系统会调用这个<code>forwardInvocation</code>,这个是时候我们调用NSInvocation的<code>invokeWithTarget</code>这个方法来将这个消息发送给nil,在OC中向一个nil发送任何消息都不会引起程序Crash,至此一个由于服务器返回数据异常而导致的Crash被解决了。</p>
+<blockquote>
+<p>这显然增加了系统的容错能力，在项目调试阶段，可能由于数据不完善，所以可以利用这个方法来规避Crash,但是在数据基本完善之后，我们可以去掉这种方法以便我们在程序Crash的时候，及时提醒后台人员来完善数据。</p>
+</blockquote>
+<h3 id="NullSafe的实现详解"><a href="#NullSafe的实现详解" class="headerlink" title="NullSafe的实现详解"></a>NullSafe的实现详解</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"> <span class="class"><span class="keyword">@implementation</span> <span class="title">NSNull</span> (<span class="title">NullSafe</span>)</span></span><br><span class="line"></span><br><span class="line"> - (<span class="built_in">NSMethodSignature</span> *)methodSignatureForSelector:(SEL)selector</span><br><span class="line">&#123;</span><br><span class="line"> <span class="keyword">@synchronized</span>([<span class="keyword">self</span> <span class="keyword">class</span>])</span><br><span class="line"> &#123;</span><br><span class="line">  <span class="comment">// 寻找 method signature</span></span><br><span class="line">  <span class="built_in">NSMethodSignature</span> *signature = [<span class="keyword">super</span> methodSignatureForSelector:selector];</span><br><span class="line">  <span class="keyword">if</span> (!signature)</span><br><span class="line">  &#123;</span><br><span class="line"><span class="comment">//改消息不能被NSNull处理，所以我们要寻找其它的可以处理的类  </span></span><br><span class="line"><span class="keyword">static</span> <span class="built_in">NSMutableSet</span> *classList = <span class="literal">nil</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="built_in">NSMutableDictionary</span> *signatureCache = <span class="literal">nil</span>;<span class="comment">// 缓存这个找到的 method signature，以便下次寻找</span></span><br><span class="line"><span class="keyword">if</span> (signatureCache == <span class="literal">nil</span>)</span><br><span class="line">&#123;</span><br><span class="line"> classList = [[<span class="built_in">NSMutableSet</span> alloc] init];</span><br><span class="line"> signatureCache = [[<span class="built_in">NSMutableDictionary</span> alloc] init];</span><br><span class="line"></span><br><span class="line"> <span class="comment">// 获取项目中的所有类，并且去除有子类的类。</span></span><br><span class="line"> <span class="comment">// objc_getClassList：这个方法会将所有的类缓存，以及这些类的数量。我们需要提供一块足够大得缓存来存储它们，所以我们必须调用这个函数两次。第一次来判断buffer的大小，第二次来填充这个buffer。</span></span><br><span class="line"> <span class="keyword">int</span> numClasses = objc_getClassList(<span class="literal">NULL</span>, <span class="number">0</span>); </span><br><span class="line"> Class *classes = (Class *)malloc(<span class="keyword">sizeof</span>(Class) * (<span class="keyword">unsigned</span> <span class="keyword">long</span>)numClasses);</span><br><span class="line"> numClasses = objc_getClassList(classes, numClasses);</span><br><span class="line"></span><br><span class="line"> <span class="built_in">NSMutableSet</span> *excluded = [<span class="built_in">NSMutableSet</span> set];</span><br><span class="line"> <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numClasses; i++)</span><br><span class="line"> &#123;</span><br><span class="line">  </span><br><span class="line">  Class someClass = classes[i];</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 筛选出其中含有子类的类，加入:excluded中</span></span><br><span class="line">  Class superclass = class_getSuperclass(someClass);</span><br><span class="line">  <span class="keyword">while</span> (superclass)</span><br><span class="line">  &#123;</span><br><span class="line">      <span class="comment">// 如果父类是NSObject,则跳出循环，并且加入classList</span></span><br><span class="line"><span class="keyword">if</span> (superclass == [<span class="built_in">NSObject</span> <span class="keyword">class</span>]) &#123;</span><br><span class="line"> <span class="comment">// 将系统中用到的所有类都加到了ClassList中</span></span><br><span class="line"> [classList addObject:someClass];</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//父类不是NSObject,将其父类添加到excluded</span></span><br><span class="line">[excluded addObject:superclass];</span><br><span class="line"> superclass = class_getSuperclass(superclass);</span><br><span class="line">  &#125;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">// 删除所有含有子类的类</span></span><br><span class="line"> <span class="keyword">for</span> (Class someClass <span class="keyword">in</span> excluded)</span><br><span class="line"> &#123;</span><br><span class="line">  [classList removeObject:someClass];</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">//释放内存</span></span><br><span class="line"> free(classes);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 首先检测缓存是否有这个实现</span></span><br><span class="line"><span class="built_in">NSString</span> *selectorString = <span class="built_in">NSStringFromSelector</span>(selector);</span><br><span class="line">signature = signatureCache[selectorString];</span><br><span class="line"><span class="keyword">if</span> (!signature)</span><br><span class="line">&#123;</span><br><span class="line"> <span class="comment">//找到方法的实现</span></span><br><span class="line"> <span class="keyword">for</span> (Class someClass <span class="keyword">in</span> classList)</span><br><span class="line"> &#123;</span><br><span class="line">  <span class="keyword">if</span> ([someClass instancesRespondToSelector:selector])</span><br><span class="line">  &#123;</span><br><span class="line">signature = [someClass instanceMethodSignatureForSelector:selector];</span><br><span class="line"><span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">//缓存以备下次使用</span></span><br><span class="line"> signatureCache[selectorString] = signature ?: [<span class="built_in">NSNull</span> null];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> ([signature isKindOfClass:[<span class="built_in">NSNull</span> <span class="keyword">class</span>]])</span><br><span class="line">&#123;</span><br><span class="line"> signature = <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> signature;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)forwardInvocation:(<span class="built_in">NSInvocation</span>  *)invocation &#123;</span><br><span class="line"> <span class="comment">// 让nil来处理这个invocation</span></span><br><span class="line"> [invocation invokeWithTarget:<span class="literal">nil</span>];</span><br><span class="line"> &#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>在原文中作者是这样写的:  [excluded addObject:NSStringFromClass(superclass)];<br><strong>这样ClassList中存放的是Class，而excluded中存放的确是String,这样就不能过滤掉不必要的类</strong>。所以，我将其改为了: [excluded addObject:superclass];<em>不知道作者是不是考虑了其他问题，也可能是由于其大意。</em></p>
+<h3 id="延伸阅读："><a href="#延伸阅读：" class="headerlink" title="延伸阅读："></a>延伸阅读：</h3><ol>
+<li><a href="http://www.jianshu.com/p/8774e192d8db" target="_blank" rel="noopener">http://www.jianshu.com/p/8774e192d8db</a></li>
+<li><a href="http://www.cocoabuilder.com/archive/cocoa/48930-objc-getclasslist-pointers-and-nsarray.html" target="_blank" rel="noopener">http://www.cocoabuilder.com/archive/cocoa/48930-objc-getclasslist-pointers-and-nsarray.html</a></li>
+<li><a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html" target="_blank" rel="noopener">https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/18/ios-tips-sum0/" rel="next" title="iOS开发Tips">
+                <i class="fa fa-chevron-left"></i> iOS开发Tips
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/31/swift-closures/" rel="prev" title="Swift学习Tip之Closures">
+                Swift学习Tip之Closures <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题来源"><span class="nav-number">1.</span> <span class="nav-text">问题来源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OC的消息转发流程"><span class="nav-number">2.</span> <span class="nav-text">OC的消息转发流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NullSafe的实现详解"><span class="nav-number">3.</span> <span class="nav-text">NullSafe的实现详解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#延伸阅读："><span class="nav-number">4.</span> <span class="nav-text">延伸阅读：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

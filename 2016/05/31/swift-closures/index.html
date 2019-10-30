@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Swift,">
+
+
+<meta name="description" content="闭包简介什么是Closures？    Closures也就是我们常说的闭包，闭包是一个具有函数功能的代码块，它类似于OC中的Block,它能够在它被定义的上下文中，被常量或者变量所捕捉和存储。也就是是说把常量和变量Closing(包)住了，这也是Closures的由来。全局函数和嵌套函数(Global and nested functions)是闭包的一种特例，闭包有一下三种形式:  全局函数是">
+<meta name="keywords" content="Swift">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift学习Tip之Closures">
+<meta property="og:url" content="https://mikefighting.github.io/2016/05/31/swift-closures/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="闭包简介什么是Closures？    Closures也就是我们常说的闭包，闭包是一个具有函数功能的代码块，它类似于OC中的Block,它能够在它被定义的上下文中，被常量或者变量所捕捉和存储。也就是是说把常量和变量Closing(包)住了，这也是Closures的由来。全局函数和嵌套函数(Global and nested functions)是闭包的一种特例，闭包有一下三种形式:  全局函数是">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-12-04T11:04:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Swift学习Tip之Closures">
+<meta name="twitter:description" content="闭包简介什么是Closures？    Closures也就是我们常说的闭包，闭包是一个具有函数功能的代码块，它类似于OC中的Block,它能够在它被定义的上下文中，被常量或者变量所捕捉和存储。也就是是说把常量和变量Closing(包)住了，这也是Closures的由来。全局函数和嵌套函数(Global and nested functions)是闭包的一种特例，闭包有一下三种形式:  全局函数是">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2016/05/31/swift-closures/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>Swift学习Tip之Closures | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2016/05/31/swift-closures/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Swift学习Tip之Closures</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-05-31T06:39:00+08:00">2016-05-31</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="闭包简介"><a href="#闭包简介" class="headerlink" title="闭包简介"></a>闭包简介</h2><p>什么是<code>Closures</code>？    <code>Closures</code>也就是我们常说的闭包，闭包是一个具有函数功能的代码块，它类似于OC中的<code>Block</code>,它能够在它被定义的上下文中，被常量或者变量所捕捉和存储。也就是是说把常量和变量<code>Closing</code>(包)住了，这也是<code>Closures</code>的由来。全局函数和嵌套函数(<code>Global and nested functions</code>)是闭包的一种特例，闭包有一下三种形式:</p>
+<ul>
+<li>全局函数是有名称但是不会捕获任何数值得闭包。</li>
+<li>嵌套函数是有名称并且可以从它们的封闭的函数体内部捕获数值的闭包。</li>
+<li>闭包表达式是用轻量级的语言所书写，并且能够从它们所在的上下文中获取数值的一种没有名称的closures。</li>
+</ul>
+<p>由于Swift本身对闭包做了很多的优化，这使得闭包的使用更加的简单明了，这些优化包括:</p>
+<ul>
+<li>从上下文中推断出参数类型和返回值类型</li>
+<li>在单一表达的闭包(<code>single-expression</code>)中隐含返回值</li>
+<li>简化参数名</li>
+<li>尾随闭包语法</li>
+</ul>
+<h2 id="闭包的基本语法"><a href="#闭包的基本语法" class="headerlink" title="闭包的基本语法"></a>闭包的基本语法</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//闭包表达式的类型和函数的类型是一样的，都是参数加上返回值,但是闭包后面有一个in, 这个关键字来告诉编译器，闭包的参数和返回值已经定义完了，下面是闭包执行语句了。</span></span><br><span class="line">&#123;</span><br><span class="line">    (参数) -&gt; 返回值类型 <span class="keyword">in</span></span><br><span class="line">    执行语句</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面说明闭包的基本用法:</p>
+<ul>
+<li>闭包的完整写法:</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  <span class="comment">// 闭包的完整写法</span></span><br><span class="line">let sayHiToSomeBody:(String) -&gt; Void = &#123;</span><br><span class="line">        (name: String) -&gt; Void <span class="keyword">in</span></span><br><span class="line">        print(<span class="string">"Hi \(name)"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    sayHiToSomeBody(<span class="string">"Mike"</span>)</span><br><span class="line">    <span class="comment">// Print: Hi Mike</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>没有返回值得闭包</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 由于这个闭包没有返回值，所以Void可以省略</span></span><br><span class="line">let sayHiToSomeBodyWithoutReturnValue:(String) -&gt; Void = &#123;</span><br><span class="line">    (name: String) <span class="keyword">in</span></span><br><span class="line">    print(<span class="string">"Hi \(name)"</span>)</span><br><span class="line">&#125;</span><br><span class="line">sayHiToSomeBodyWithoutReturnValue(<span class="string">"Jimme"</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>没有参数没有返回值得闭包</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 没有参数没有返回值的写法</span></span><br><span class="line"><span class="keyword">let</span> sayHiToSomeBodyWithoutParaAndReturnValue:() -&gt;<span class="type">Void</span> = &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">"Hi Wallace"</span>)</span><br><span class="line">&#125;</span><br><span class="line">sayHiToSomeBodyWithoutParaAndReturnValue() </span><br><span class="line"><span class="comment">// Print: Hi Wallace</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>闭包做为一个参数</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">       <span class="comment">// 闭包做为一个参数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">functionToRunClosureAsParam</span><span class="params">(someClosure:<span class="params">()</span></span></span> -&gt; ()) -&gt;<span class="type">String</span>&#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"run before the closure"</span>)</span><br><span class="line">        someClosure()</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"I ran the closure"</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(functionToRunClosureAsParam(&#123;<span class="built_in">print</span>(<span class="string">"try it now"</span>)&#125;))</span><br><span class="line">    <span class="comment">// Print:</span></span><br><span class="line">    <span class="comment">// run before the closure</span></span><br><span class="line">    <span class="comment">// try it now</span></span><br><span class="line">    <span class="comment">// I ran the closure</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>闭包做为函数的返回值</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 闭包做为函数的返回值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeFunctionWithClosureToReturn</span><span class="params">(somePara:String)</span></span> -&gt;() -&gt; ()&#123; </span><br><span class="line">       <span class="keyword">let</span> resultClosure = &#123; <span class="built_in">print</span>(<span class="string">"\(somePara)"</span>)&#125;</span><br><span class="line">       <span class="keyword">return</span> resultClosure</span><br><span class="line">   &#125;</span><br><span class="line"> <span class="keyword">let</span> yellSomeString = makeFunctionWithClosureToReturn(<span class="string">"I Love Swift"</span>)</span><br><span class="line">      yellSomeString()</span><br><span class="line">    <span class="comment">// Print: I Love Swift</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>捕获值，（在闭包内部捕获闭包所在的上下文(<code>surrounding context</code>)的变量）</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 捕获值(这里也是一个以闭包做为返回值的函数)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">someFuncWithClosureReturn</span><span class="params">(forIncrement amount: Int)</span></span> -&gt; () -&gt;<span class="type">Int</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> runningTotal = <span class="number">0</span></span><br><span class="line">    <span class="comment">// 这个闭包是没有参数，只有返回值，这个返回值是由someFuncWithClosureReturn()的参数，和内部的变量</span></span><br><span class="line">    <span class="keyword">let</span> incrementer:()-&gt;<span class="type">Int</span> = &#123;</span><br><span class="line">        runningTotal += amount</span><br><span class="line">        <span class="keyword">return</span> runningTotal</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//            函数其实也是闭包的一种，所以可以这样写</span></span><br><span class="line">    <span class="comment">//            func incrementer() -&gt;Int &#123;</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">//                runningTotal += amount;</span></span><br><span class="line">    <span class="comment">//                return runningTotal</span></span><br><span class="line">    <span class="comment">//            &#125;</span></span><br><span class="line">    <span class="keyword">return</span> incrementer</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> incrementByTen = someFuncWithClosureReturn(forIncrement: <span class="number">10</span>)</span><br><span class="line"><span class="built_in">print</span>(incrementByTen()) <span class="comment">// Print 10</span></span><br><span class="line"><span class="built_in">print</span>(incrementByTen()) <span class="comment">// Print 20</span></span><br><span class="line"><span class="built_in">print</span>(incrementByTen()) <span class="comment">// Print 30</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>尾随闭包<code>Trailing Closures</code>:如果闭包是函数的最后一个参数，并且闭包比较长，这个时候可以在()的后面写一个{}来做为闭包。上文提到的functionToRunClosureAsParam()就是这样一个例子，所以我们可以使用尾随闭包来简化函数的调用。</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//闭包做为函数的最后一个参数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">functionToRunClosureAsParam</span><span class="params">(someClosure:<span class="params">()</span></span></span> -&gt; ()) -&gt;<span class="type">String</span> </span><br><span class="line"><span class="built_in">print</span>(<span class="string">"run before the closure"</span>)</span><br><span class="line">someClosure()</span><br><span class="line"><span class="keyword">return</span> <span class="string">"I ran the closure"</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 这里将闭包提出了()</span></span><br><span class="line"><span class="comment">// 而不是上文中的:print(functionToRunClosureAsParam(&#123;print("try it now")&#125;))</span></span><br><span class="line"><span class="built_in">print</span>(functionToRunClosureAsParam()&#123;<span class="built_in">print</span>(<span class="string">"Try it now "</span>)&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="闭包的高级用法"><a href="#闭包的高级用法" class="headerlink" title="闭包的高级用法"></a>闭包的高级用法</h2><ul>
+<li><code>Noescape Closures</code>:非逃逸型闭包,如果闭包是函数的一个参数，那么这个闭包只能在函数内部使用；<code>Escape Closures</code>:逃逸型闭包,当闭包做为函数的一个参数的时候，有时候在函数已经执行完，并且已经返回，但是这之后才调用闭包，这种闭包就称为逃逸闭包（Escaping Closure),逃逸型闭包可以用在异步操作。</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 非逃逸型闭包</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">someFunctionWithNoescapeClosure</span><span class="params">(@noescape closure: <span class="params">()</span></span></span> -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">    closure()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 逃逸型闭包，如果强制将其改变为非逃逸型的将会报错，因为非逃逸型只能在函数内部使用，而这个闭包却被存在了函数之外的数组中，所以必须是逃逸型的，如果强制改为非逃逸型的，会报错</span></span><br><span class="line"><span class="keyword">var</span> completionHandlers: [() -&gt; <span class="type">Void</span>] = [] <span class="comment">// 这是一个存贮闭包的数组</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">someFunctionWithEscapingClosure</span><span class="params">(completionHandler: <span class="params">()</span></span></span> -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">    completionHandlers.append(completionHandler)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 非逃逸型的闭包如果使用了全局变量，那么可以省去self,下面举例说明</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeClass</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x = <span class="number">10</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">doSomething</span><span class="params">()</span></span> &#123;</span><br><span class="line">        someFunctionWithEscapingClosure &#123; <span class="keyword">self</span>.x = <span class="number">100</span> &#125;</span><br><span class="line">        someFunctionWithNoescapeClosure &#123; x = <span class="number">200</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> instance = <span class="type">SomeClass</span>()</span><br><span class="line">instance.doSomething()</span><br><span class="line"><span class="built_in">print</span>(instance.x)</span><br><span class="line"><span class="comment">// prints "200"</span></span><br><span class="line"></span><br><span class="line">completionHandlers.first?() <span class="comment">// 这个时候取出数组中存放的已经逃逸的闭包，然后执行它，就会让 instanc.x变为100</span></span><br><span class="line"><span class="built_in">print</span>(instance.x)</span><br><span class="line"><span class="comment">// prints "100”</span></span><br></pre></td></tr></table></figure>
+
+<p>下面在举个例子说明<code>Noescape Closures</code>的用法:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">// 再比如非逃逸型闭包</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">doIt</span><span class="params">(@noescape code: <span class="params">()</span></span></span> -&gt; ()) &#123;</span><br><span class="line">    <span class="comment">/* 我们可以这样做 */</span></span><br><span class="line">    <span class="comment">// 仅调用它</span></span><br><span class="line">    code()</span><br><span class="line">    <span class="comment">// 做为非逃逸型参数传递给另外一个函数</span></span><br><span class="line">    doItMore(code)</span><br><span class="line">    <span class="comment">// 在另外一个非逃逸的函数中捕获智</span></span><br><span class="line">doItMore &#123;</span><br><span class="line">        code()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* 我们不可以做 */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    // 将它赋值为一个需要可逃逸闭包参数的函数</span></span><br><span class="line"><span class="comment">dispatch_async(dispatch_get_main_queue(), code)</span></span><br><span class="line"><span class="comment">        // 存储它</span></span><br><span class="line"><span class="comment">        let _code:() -&gt; () = code</span></span><br><span class="line"><span class="comment">        // 在另一个可逃逸的闭包</span></span><br><span class="line"><span class="comment">        let __code = &#123; code() &#125;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">doItMore</span><span class="params">(@noescape code: <span class="params">()</span></span></span> -&gt; ()) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>Autoclosures</code>自动闭包:如果函数中的一个闭包参数被<code>@autoclosures</code>修饰，那么这个函数在被调用的时候可以省去花括号,注意如果一个闭包被autoClosures修饰的时候默认是noescape型的，所以在不能用到异步处理中，这是只需要在将<code>@autoclosure</code>变为<code>@autoclosure(escaping)</code>就可以了</li>
+</ul>
+<p>下面举例说明:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// customersInLine is ["Ewa", "Barry", "Daniella"]</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">serveCustomer</span><span class="params">(@autoclosure customerProvider: <span class="params">()</span></span></span> -&gt; <span class="type">String</span>) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"Now serving \(customerProvider())!"</span>)</span><br><span class="line">&#125;</span><br><span class="line">serveCustomer(customersInLine.removeAtIndex(<span class="number">0</span>)) <span class="comment">// 这个时候回省去&#123;&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 再比如一个以闭包做为参数的函数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">(@autoclosure pred: <span class="params">()</span></span></span> -&gt; <span class="type">Bool</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> pred() &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"It's true"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">f(<span class="number">2</span> &gt; <span class="number">1</span>) <span class="comment">// 如果不加@autoclosure，我们不得不f(&#123;2 &gt; 1&#125;)</span></span><br><span class="line"><span class="comment">// It's true</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Swift/" rel="tag"># Swift</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/19/msg-forwarding-exception/" rel="next" title="iOS消应用实例--异常处理">
+                <i class="fa fa-chevron-left"></i> iOS消应用实例--异常处理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/01/internationalization-for-ios/" rel="prev" title="iOS中的国际化">
+                iOS中的国际化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#闭包简介"><span class="nav-number">1.</span> <span class="nav-text">闭包简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#闭包的基本语法"><span class="nav-number">2.</span> <span class="nav-text">闭包的基本语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#闭包的高级用法"><span class="nav-number">3.</span> <span class="nav-text">闭包的高级用法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

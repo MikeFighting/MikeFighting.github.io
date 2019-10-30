@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Objective-C,">
+
+
+<meta name="description" content="常用做法在IOS开发中，我们的基类往往会写一些空方法，然后让子类去实现，基类控制主要流程(这其实就是模板方法模式)，这时我们往往这样写： 123- (void)mustBeOverriddenMethod &amp;#123;   [NSException raise:@&quot;Method did not be overridden&quot; format:@&quot;you must override this metho">
+<meta name="keywords" content="Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RunTime应用实例：MustOverride">
+<meta property="og:url" content="https://mikefighting.github.io/2017/06/05/understanding-must-override/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="常用做法在IOS开发中，我们的基类往往会写一些空方法，然后让子类去实现，基类控制主要流程(这其实就是模板方法模式)，这时我们往往这样写： 123- (void)mustBeOverriddenMethod &amp;#123;   [NSException raise:@&quot;Method did not be overridden&quot; format:@&quot;you must override this metho">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-4a3f19f66fd72bd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-635cfd5c1231b6d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-12-04T03:23:23.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RunTime应用实例：MustOverride">
+<meta name="twitter:description" content="常用做法在IOS开发中，我们的基类往往会写一些空方法，然后让子类去实现，基类控制主要流程(这其实就是模板方法模式)，这时我们往往这样写： 123- (void)mustBeOverriddenMethod &amp;#123;   [NSException raise:@&quot;Method did not be overridden&quot; format:@&quot;you must override this metho">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-4a3f19f66fd72bd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/06/05/understanding-must-override/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>RunTime应用实例：MustOverride | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/06/05/understanding-must-override/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RunTime应用实例：MustOverride</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-05T11:41:00+08:00">2017-06-05</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="常用做法"><a href="#常用做法" class="headerlink" title="常用做法"></a>常用做法</h2><p>在IOS开发中，我们的基类往往会写一些空方法，然后让子类去实现，基类控制主要流程(这其实就是模板方法模式)，这时我们往往这样写：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)mustBeOverriddenMethod &#123;</span><br><span class="line">   [<span class="built_in">NSException</span> raise:<span class="string">@"Method did not be overridden"</span> format:<span class="string">@"you must override this method in the subclass"</span>];</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>  这样该方法如果直接被父类调用就会报异常，并且提示一定要被子类所覆盖。但是该方法存在如下弊端：</p>
+<ol>
+<li>该方法一定要被调用才可以报异常，如果子类没有调用该方法，也没有覆盖该方法，父类在某些特定的情况下才调用该方法，那么就会出错。</li>
+<li>不可以在该方法内部做一个基本的实现，然后被子类继承并且调用<code>[super mustBeOverriddenMethod]</code></li>
+<li>如果项目中存在一个子类，但是暂时没有用到，并且其没有覆写这个方法，那么没有提示。以后其他人用这个类，很可能就会出错。</li>
+</ol>
+<h2 id="优雅的做法及疑问"><a href="#优雅的做法及疑问" class="headerlink" title="优雅的做法及疑问"></a>优雅的做法及疑问</h2><p>   以上这些问题都可以通过<a href="https://github.com/nicklockwood/MustOverride" target="_blank" rel="noopener">MustOverride</a>框架来实现。<br>   先来看下其用法，然后我们逐步分析其实现方式。<br>   只要在父类需要被实现的方法内容添加一个宏：<code>SUBCLASS_MUST_OVERRIDE</code>即可：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)someMethod &#123;</span><br><span class="line">    SUBCLASS_MUST_OVERRIDE;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以了，并且更加神奇的是：</p>
+<ol>
+<li>没有类调用该方法也可以报异常。</li>
+<li>就算子类没有被用到也会报异常。</li>
+<li>父类中可以做简单的实现，子类可以调用<code>super</code>来扩展该实现。</li>
+</ol>
+<p>这时你可能产生如下疑问:</p>
+<ol>
+<li>这个类没有用到为啥可以报异常？</li>
+<li>它是怎样找到这个类的被标记了<code>SUBCLASS_MUST_OVERRIDE</code>的方法的？</li>
+</ol>
+<h2 id="对问题的剖析"><a href="#对问题的剖析" class="headerlink" title="对问题的剖析"></a>对问题的剖析</h2><p>   一切都要从这个宏说起，进入宏的定义可以发现：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">#define SUBCLASS_MUST_OVERRIDE __attribute__((used, section(<span class="meta-string">"__DATA,MustOverride"</span> \</span></span><br><span class="line">))) <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> *__must_override_entry__ = __func__</span><br></pre></td></tr></table></figure>
+
+<p>  是不是感觉有些长？我们可以将该宏拆分：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">     <span class="meta">#define SUBCLASS_MUST_OVERRIDE static const char *__must_override_entry__ = __func__</span></span><br><span class="line">__attribute__((used, section(<span class="string">"__DATA, MustOverride"</span> )))</span><br></pre></td></tr></table></figure>
+
+<p> 首先定义了一个静态常量指针<code>__must_override_entry__</code>，这个指针指向<code>__func__</code>，也就是该宏所在方法的方法名。然后利用<code>__attribute__</code>(编译器指令，可以在声明时做一些错误检查，或者一些优化)，将其放入指定的<code>section</code>中（关于section的定义会在后续章节中加以说明）,我们可以在<code>loader.h</code>中看到section是这样一个结构体：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">struct</span> section &#123; <span class="comment">/* for 32-bit architectures */</span></span><br><span class="line"><span class="keyword">char</span>		sectname[<span class="number">16</span>];	<span class="comment">/* name of this section */</span></span><br><span class="line"><span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment this section goes in */</span></span><br><span class="line">uint32_t	addr;		<span class="comment">/* memory address of this section */</span></span><br><span class="line">uint32_t	size;		<span class="comment">/* size in bytes of this section */</span></span><br><span class="line">uint32_t	offset;		<span class="comment">/* file offset of this section */</span></span><br><span class="line">uint32_t	align;		<span class="comment">/* section alignment (power of 2) */</span></span><br><span class="line">uint32_t	reloff;		<span class="comment">/* file offset of relocation entries */</span></span><br><span class="line">uint32_t	nreloc;		<span class="comment">/* number of relocation entries */</span></span><br><span class="line">uint32_t	flags;		<span class="comment">/* flags (section type and attributes)*/</span></span><br><span class="line">uint32_t	reserved1;	<span class="comment">/* reserved (for offset or index) */</span></span><br><span class="line">uint32_t	reserved2;	<span class="comment">/* reserved (for count or sizeof) */</span></span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>  关于<a href="http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0491c/BABCJJID.html" target="_blank" rel="noopener">used的用法我们要到ARM的指令说明中查询</a></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-4a3f19f66fd72bd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="ARM中关于used的说明"></p>
+<p>  从上面可以看出，used的意思是告诉编译器该<strong>静态变量</strong>要在该对象文件中被保留（尽管该变量是没有被引用的）。被标注的静态变量将会按照声明的顺序，放到指定的一个section中。使用<code>__attribute__((section(&quot;name&quot;)))</code>可以指明该section.<br>  那么放到section中的静态变量是怎样被使用的呢？<br>  我们可以看到在load方法中，其调用了<code>CheckOverrides</code>函数，也就是在该类加载到Runtime中的时候就被调用，不论其是否被使用。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">Dl_info info;</span><br><span class="line">dladdr((<span class="keyword">const</span> <span class="keyword">void</span> *)&amp;CheckOverrides, &amp;info);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> MustOverrideValue mach_header = (MustOverrideValue)info.dli_fbase;</span><br><span class="line"><span class="keyword">const</span> MustOverrideSection *section = GetSectByNameFromHeader((<span class="keyword">void</span> *)mach_header, <span class="string">"__DATA"</span>, <span class="string">"MustOverride"</span>);</span><br><span class="line"><span class="keyword">if</span> (section == <span class="literal">NULL</span>) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">NSMutableArray</span> *failures = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line"><span class="keyword">for</span> (MustOverrideValue addr = section-&gt;offset; addr &lt; section-&gt;offset + section-&gt;size; addr += <span class="keyword">sizeof</span>(<span class="keyword">const</span> <span class="keyword">char</span> **))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSString</span> *entry = @(*(<span class="keyword">const</span> <span class="keyword">char</span> **)(mach_header + addr));</span><br><span class="line">    <span class="built_in">NSArray</span> *parts = [[entry substringWithRange:<span class="built_in">NSMakeRange</span>(<span class="number">2</span>, entry.length - <span class="number">3</span>)] componentsSeparatedByString:<span class="string">@" "</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *className = parts[<span class="number">0</span>];</span><br><span class="line">    <span class="built_in">NSRange</span> categoryRange = [className rangeOfString:<span class="string">@"("</span>];</span><br><span class="line">    <span class="keyword">if</span> (categoryRange.length)</span><br><span class="line">    &#123;</span><br><span class="line">        className = [className substringToIndex:categoryRange.location];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">BOOL</span> isClassMethod = [entry characterAtIndex:<span class="number">0</span>] == <span class="string">'+'</span>;</span><br><span class="line">    Class cls = <span class="built_in">NSClassFromString</span>(className);</span><br><span class="line">    SEL selector = <span class="built_in">NSSelectorFromString</span>(parts[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (Class subclass <span class="keyword">in</span> SubclassesOfClass(cls))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!ClassOverridesMethod(isClassMethod ? object_getClass(subclass) : subclass, selector))</span><br><span class="line">        &#123;</span><br><span class="line">            [failures addObject:[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@ does not implement method %c%@ required by %@"</span>,</span><br><span class="line">                                 subclass, isClassMethod ? <span class="string">'+'</span> : <span class="string">'-'</span>, parts[<span class="number">1</span>], className]];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>   从中可以看到其从<code>Dl_info</code>中获取了section，<br>   什么是<code>Dl_info</code>，<code>dladdr</code>？<a href="http://man7.org/linux/man-pages/man3/dladdr.3.html" target="_blank" rel="noopener">我们要从Linux指令集中去查找</a>，<br>   <img src="http://upload-images.jianshu.io/upload_images/1513759-635cfd5c1231b6d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Linux中关于dladdr的说明"></p>
+<p>  从其中的解释可以看出来，<code>dladdr</code>可以用来确定<code>addr</code>指明的地址是否存在于公用的对象中，这些对象是被调用程序所加载的。如果存在那么<code>dladdr</code>会返回公用对象及重叠<code>addr</code>的表示。该信息被封装到了<code>Dl_info</code>结构体中。取出<code>Dl_info</code>结构体中的<code>dli_fbase</code>,然后调用<code>getsectbynamefromheader_64</code>，就可以获取之前存储数据的<code>section</code>。然后遍历该<code>section</code>以找到所有被标识的方法。接下来利用<code>RunTime</code>找到所有的子类：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">      <span class="keyword">static</span> <span class="built_in">NSArray</span> *SubclassesOfClass(Class baseClass)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static</span> Class *classes;</span><br><span class="line">	    <span class="keyword">static</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> classCount;</span><br><span class="line">	    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</span><br><span class="line">	    <span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</span><br><span class="line">	      classes = objc_copyClassList(&amp;classCount); <span class="comment">// 获取项目中所有用到的类</span></span><br><span class="line">	    &#125;);</span><br><span class="line">    <span class="built_in">NSMutableArray</span> *subclasses = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; classCount; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        Class cls = classes[i];</span><br><span class="line">        Class superclass = cls;</span><br><span class="line">        <span class="keyword">while</span> (superclass)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (superclass == baseClass)</span><br><span class="line">            &#123;</span><br><span class="line">                [subclasses addObject:cls];</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            superclass = class_getSuperclass(superclass);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> subclasses;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+
+<p>  判断某个类是否覆盖了方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">static</span> <span class="built_in">BOOL</span> ClassOverridesMethod(Class cls, SEL selector)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> numberOfMethods;</span><br><span class="line">    Method *methods = class_copyMethodList(cls, &amp;numberOfMethods);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numberOfMethods; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (method_getName(methods[i]) == selector)</span><br><span class="line">        &#123;</span><br><span class="line">            free(methods);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    free(methods);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果没有覆盖则报异常。<br>小结：MustOverrid在编译期利用<code>__attribute__((used,section(&quot;__DATA, MustOverride&quot;)))</code>来将方法名放到<code>section</code>中，然后在文件加载到runtime的时候找到这个<code>section</code>，进而找到对应地方法，找到所有的子类，利用<code>runtime</code>判断其是否覆盖了父类的方法。</p>
+<h2 id="附："><a href="#附：" class="headerlink" title="附："></a>附：</h2><p>  关于load方法的几点说明：<br>  在类或者分类被加载到Runtime的时候，会触发<code>load</code>方法；并且只会在第一次被加载的时候被调用，所以只会调用一次。<br>  load方法的调用顺序：</p>
+<ol>
+<li>父类先调用<code>+load</code>方法，然后子类再调用。</li>
+<li>分类调用<code>+load</code>方法要晚于原类。</li>
+</ol>
+<h3 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h3><p><a href="http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0474e/BABHIIEF.html" target="_blank" rel="noopener">http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0474e/BABHIIEF.html</a><br><a href="http://tech.meituan.com/DiveIntoCategory.html" target="_blank" rel="noopener">http://tech.meituan.com/DiveIntoCategory.html</a><br><a href="http://man7.org/linux/man-pages/man3/dladdr.3.html" target="_blank" rel="noopener">http://man7.org/linux/man-pages/man3/dladdr.3.html</a><br><a href="https://www.bignerdranch.com/blog/inside-the-bracket-part-5-runtime-api/" target="_blank" rel="noopener">https://www.bignerdranch.com/blog/inside-the-bracket-part-5-runtime-api/</a><br><a href="http://nshipster.com/__attribute__/" target="_blank" rel="noopener">http://nshipster.com/__attribute__/</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/26/RegEx-in-objc/" rel="next" title="正则表达式最佳实践">
+                <i class="fa fa-chevron-left"></i> 正则表达式最佳实践
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/26/VaporBasicUse/" rel="prev" title="Vapor的安装和部署">
+                Vapor的安装和部署 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#常用做法"><span class="nav-number">1.</span> <span class="nav-text">常用做法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优雅的做法及疑问"><span class="nav-number">2.</span> <span class="nav-text">优雅的做法及疑问</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对问题的剖析"><span class="nav-number">3.</span> <span class="nav-text">对问题的剖析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附："><span class="nav-number">4.</span> <span class="nav-text">附：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#延伸阅读"><span class="nav-number">4.1.</span> <span class="nav-text">延伸阅读</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

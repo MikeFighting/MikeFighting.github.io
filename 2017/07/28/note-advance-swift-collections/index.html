@@ -356,8 +356,7 @@
     &amp;&amp; lhs.zipCode == rhs.zipCode
     &amp;&amp; lhs.birthday == rhs.birthday
     }
-}
-</code></pre><p>也就是必须明确一下两点：</p>
+}</code></pre><p>也就是必须明确一下两点：</p>
 <ol>
 <li>相等的实例必须有相同的哈希值。</li>
 <li>具有相同哈希值的两个对象不一定相等。</li>
@@ -369,8 +368,7 @@
   var hashValue:Int {
   returen name.hasValue^zipCode.hashValue^birthday.hashValue
   }
-}
-</code></pre><p>注：</p>
+}</code></pre><p>注：</p>
 <ol>
 <li>标注库中的基础类型如: String,integer,float,boole，以及没有关联值的Enum。</li>
 <li>在<code>Dictionary</code>中，如果使用可变的引用类型来作为<code>Key</code>并且将其改变，这个改变同时又改变了哈希值，那么这个<code>Key</code>对应的<code>Value</code>就丢失了。但是如果值类型的实例作为了<code>Key</code>，因为它执行了一次<code>Copy</code>，所以就不用担心被改变了。这也是值类型的一个优势所在。</li>
@@ -390,8 +388,7 @@ func unique() -&gt; [Iterator.Element] {
     }
 }
 }
-let result = [1,2,3,12,1,3,4,5,6,4,6].unique()
-</code></pre><p>通过上面的方法就可以将元素按照原来的顺序排列下来。</p>
+let result = [1,2,3,12,1,3,4,5,6,4,6].unique()</code></pre><p>通过上面的方法就可以将元素按照原来的顺序排列下来。</p>
 <h2 id="Range"><a href="#Range" class="headerlink" title="Range"></a>Range</h2><p>Swift中管更capable的集合叫countable，countable的边界包含<code>integer</code>和指针。但是不包含浮点型，因为<code>Stride</code>对    <code>integer</code>有限制。如果要遍历浮点型数据，那么需要使用<code>stride(from:to:by)</code>，以及<code>stride(from:through:by)</code>来新建一个<code>Sequence</code>。<br>将封闭的<code>Ragne</code>转化成半封闭的<code>Range</code>是不可能的，因为在浮点数的情况下不能确定比最大值小的值是多少。    除非这个<code>Sequence</code>是<code>Strideable</code>的。如果一个函数接受一个Range座位返回值的话，不可以用<code>...</code>来创建。</p>
 
       
@@ -511,7 +508,7 @@ let result = [1,2,3,12,1,3,4,5,6,4,6].unique()
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">39</span>
+                    <span class="site-state-item-count">56</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -546,7 +543,9 @@ let result = [1,2,3,12,1,3,4,5,6,4,6].unique()
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

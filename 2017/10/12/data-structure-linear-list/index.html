@@ -374,8 +374,7 @@
 <th>缺点</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>无需为表示表中元素之间的逻辑关系而增加额外的存储空间</td>
 <td>插入插入和删除元素需要移动大量元素</td>
 </tr>
@@ -387,14 +386,15 @@
 <td></td>
 <td>造成存储空间的“碎片”</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <h2 id="链式存储结构"><a href="#链式存储结构" class="headerlink" title="链式存储结构"></a>链式存储结构</h2><p>为了解决线性存储结构不容易扩展，难以插入和删除的缺点。出现了链式存储的线性表，这种表的每一个元素中都有一个标识用来记录下一个元素地址。这样就不需要在内存中开辟连续的空间。它的存储形式是这样的：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-5076d727f47a9f05.png" alt="LinkedList"><br>它需要两个存储空间，一个数据域用来存储数据元素的信息，一个指针域用来存贮下个元素的地址，其中的每个元素又叫做结点（Node）。每个线性表都有一个指针指向它，这个指针叫做头指针（<em>这个指针是每个链表所必须的，即使这个链表为空</em>），这个指针指向头结点（如果存在的话），头结点的数据域是空或者可以存储表的长度等附加信息。最后一个结点是的指针域是NULL或者”^”符号。那么为啥要有这个头结点呢?不要头结点可以吗？那为啥链表的结尾不需要特殊处理呢？因为链表结尾的指针域为NULL或者”^”所以其插入操作是相同的。<br>答案是可以的，但是这会让链表对第一个结点之前的插入操作变得和其它元素不统一，为了解决这种不便，人为地加入了头结点。</p>
 <h3 id="查询-1"><a href="#查询-1" class="headerlink" title="查询"></a>查询</h3><p>单链表的查询需要一个个遍历，因为它的存储空间不连续所以不能根据第一个元素的地址推断出第i个元素的地址，必须一个个查找，直到查找到第i个元素。因此它的时间复杂度是O(n)。</p>
 <h3 id="插入和删除"><a href="#插入和删除" class="headerlink" title="插入和删除"></a>插入和删除</h3><p>单链表的插入操作就比较简单，只需要改变插入点的前结点以及插入结点的指针即可。如下图所示<br><img src="http://upload-images.jianshu.io/upload_images/1513759-f5a638c6e223b1b7.png" alt="Insert Linked List"><br>关键的步骤为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">s-&gt;next = p-&gt;next; </div><div class="line">p-&gt;next = s;</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s-&gt;next = p-&gt;next; </span><br><span class="line">p-&gt;next = s;</span><br></pre></td></tr></table></figure>
+
 <p>这样就可以插入结点了，注意这里的。<br>单链表删除元素的操作也是比较简单，只要将要删除结点之前的结点跳过删除结点，然后指向删除结点之后的结点即可。如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-ad3a75e5ce4399f9.png" alt="Delete Node"><br>关键的步骤为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">p-&gt;next = p-&gt;next-&gt;next</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">p-&gt;next = p-&gt;next-&gt;next</span><br></pre></td></tr></table></figure>
+
 <h3 id="单链表和顺序存储结构的优缺点"><a href="#单链表和顺序存储结构的优缺点" class="headerlink" title="单链表和顺序存储结构的优缺点"></a>单链表和顺序存储结构的优缺点</h3><p>一、时间性能</p>
 <ul>
 <li>查找<ul>
@@ -424,8 +424,7 @@
 <th>缺点</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>插入和删除操作，只需修改游标，不用移动元素，<br>从而改进了顺序存储结构中的插入和删除<br>需要移动大量元素的缺点</td>
 <td>没有解决连续存储带来的长度难以确定的问题</td>
 </tr>
@@ -433,15 +432,16 @@
 <td></td>
 <td>失去了顺序存储结构随机存取的特性</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <h2 id="循环链表"><a href="#循环链表" class="headerlink" title="循环链表"></a>循环链表</h2><p>单链表有一个非常严重的问题：从链表中的一个结点出发，访问到链表中的所有结点，比如当从尾结点出发，要访问到所有的结点，必须先把指针移动头结点，然后从头开始遍历。为了解决这个问题，又引入了一种新的数据结构：循环链表。循环链表也就是说把原来单链表中终端结点的指针端由空改为指向头结点，这就使整个链表形成一个环，这种头尾相接的单链表成为单循环链表，简称循环链表（circular linked list）。这样虽然可以解决遍历其中任何一个结点的目的，但是还有一个问题：从头结点查找尾结点的时间复杂度为O(n)。我们可以通过将头指针移动位置来解决这个问题：<em>不用头指针，而是用指向终端结点的尾指针来表示循环链表，此时查找开始结点和终端结点都很方便了（时间复杂度都是O(1)）。</em><br><img src="http://upload-images.jianshu.io/upload_images/1513759-144be4c25748578e.png" alt="rear point circular linked list"><br>关于循环链表的其它操作和单链表的几乎是一样的，不再赘述。</p>
 <h2 id="双向链表"><a href="#双向链表" class="headerlink" title="双向链表"></a>双向链表</h2><p>循环链表是解决了单链表中查找所有结点的难题，但是它还存在一个问题：如果要查找某个结点的前驱结点，那么需要的时间复杂度是O(n)，因为我们要按照单向的指针遍历一遍。为了解决这个问题提出了双向链表的概念：双向链表(double linked list)是在单链表的每个结点中，再设置一个指向其前驱结点的指针域。它的结构如下：</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/1513759-48340e06fb86b26b.png" alt="structure of double linked list"></p>
 <h3 id="双向链表的插入和删除"><a href="#双向链表的插入和删除" class="headerlink" title="双向链表的插入和删除"></a>双向链表的插入和删除</h3><p>双向链表的插入相对于单链表的插入要复杂一些，因为它涉及到两个指针的操作。如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-d028f13fa949a3e7.png" alt="insert into double linked list"><br>其中的关键步骤为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">s-&gt;prior = p;  // 把p赋值给s的前驱，如①</div><div class="line">s-&gt;next = p-&gt;next; // 把p的后继赋值给s的后继，如②</div><div class="line">p-&gt;next-&gt;prior = s; // 把s赋值给p的后继的前驱，如③</div><div class="line">p-&gt;next = s; // 把s赋值给p的后继，如④</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">s-&gt;prior = p;  // 把p赋值给s的前驱，如①</span><br><span class="line">s-&gt;next = p-&gt;next; // 把p的后继赋值给s的后继，如②</span><br><span class="line">p-&gt;next-&gt;prior = s; // 把s赋值给p的后继的前驱，如③</span><br><span class="line">p-&gt;next = s; // 把s赋值给p的后继，如④</span><br></pre></td></tr></table></figure>
+
 <p>相对于插入操作，删除操作相对比较简单，如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-c899193e34b4442d.png" alt="delete from double linked list"><br>其中的关键步骤为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">p-&gt;prior-&gt;next = p-&gt;next; // 将p的后继赋值给其前驱的后继，如①</div><div class="line">p-&gt;next-&gt;prior = p-&gt;prior; // 将p的前驱赋值给p的后继的前驱，如②</div><div class="line">free(p); // 释放p</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">p-&gt;prior-&gt;next = p-&gt;next; // 将p的后继赋值给其前驱的后继，如①</span><br><span class="line">p-&gt;next-&gt;prior = p-&gt;prior; // 将p的前驱赋值给p的后继的前驱，如②</span><br><span class="line">free(p); // 释放p</span><br></pre></td></tr></table></figure>
+
 <p>相对于单链表其查找速度更快了，但是它多出了一位来存储指向其前继结点的指针，因此是典型的用空间换取时间的做法。另外循环链表的插入相对来说比较复杂，需要把握好每一步的顺序，否则会出错。</p>
 
       
@@ -473,8 +473,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/09/27/servlet-introduce/" rel="next" title="Servlet简介">
-                <i class="fa fa-chevron-left"></i> Servlet简介
+              <a href="/2017/09/10/java-detials/" rel="next" title="可能被遗漏的Java细节">
+                <i class="fa fa-chevron-left"></i> 可能被遗漏的Java细节
               </a>
             
           </div>
@@ -561,7 +561,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">39</span>
+                    <span class="site-state-item-count">56</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -596,7 +596,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

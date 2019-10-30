@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="FrameWork,">
+
+
+<meta name="description" content="iOS中AOP框架Aspects源码分析AOP是Aspect Oriented Programming的缩写，意思就是面向切面编程。具体的解释可以到维基百科上或者其它地方查看。在IOS中使用Swizzle技术可以实现面向切面编程，我在RunTime应用实例–关于埋点的思考博文中也提到了Aspects框架，下面就来对该框架做以分析。 一般的Swizzle是怎么实现的？在RunTime应用实例–关于埋">
+<meta name="keywords" content="FrameWork">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IOS中AOP框架Aspects源码分析">
+<meta property="og:url" content="https://mikefighting.github.io/2017/04/07/understanding-aspects-source-code/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="iOS中AOP框架Aspects源码分析AOP是Aspect Oriented Programming的缩写，意思就是面向切面编程。具体的解释可以到维基百科上或者其它地方查看。在IOS中使用Swizzle技术可以实现面向切面编程，我在RunTime应用实例–关于埋点的思考博文中也提到了Aspects框架，下面就来对该框架做以分析。 一般的Swizzle是怎么实现的？在RunTime应用实例–关于埋">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-4268aad7e1e7cd89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/510">
+<meta property="og:updated_time" content="2018-12-04T09:37:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IOS中AOP框架Aspects源码分析">
+<meta name="twitter:description" content="iOS中AOP框架Aspects源码分析AOP是Aspect Oriented Programming的缩写，意思就是面向切面编程。具体的解释可以到维基百科上或者其它地方查看。在IOS中使用Swizzle技术可以实现面向切面编程，我在RunTime应用实例–关于埋点的思考博文中也提到了Aspects框架，下面就来对该框架做以分析。 一般的Swizzle是怎么实现的？在RunTime应用实例–关于埋">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-4268aad7e1e7cd89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/510">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/04/07/understanding-aspects-source-code/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>IOS中AOP框架Aspects源码分析 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/04/07/understanding-aspects-source-code/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">IOS中AOP框架Aspects源码分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-04-07T16:38:00+08:00">2017-04-07</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="iOS中AOP框架Aspects源码分析"><a href="#iOS中AOP框架Aspects源码分析" class="headerlink" title="iOS中AOP框架Aspects源码分析"></a>iOS中AOP框架Aspects源码分析</h2><p>AOP是Aspect Oriented Programming的缩写，意思就是面向切面编程。具体的解释可以到<a href="https://en.wikipedia.org/wiki/Aspect-oriented_programming" target="_blank" rel="noopener">维基百科</a>上或者其它地方查看。在IOS中使用Swizzle技术可以实现面向切面编程，我在<a href="http://www.jianshu.com/p/69859d580354" target="_blank" rel="noopener">RunTime应用实例–关于埋点的思考</a>博文中也提到了Aspects框架，下面就来对该框架做以分析。</p>
+<h2 id="一般的Swizzle是怎么实现的？"><a href="#一般的Swizzle是怎么实现的？" class="headerlink" title="一般的Swizzle是怎么实现的？"></a>一般的Swizzle是怎么实现的？</h2><p>在RunTime应用实例–关于埋点的思考，也讲到了MethodSwizzle的技术，下面来看最常见的实现方案。比如我们要Hook住UIButton的<code>sendAction:to:forEvent:</code>，这时候我们一般这样做:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">+(<span class="keyword">void</span>)load&#123;</span><br><span class="line"><span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</span><br><span class="line"><span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</span><br><span class="line">    SEL originSEL = <span class="keyword">@selector</span>(sendAction:to:forEvent:);</span><br><span class="line">    SEL swizzleSEL = <span class="keyword">@selector</span>(swizzleSendAction:to:forEvent:);</span><br><span class="line">    Class processedClass = [<span class="keyword">self</span> <span class="keyword">class</span>];</span><br><span class="line">    Method originMethod = class_getInstanceMethod(processedClass, originSEL);</span><br><span class="line">    Method swizzleMethod = class_getInstanceMethod(processedClass, swizzleSEL);</span><br><span class="line">    method_exchangeImplementations(originMethod, swizzleMethod);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)swizzleSendAction:(SEL)action to:(<span class="keyword">id</span>)target forEvent:(<span class="built_in">UIEvent</span> *)event&#123;</span><br><span class="line"><span class="comment">// 执行相应的逻辑</span></span><br><span class="line"><span class="comment">// 调用原来的系统方法</span></span><br><span class="line">[<span class="keyword">self</span> swizzleSendAction:action to:target forEvent:event];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>具体的解释可以参见<strong>RunTime应用实例–关于埋点的思考</strong>这篇文章。</p>
+<h2 id="这样做有什么弊端？"><a href="#这样做有什么弊端？" class="headerlink" title="这样做有什么弊端？"></a>这样做有什么弊端？</h2><ul>
+<li>我们要给每一个要Hook的方法额外新加一个方法，方法的参数个数是一样的。</li>
+<li>如果每个被Hook的方法内部的实现逻辑都一样，那么就需要在每个新添加的方法中调用这段实现逻辑。</li>
+<li>我们新加的代码是在被Hook方法之前还是之后调用的呢？</li>
+<li>我们能放将这个新加的方法转化为一个Block呢？这样代码会更紧凑，逻辑更清晰。</li>
+<li>如果这个方法转化为Block，那么如何将这个Block替换掉原来的方法实现Swizzle呢？怎样在合适的时候调用这个block呢？</li>
+</ul>
+<p>带着这些问题我们来看Aspects是如何实现的。</p>
+<h2 id="主要的实现思路"><a href="#主要的实现思路" class="headerlink" title="主要的实现思路"></a>主要的实现思路</h2><ol>
+<li>使用和原方法相同参数不同方法名的方法，替换被hook的方法，这样系统在找不到这个方法的时候就会走到<code>forwardInvocation:</code>。</li>
+<li>使用<code>__ASPECTS_ARE_BEING_CALLED__</code>替换掉系统的<code>forwardInvocation:</code>。 </li>
+<li>给类增加<code>AspectsForwardInvocationSelectorName</code>方法，它的实现是原来的<code>forwardInvocation:</code>的IMP。</li>
+<li>当要hook的方法被调用时，系统会调用<code>forwardInvocation:</code>方法。由于这个方法也被替换掉了，所以会调用<code>__ASPECTS_ARE_BEING_CALLED__</code>。</li>
+<li><code>__ASPECTS_ARE_BEING_CALLED__</code>内部，先调用被hook方法之前的block,再调用替换被hook方法的block，以及没有替换的实现，最后调用被hook方法之之后的block。</li>
+<li>如果hook出错，则再调用原来的<code>AspectsForwardInvocationSelectorName</code>的方法。</li>
+</ol>
+<h2 id="Aspects-m包含的内部类及分类"><a href="#Aspects-m包含的内部类及分类" class="headerlink" title="Aspects.m包含的内部类及分类"></a><code>Aspects.m</code>包含的内部类及分类</h2><ul>
+<li><strong>AspectInfo</strong>:存储被hook方法的信息。</li>
+<li><strong>AspectIdentifier</strong>:记录每一次Aspect的信息。</li>
+<li><strong>AspectsContainer</strong>:某个类或者某个对象所有被hook方法的集合。</li>
+<li><strong>AspectTracker</strong>:对所有hook方法的操作（增加或者减少）。</li>
+<li><strong>NSInvocation (Aspects)</strong>:获取NSInvocation的参数。</li>
+<li><strong>NSObject (Aspects)</strong>:框架的主要分类，定义公共接口。</li>
+</ul>
+<p>各类之间的关系如图：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-4268aad7e1e7cd89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/510" alt="Aspect框架各类之间的结构"></p>
+<h2 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h2><p>公共方法主要调用：<code>aspect_add</code>方法，该方法内部主要调用三个方法</p>
+<ol>
+<li><code>AspectsContainer *aspectContainer = aspect_getContainerForObject(self, selector);</code>获取该方法对应的<code>AspectsContainer</code>。</li>
+</ol>
+<ul>
+<li>将要hook的方法转化为aliasSelector。</li>
+<li>取得关联的AspectsContainer，如果没有，怎设置关联的AspectsContainer；</li>
+</ul>
+<ol start="2">
+<li><code>identifier = [AspectIdentifier identifierWithSelector:selector object:self options:options block:block error:error];</code>,将调用的参数封装成AspectIdentifier。</li>
+</ol>
+<ul>
+<li>通过：<code>aspect_blockMethodSignature</code>取的block对应的<code>NSMethodSignature</code>,</li>
+<li>创建<code>AspectIdentifier</code>并且返回</li>
+</ul>
+<ol start="3">
+<li><code>aspect_prepareClassAndHookSelector(self, selector, error);</code>，准备工作及hook方法。</li>
+</ol>
+<ul>
+<li>aspect_hookClass，内部调用<code>aspect_swizzleForwardInvocation</code>，将系统的<code>forwardInvocation:</code> 替换为<code>__ASPECTS_ARE_BEING_CALLED__</code>。</li>
+<li>在改方法内部分别调用被hook方法之前，替换被hook方法，被hook方法之后的方法。 </li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// Before hooks.  </span></span><br><span class="line">aspect_invoke(classContainer.beforeAspects, info);</span><br><span class="line">aspect_invoke(objectContainer.beforeAspects, info);</span><br><span class="line"><span class="comment">// Instead hooks.</span></span><br><span class="line"><span class="built_in">BOOL</span> respondsToAlias = <span class="literal">YES</span>;</span><br><span class="line"><span class="keyword">if</span> (objectContainer.insteadAspects.count || classContainer.insteadAspects.count) &#123;</span><br><span class="line">aspect_invoke(classContainer.insteadAspects, info);</span><br><span class="line">aspect_invoke(objectContainer.insteadAspects, info);</span><br><span class="line">&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">Class klass = object_getClass(invocation.target);</span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line"><span class="keyword">if</span> ((respondsToAlias = [klass instancesRespondToSelector:aliasSelector])) &#123;</span><br><span class="line">  [invocation invoke];</span><br><span class="line">  <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;<span class="keyword">while</span> (!respondsToAlias &amp;&amp; (klass = class_getSuperclass(klass)));</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// After hooks.</span></span><br><span class="line">aspect_invoke(classContainer.afterAspects, info);</span><br><span class="line">aspect_invoke(objectContainer.afterAspects, info);</span><br></pre></td></tr></table></figure>
+
+<p>从中可以看出Aspect重要使用了NSInvocation来避免了不同参数个数的限制，通过将block转换为NSMethodSignature对象，可以实现对原有方法的替换或者Swizzle，然后调用其<code>invoke</code>方法，可以在适当的时机触发这个block，通过标识将block分为，原方法之前，之后，替换原方法等做法。而不必像一般实现方法那样，改变每个新加方法中调用原来方法的位置来实现。</p>
+<h2 id="其它Tips"><a href="#其它Tips" class="headerlink" title="其它Tips"></a>其它Tips</h2><ol>
+<li>如果某个类只可能被其它一个类用到，那么可以将它们写到一个<code>.m</code>文件中，这是高内聚的一种表现。</li>
+<li>类，包括分类的出现，其实是为了更好的组织代码，让代码的功能更清晰易懂。</li>
+<li>将一段代码加锁的方式：可以将代码块作为参数，然后对其执行前后加锁，这样做的好处是：如果以后要换锁的类型，那么只要在这个方法中改变就可以了：例如：</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> aspect_performLocked(dispatch_block_t block) &#123;</span><br><span class="line"><span class="keyword">static</span> OSSpinLock aspect_lock = OS_SPINLOCK_INIT;</span><br><span class="line">OSSpinLockLock(&amp;aspect_lock);</span><br><span class="line">block();</span><br><span class="line">OSSpinLockUnlock(&amp;aspect_lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>可以通过自定义结构体的方式将block转换成NSMethodSignature对象，然后在适当的时候调用。</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)invoke;</span><br><span class="line">- (<span class="keyword">void</span>)invokeWithTarget:(<span class="keyword">id</span>)target;</span><br></pre></td></tr></table></figure>
+
+<p> 这两个方法来触发这个block。具体做法请见：AspectBlockRef这个结构体和<code>aspect_blockMethodSignature</code>这个方法。<strong>这里有一个疑问：</strong>根据<a href="https://llvm.org/svn/llvm-project/compiler-rt/tags/Apple/Libcompiler_rt-10/BlocksRuntime/Block_private.h" target="_blank" rel="noopener">苹果官方提供的block定义</a>，其中是没有signature这个字段的:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Revised new layout. */</span></span><br><span class="line"><span class="keyword">struct</span> Block_descriptor &#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">int</span> reserved;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">int</span> size;</span><br><span class="line">    <span class="keyword">void</span> (*<span class="keyword">copy</span>)(<span class="keyword">void</span> *dst, <span class="keyword">void</span> *src);</span><br><span class="line">    <span class="keyword">void</span> (*dispose)(<span class="keyword">void</span> *);</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p> 但是Aspect中的block转化为响应的结构体：<code>AspectBlockRef   layout = (__bridge void *)block;</code>之后就会自动有signature字段，这点不是很理解还望大神指教。</p>
+<ol start="5">
+<li>给定一个对象，和这个对象的SEL，如果参数非常多，使用<code>performSelector:withObject:</code>这种方式不太合适，这时可以借鉴YYKit中的<code>NSObject+YYAdd</code>里面的方法，如果这时有NSInvocation对象，那么可以直接调用<code>objc_msgSend(self, SEL, invocation)</code>这种方式来实现。</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/FrameWork/" rel="tag"># FrameWork</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/07/thingking-in-track-using-runtime/" rel="next" title="RunTime应用实例--关于埋点的思考">
+                <i class="fa fa-chevron-left"></i> RunTime应用实例--关于埋点的思考
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/10/useing-core-graphics-for-scratch/" rel="prev" title="利用Core Graphics实现刮奖效果">
+                利用Core Graphics实现刮奖效果 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS中AOP框架Aspects源码分析"><span class="nav-number">1.</span> <span class="nav-text">iOS中AOP框架Aspects源码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一般的Swizzle是怎么实现的？"><span class="nav-number">2.</span> <span class="nav-text">一般的Swizzle是怎么实现的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#这样做有什么弊端？"><span class="nav-number">3.</span> <span class="nav-text">这样做有什么弊端？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主要的实现思路"><span class="nav-number">4.</span> <span class="nav-text">主要的实现思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Aspects-m包含的内部类及分类"><span class="nav-number">5.</span> <span class="nav-text">Aspects.m包含的内部类及分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行流程"><span class="nav-number">6.</span> <span class="nav-text">执行流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其它Tips"><span class="nav-number">7.</span> <span class="nav-text">其它Tips</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

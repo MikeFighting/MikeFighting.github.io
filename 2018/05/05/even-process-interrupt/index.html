@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Objective-C,">
+
+
+<meta name="description" content="前言中断是计算机中的一种常用的机制，也是计算机中发展中里程碑式的一步，本文将以AT89S51单片机为例来讲解中断的产生和处理过程。下面以一个按键的处理程序为例来说明，在下面的例子中，我们要实现这样一个功能：当按下按钮S1时，我让红灯点亮100ms，然后让绿灯亮，如果没有按下S1，那么一直是绿灯亮。 没有中断以前如果没有中断，我们的做法应该是这样的：不停地扫描P3.3口，如果发现P3.3口是低电平，">
+<meta name="keywords" content="Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="事件处理的背后--中断">
+<meta property="og:url" content="https://mikefighting.github.io/2018/05/05/even-process-interrupt/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="前言中断是计算机中的一种常用的机制，也是计算机中发展中里程碑式的一步，本文将以AT89S51单片机为例来讲解中断的产生和处理过程。下面以一个按键的处理程序为例来说明，在下面的例子中，我们要实现这样一个功能：当按下按钮S1时，我让红灯点亮100ms，然后让绿灯亮，如果没有按下S1，那么一直是绿灯亮。 没有中断以前如果没有中断，我们的做法应该是这样的：不停地扫描P3.3口，如果发现P3.3口是低电平，">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1513759-b00fcb97db974663.png">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1513759-19e3d55dd9a88be4.png">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1513759-f01403b283b26e74.png">
+<meta property="og:updated_time" content="2018-10-08T05:56:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="事件处理的背后--中断">
+<meta name="twitter:description" content="前言中断是计算机中的一种常用的机制，也是计算机中发展中里程碑式的一步，本文将以AT89S51单片机为例来讲解中断的产生和处理过程。下面以一个按键的处理程序为例来说明，在下面的例子中，我们要实现这样一个功能：当按下按钮S1时，我让红灯点亮100ms，然后让绿灯亮，如果没有按下S1，那么一直是绿灯亮。 没有中断以前如果没有中断，我们的做法应该是这样的：不停地扫描P3.3口，如果发现P3.3口是低电平，">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1513759-b00fcb97db974663.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2018/05/05/even-process-interrupt/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>事件处理的背后--中断 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2018/05/05/even-process-interrupt/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">事件处理的背后--中断</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-05-05T08:41:09+08:00">2018-05-05</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>中断是计算机中的一种常用的机制，也是计算机中发展中里程碑式的一步，本文将以AT89S51单片机为例来讲解中断的产生和处理过程。下面以一个按键的处理程序为例来说明，在下面的例子中，我们要实现这样一个功能：当按下按钮S1时，我让红灯点亮100ms，然后让绿灯亮，如果没有按下S1，那么一直是绿灯亮。<br><img src="https://upload-images.jianshu.io/upload_images/1513759-b00fcb97db974663.png" alt="单片机中断的例子"></p>
+<h2 id="没有中断以前"><a href="#没有中断以前" class="headerlink" title="没有中断以前"></a>没有中断以前</h2><p>如果没有中断，我们的做法应该是这样的：不停地扫描P3.3口，如果发现P3.3口是低电平，那么就让红灯亮100ms，然后熄灭红灯，让绿灯亮。在这个简单的功能里是没有什么问题的，但是如果单片机要处理的事情很多，而它为了处理S1按键这一个事情就被占据，不能脱身，对CPU来说就是非常浪费的，因为CPU的执行速度是非常之快的，而按键的按下和松开对CPU来说是非常慢的，也就是说再两次按键被按下的间隙，CPU可以执行非常多的指令，而这种轮询端口的方式大大降低了CPU的效率。</p>
+<h2 id="中断是什么？"><a href="#中断是什么？" class="headerlink" title="中断是什么？"></a>中断是什么？</h2><p>在上面的例子中，我们看到，如果没有按钮事件到来，CPU的效率是非常低的。为了解放CPU，我们引入了中断的概念，那么究竟什么是中断？举个例子，下班回家我们想用微波炉做个鸡蛋羹，如果没有中断，我们就必须在微波炉旁边时刻等着，等到预计的时间到了，然后把微波炉关掉。在等待的过程中我们不能做其它的事情，因为超过了需要的时间，鸡蛋羹就会失去最佳味道。如果做鸡蛋羹需要5分钟的时间，那么我们（CPU）就傻等了五分钟时间，我们原本可以用这五分钟时间背几个单词或者看会儿书。我们知道CPU处理指令的速度非常之快，大约在10^9的数量级。等待的这五分钟时间原本可以用来处理很多指令。那么怎么办呢？这时我们可以给微波炉加一个定时的功能，有了这个功能，我们把打好的鸡蛋放到碗里，然后放到微波炉中就不用管了，这时我们可以去做其它的事情，在做事情的过程中，我们听到了微波炉发出了“嘀–嘀–嘀”的声音，我们知道是时间到了，我们关了微波炉，然后把做好的鸡蛋取出来。这个到了一定的条件发出“嘀–嘀–嘀”的声音就是产生了一个中断，我们去取出来鸡蛋就是对一个中断的处理。我们可以看到使用了中断可以提高CPU的效率，让它可以再外部设备进行某些操作的时候去做其它的事，而在触发中断时候再让CPU对中断进行相应的处理。</p>
+<h2 id="单片机的中断处理过程"><a href="#单片机的中断处理过程" class="headerlink" title="单片机的中断处理过程"></a>单片机的中断处理过程</h2><p>通过上面的分析，我们知道中断可以提高CPU的执行效率，那么使用中断，我们可以怎样实现上图中所示实例的程序呢？</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">    ORG  00H ; 起始地址00H</span><br><span class="line">    ; 主程序段，点亮绿色发光二极管D1</span><br><span class="line"></span><br><span class="line">MAIN:</span><br><span class="line">     MOV   IE, <span class="comment">#84H ; 使能外部中断1</span></span><br><span class="line">GREEN:</span><br><span class="line">     CLR   P0.0     ; 点亮绿色发光二极管D1</span><br><span class="line">     JMP   GREEN    ; 循环</span><br><span class="line">     ; 中断服务子程序，熄灭绿色发光二极管D1，点亮红色D2</span><br><span class="line"></span><br><span class="line">     ORG  13H       ; 外部中断1的中断服务子程序起始地址为13H</span><br><span class="line">EXT1_RED:</span><br><span class="line">      SETB  P0.0    ; 熄灭绿色发光二极管D1</span><br><span class="line">      CLR   P0.1    ; 点亮红色D2</span><br><span class="line"></span><br><span class="line">D1:</span><br><span class="line">      MOV  R4,  <span class="comment">#200; 延时100ms</span></span><br><span class="line"></span><br><span class="line">D2:   MOV  R5,  <span class="comment">#248</span></span><br><span class="line">      DJNZ R5, $</span><br><span class="line">      DJNZ R4, D2</span><br><span class="line">      SETB P0.1     ;熄灭红色发光二极管D2</span><br><span class="line">      RET1          ;中断服务子程序结束</span><br><span class="line"></span><br><span class="line">      END           ;程序结束</span><br></pre></td></tr></table></figure>
+
+<p>下面我们来详细分析下这段代码。<code>ORG</code>伪指令指明该段代码所在的内存地址是00,计算机执行到这里会将PC指针指向00处，这样就可以执行该段代码了。其中<code>MOV  IE, #84</code>，将8：4赋值给IE寄存器，IE寄存器是一个中断使能寄存器，为什么要设置中断使能寄存器呢？在上图中我们可以看到P3.0–P3.5这六个端口后面都有个括号，括号中分别是(RXD，TXD，INT0，INT1，T0，T1)，这说明这些端口要么作为普通的IO口，要么作为中断源。默认情况下，单片机上电以后是不会对任何中断产生响应的，相应的中断端口是做为普通的IO口使用的，只有使能了以后才可以接收中断。这六个端口对应五个中断源，RXD和TXD对应串行口中断，INT0，INT1，T0，T1分别对应于外部中断0，外部中断1，Timer0中断和Timer1中断。下面我们看下IE寄存器各个位的含义：<br><img src="https://upload-images.jianshu.io/upload_images/1513759-19e3d55dd9a88be4.png" alt="中断使能寄存器"><br>从中我们可以看到IE的最高位是EA，它管理着所有的中断源，如果该为置零，那么所有的中断都不能响应了，其中第6位和第5位是保留位，第四位管理串行口中断，ET1管理Timer1中断，EX1管理外部中断1，第1位和第0位分别管理Timer0中断和外部中断0。我们写的84换算成十六进制刚好是10000100，对应于中断使能寄存器，也就是开启了外部中断1。而外部中断1的接口刚好和键盘S1的相连接。所以如果键盘被按下，就会触发单片机的一次中断。中断被使能以后，我们进入GREEN程序段，在这里面调用CLR P0.0;这条指令可以将P0.0口置成低电平，因为P0.0口上的绿色发光二极管的正极连接的是高电平，所以它会被点亮。然后调用JMP GREEN；指令一直循环。接下来就是中断服务子程序，也就是当中断发生的时候CPU需要执行的指令。ORG 13H;指明接下来的指令发到13H地址开始的指令处。为什么偏偏要是13H呢？因为单片机在设计生产出来的时候都有一个中断向量表，这个中断向量表就说明了每个中断如果发生那么CPU会去哪个地址处开始执行。AT89S51单片机的中断向量表如下：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1513759-f01403b283b26e74.png" alt="AT89S51单片机的中断向量表"><br>我们可以看到外部中断1的向量地址是0013H，也就是说CPU如果遇到了外部中断1就会去0013H地址处执行。我们可以看到每两个中断向量的地址相隔只有8位，所以通常情况下，从向量地址处开始的第一条指令是JMP 指令，让程序跳转到其它的地址处执行，不然会影响其后面中断向量的执行。因为我们这里只有一个中断，所以不存在相互影响。</p>
+<p>在绿灯亮着的过程中，我们按下按键，这时就会触发一次中断，CPU找到13H开始的地址，然后取指，执行。执行EXT1_RED:，在这里先执行SETB P0.0；将P0.0口置为高电平，让绿灯熄灭，进而执行CLR P0.1;将P0.1口置为低电平然后点亮红色发光二极管。那么下面的延时程序段是怎么计算的呢?</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">D1:</span><br><span class="line">      MOV  R4,  <span class="comment">#200; 延时100ms</span></span><br><span class="line"></span><br><span class="line">D2:   MOV  R5,  <span class="comment">#248</span></span><br><span class="line">      DJNZ R5, $</span><br><span class="line">      DJNZ R4, D2</span><br><span class="line">      SETB P0.1     ;熄灭红色发光二极管D2</span><br><span class="line">      RET1          ;中断服务子程序结束</span><br></pre></td></tr></table></figure>
+
+<p>我们看上面单片机的电路，我们发现一个Y1，12MHz的元器件，这个器件就是<strong>晶振</strong>，一个机器周期等于晶振频率的倒数乘以12，所以一个机器周期的时间为：</p>
+<p>$$<br>12 \times \frac{1}{12MHz} = 1 \mu s<br>$$</p>
+<p>这个程序D1中先将200移动到寄存器R4中，D2中先将248移动到R5中，然后将R5减1，如果不等于0，则持续执行这条指令（DJNZ R5, $），所以:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MOV  R5,  <span class="comment">#248</span></span><br><span class="line">DJNZ R5, $</span><br></pre></td></tr></table></figure>
+
+<p>因为执行一个DJNZ指令需要花费两个时钟周期，所以内层循环总共的耗时是: </p>
+<p>$$<br>1 + 2 \times 248 = 497 \mu s<br>$$</p>
+<p>一条MOV指令花费一个时钟周期，所以加上外层循环总共的耗时时间是：</p>
+<p>$$<br>200 \times (497 + 2) + 1 = 99801 \mu s \approx 100 ms<br>$$</p>
+<p>到此为止一个没有操作系统的逻辑处理事件的流程已经结束了，那么操作系统，这个在硬件上面的第一层软件，它是怎样来管理中断的呢？</p>
+<h3 id="旁注"><a href="#旁注" class="headerlink" title="旁注"></a>旁注</h3><p>其实中断使能IE寄存器，在操作系统中也扮演者重要的角色，在进行临界区保护的时候，我们需要加锁，加锁可以有很多方式，比如用纯粹软件的方式：面包店算法。也可以使用硬件的方式，硬件的方式就是关闭中断，关闭中断之后，其它进程就不能进入操作系统内核了，不能进入操作系统内核，也就不会对其进行相应的调度，其它线程也就不能进入临界区了。通过这种硬件的方式，可以提高程序的执行速度，与此同时也可以减少软件方法书写的复杂性。在Linux中使用<code>cli()</code>和<code>sti()</code>的系统调用来关闭和打开中断。同时如果有了操作系统，那么响应的中断往往会和一个驱动相连接，比如：网卡的中断号为X，那么在中断处理程序中就会将中断号X和网卡驱动程序绑定起来。这样，如果遇到了中断X，就会调用响应的驱动程序执行其操作。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>《实例解读51单片机完全学习与应用》<br>操作系统：临界区保护</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/05/even-process-introduction/" rel="next" title="事件处理的背后--综述">
+                <i class="fa fa-chevron-left"></i> 事件处理的背后--综述
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/14/note-buffer-overflow-example/" rel="prev" title="缓冲区溢出实例解析">
+                缓冲区溢出实例解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#没有中断以前"><span class="nav-number">2.</span> <span class="nav-text">没有中断以前</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#中断是什么？"><span class="nav-number">3.</span> <span class="nav-text">中断是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单片机的中断处理过程"><span class="nav-number">4.</span> <span class="nav-text">单片机的中断处理过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#旁注"><span class="nav-number">4.1.</span> <span class="nav-text">旁注</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

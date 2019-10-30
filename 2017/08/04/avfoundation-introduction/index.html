@@ -370,7 +370,8 @@
 <li>需要自己明确指定类和方法所在线程的话会在响应的线程中年触发通知</li>
 </ul>
 <p>如果要开发多线程的应用，那么你应该使用<code>isMainThread</code>或者<code>[[NSThread currentThread] isEqual:&lt;#A stored thread reference#&gt;]</code>来提前测试是否该线程是你期望的要执行的线程。如果要跨线程，你可能需要如下方法</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">performSelectorOnMainThread:withObject:waitUntilDone: </div><div class="line">performSelector:onThread:withObject:waitUntilDone:modes:</div><div class="line"><span class="built_in">dispatch_async</span></div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">performSelectorOnMainThread:withObject:waitUntilDone: </span><br><span class="line">performSelector:onThread:withObject:waitUntilDone:modes:</span><br><span class="line"><span class="built_in">dispatch_async</span></span><br></pre></td></tr></table></figure>
+
 <p>为了更好的开发AVFoundation，你需要具备如下前提知识：</p>
 <ul>
 <li>全面理解基础的Cocoa开发工具及技术</li>
@@ -496,7 +497,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">39</span>
+                    <span class="site-state-item-count">56</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -531,7 +532,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

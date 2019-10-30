@@ -348,8 +348,7 @@
         <p>   <img src="http://upload-images.jianshu.io/upload_images/1513759-267da7a2929f0562.jpg" alt="Validation"><br>服务端在有数据请求时需要对数据进行校验然后返回响应的校验结果，比如要求必须输入邮箱，必须输入电话等，Validation工具给我们提供了非常方便的常用操作，接下来就对其使用过程做以总结（<em>本文用到的是Validation 1.2.0版本</em>）。</p>
 <h2 id="Vapor中添加Validation依赖包"><a href="#Vapor中添加Validation依赖包" class="headerlink" title="Vapor中添加Validation依赖包"></a>Vapor中添加Validation依赖包</h2><p>在<code>Package.swift</code>文件中添加如下的依赖，比如：</p>
 <pre><code>.Package(url: &quot;https://github.com/vapor/vapor.git&quot;, majorVersion: 2),
-.Package(url: &quot;https://github.com/vapor/validation-provider.git&quot;, majorVersion: 1)
-</code></pre><blockquote>
+.Package(url: &quot;https://github.com/vapor/validation-provider.git&quot;, majorVersion: 1)</code></pre><blockquote>
 <p>之后要执行<code>vapor clean</code>或者<code>rm -rf .build Package.pins</code>，然后执行<code>vapor update</code>或者<code>swift package update</code>，<code>vapor xcode</code>，这样才可以安装好依赖。</p>
 </blockquote>
 <h2 id="校验实例"><a href="#校验实例" class="headerlink" title="校验实例"></a>校验实例</h2><h3 id="Alphanumeric校验"><a href="#Alphanumeric校验" class="headerlink" title="Alphanumeric校验"></a>Alphanumeric校验</h3><p> 接下来我们来做一个简单的校验，校验输入的字符串是否是a-z或者0-9在请求中加入如下代码：</p>
@@ -358,26 +357,21 @@
                 <span class="keyword">throw</span> <span class="type">Abort</span>.badRequest
             }
             <span class="keyword">let</span> validInput = <span class="keyword">try</span> input.tested(by: <span class="type">OnlyAlphanumeric</span>())
-            <span class="keyword">return</span> <span class="string">"validated:<span class="subst">\(validInput)</span>"</span>
-}
-</code></pre>
-<p>我们运行程序，然后在PostMan中输入<a href="http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：" target="_blank" rel="external">http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：</a></p>
-<pre><code class="Swift">{<span class="string">"identifier"</span>:<span class="string">"Validation.ValidatorError.failure"</span>,<span class="string">"reason"</span>:<span class="string">"Internal Server Error"</span>,<span class="string">"debugReason"</span>:<span class="string">"OnlyAlphanumeric failed validation: example@github.com is not alphanumeric"</span>,<span class="string">"error"</span>:<span class="literal">true</span>}
-</code></pre>
+            <span class="keyword">return</span> <span class="string">"validated:\(validInput)"</span>
+}</code></pre>
+<p>我们运行程序，然后在PostMan中输入<a href="http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：" target="_blank" rel="noopener">http://localhost:8080/alpha?input=example@github.com，这时会得到下面的返回值：</a></p>
+<pre><code class="Swift">{<span class="string">"identifier"</span>:<span class="string">"Validation.ValidatorError.failure"</span>,<span class="string">"reason"</span>:<span class="string">"Internal Server Error"</span>,<span class="string">"debugReason"</span>:<span class="string">"OnlyAlphanumeric failed validation: example@github.com is not alphanumeric"</span>,<span class="string">"error"</span>:<span class="literal">true</span>}</code></pre>
 <p>这也就说明了，我们传输的问本内容不符合<code>alphanumeric</code>。<br>然后我们将URL改为<code>http://localhost:8080/alpha?input=example123</code>，然后就会看到我们的返回值</p>
-<pre><code>validated:example
-</code></pre><h3 id="邮箱校验"><a href="#邮箱校验" class="headerlink" title="邮箱校验"></a>邮箱校验</h3><p>我们可以利用<code>EmailValidator</code>来做邮箱的校验，方法同上面一样：</p>
+<pre><code>validated:example</code></pre><h3 id="邮箱校验"><a href="#邮箱校验" class="headerlink" title="邮箱校验"></a>邮箱校验</h3><p>我们可以利用<code>EmailValidator</code>来做邮箱的校验，方法同上面一样：</p>
 <pre><code class="Swift"><span class="keyword">get</span>(<span class="string">"email"</span>) { request <span class="keyword">in</span>
             <span class="keyword">guard</span> <span class="keyword">let</span> input = request.data[<span class="string">"input"</span>]?.string <span class="keyword">else</span> {
                 <span class="keyword">throw</span> <span class="type">Abort</span>.badRequest
             }
             <span class="keyword">let</span> validaInput = <span class="keyword">try</span> input.tested(by: <span class="type">EmailValidator</span>())
-            <span class="keyword">return</span> <span class="string">"validated:<span class="subst">\(validaInput)</span>"</span>
-    }
-</code></pre>
-<p>然后我们输入URL：<a href="http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：" target="_blank" rel="external">http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：</a></p>
-<pre><code>Validated: wallaceicdi@outlook.com
-</code></pre><h3 id="其余自带校验工具"><a href="#其余自带校验工具" class="headerlink" title="其余自带校验工具"></a>其余自带校验工具</h3><table>
+            <span class="keyword">return</span> <span class="string">"validated:\(validaInput)"</span>
+    }     </code></pre>
+<p>然后我们输入URL：<a href="http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：" target="_blank" rel="noopener">http://localhost:8080/email?input=wallaceicdi@outlook.com，然后就会的到：</a></p>
+<pre><code>Validated: wallaceicdi@outlook.com</code></pre><h3 id="其余自带校验工具"><a href="#其余自带校验工具" class="headerlink" title="其余自带校验工具"></a>其余自带校验工具</h3><table>
 <thead>
 <tr>
 <th>校验类</th>
@@ -385,8 +379,7 @@
 <th>用法</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>Unique</td>
 <td>输入内容是否唯一</td>
 <td>someCharacter.tested(by: Unique())</td>
@@ -416,8 +409,7 @@
 <td>输入内容是否被包含</td>
 <td>input.tested(by: In.init([“1”,”2”,”3”]))</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <h2 id="创建自己的校验工具"><a href="#创建自己的校验工具" class="headerlink" title="创建自己的校验工具"></a>创建自己的校验工具</h2><p>通过参考工具自带的<code>Equals.Swift</code>：</p>
 <pre><code class="Swift"><span class="comment">/// Validates that matches a given input</span>
 <span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">Equals</span>&lt;<span class="title">T</span>&gt;: <span class="title">Validator</span> <span class="title">where</span> <span class="title">T</span>: <span class="title">Validatable</span>, <span class="title">T</span>: <span class="title">Equatable</span> </span>{
@@ -431,13 +423,12 @@
 
     <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">validate</span><span class="params">(<span class="number">_</span> input: T)</span></span> <span class="keyword">throws</span> {
         <span class="keyword">guard</span> input == expectation <span class="keyword">else</span> {
-            <span class="keyword">throw</span> error(<span class="string">"<span class="subst">\(input)</span> does not equal expectation <span class="subst">\(expectation)</span>"</span>)
+            <span class="keyword">throw</span> error(<span class="string">"\(input) does not equal expectation \(expectation)"</span>)
         }
     }
-}
-</code></pre>
+}</code></pre>
 <p>从这里面我们可以看出，只要遵守<code>Validator</code>协议，并且实现其<code>validate</code>方法即可。</p>
-<p>参考文件：<br><a href="https://github.com/vapor/validation/blob/master/Tests/ValidationTests/ValidationConvenienceTests.swift" target="_blank" rel="external">https://github.com/vapor/validation/blob/master/Tests/ValidationTests/ValidationConvenienceTests.swift</a></p>
+<p>参考文件：<br><a href="https://github.com/vapor/validation/blob/master/Tests/ValidationTests/ValidationConvenienceTests.swift" target="_blank" rel="noopener">https://github.com/vapor/validation/blob/master/Tests/ValidationTests/ValidationConvenienceTests.swift</a></p>
 
       
     </div>
@@ -556,7 +547,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">39</span>
+                    <span class="site-state-item-count">56</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -591,7 +582,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

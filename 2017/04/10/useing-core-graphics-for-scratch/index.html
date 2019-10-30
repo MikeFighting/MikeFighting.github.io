@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Objective-C,">
+
+
+<meta name="description" content="刮奖是商家类项目中经常使用的组件，其实现方式也有多种，下面介绍一种使用Core Graphics实现的一种方式。 Core Graphics中有一种根据遮罩图片(Masking Images)和原图片最终合成位图的方法，下面看一个官方文档给出的效果来一个直观的展示。从中可以看到黑色的部分将原图显示了出来，白色的部分把原图遮住了，灰色的部分和原图经过一定的算法进行了合成。我们可以通过不断的改变遮罩层">
+<meta name="keywords" content="Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用Core Graphics实现刮奖效果">
+<meta property="og:url" content="https://mikefighting.github.io/2017/04/10/useing-core-graphics-for-scratch/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="刮奖是商家类项目中经常使用的组件，其实现方式也有多种，下面介绍一种使用Core Graphics实现的一种方式。 Core Graphics中有一种根据遮罩图片(Masking Images)和原图片最终合成位图的方法，下面看一个官方文档给出的效果来一个直观的展示。从中可以看到黑色的部分将原图显示了出来，白色的部分把原图遮住了，灰色的部分和原图经过一定的算法进行了合成。我们可以通过不断的改变遮罩层">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-1fd246bfd247ca29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-a551b423e34ebc65.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-e83b5cbb73ba007d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-60f70dd8905db127.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-12-04T06:53:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="利用Core Graphics实现刮奖效果">
+<meta name="twitter:description" content="刮奖是商家类项目中经常使用的组件，其实现方式也有多种，下面介绍一种使用Core Graphics实现的一种方式。 Core Graphics中有一种根据遮罩图片(Masking Images)和原图片最终合成位图的方法，下面看一个官方文档给出的效果来一个直观的展示。从中可以看到黑色的部分将原图显示了出来，白色的部分把原图遮住了，灰色的部分和原图经过一定的算法进行了合成。我们可以通过不断的改变遮罩层">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-1fd246bfd247ca29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2017/04/10/useing-core-graphics-for-scratch/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>利用Core Graphics实现刮奖效果 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/04/10/useing-core-graphics-for-scratch/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">利用Core Graphics实现刮奖效果</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-04-10T16:53:00+08:00">2017-04-10</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>刮奖是商家类项目中经常使用的组件，其实现方式也有多种，下面介绍一种使用Core Graphics实现的一种方式。</p>
+<p>Core Graphics中有一种根据遮罩图片(Masking Images)和原图片最终合成位图的方法，下面看一个官方文档给出的效果来一个直观的展示。<br><img src="http://upload-images.jianshu.io/upload_images/1513759-1fd246bfd247ca29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="原图"><br><img src="http://upload-images.jianshu.io/upload_images/1513759-a551b423e34ebc65.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="遮罩图"><br><img src="http://upload-images.jianshu.io/upload_images/1513759-e83b5cbb73ba007d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="合成图"><br>从中可以看到黑色的部分将原图显示了出来，白色的部分把原图遮住了，灰色的部分和原图经过一定的算法进行了合成。我们可以通过不断的改变遮罩层中某部分的颜色，最终产生刮奖的效果。具体步骤如下：<br><img src="http://upload-images.jianshu.io/upload_images/1513759-60f70dd8905db127.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="实现步骤"><br>从中可以看出，刚开始产生的Marsk是黑色的，这时合成之后蒙层图片原样展示，手指一动的时候往mask上绘制了白色的线条，这样，合成之后蒙层上被划过的地方被白色所取代，这样就出现了刮奖的效果，在每次绘制完成之后只需要调用<code>setNeedsDisplay</code>方法，然后在<code>drawRect</code>方法中不断展现最终合成的图片即可。<br>具体的代码如下:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CGColorSpaceRef</span> colorspace = <span class="built_in">CGColorSpaceCreateDeviceGray</span>();</span><br><span class="line"><span class="keyword">float</span> scale = [<span class="built_in">UIScreen</span> mainScreen].scale;</span><br><span class="line"><span class="comment">//1. 获取刮奖层</span></span><br><span class="line"><span class="built_in">UIGraphicsBeginImageContextWithOptions</span>(hideView.bounds.size, <span class="literal">NO</span>, <span class="number">0</span>);</span><br><span class="line">[hideView.layer renderInContext:<span class="built_in">UIGraphicsGetCurrentContext</span>()];</span><br><span class="line">hideView.layer.contentsScale = scale;</span><br><span class="line">hideImage = <span class="built_in">UIGraphicsGetImageFromCurrentImageContext</span>().CGImage;</span><br><span class="line"><span class="built_in">UIGraphicsEndImageContext</span>();</span><br><span class="line"></span><br><span class="line">size_t imageWidth = <span class="built_in">CGImageGetWidth</span>(hideImage);</span><br><span class="line">size_t imageHeight = <span class="built_in">CGImageGetHeight</span>(hideImage);</span><br><span class="line"><span class="built_in">CFMutableDataRef</span> pixels = <span class="built_in">CFDataCreateMutable</span>(<span class="literal">NULL</span>, imageWidth * imageHeight);</span><br><span class="line"><span class="comment">//2. 获取context手指滑动时不断在这个context上画上白线。</span></span><br><span class="line">contextMask = <span class="built_in">CGBitmapContextCreate</span>(<span class="built_in">CFDataGetMutableBytePtr</span>(pixels), imageWidth, imageHeight , <span class="number">8</span>, imageWidth, colorspace, kCGImageAlphaNone);</span><br><span class="line"><span class="built_in">CGContextFillRect</span>(contextMask, <span class="keyword">self</span>.frame);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置滑动时候产生的线条颜色是白色</span></span><br><span class="line"><span class="built_in">CGContextSetStrokeColorWithColor</span>(contextMask, [<span class="built_in">UIColor</span> whiteColor].CGColor);</span><br><span class="line"><span class="built_in">CGContextSetLineWidth</span>(contextMask, _sizeBrush);</span><br><span class="line"><span class="built_in">CGContextSetLineCap</span>(contextMask, kCGLineCapRound);</span><br><span class="line"></span><br><span class="line"><span class="built_in">CGDataProviderRef</span> dataProvider = <span class="built_in">CGDataProviderCreateWithCFData</span>(pixels);</span><br><span class="line"><span class="built_in">CGImageRef</span> mask = <span class="built_in">CGImageMaskCreate</span>(imageWidth, imageHeight, <span class="number">8</span>, <span class="number">8</span>, imageWidth, dataProvider, <span class="literal">nil</span>, <span class="literal">NO</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//2. 根据iamge mask产生最终的图片</span></span><br><span class="line">scratchImage = <span class="built_in">CGImageCreateWithMask</span>(hideImage, mask);</span><br><span class="line"><span class="built_in">CGImageRelease</span>(mask);</span><br><span class="line"><span class="built_in">CGColorSpaceRelease</span>(colorspace);</span><br></pre></td></tr></table></figure>
+
+<p>手指滑动时候调用的方法:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)touchesMoved:(<span class="built_in">NSSet</span> *)touches withEvent:(<span class="built_in">UIEvent</span> *)event &#123;</span><br><span class="line">[<span class="keyword">super</span> touchesMoved:touches withEvent:event];</span><br><span class="line"><span class="built_in">UITouch</span> *touch = [[event touchesForView:<span class="keyword">self</span>] anyObject];</span><br><span class="line">currentTouchLocation = [touch locationInView:<span class="keyword">self</span>];</span><br><span class="line">previousTouchLocation = [touch previousLocationInView:<span class="keyword">self</span>];</span><br><span class="line">[<span class="keyword">self</span> scratchTheViewFrom:previousTouchLocation to:currentTouchLocation];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 绘制图像</span></span><br><span class="line">- (<span class="keyword">void</span>)scratchTheViewFrom:(<span class="built_in">CGPoint</span>)startPoint to:(<span class="built_in">CGPoint</span>)endPoint &#123;</span><br><span class="line"></span><br><span class="line"><span class="built_in">BOOL</span> needRender = [<span class="keyword">self</span> needRenderWithCurrentLocation:endPoint previousLocation:previousTouchLocation];</span><br><span class="line"><span class="keyword">if</span> (!needRender) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">float</span> scale = [<span class="built_in">UIScreen</span> mainScreen].scale;</span><br><span class="line"><span class="built_in">CGContextMoveToPoint</span>(contextMask, startPoint.x * scale, (<span class="keyword">self</span>.frame.size.height - startPoint.y) * scale);</span><br><span class="line"><span class="built_in">CGContextAddLineToPoint</span>(contextMask, endPoint.x * scale, (<span class="keyword">self</span>.frame.size.height - endPoint.y) * scale);</span><br><span class="line"><span class="built_in">CGContextStrokePath</span>(contextMask);</span><br><span class="line"><span class="comment">// 调用drawRect 方法</span></span><br><span class="line">[<span class="keyword">self</span> setNeedsDisplay];</span><br><span class="line"><span class="keyword">self</span>.isDrawn = <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)drawRect:(<span class="built_in">CGRect</span>)rect &#123;</span><br><span class="line"><span class="built_in">UIImage</span> *imageToDraw = [<span class="built_in">UIImage</span> imageWithCGImage:scratchImage];</span><br><span class="line">[imageToDraw drawInRect:<span class="built_in">CGRectMake</span>(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="keyword">self</span>.frame.size.width, <span class="keyword">self</span>.frame.size.height)];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/07/understanding-aspects-source-code/" rel="next" title="IOS中AOP框架Aspects源码分析">
+                <i class="fa fa-chevron-left"></i> IOS中AOP框架Aspects源码分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/25/mutiple-cocoapods-coexist/" rel="prev" title="Cocoapods多版本共存并自由切换">
+                Cocoapods多版本共存并自由切换 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

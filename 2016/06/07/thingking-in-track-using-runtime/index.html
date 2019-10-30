@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Objective-C,">
+
+
+<meta name="description" content="埋点是现在很多App中都需要用到的，这个问题可能每个人都能处理，但是怎样来减少埋点所带来的侵入性，怎样用更加简洁的方式来处理埋点问题，怎样减少误埋，如果上线了发现少埋了怎么办？下面是本文讨论的重点（本文Demo已上传GitHub，可以下载讨论）:  什么是埋点？埋点的作用是什么？ 常规的处理方式是怎样的？ 我们可以怎样优化？ 怎样使用RunTime对其进行优化？ 在实践中遇到了什么问题以及解决方案">
+<meta name="keywords" content="Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RunTime应用实例--关于埋点的思考">
+<meta property="og:url" content="https://mikefighting.github.io/2016/06/07/thingking-in-track-using-runtime/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="埋点是现在很多App中都需要用到的，这个问题可能每个人都能处理，但是怎样来减少埋点所带来的侵入性，怎样用更加简洁的方式来处理埋点问题，怎样减少误埋，如果上线了发现少埋了怎么办？下面是本文讨论的重点（本文Demo已上传GitHub，可以下载讨论）:  什么是埋点？埋点的作用是什么？ 常规的处理方式是怎样的？ 我们可以怎样优化？ 怎样使用RunTime对其进行优化？ 在实践中遇到了什么问题以及解决方案">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-01e20264d3596c3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-4630c1435e321dbe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-4e30c9b337c4c891.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1513759-3c28e14477b58263.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-12-04T09:45:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RunTime应用实例--关于埋点的思考">
+<meta name="twitter:description" content="埋点是现在很多App中都需要用到的，这个问题可能每个人都能处理，但是怎样来减少埋点所带来的侵入性，怎样用更加简洁的方式来处理埋点问题，怎样减少误埋，如果上线了发现少埋了怎么办？下面是本文讨论的重点（本文Demo已上传GitHub，可以下载讨论）:  什么是埋点？埋点的作用是什么？ 常规的处理方式是怎样的？ 我们可以怎样优化？ 怎样使用RunTime对其进行优化？ 在实践中遇到了什么问题以及解决方案">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1513759-01e20264d3596c3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2016/06/07/thingking-in-track-using-runtime/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>RunTime应用实例--关于埋点的思考 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2016/06/07/thingking-in-track-using-runtime/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RunTime应用实例--关于埋点的思考</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-06-07T11:35:00+08:00">2016-06-07</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>埋点是现在很多App中都需要用到的，这个问题可能每个人都能处理，但是怎样来减少埋点所带来的侵入性，怎样用更加简洁的方式来处理埋点问题，怎样减少误埋，如果上线了发现少埋了怎么办？下面是本文讨论的重点（<a href="https://github.com/MikeFighting/LogByRunTime" target="_blank" rel="noopener">本文Demo已上传GitHub，可以下载讨论</a>）:</p>
+<ul>
+<li>什么是埋点？埋点的作用是什么？</li>
+<li>常规的处理方式是怎样的？</li>
+<li>我们可以怎样优化？</li>
+<li>怎样使用RunTime对其进行优化？</li>
+<li>在实践中遇到了什么问题以及解决方案？</li>
+<li>最理想的埋点是什么样的？</li>
+<li>其中可能存在的问题是什么？</li>
+</ul>
+<p>接下来将对其一一做以说明:</p>
+<h2 id="什么是埋点？埋点的作用是什么？"><a href="#什么是埋点？埋点的作用是什么？" class="headerlink" title="什么是埋点？埋点的作用是什么？"></a>什么是埋点？埋点的作用是什么？</h2><p>其实埋点也叫日志上报，其实就是根据需求上报一系列关于用户行为的数据，比如：用户点击了哪个按钮，用户浏览了哪个网站，用户在某个页面停留了多久等数据。这些数据对于运营来说很有用，他们可以用来分析某个功能开发的是不是合理，是不是因为某个地方的不合理而到导致了转化率的下降，从而对我们的App进行相应的改进，我们来看下某个第三方平台提供的埋点实例。<br><img src="http://upload-images.jianshu.io/upload_images/1513759-01e20264d3596c3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="埋点统计字段定义"><br>上图中说明了，某个时间对应的事件ID,以及针对这个事件需要关联的字段。下面是后台系统对某个埋点所做的数据统计:<br><img src="http://upload-images.jianshu.io/upload_images/1513759-4630c1435e321dbe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="后台系统对埋点的数据分析"></p>
+<p>这样我们就可以详细的分析出用户对于App的反馈，从而及时的修改我们的产品。</p>
+<h2 id="常规的埋点的做法是怎样的？"><a href="#常规的埋点的做法是怎样的？" class="headerlink" title="常规的埋点的做法是怎样的？"></a>常规的埋点的做法是怎样的？</h2><p>其实很简单，我们就在相应的事件里面加入相关的代码，给服务器上报数据不就得了。如下所示:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个一个按钮的响应事件</span></span><br><span class="line">- (<span class="keyword">void</span>)someButtonAction:(<span class="built_in">UIButton</span> *)someButton&#123;</span><br><span class="line"><span class="comment">// 该按钮需要处理的业务</span></span><br><span class="line">[<span class="keyword">self</span> upDateSomthing]</span><br><span class="line"><span class="comment">// 开始埋点</span></span><br><span class="line"><span class="comment">// eid:事件id，sa:用户id, cI:当前时间</span></span><br><span class="line"><span class="built_in">NSDictionary</span> *upLoadDic = @&#123;<span class="string">@"eid"</span>:<span class="string">@"311"</span>,<span class="string">@"sa"</span>:<span class="string">@"706976487532177"</span>,<span class="string">@"cI"</span>:<span class="string">@"2016-6-4 12:11:34"</span>&#125;;</span><br><span class="line">[ZHUpLoadManager upLoadWithDic:upLoadDic];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样一个埋点问题就解决了，单同时却隐藏着很多问题:1.这样每点击一个一下按钮就请求一次网络会不会出现性能问题？2.如果这样频繁的数据上报会不会消耗更多的用户流量？3.这样的代码能经受住需求的变更吗？比如字段变了，或者你把<code>cI</code>看错了，应该是<code>cl</code>。4.这样的代码会不会造成难以测试？5.这样的频繁上报会不会增加服务器端的压力？6.代码整洁吗？……(<strong>程序员的一个好习惯是:这个代码能否经受住需求的变更。</strong>)</p>
+<h2 id="我们可以怎样优化？"><a href="#我们可以怎样优化？" class="headerlink" title="我们可以怎样优化？"></a>我们可以怎样优化？</h2><ol>
+<li>首先我们可以用一个类，来专门处理这些需要上报的埋点的字段，将这些字段作为常量,例如:</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// LogManager.h</span></span><br><span class="line"><span class="keyword">extern</span> <span class="built_in">NSString</span> * <span class="keyword">const</span> kLogEventKey;   <span class="comment">//事件id</span></span><br><span class="line"><span class="keyword">extern</span> <span class="built_in">NSString</span> * <span class="keyword">const</span> kLogUserIdKey;  <span class="comment">//用户id</span></span><br><span class="line"><span class="keyword">extern</span> <span class="built_in">NSString</span> * <span class="keyword">const</span> kLogOperationInterval;  <span class="comment">//操作时间</span></span><br><span class="line"><span class="comment">// LogManager.m</span></span><br><span class="line"><span class="built_in">NSString</span> * <span class="keyword">const</span> kLogEventKey   = <span class="string">@"co"</span>; <span class="comment">//事件id</span></span><br><span class="line"><span class="built_in">NSString</span> * <span class="keyword">const</span> kLogUserIdKey  = <span class="string">@"sa"</span>; <span class="comment">//用户id</span></span><br><span class="line"><span class="built_in">NSString</span> * <span class="keyword">const</span> kLogOperationInterval  = <span class="string">@"cq"</span>; <span class="comment">//操作时间</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>对于用户id，当前时间，用户手机型号，手机品牌，等等与用户所在页面无关的内容，可以用统一的一个类进行处理，将其作为这个类的一个属性，使用<code>getter</code>方法将其相应的数值返回即可(对于恒定不变的可以使用懒加载)。</li>
+<li>这样的数据传输策略是有问题的，每次点击都上报，可能一个面需要上报的地方很多，这就会造成很大的性能问题，我们可以<strong>先将需要上传的数据缓存起来，然后缓存够50条数据上报一次，或者每隔5分钟上报一次</strong>;</li>
+<li>为了节省流量我们可以，1）将数据压缩之后再上报,<a href="http://www.jianshu.com/p/7016ffdbe97d" target="_blank" rel="noopener">可以参考我的另一篇文章</a>；2）和服务端商量，用尽可能短的字段，如:<code>cityName = @&quot;北京&quot;;</code>变为<code>cn = @&quot;北京&quot;;</code>3)尽量不要上传的频率过高，如第三点。</li>
+<li>如何解决代码的整洁，易于测试的问题？请看下面。</li>
+</ol>
+<h2 id="怎样使用RunTime来进行优化？"><a href="#怎样使用RunTime来进行优化？" class="headerlink" title="怎样使用RunTime来进行优化？"></a>怎样使用RunTime来进行优化？</h2><p>我么能不能利用RunTime来给每一个Button的响应事件中添加一段代码，利用这段代码来进行埋点上报呢？或者进一步来说我们能不能给所有继承自UIControl的对象都添加这样一段代码呢？这样我们不是可以捕获所有的用户事件了吗？(其实答案是否定的，看第五条);这时我们可以利用Mehod Swizzle,或者叫<code>方法注入</code>,或者叫<code>hook</code>住了某个方法，听着挺玄乎，其实就是RunTime的一个API,这个API能够交换两个方法的实现。通过这个API,我们可以这样实现方法注入。如下图所示:<br><img src="http://upload-images.jianshu.io/upload_images/1513759-4e30c9b337c4c891.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="方法注入的实现过程"><br>那么我们点击按钮系统会不会给每个按钮都执行一个统一的方法？然后我们往这个方法中嵌入响应的代码片段就可以了。答案是肯定的。我们可以往</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)sendAction:(SEL)action to:(<span class="keyword">nullable</span> <span class="keyword">id</span>)target forEvent:(<span class="keyword">nullable</span> <span class="built_in">UIEvent</span> *)event;</span><br></pre></td></tr></table></figure>
+
+<p>这个方法里面嵌入相应的代码片段。我们可以这样:1.将互换方法实现的的这个方法放到一个工具类中，因为我们可能不止一处要用到这种方法。2.我们给UIControl添加一个Category,然后在里面调用这个工具类然后实现所插入的代码片段。这里我们既然可以得到<code>target</code>还有<code>action</code>,那么很多情况下我们就可以唯一确定这个埋点了，那么我们怎样从这么多的埋点中选出这个这个埋点呢？<strong>我们其实可以用字典和数组结合的方式将这些方法的target和方法的参数一一存起来，然后在嵌入的方法内部获取其对应的方法，以及其相应的，这个事先配置好的字典和数组的结合放在哪里比较合适呢？plist。</strong>下面就以最简单的形式展示这种思路:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 工具类</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ZHSwizzleTool</span> : <span class="title">NSObject</span></span></span><br><span class="line">+ (<span class="keyword">void</span>)zhSwizzleWithClass:(Class)processedClass originalSelector:(SEL)originSelector swizzleSelector:(SEL)swizzlSelector;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ZHSwizzleTool</span></span></span><br><span class="line"> +(<span class="keyword">void</span>)zhSwizzleWithClass:(Class)processedClass originalSelector:(SEL)originSelector swizzleSelector:(SEL)swizzlSelector&#123;</span><br><span class="line"></span><br><span class="line">    Method originMethod = class_getInstanceMethod(processedClass, originSelector);</span><br><span class="line">    Method swizzleMethod = class_getInstanceMethod(processedClass, swizzlSelector);</span><br><span class="line">    <span class="built_in">BOOL</span> didAddMethod = class_addMethod(processedClass, originSelector, method_getImplementation(swizzleMethod), method_getTypeEncoding(swizzleMethod));</span><br><span class="line">    <span class="keyword">if</span> (didAddMethod) &#123;</span><br><span class="line">    class_replaceMethod(processedClass, swizzlSelector, method_getImplementation(originMethod), method_getTypeEncoding(originMethod));</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        method_exchangeImplementations(originMethod, swizzleMethod);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 分类</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">UIControl</span> (<span class="title">ZHSwizzle</span>)</span></span><br><span class="line">+(<span class="keyword">void</span>)load&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</span><br><span class="line"><span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</span><br><span class="line"></span><br><span class="line">SEL originSEL = <span class="keyword">@selector</span>(sendAction:to:forEvent:);</span><br><span class="line">SEL swizzleSEL = <span class="keyword">@selector</span>(sendSwizzleAction:to:forEvent:);</span><br><span class="line"></span><br><span class="line">[ZHSwizzleTool zhSwizzleWithClass:[<span class="keyword">self</span> <span class="keyword">class</span>]originalSelector:originSEL swizzleSelector:swizzleSEL];</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line">&#125;</span><br><span class="line"> - (<span class="keyword">void</span>)sendSwizzleAction:(SEL)action to:(<span class="keyword">id</span>)target   forEvent:(<span class="built_in">UIEvent</span> *)event&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注意这里调用的是原来的系统方法</span></span><br><span class="line">[<span class="keyword">self</span> sendSwizzleAction:action to:target forEvent:event];</span><br><span class="line"></span><br><span class="line"><span class="built_in">NSString</span> *selectorName = <span class="built_in">NSStringFromSelector</span>(action);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个plist中存储的数据格式是这样的:@&#123;@"someViewController":@"selector0":@[para0,para1,para2],@"selector1":@[para0,para1]]&#125;;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">NSString</span> *pathString = [[<span class="built_in">NSBundle</span> mainBundle]pathForResource:<span class="string">@"ZHLogInfo"</span> ofType:<span class="string">@"plist"</span>];</span><br><span class="line"><span class="built_in">NSDictionary</span> *plistDic = [<span class="built_in">NSDictionary</span> dictionaryWithContentsOfFile:pathString];</span><br><span class="line"></span><br><span class="line"><span class="comment">//1. 获取Target的名字</span></span><br><span class="line"><span class="built_in">NSDictionary</span> *controllerDic = plistDic[<span class="built_in">NSStringFromClass</span>([target <span class="keyword">class</span>])];</span><br><span class="line"></span><br><span class="line"><span class="comment">//2. 获取这个方法对应的参数列表</span></span><br><span class="line"><span class="built_in">NSArray</span> *parameterArray = controllerDic[selectorName];</span><br><span class="line"><span class="comment">//3. 实例化数据中心</span></span><br><span class="line">ZHLogDataCenter *logCenter = [[ZHLogDataCenter alloc]init];</span><br><span class="line"><span class="built_in">NSMutableDictionary</span> *logInfoDic = [<span class="built_in">NSMutableDictionary</span> dictionary];</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="built_in">NSString</span> *parameter <span class="keyword">in</span> parameterArray) &#123;</span><br><span class="line"></span><br><span class="line"><span class="built_in">NSString</span> *getSelector = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@"</span>,parameter];</span><br><span class="line">SEL getSeletor = <span class="built_in">NSSelectorFromString</span>(getSelector);</span><br><span class="line"><span class="comment">//4. 从数据中心中获取相应的数据</span></span><br><span class="line"><span class="keyword">id</span> value =  [logCenter performSelector:getSeletor withObject:<span class="literal">nil</span>];</span><br><span class="line"><span class="comment">//5.获取成功则将其存入需要上传的字典</span></span><br><span class="line"><span class="keyword">if</span> (value)</span><br><span class="line">[logInfoDic setObject:value forKey:parameter];</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">   <span class="comment">//6.将这个字典存入埋点管理类，其会将其存入缓存并等待上传</span></span><br><span class="line">[ZHLogCenter zhLogWithInforDictionary:logInfoDic];</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p> 下面是这个代码中用到的Plist中的配置:<br><img src="http://upload-images.jianshu.io/upload_images/1513759-3c28e14477b58263.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="埋点相关字段的plist配置"></p>
+<h2 id="在实践中遇到了什么问题以及解决方案？"><a href="#在实践中遇到了什么问题以及解决方案？" class="headerlink" title="在实践中遇到了什么问题以及解决方案？"></a>在实践中遇到了什么问题以及解决方案？</h2><ol>
+<li>并不是所有的事件都是有继承自UIControl的控件来发出的，比如：手势，点击Cell。</li>
+<li>并不是所有的按钮点击了之后就立马需要埋点上传？可能在按钮的响应方法中经过了层层的<code>if(){  } else{  }</code>最后才需要埋点。</li>
+<li>和事件所在类无关的埋点数据可以同意从<code>ZHLogDataCenter</code>这个类中中取，那么如果这个数据是和所在类有关呢？</li>
+<li>对于代理方法该怎样处理？</li>
+<li>如果很多个按钮对应着一个事件该怎样处理？</li>
+<li>项目中事件的处理方法不尽相同，方法的参数个数不一样，并且方法的返回值也不一样，如何对他们进行统一的处理?</li>
+</ol>
+<p>下面我们来一一解决这些问题。</p>
+<p><strong>问题1</strong>：对于不是来自UIControl的子类发出的事件，我们一样是可以进行hooK，只不过方法有所不同。我们在UIControl的分类中写了一段嵌入的代码，确实hook住了系统UIButton的点击事件，是<strong>因为UIButton自身会调用UIControl的这个方法。但是对于点击事件，这个是我们自己写的一个方法，它的父类<code>UIViewController</code>中是没有的，所以在执行我们自己点击事件的方法时UIViewController分类中要嵌入的方法是不会被调用的，这时候怎么办，我们可以动态的给我们自己要hook的ViewController动态的添加一个方法，然后就可以hook了</strong>（这一点不太好理解）。具体的添加方法，可以参考本文的实例代码。</p>
+<p><strong>问题2</strong>：对于是否上传和具体的业务逻辑相关的情况，我们可以用方法所在类的一个属性值进行标记，这个属性写在<code>.m</code>文件中即可(KVC可以获取.m文件中的属性值。)，我们先执行要hook那个类的方法，然后根据<code>plist</code>中配置的相关标记进行相应的处理（这里的属性值其实也是不必要的，我么可以根据类名和方法名字符串的哈希生成唯一的key，然后利用runtime自动关联到这个类的<code>mf_condition</code>属性上，这个属性是一个字典其key就是刚才生成的，value就是运行完这个方法之后得到的值，然后这个值再跟plist中的配置做以比较）。</p>
+<p><strong>问题3</strong>：对于和事件所在类有紧密关联的埋点数据，比如某个页面对应的产品ID,比如某个页面点击了cell，之后这个cell对应的model的ID。这个时候我们可以参考方法2，添加一个属性，用一个属性值来存储这些这些需要上传的具体数据。</p>
+<p><strong>问题4</strong>：代理方法和手势的处理也是一样的，既然一个类实现了某个代理方法，那么其<code>[someInstance respondsToSelector:someSelector]</code>所返回的BOOL值应该是YES的，然后其它的就和手势的处理是一样的了。</p>
+<p><strong>问题5</strong>：对于很多按钮对应一个响应事件的情况，我们可以利用RunTime动态的给按钮添加一个属性，比如:buttonIdentifier,这样我们就可以在plist中进行相应的配置，以进行相应的埋点处理。</p>
+<p><strong>问题6</strong>：这个问题其实就是hook住所有的方法，然后给他们添加同一个代码段的问题，这时候我们可以使用<code>Aspects</code>这个第三方框架：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+ (<span class="keyword">id</span>&lt;AspectToken&gt;)aspect_hookSelector:(SEL)selector</span><br><span class="line">  withOptions:(AspectOptions)options</span><br><span class="line">   usingBlock:(<span class="keyword">id</span>)block</span><br><span class="line">error:(<span class="built_in">NSError</span> **)error &#123;</span><br><span class="line"><span class="keyword">return</span> aspect_add((<span class="keyword">id</span>)<span class="keyword">self</span>, selector, options, block, error);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用这个接口，因为在<code>UIViewController</code>的分类中调用这个接口的对象不一样，并且我们根据<code>plist</code>中的配置hook的selector不一样，然而最后执行的block却是一样的，这就很好的解决了问题。</p>
+<h2 id="最理想的埋点是什么样的？"><a href="#最理想的埋点是什么样的？" class="headerlink" title="最理想的埋点是什么样的？"></a>最理想的埋点是什么样的？</h2><p>最理想的埋点是动态的，就是PM给我们说需要哪些埋点，然后服务器给我们发一个类似与上文中提到的<code>plist</code>一样的文件，或者一个<code>json</code>,我们存到本地，如果这些埋点没有更新，我们就从本地中读取相应的文件，做相应的埋点，如果有更新，我们重新从服务器获取最新的需要埋的点，然后进行相应埋点。这样就解决了少埋，或者埋点不恰当，需要添加埋点的问题。</p>
+<h2 id="其中可能存在的问题是什么？"><a href="#其中可能存在的问题是什么？" class="headerlink" title="其中可能存在的问题是什么？"></a>其中可能存在的问题是什么？</h2><p>当然这里面也有其难以处理的问题，比如我们使用了一个第三方控件，这个第三方控件的事件回调不是用delegate实现的，而是用block实现的，并且这个埋点和具体的业务逻辑有关系，那么这种方法就难以处理了。 如果很多事件的逻辑处理放到了block中进行，那么也将造难以处理。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/01/internationalization-for-ios/" rel="next" title="iOS中的国际化">
+                <i class="fa fa-chevron-left"></i> iOS中的国际化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/07/understanding-aspects-source-code/" rel="prev" title="IOS中AOP框架Aspects源码分析">
+                IOS中AOP框架Aspects源码分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是埋点？埋点的作用是什么？"><span class="nav-number">1.</span> <span class="nav-text">什么是埋点？埋点的作用是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常规的埋点的做法是怎样的？"><span class="nav-number">2.</span> <span class="nav-text">常规的埋点的做法是怎样的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我们可以怎样优化？"><span class="nav-number">3.</span> <span class="nav-text">我们可以怎样优化？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#怎样使用RunTime来进行优化？"><span class="nav-number">4.</span> <span class="nav-text">怎样使用RunTime来进行优化？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在实践中遇到了什么问题以及解决方案？"><span class="nav-number">5.</span> <span class="nav-text">在实践中遇到了什么问题以及解决方案？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最理想的埋点是什么样的？"><span class="nav-number">6.</span> <span class="nav-text">最理想的埋点是什么样的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其中可能存在的问题是什么？"><span class="nav-number">7.</span> <span class="nav-text">其中可能存在的问题是什么？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
