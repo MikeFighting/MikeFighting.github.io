@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Objctive-C,">
+
+
+<meta name="description" content="本文源于开发中的一个困惑：经历了较大的重构，项目中有两个相同的类文件，竟然可以编译并链接通过。经过反思，回顾，整理了关于静态库的相关技术才解决了此疑问。接下来将聊聊静态库出现的原因，链接的原理及其容易令人困惑的点，同时简要说明OC中方法和类链接的特点。 问题由来问题一在iOS开发中，如果项目中有两个相同的类，那么在链接的时候一般会报错：  可是在我开发的项目，为什么不同目录下有两个相同的类确不会报">
+<meta name="keywords" content="Objctive-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聊聊OC中静态库的链接">
+<meta property="og:url" content="https://mikefighting.github.io/2019/10/30/chat-for-static-lib-link-in-OC/index.html">
+<meta property="og:site_name" content="击水湘江">
+<meta property="og:description" content="本文源于开发中的一个困惑：经历了较大的重构，项目中有两个相同的类文件，竟然可以编译并链接通过。经过反思，回顾，整理了关于静态库的相关技术才解决了此疑问。接下来将聊聊静态库出现的原因，链接的原理及其容易令人困惑的点，同时简要说明OC中方法和类链接的特点。 问题由来问题一在iOS开发中，如果项目中有两个相同的类，那么在链接的时候一般会报错：  可是在我开发的项目，为什么不同目录下有两个相同的类确不会报">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2019/png/341672/1571229029299-166df8d8-97dc-41cc-b277-b850b72a5e38.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2019/png/341672/1571301198062-586ae3a8-e2d9-4918-8f81-4c94bc6ebccc.png">
+<meta property="og:updated_time" content="2019-10-30T14:28:49.830Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="聊聊OC中静态库的链接">
+<meta name="twitter:description" content="本文源于开发中的一个困惑：经历了较大的重构，项目中有两个相同的类文件，竟然可以编译并链接通过。经过反思，回顾，整理了关于静态库的相关技术才解决了此疑问。接下来将聊聊静态库出现的原因，链接的原理及其容易令人困惑的点，同时简要说明OC中方法和类链接的特点。 问题由来问题一在iOS开发中，如果项目中有两个相同的类，那么在链接的时候一般会报错：  可是在我开发的项目，为什么不同目录下有两个相同的类确不会报">
+<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2019/png/341672/1571229029299-166df8d8-97dc-41cc-b277-b850b72a5e38.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://mikefighting.github.io/2019/10/30/chat-for-static-lib-link-in-OC/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>聊聊OC中静态库的链接 | 击水湘江</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">击水湘江</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Born To Fight!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2019/10/30/chat-for-static-lib-link-in-OC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">聊聊OC中静态库的链接</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-30T22:24:12+08:00">2019-10-30</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文源于开发中的一个困惑：经历了较大的重构，项目中有两个相同的类文件，竟然可以编译并链接通过。经过反思，回顾，整理了关于静态库的相关技术才解决了此疑问。接下来将聊聊静态库出现的原因，链接的原理及其容易令人困惑的点，同时简要说明OC中方法和类链接的特点。</p>
+<h3 id="问题由来"><a href="#问题由来" class="headerlink" title="问题由来"></a>问题由来</h3><h4 id="问题一"><a href="#问题一" class="headerlink" title="问题一"></a>问题一</h4><p>在iOS开发中，如果项目中有两个相同的类，那么在链接的时候一般会报错：</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2019/png/341672/1571229029299-166df8d8-97dc-41cc-b277-b850b72a5e38.png" alt="image.png"></p>
+<p>可是在我开发的项目，为什么不同目录下有两个相同的类确不会报错，能够正常链接通过。</p>
+<h4 id="问题二"><a href="#问题二" class="headerlink" title="问题二"></a>问题二</h4><p>在C语言中，如果某个函数没有被定义，那么在链接时候会报符号找不到的错误，OC中如果某个类的方法只写了声明，为什么可以链接通过呢？</p>
+<h4 id="问题三"><a href="#问题三" class="headerlink" title="问题三"></a>问题三</h4><p>如果在项目中引入的静态库里含有只有分类的文件，为什么会在运行时会报错:<strong>unrecognized selector sent to instance</strong>？</p>
+<p>这里这几个问题其实都和静态库有关，我们先看看静态库解决了什么问题，以及静态库的链接是怎样的。</p>
+<h3 id="静态库解决了什么问题？"><a href="#静态库解决了什么问题？" class="headerlink" title="静态库解决了什么问题？"></a>静态库解决了什么问题？</h3><p>如果没有静态库，我们开发一个项目，会怎样？为了开发一个功能，我们要去某个公共的地方找到实现了相应功能的文件，以及这个文件依赖的文件，然后引入到项目中去，这样做显然太复杂了。后来出现了静态库，它其实是将上述动作交给了链接器，从而节省了人力。总体来说它可以方便引入外部功能，不泄露源码，节省编译时间等几个优点。</p>
+<h4 id="方便开发者使用"><a href="#方便开发者使用" class="headerlink" title="方便开发者使用"></a>方便开发者使用</h4><p>如果没有静态库，我们该怎样调用某个公共方法?我们首先需要去某个地方查找这个方法的定义，然后将这个方法的.h和.c文件引入到我们的工程，这时如果这个.c文件中还引入了其它的方法，那么我们需要一直寻找下去，这样就会让开发流程及其复杂。有了静态库，我们只需要导入一个库文件即可，链接器会决定究竟需要引入哪些目标文件。</p>
+<h4 id="方便编译器开发"><a href="#方便编译器开发" class="headerlink" title="方便编译器开发"></a>方便编译器开发</h4><p>有些人可能会感觉，既然程序员逐个来找所需要的源文件这么复杂，为什么编译器不内置所有的文件？我们使用的时候自动给我们链接所需要的目标文件不就可以了？这样做确实是可以，但是这样做其实大大增大了编译器的开发成本和维护成本，它和静态库耦合了，如果某个静态库升级了那么编译器也需要升级。</p>
+<h4 id="节省磁盘和内存空间"><a href="#节省磁盘和内存空间" class="headerlink" title="节省磁盘和内存空间"></a>节省磁盘和内存空间</h4><p>如果将所有的功能文件都打进一个.o文件，然后链接一次不就解决了开发者的问题，也解决了编译器的问题了吗？是，这样是解决了两者的问题，但是又引入了另外的问题：可执行文件的变得很大，因为它引入了不需要的功能，这占用了磁盘空间，同时在程序运行的时候也会占用内存空间。</p>
+<h4 id="不泄露源码"><a href="#不泄露源码" class="headerlink" title="不泄露源码"></a>不泄露源码</h4><p>某些框架可能是作为商用产品提供给开发者的，不能直接将代码提供给开发者，这时将源代码编译之后提供给开发者更加安全。其实如果开发者知道了源码的实现逻辑，就可能会依赖没有在.h中暴露出来的代码，这样不规范的用法就导致依赖了不稳定的东西，结果一旦库升级，内部实现逻辑改变，那么上层的使用方就会出bug。</p>
+<h4 id="节省编译时间"><a href="#节省编译时间" class="headerlink" title="节省编译时间"></a>节省编译时间</h4><p>在大型工程的开发过程中，某个开发者仅仅关注一个模块的功能，如果所有模块都是源码，那么每次运行项目就需要全部编译一遍，项目越大越耗时，所以在很多大型软件开发过程中都会拆开各个模块给不同的团队开发，自己业务不依赖的模块是个静态库，这样就在很大程度上节约开发的时间。</p>
+<h3 id="静态库的链接过程"><a href="#静态库的链接过程" class="headerlink" title="静态库的链接过程"></a>静态库的链接过程</h3><p>知道了静态库出现的原因，下面说说Unix标准下静态库的链接步骤。将静态库和源文件链接的形式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1linux&gt; gcc main.c /usr/lib/libm.a /usr/lib/libc.a</span><br></pre></td></tr></table></figure>
+
+<p>链接器的工作方式是这样的：在链接器收到这个指令之后，会对创建三个集合E，D，U，它们的作用分别是：</p>
+<p>E：存放最终要链接成可执行文件的所有目标文件。</p>
+<p>D：存放放入E中的目标文件中定义的符号。</p>
+<p>U：未被解析的符号引用。</p>
+<p>链接器根据传入参数中<strong>从前往后**</strong>的顺序解析所有的输入项，**如果输入项为.c文件，那么就会被转化成.o文件然后放到E中，如果是.o文件则直接放到E中，同时更新D和U，如果其输入的是静态库，那么它会逐个遍历静态库中的目标文件，以查找U中符号的定义，如果找到了某个目标文件定义了U中的符号，那么就将其加入到E中，并更新D，一直到U和D中的符号稳定（这时说明静态库中所有的目标文件都被处理完了，U和D都不再变化了）。最后链接时候只会链接E中的目标文件，静态库中不在E中的目标文件将会被忽略，从而不占可执行文件的空间。处理到最后，如果U中有符号未被定义，那么就会报符号找不到的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1linux&gt; undefined reference to &apos;some_func&apos;</span><br></pre></td></tr></table></figure>
+
+<p>具体流程如下：</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2019/png/341672/1571301198062-586ae3a8-e2d9-4918-8f81-4c94bc6ebccc.png" alt="静态库的链接流程.png"></p>
+<h3 id="静态库链接注意点"><a href="#静态库链接注意点" class="headerlink" title="静态库链接注意点"></a>静态库链接注意点</h3><p>从上面链接器对静态库处理链接的描述中，我们会发现几个问题：</p>
+<h4 id="链接的顺序很重要"><a href="#链接的顺序很重要" class="headerlink" title="链接的顺序很重要"></a>链接的顺序很重要</h4><p>如果某个文件引用了静态库中的函数，然而将静态库的链接放在了引用文件的前面，将会出现链接失败。为什么？<strong>因为引用符号的文件出现在了静态库的后面，那么，在静态库链接的时候没有被放到U中，所以静态库中需要被加入链接的目标文件被直接舍弃了。</strong>例如在main.c中使用了sumlib.a中的sum方法，而在链接的时候使用:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1linux&gt;  gcc sumlib.a main.c</span><br></pre></td></tr></table></figure>
+
+<p>这时会报符号未定义的链接错误，但是这样链接就没有问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1linux&gt;  gcc main.c sumlib.a</span><br></pre></td></tr></table></figure>
+
+<p>这是因为如果先处理sumlib.a的话，因为没有未引用的符号放到U中，所以这个静态库就直接被忽略了，之后再链接main.o的时候就会出错，关于静态库和.o之间链接可能引起的问题，<a href="https://stackoverflow.com/questions/37490157/linker-does-not-emit-multiple-definition-error-when-same-symbol-coexists-in-obje。" target="_blank" rel="noopener">StackOverflow上的这个回答给了五个Case可供学习</a> <strong>很多现代的链接器优化了删除静态库中无用文件的逻辑，不是在处理完某个静态库就将其中不需要的文件移除，而是在所有输入项中未定义符号处理完之后才会决定是否舍弃静态库中未放入E中的文件（这点是在Mac上使用gcc和clang试验结合参考资料5得来的）。</strong></p>
+<h4 id="静态库中可以出现重复的符号"><a href="#静态库中可以出现重复的符号" class="headerlink" title="静态库中可以出现重复的符号"></a>静态库中可以出现重复的符号</h4><p>因为静态库在生成时候是没有进行链接的，所以其不会检查是否有符号重复，而在链接时候，只要链接器找到了一个U中符号定义的目标文件，就将其放入到E中，并更新D，因此，之后那个重复的文件没有被链接的可能。所以链接过程中不会有重复目标文件带来的错误，无论这个文件是出现在一个静态库中，还是出现在多个静态库之间（在Xcode中，如果某个静态库的不同问价夹下出现两个相同的类文件，那么编译之后会在类名以某种规则加上字符串，以做区分）<strong>如果两个静态库中有相同的类，那么先被用来解引用的类将会被链接，而后被解引用的那个静态库中的文件，因为U中没有了该符号，所以就不会再被链接。</strong></p>
+<h4 id="不在静态库中的目标文件都会被放到E中"><a href="#不在静态库中的目标文件都会被放到E中" class="headerlink" title="不在静态库中的目标文件都会被放到E中"></a>不在静态库中的目标文件都会被放到E中</h4><p>如果某个源文件是直接链接，而没有打包进静态库，那么即使该文件没有被引用，它还是会被加入到可执行文件，从而增加了应用程序包的大小。</p>
+<h4 id="源文件可以替换掉静态库中的文件"><a href="#源文件可以替换掉静态库中的文件" class="headerlink" title="源文件可以替换掉静态库中的文件"></a>源文件可以替换掉静态库中的文件</h4><p>如果源文件放到静态库中的前面进行链接，那么最终链接的时候会用源文件，而不会使用静态库中编译好的目标文件，这个方法可以用在静态库的调试过程中。比如我们的项目用到了某个静态库，发现库中有一个bug，如果每修改一次都重新打包同时加入到项目中就会变得很繁琐（静态库有时候不好作为project直接引入到项目中），可以将某个文件直接引入到被使用的项目中去，这样就可以调试，调试完成之后再将源文件编译打包进静态库中就可以了。</p>
+<h3 id="本文开头提出的问题原因在哪？"><a href="#本文开头提出的问题原因在哪？" class="headerlink" title="本文开头提出的问题原因在哪？"></a>本文开头提出的问题原因在哪？</h3><h4 id="问题一-1"><a href="#问题一-1" class="headerlink" title="问题一"></a>问题一</h4><p>细心的读者可能已经发现，原因就是我上文说的静态库链接机制，由于我们的开发是在静态库中的，所以可以有两个相同的类被放到不同的目录下，至于哪个类被链接取决于哪个类先被链接器处理。</p>
+<h4 id="问题二-1"><a href="#问题二-1" class="headerlink" title="问题二"></a>问题二</h4><p>问题二的原因在于，在OC中方法是不会被生成符号的，可以生成符号的只有类名和全局变量，所以如果某个类没有.m文件，直接链接错误的。而方法不会，在OC中方法调用，在编译之后会转换成objc_msgSend函数的调用，方法名作为该函数的一个字符串参数被传入，而函数的具体地址是在运行时决定的，这一点和C语言不一样，这也就是OC作为一门动态语言的特点。</p>
+<h4 id="问题三-1"><a href="#问题三-1" class="headerlink" title="问题三"></a>问题三</h4><p>问题三的原因和问题二很像，因为OC不将方法作为符号，所以就不会将其放入U中，因为U中没有静态库中的符号，所以就不会将静态库中相应的目标文件链接进可执行文件，就会在运行的时候报错。关于这个问题及其解决方案，请看苹果的官方解答：<a href="https://developer.apple.com/library/archive/qa/qa1490/_index.html" target="_blank" rel="noopener">https://developer.apple.com/library/archive/qa/qa1490/_index.html</a></p>
+<h3 id="备注："><a href="#备注：" class="headerlink" title="备注："></a>备注：</h3><blockquote>
+<p>上面的问题三解决方案是通过配置Xcode中Build Setting，在Other Linker Flags中添加ObjC标识，填了此标识就会加载静态库的所有成员，无论是C还是C++还OC，但它对同一个静态库中的相同类是不会同时链接的，还是遵守上文中链接流程的描述（链接其中先链接到的符号文件），但是对于不同静态库中的文件不会因为其中已经没有未引用的符号而不链接该文件。同时现在绝大多数的项目都会使用CocoaPod，而CocoaPod默认是添加了ObjC标识的，这也就是为什么很多时候两个不同的静态库中有相同的符号会报链接错误。</p>
+</blockquote>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>既然在使用静态库的过程中可能会有这些问题，应该如何避免呢？解决某个静态库中相同文件，其实可以在提交前写个脚本执行下，如果发现相同的文件，则不能提交git仓库。然而对于不同静态库中相同类名等问题就需要在持续集成打包的机器上做比价合适，因为其比较耗时，可以使用ar -t或者其它指令来找出所有的.o文件，对比其是否有相同的目标文件，并给出总后的结果（如果开启了ObjC标识，那么其实无需关心不同静态库中相同目标文件的问题，因为链接器会直接报错的）。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
+<li>深入理解计算机系统: 7.6.3</li>
+<li><a href="https://developer.apple.com/library/archive/qa/qa1490/_index.html" target="_blank" rel="noopener">https://developer.apple.com/library/archive/qa/qa1490/_index.html</a></li>
+<li><a href="https://stackoverflow.com/questions/50292838/multiple-symbol-definitions-and-static-libraries" target="_blank" rel="noopener">https://stackoverflow.com/questions/50292838/multiple-symbol-definitions-and-static-libraries</a></li>
+<li><a href="https://stackoverflow.com/questions/37490157/linker-does-not-emit-multiple-definition-error-when-same-symbol-coexists-in-obje" target="_blank" rel="noopener">https://stackoverflow.com/questions/37490157/linker-does-not-emit-multiple-definition-error-when-same-symbol-coexists-in-obje</a></li>
+<li><a href="https://blog.csdn.net/weiyuefei/article/details/76169772" target="_blank" rel="noopener">https://blog.csdn.net/weiyuefei/article/details/76169772</a></li>
+<li><a href="https://segmentfault.com/a/1190000005859469" target="_blank" rel="noopener">https://segmentfault.com/a/1190000005859469</a></li>
+<li><a href="https://pewpewthespells.com/blog/objc_linker_flags.html" target="_blank" rel="noopener">https://pewpewthespells.com/blog/objc_linker_flags.html</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Objctive-C/" rel="tag"># Objctive-C</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/21/elements-that-effect-orthogonality/" rel="next" title="影响正交性的常见因素">
+                <i class="fa fa-chevron-left"></i> 影响正交性的常见因素
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="击水湘江">
+            
+              <p class="site-author-name" itemprop="name">击水湘江</p>
+              <p class="site-description motion-element" itemprop="description">努力让明天的自己爱上今天的自己！</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">57</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题由来"><span class="nav-number">1.</span> <span class="nav-text">问题由来</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#问题一"><span class="nav-number">1.1.</span> <span class="nav-text">问题一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#问题二"><span class="nav-number">1.2.</span> <span class="nav-text">问题二</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#问题三"><span class="nav-number">1.3.</span> <span class="nav-text">问题三</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态库解决了什么问题？"><span class="nav-number">2.</span> <span class="nav-text">静态库解决了什么问题？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方便开发者使用"><span class="nav-number">2.1.</span> <span class="nav-text">方便开发者使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方便编译器开发"><span class="nav-number">2.2.</span> <span class="nav-text">方便编译器开发</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#节省磁盘和内存空间"><span class="nav-number">2.3.</span> <span class="nav-text">节省磁盘和内存空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不泄露源码"><span class="nav-number">2.4.</span> <span class="nav-text">不泄露源码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#节省编译时间"><span class="nav-number">2.5.</span> <span class="nav-text">节省编译时间</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态库的链接过程"><span class="nav-number">3.</span> <span class="nav-text">静态库的链接过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态库链接注意点"><span class="nav-number">4.</span> <span class="nav-text">静态库链接注意点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#链接的顺序很重要"><span class="nav-number">4.1.</span> <span class="nav-text">链接的顺序很重要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#静态库中可以出现重复的符号"><span class="nav-number">4.2.</span> <span class="nav-text">静态库中可以出现重复的符号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不在静态库中的目标文件都会被放到E中"><span class="nav-number">4.3.</span> <span class="nav-text">不在静态库中的目标文件都会被放到E中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#源文件可以替换掉静态库中的文件"><span class="nav-number">4.4.</span> <span class="nav-text">源文件可以替换掉静态库中的文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本文开头提出的问题原因在哪？"><span class="nav-number">5.</span> <span class="nav-text">本文开头提出的问题原因在哪？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#问题一-1"><span class="nav-number">5.1.</span> <span class="nav-text">问题一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#问题二-1"><span class="nav-number">5.2.</span> <span class="nav-text">问题二</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#问题三-1"><span class="nav-number">5.3.</span> <span class="nav-text">问题三</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#备注："><span class="nav-number">6.</span> <span class="nav-text">备注：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案"><span class="nav-number">7.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">8.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">击水湘江</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

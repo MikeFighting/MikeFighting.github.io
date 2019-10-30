@@ -276,6 +276,178 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2019/10/30/chat-for-static-lib-link-in-OC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/10/30/chat-for-static-lib-link-in-OC/" itemprop="url">聊聊OC中静态库的链接</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-30T22:24:12+08:00">2019-10-30</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文源于开发中的一个困惑：经历了较大的重构，项目中有两个相同的类文件，竟然可以编译并链接通过。经过反思，回顾，整理了关于静态库的相关技术才解决了此疑问。接下来将聊聊静态库出现的原因，链接的原理及其容易令人困惑的点，同时简要说明OC中方法和类链接的特点。</p>
+<h3 id="问题由来"><a href="#问题由来" class="headerlink" title="问题由来"></a>问题由来</h3><h4 id="问题一"><a href="#问题一" class="headerlink" title="问题一"></a>问题一</h4><p>在iOS开发中，如果项目中有两个相同的类，那么在链接的时候一般会报错：</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2019/png/341672/1571229029299-166df8d8-97dc-41cc-b277-b850b72a5e38.png" alt="image.png"></p>
+<p>可是在我开发的项目，为什么不同目录下有两个相同的类确不会报错，能够正常链接通过。</p>
+<h4 id="问题二"><a href="#问题二" class="headerlink" title="问题二"></a>问题二</h4><p>在C语言中，如果某个函数没有被定义，那么在链接时候会报符号找不到的错误，OC中如果某个类的方法只写了声明，为什么可以链接通过呢？</p>
+<h4 id="问题三"><a href="#问题三" class="headerlink" title="问题三"></a>问题三</h4><p>如果在项目中引入的静态库里含有只有分类的文件，为什么会在运行时会报错:<strong>unrecognized selector sent to instance</strong>？</p>
+<p>这里这几个问题其实都和静态库有关，我们先看看静态库解决了什么问题，以及静态库的链接是怎样的。</p>
+<h3 id="静态库解决了什么问题？"><a href="#静态库解决了什么问题？" class="headerlink" title="静态库解决了什么问题？"></a>静态库解决了什么问题？</h3><p>如果没有静态库，我们开发一个项目，会怎样？为了开发一个功能，我们要去某个公共的地方找到实现了相应功能的文件，以及这个文件依赖的文件，然后引入到项目中去，这样做显然太复杂了。后来出现了静态库，它其实是将上述动作交给了链接器，从而节省了人力。总体来说它可以方便引入外部功能，不泄露源码，节省编译时间等几个优点。</p>
+<h4 id="方便开发者使用"><a href="#方便开发者使用" class="headerlink" title="方便开发者使用"></a>方便开发者使用</h4><p>如果没有静态库，我们该怎样调用某个公共方法?我们首先需要去某个地方查找这个方法的定义，然后将这个方法的.h和.c文件引入到我们的工程，这时如果这个.c文件中还引入了其它的方法，那么我们需要一直寻找下去，这样就会让开发流程及其复杂。有了静态库，我们只需要导入一个库文件即可，链接器会决定究竟需要引入哪些目标文件。</p>
+<h4 id="方便编译器开发"><a href="#方便编译器开发" class="headerlink" title="方便编译器开发"></a>方便编译器开发</h4><p>有些人可能会感觉，既然程序员逐个来找所需要的源文件这么复杂，为什么编译器不内置所有的文件？我们使用的时候自动给我们链接所需要的目标文件不就可以了？这样做确实是可以，但是这样做其实大大增大了编译器的开发成本和维护成本，它和静态库耦合了，如果某个静态库升级了那么编译器也需要升级。</p>
+<h4 id="节省磁盘和内存空间"><a href="#节省磁盘和内存空间" class="headerlink" title="节省磁盘和内存空间"></a>节省磁盘和内存空间</h4><p>如果将所有的功能文件都打进一个.o文件，然后链接一次不就解决了开发者的问题，也解决了编译器的问题了吗？是，这样是解决了两者的问题，但是又引入了另外的问题：可执行文件的变得很大，因为它引入了不需要的功能，这占用了磁盘空间，同时在程序运行的时候也会占用内存空间。</p>
+<h4 id="不泄露源码"><a href="#不泄露源码" class="headerlink" title="不泄露源码"></a>不泄露源码</h4><p>某些框架可能是作为商用产品提供给开发者的，不能直接将代码提供给开发者，这时将源代码编译之后提供给开发者更加安全。其实如果开发者知道了源码的实现逻辑，就可能会依赖没有在.h中暴露出来的代码，这样不规范的用法就导致依赖了不稳定的东西，结果一旦库升级，内部实现逻辑改变，那么上层的使用方就会出bug。</p>
+<h4 id="节省编译时间"><a href="#节省编译时间" class="headerlink" title="节省编译时间"></a>节省编译时间</h4><p>在大型工程的开发过程中，某个开发者仅仅关注一个模块的功能，如果所有模块都是源码，那么每次运行项目就需要全部编译一遍，项目越大越耗时，所以在很多大型软件开发过程中都会拆开各个模块给不同的团队开发，自己业务不依赖的模块是个静态库，这样就在很大程度上节约开发的时间。</p>
+<h3 id="静态库的链接过程"><a href="#静态库的链接过程" class="headerlink" title="静态库的链接过程"></a>静态库的链接过程</h3><p>知道了静态库出现的原因，下面说说Unix标准下静态库的链接步骤。将静态库和源文件链接的形式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1linux&gt; gcc main.c /usr/lib/libm.a /usr/lib/libc.a</span><br></pre></td></tr></table></figure>
+
+<p>链接器的工作方式是这样的：在链接器收到这个指令之后，会对创建三个集合E，D，U，它们的作用分别是：</p>
+<p>E：存放最终要链接成可执行文件的所有目标文件。</p>
+<p>D：存放放入E中的目标文件中定义的符号。</p>
+<p>U：未被解析的符号引用。</p>
+<p>链接器根据传入参数中<strong>从前往后**</strong>的顺序解析所有的输入项，**如果输入项为.c文件，那么就会被转化成.o文件然后放到E中，如果是.o文件则直接放到E中，同时更新D和U，如果其输入的是静态库，那么它会逐个遍历静态库中的目标文件，以查找U中符号的定义，如果找到了某个目标文件定义了U中的符号，那么就将其加入到E中，并更新D，一直到U和D中的符号稳定（这时说明静态库中所有的目标文件都被处理完了，U和D都不再变化了）。最后链接时候只会链接E中的目标文件，静态库中不在E中的目标文件将会被忽略，从而不占可执行文件的空间。处理到最后，如果U中有符号未被定义，那么就会报符号找不到的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1linux&gt; undefined reference to &apos;some_func&apos;</span><br></pre></td></tr></table></figure>
+
+<p>具体流程如下：</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2019/png/341672/1571301198062-586ae3a8-e2d9-4918-8f81-4c94bc6ebccc.png" alt="静态库的链接流程.png"></p>
+<h3 id="静态库链接注意点"><a href="#静态库链接注意点" class="headerlink" title="静态库链接注意点"></a>静态库链接注意点</h3><p>从上面链接器对静态库处理链接的描述中，我们会发现几个问题：</p>
+<h4 id="链接的顺序很重要"><a href="#链接的顺序很重要" class="headerlink" title="链接的顺序很重要"></a>链接的顺序很重要</h4><p>如果某个文件引用了静态库中的函数，然而将静态库的链接放在了引用文件的前面，将会出现链接失败。为什么？<strong>因为引用符号的文件出现在了静态库的后面，那么，在静态库链接的时候没有被放到U中，所以静态库中需要被加入链接的目标文件被直接舍弃了。</strong>例如在main.c中使用了sumlib.a中的sum方法，而在链接的时候使用:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1linux&gt;  gcc sumlib.a main.c</span><br></pre></td></tr></table></figure>
+
+<p>这时会报符号未定义的链接错误，但是这样链接就没有问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1linux&gt;  gcc main.c sumlib.a</span><br></pre></td></tr></table></figure>
+
+<p>这是因为如果先处理sumlib.a的话，因为没有未引用的符号放到U中，所以这个静态库就直接被忽略了，之后再链接main.o的时候就会出错，关于静态库和.o之间链接可能引起的问题，<a href="https://stackoverflow.com/questions/37490157/linker-does-not-emit-multiple-definition-error-when-same-symbol-coexists-in-obje。" target="_blank" rel="noopener">StackOverflow上的这个回答给了五个Case可供学习</a> <strong>很多现代的链接器优化了删除静态库中无用文件的逻辑，不是在处理完某个静态库就将其中不需要的文件移除，而是在所有输入项中未定义符号处理完之后才会决定是否舍弃静态库中未放入E中的文件（这点是在Mac上使用gcc和clang试验结合参考资料5得来的）。</strong></p>
+<h4 id="静态库中可以出现重复的符号"><a href="#静态库中可以出现重复的符号" class="headerlink" title="静态库中可以出现重复的符号"></a>静态库中可以出现重复的符号</h4><p>因为静态库在生成时候是没有进行链接的，所以其不会检查是否有符号重复，而在链接时候，只要链接器找到了一个U中符号定义的目标文件，就将其放入到E中，并更新D，因此，之后那个重复的文件没有被链接的可能。所以链接过程中不会有重复目标文件带来的错误，无论这个文件是出现在一个静态库中，还是出现在多个静态库之间（在Xcode中，如果某个静态库的不同问价夹下出现两个相同的类文件，那么编译之后会在类名以某种规则加上字符串，以做区分）<strong>如果两个静态库中有相同的类，那么先被用来解引用的类将会被链接，而后被解引用的那个静态库中的文件，因为U中没有了该符号，所以就不会再被链接。</strong></p>
+<h4 id="不在静态库中的目标文件都会被放到E中"><a href="#不在静态库中的目标文件都会被放到E中" class="headerlink" title="不在静态库中的目标文件都会被放到E中"></a>不在静态库中的目标文件都会被放到E中</h4><p>如果某个源文件是直接链接，而没有打包进静态库，那么即使该文件没有被引用，它还是会被加入到可执行文件，从而增加了应用程序包的大小。</p>
+<h4 id="源文件可以替换掉静态库中的文件"><a href="#源文件可以替换掉静态库中的文件" class="headerlink" title="源文件可以替换掉静态库中的文件"></a>源文件可以替换掉静态库中的文件</h4><p>如果源文件放到静态库中的前面进行链接，那么最终链接的时候会用源文件，而不会使用静态库中编译好的目标文件，这个方法可以用在静态库的调试过程中。比如我们的项目用到了某个静态库，发现库中有一个bug，如果每修改一次都重新打包同时加入到项目中就会变得很繁琐（静态库有时候不好作为project直接引入到项目中），可以将某个文件直接引入到被使用的项目中去，这样就可以调试，调试完成之后再将源文件编译打包进静态库中就可以了。</p>
+<h3 id="本文开头提出的问题原因在哪？"><a href="#本文开头提出的问题原因在哪？" class="headerlink" title="本文开头提出的问题原因在哪？"></a>本文开头提出的问题原因在哪？</h3><h4 id="问题一-1"><a href="#问题一-1" class="headerlink" title="问题一"></a>问题一</h4><p>细心的读者可能已经发现，原因就是我上文说的静态库链接机制，由于我们的开发是在静态库中的，所以可以有两个相同的类被放到不同的目录下，至于哪个类被链接取决于哪个类先被链接器处理。</p>
+<h4 id="问题二-1"><a href="#问题二-1" class="headerlink" title="问题二"></a>问题二</h4><p>问题二的原因在于，在OC中方法是不会被生成符号的，可以生成符号的只有类名和全局变量，所以如果某个类没有.m文件，直接链接错误的。而方法不会，在OC中方法调用，在编译之后会转换成objc_msgSend函数的调用，方法名作为该函数的一个字符串参数被传入，而函数的具体地址是在运行时决定的，这一点和C语言不一样，这也就是OC作为一门动态语言的特点。</p>
+<h4 id="问题三-1"><a href="#问题三-1" class="headerlink" title="问题三"></a>问题三</h4><p>问题三的原因和问题二很像，因为OC不将方法作为符号，所以就不会将其放入U中，因为U中没有静态库中的符号，所以就不会将静态库中相应的目标文件链接进可执行文件，就会在运行的时候报错。关于这个问题及其解决方案，请看苹果的官方解答：<a href="https://developer.apple.com/library/archive/qa/qa1490/_index.html" target="_blank" rel="noopener">https://developer.apple.com/library/archive/qa/qa1490/_index.html</a></p>
+<h3 id="备注："><a href="#备注：" class="headerlink" title="备注："></a>备注：</h3><blockquote>
+<p>上面的问题三解决方案是通过配置Xcode中Build Setting，在Other Linker Flags中添加ObjC标识，填了此标识就会加载静态库的所有成员，无论是C还是C++还OC，但它对同一个静态库中的相同类是不会同时链接的，还是遵守上文中链接流程的描述（链接其中先链接到的符号文件），但是对于不同静态库中的文件不会因为其中已经没有未引用的符号而不链接该文件。同时现在绝大多数的项目都会使用CocoaPod，而CocoaPod默认是添加了ObjC标识的，这也就是为什么很多时候两个不同的静态库中有相同的符号会报链接错误。</p>
+</blockquote>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>既然在使用静态库的过程中可能会有这些问题，应该如何避免呢？解决某个静态库中相同文件，其实可以在提交前写个脚本执行下，如果发现相同的文件，则不能提交git仓库。然而对于不同静态库中相同类名等问题就需要在持续集成打包的机器上做比价合适，因为其比较耗时，可以使用ar -t或者其它指令来找出所有的.o文件，对比其是否有相同的目标文件，并给出总后的结果（如果开启了ObjC标识，那么其实无需关心不同静态库中相同目标文件的问题，因为链接器会直接报错的）。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
+<li>深入理解计算机系统: 7.6.3</li>
+<li><a href="https://developer.apple.com/library/archive/qa/qa1490/_index.html" target="_blank" rel="noopener">https://developer.apple.com/library/archive/qa/qa1490/_index.html</a></li>
+<li><a href="https://stackoverflow.com/questions/50292838/multiple-symbol-definitions-and-static-libraries" target="_blank" rel="noopener">https://stackoverflow.com/questions/50292838/multiple-symbol-definitions-and-static-libraries</a></li>
+<li><a href="https://stackoverflow.com/questions/37490157/linker-does-not-emit-multiple-definition-error-when-same-symbol-coexists-in-obje" target="_blank" rel="noopener">https://stackoverflow.com/questions/37490157/linker-does-not-emit-multiple-definition-error-when-same-symbol-coexists-in-obje</a></li>
+<li><a href="https://blog.csdn.net/weiyuefei/article/details/76169772" target="_blank" rel="noopener">https://blog.csdn.net/weiyuefei/article/details/76169772</a></li>
+<li><a href="https://segmentfault.com/a/1190000005859469" target="_blank" rel="noopener">https://segmentfault.com/a/1190000005859469</a></li>
+<li><a href="https://pewpewthespells.com/blog/objc_linker_flags.html" target="_blank" rel="noopener">https://pewpewthespells.com/blog/objc_linker_flags.html</a></li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2018/11/21/elements-that-effect-orthogonality/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1831,162 +2003,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/12/20/note-concurrency-jmm-0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/20/note-concurrency-jmm-0/" itemprop="url">Java内存模型</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-20T10:22:33+08:00">2017-12-20</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="为什么需要内存模型"><a href="#为什么需要内存模型" class="headerlink" title="为什么需要内存模型?"></a>为什么需要内存模型?</h2><p>我们知道在并发编程中需要处理两个关键问题：线程之间的通信，以及线程之间的同步。线程之间的通信机制有两种：共享信息和消息传递。共享信息是指某个线程改变了共享信息，之后另外一个线程读取这个共享信息，这就完成了一次通信。从中我们可以看到这种通信是隐式进行的。但是在消息传递并发模式中，线程之间没有公共状态，它们之间必须通过发送消息来进行显示式通信。Java的并发采取的是共享信息的模式，线程之间的通信总是隐式进行，通信过程对程序员不透明，如果编码时候不理解这种隐式通信机制，就会遇到各种内存可见性的问题。<br></p>
-<p>现代处理器为了提升数据存取的效率在CPU内部都加了L1,L2,L3这样的三级缓存(Cache)：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-ba90c6662dcef457.png" alt="cache"></p>
-<p>我们上文中提到的共享信息其实就是放到了主内存中的。线程A执行操作的时候如果发现Cache中没有就会从主存中拷贝一份副本，存储到本地，线程B需要数据的时候也从主存中拷贝一份副本到本地缓存中。如果线程A的操作完成之后将操作结果在线程B执行之前就刷新到主存中，那么线程B就可以<strong>看见</strong>最新的数值：</p>
-<p><img src="http://7xsbfz.com1.z0.glb.clouddn.com/Screen%20Shot%202018-01-05%20at%205.20.15%20PM.png" alt="share_memory_communication"></p>
-<p>但是既然Cache的存在是为了减少访问主存的次数，那么如果每次都这样先更新本地缓存，然后立即刷新到主存，那么使用Cache就不能带来性能的提升了。所以这里就是有一个问题，什么时候A线程对共享变量的操作对线程B是可见的？</p>
-<h2 id="什么是Java内存模型？"><a href="#什么是Java内存模型？" class="headerlink" title="什么是Java内存模型？"></a>什么是Java内存模型？</h2><p>针对上文中提出的问题，我们引入内存模型(JMM)的概念。内存模型其实就是一套规则，这套规则决定了一个线程对共享变量的写入何时对另一个线程可见。它的抽象结构示意图如下：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-0408c80715604a7b.png" alt="JMM Function"></p>
-<h2 id="指令重排优点和缺点"><a href="#指令重排优点和缺点" class="headerlink" title="指令重排优点和缺点"></a>指令重排优点和缺点</h2><p>指令重排是编译器和处理器在为了提升程序的执行效率而对代码所做的优化，这种优化在单线程中没有问题，但是在多线程中，就可能违背了JMM对内存可见性的约束，关于这方面的内容，请参考我的另外一篇文章:<a href="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/">计算机基础知识</a>。所以编译器为了满足JMM的要求，就需要在合适的位置给其所编译的代码加上内存屏障来禁止特定类型的重构排序，这种内存屏障还可以确保某个操作是否立即刷新到主存，以保证对之后的操作是可见的。内存屏障有四种类型：LoadLoad，LoadStore，StoreStore，StoreLoad。它们分别插在：读读，读写，写写，写读之间用来确保之后和之前的操作不能进行指令重排，与此同时如果前面的操作是写操作，还要保证它对于后面的操作是可见的。</p>
-<h2 id="volatile同步原语"><a href="#volatile同步原语" class="headerlink" title="volatile同步原语"></a>volatile同步原语</h2><p>上面说了JMM的相关概念，下面就用volatile来举例说明，JMM是如何确保它的可见性和原子性的内存语义的。<br>volatile也被称为轻量级锁，如果某个变量被声明为volatile，那么对它的读操作和写操作就具有原子性，<strong>但是如果是复合操作，那么就不具有原子性</strong>，比如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VolatileFeaturesExample</span> </span>&#123;</span><br><span class="line">    <span class="keyword">volatile</span> <span class="keyword">long</span> v1 = <span class="number">0L</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(<span class="keyword">long</span> l)</span></span>&#123;</span><br><span class="line">        v1 = l;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">get</span><span class="params">()</span></span>&#123;</span><br><span class="line">        returen v1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAndIncrement</span><span class="params">()</span></span>&#123;</span><br><span class="line">        v1 ++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在这里set和get方法的语义和加了锁是一样的，其中getAndIncrement其实可以分为以下三个部分：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAndIncrement</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">long</span> tempt = get();</span><br><span class="line">    temp += <span class="number">1L</span>;</span><br><span class="line">    set(tempt);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这其中get和set方法是加锁的，但是<code>tempt += 1L;</code>在执行的时候可以有多个线程同时操作（比如两个线程同时判断了get()的值，然后在线程A对其进行改变的过程中，线程B也对其进行修改），所以不具有原子性，也就是说volatile让单个读和写操作具有原子性，但是对于复合操作是没有原子性的。</p>
-<h3 id="volatile变量读写的内存语义"><a href="#volatile变量读写的内存语义" class="headerlink" title="volatile变量读写的内存语义"></a>volatile变量读写的内存语义</h3><p>什么是内存语义？内存语义就是说某段代码，在进行内存实际操作的时候是怎样的。 对volatile变量执行写操作，会将线程的本地内存值刷新到主存中；对volatile变量执行读操作，操作系统会将变量所在线程的本地内存置为无效，然后该线程就会从主内存中读取该volatile变量。这样就保证了写线程的操作对读线程是可见的了。这个过程其实就是两个线程之间进行通信的过程。</p>
-<blockquote>
-<p>也就是说避免指令重排是实现可见性的基础，如果不限制相应的指令重排就不会具有可见性，而避免指令重排就需要插入相关的内存屏障，内存屏障不仅保证了内存不被重拍，同时保证了内存的可见性。比如StoreStore屏障，它可以保证前一个写操作的数据可以刷新到主存，也就是说对下一个操作是可见的。</p>
-</blockquote>
-<h3 id="volatile内存语义的实现原理"><a href="#volatile内存语义的实现原理" class="headerlink" title="volatile内存语义的实现原理"></a>volatile内存语义的实现原理</h3><p>从上文可以看出，要确保volatile变量可见性的实现就必须要避免其前后的相关操作不进行指令重排，下面是JMM对编译器规定的指令重排规则：</p>
-<ol>
-<li>当第二个操作是volatile写的时候，不管第一个操作是不是volatile操作，都不能将两个操作重排序。</li>
-<li>当第一个操作是volatile读的时候，不管第二个操作是不是volatile操作，都不能将两个操作重排序。</li>
-<li>第一个操作是volatile写，第二个操作是volatile读的时候不能，不能将两个操作重排序。</li>
-</ol>
-<p>为了实现这个规则，编译器必须在volatile的前后插入内存屏障来做保证：</p>
-<ul>
-<li>在每个volatile写的前面加上StoreStore屏障。</li>
-<li>在每个volatile写的后面加上StoreLoad屏障。</li>
-<li>在每个volatile读的后面插入一个LoadLoad屏障。</li>
-<li>在每个volatile读的后面插入一个LoadStore屏障。</li>
-</ul>
-<p>因为上文中JMM规定第一个volatile读操作后面的任意操作都不能重排序，所以加入了两个屏障。又因为volatile写操作的要避免和之前的指令以及之后的voloaile读操作指令重拍，所以要在其后面加上StoreLoad屏障，其前面加上StoreStore屏障可以避免之前的写操作和volatile写做指令重排。如下图所示：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1513759-a710e691801ccc87.png" alt="barriers"></p>
-<p>在上面volatile写后面加入StoreLoad屏障是为了防止和下面可能出现的volatile读/写重排序，为什么是可能出现呢？因为编译器有时没有办法确定其后面是否有必要插入StoreLoad屏障，因为如果volatile在方法的最后一行，然后就return了，这时就没有必要了，但是为了防止少插入的情况，编译器就在volatile写的后面都加上了LoadStore屏障，这是一种保守的做法。从上面我们可以看到volatile读和写的内存屏障插入策略是非常保守的，然而再实际情况下，编译器可以根据代码的实际情况，在不影响内存语义的情况下，减少某些不必要的屏障插入（这些优化也跟处理器类型有关）。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2036,7 +2052,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-count">57</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -2069,7 +2085,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">9</span>
+                      
+                    
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

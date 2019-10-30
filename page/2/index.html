@@ -276,6 +276,162 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/12/20/note-concurrency-jmm-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/20/note-concurrency-jmm-0/" itemprop="url">Java内存模型</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-20T10:22:33+08:00">2017-12-20</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="为什么需要内存模型"><a href="#为什么需要内存模型" class="headerlink" title="为什么需要内存模型?"></a>为什么需要内存模型?</h2><p>我们知道在并发编程中需要处理两个关键问题：线程之间的通信，以及线程之间的同步。线程之间的通信机制有两种：共享信息和消息传递。共享信息是指某个线程改变了共享信息，之后另外一个线程读取这个共享信息，这就完成了一次通信。从中我们可以看到这种通信是隐式进行的。但是在消息传递并发模式中，线程之间没有公共状态，它们之间必须通过发送消息来进行显示式通信。Java的并发采取的是共享信息的模式，线程之间的通信总是隐式进行，通信过程对程序员不透明，如果编码时候不理解这种隐式通信机制，就会遇到各种内存可见性的问题。<br></p>
+<p>现代处理器为了提升数据存取的效率在CPU内部都加了L1,L2,L3这样的三级缓存(Cache)：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-ba90c6662dcef457.png" alt="cache"></p>
+<p>我们上文中提到的共享信息其实就是放到了主内存中的。线程A执行操作的时候如果发现Cache中没有就会从主存中拷贝一份副本，存储到本地，线程B需要数据的时候也从主存中拷贝一份副本到本地缓存中。如果线程A的操作完成之后将操作结果在线程B执行之前就刷新到主存中，那么线程B就可以<strong>看见</strong>最新的数值：</p>
+<p><img src="http://7xsbfz.com1.z0.glb.clouddn.com/Screen%20Shot%202018-01-05%20at%205.20.15%20PM.png" alt="share_memory_communication"></p>
+<p>但是既然Cache的存在是为了减少访问主存的次数，那么如果每次都这样先更新本地缓存，然后立即刷新到主存，那么使用Cache就不能带来性能的提升了。所以这里就是有一个问题，什么时候A线程对共享变量的操作对线程B是可见的？</p>
+<h2 id="什么是Java内存模型？"><a href="#什么是Java内存模型？" class="headerlink" title="什么是Java内存模型？"></a>什么是Java内存模型？</h2><p>针对上文中提出的问题，我们引入内存模型(JMM)的概念。内存模型其实就是一套规则，这套规则决定了一个线程对共享变量的写入何时对另一个线程可见。它的抽象结构示意图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-0408c80715604a7b.png" alt="JMM Function"></p>
+<h2 id="指令重排优点和缺点"><a href="#指令重排优点和缺点" class="headerlink" title="指令重排优点和缺点"></a>指令重排优点和缺点</h2><p>指令重排是编译器和处理器在为了提升程序的执行效率而对代码所做的优化，这种优化在单线程中没有问题，但是在多线程中，就可能违背了JMM对内存可见性的约束，关于这方面的内容，请参考我的另外一篇文章:<a href="https://mikefighting.github.io/2017/09/10/chat-computer-science-basic/">计算机基础知识</a>。所以编译器为了满足JMM的要求，就需要在合适的位置给其所编译的代码加上内存屏障来禁止特定类型的重构排序，这种内存屏障还可以确保某个操作是否立即刷新到主存，以保证对之后的操作是可见的。内存屏障有四种类型：LoadLoad，LoadStore，StoreStore，StoreLoad。它们分别插在：读读，读写，写写，写读之间用来确保之后和之前的操作不能进行指令重排，与此同时如果前面的操作是写操作，还要保证它对于后面的操作是可见的。</p>
+<h2 id="volatile同步原语"><a href="#volatile同步原语" class="headerlink" title="volatile同步原语"></a>volatile同步原语</h2><p>上面说了JMM的相关概念，下面就用volatile来举例说明，JMM是如何确保它的可见性和原子性的内存语义的。<br>volatile也被称为轻量级锁，如果某个变量被声明为volatile，那么对它的读操作和写操作就具有原子性，<strong>但是如果是复合操作，那么就不具有原子性</strong>，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VolatileFeaturesExample</span> </span>&#123;</span><br><span class="line">    <span class="keyword">volatile</span> <span class="keyword">long</span> v1 = <span class="number">0L</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(<span class="keyword">long</span> l)</span></span>&#123;</span><br><span class="line">        v1 = l;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">get</span><span class="params">()</span></span>&#123;</span><br><span class="line">        returen v1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAndIncrement</span><span class="params">()</span></span>&#123;</span><br><span class="line">        v1 ++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这里set和get方法的语义和加了锁是一样的，其中getAndIncrement其实可以分为以下三个部分：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAndIncrement</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">long</span> tempt = get();</span><br><span class="line">    temp += <span class="number">1L</span>;</span><br><span class="line">    set(tempt);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这其中get和set方法是加锁的，但是<code>tempt += 1L;</code>在执行的时候可以有多个线程同时操作（比如两个线程同时判断了get()的值，然后在线程A对其进行改变的过程中，线程B也对其进行修改），所以不具有原子性，也就是说volatile让单个读和写操作具有原子性，但是对于复合操作是没有原子性的。</p>
+<h3 id="volatile变量读写的内存语义"><a href="#volatile变量读写的内存语义" class="headerlink" title="volatile变量读写的内存语义"></a>volatile变量读写的内存语义</h3><p>什么是内存语义？内存语义就是说某段代码，在进行内存实际操作的时候是怎样的。 对volatile变量执行写操作，会将线程的本地内存值刷新到主存中；对volatile变量执行读操作，操作系统会将变量所在线程的本地内存置为无效，然后该线程就会从主内存中读取该volatile变量。这样就保证了写线程的操作对读线程是可见的了。这个过程其实就是两个线程之间进行通信的过程。</p>
+<blockquote>
+<p>也就是说避免指令重排是实现可见性的基础，如果不限制相应的指令重排就不会具有可见性，而避免指令重排就需要插入相关的内存屏障，内存屏障不仅保证了内存不被重拍，同时保证了内存的可见性。比如StoreStore屏障，它可以保证前一个写操作的数据可以刷新到主存，也就是说对下一个操作是可见的。</p>
+</blockquote>
+<h3 id="volatile内存语义的实现原理"><a href="#volatile内存语义的实现原理" class="headerlink" title="volatile内存语义的实现原理"></a>volatile内存语义的实现原理</h3><p>从上文可以看出，要确保volatile变量可见性的实现就必须要避免其前后的相关操作不进行指令重排，下面是JMM对编译器规定的指令重排规则：</p>
+<ol>
+<li>当第二个操作是volatile写的时候，不管第一个操作是不是volatile操作，都不能将两个操作重排序。</li>
+<li>当第一个操作是volatile读的时候，不管第二个操作是不是volatile操作，都不能将两个操作重排序。</li>
+<li>第一个操作是volatile写，第二个操作是volatile读的时候不能，不能将两个操作重排序。</li>
+</ol>
+<p>为了实现这个规则，编译器必须在volatile的前后插入内存屏障来做保证：</p>
+<ul>
+<li>在每个volatile写的前面加上StoreStore屏障。</li>
+<li>在每个volatile写的后面加上StoreLoad屏障。</li>
+<li>在每个volatile读的后面插入一个LoadLoad屏障。</li>
+<li>在每个volatile读的后面插入一个LoadStore屏障。</li>
+</ul>
+<p>因为上文中JMM规定第一个volatile读操作后面的任意操作都不能重排序，所以加入了两个屏障。又因为volatile写操作的要避免和之前的指令以及之后的voloaile读操作指令重拍，所以要在其后面加上StoreLoad屏障，其前面加上StoreStore屏障可以避免之前的写操作和volatile写做指令重排。如下图所示：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1513759-a710e691801ccc87.png" alt="barriers"></p>
+<p>在上面volatile写后面加入StoreLoad屏障是为了防止和下面可能出现的volatile读/写重排序，为什么是可能出现呢？因为编译器有时没有办法确定其后面是否有必要插入StoreLoad屏障，因为如果volatile在方法的最后一行，然后就return了，这时就没有必要了，但是为了防止少插入的情况，编译器就在volatile写的后面都加上了LoadStore屏障，这是一种保守的做法。从上面我们可以看到volatile读和写的内存屏障插入策略是非常保守的，然而再实际情况下，编译器可以根据代码的实际情况，在不影响内存语义的情况下，减少某些不必要的屏障插入（这些优化也跟处理器类型有关）。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/12/16/note-concurrency-in-practice-advance-3-0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1851,200 +2007,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/09/05/chat-if-else/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/05/chat-if-else/" itemprop="url">聊聊if else</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-05T07:04:01+08:00">2017-09-05</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><img src="http://upload-images.jianshu.io/upload_images/1513759-12027b6db51d7301.png" alt="if else"><br>if else 是我们学习C语言开始用的流程控制语句。还记得大学老师说过一句话，任何复杂的业务逻辑都可以用if else去解决。然而就像面向对象中的继承一样，如果用的过多就会造成代码的腐烂。下面我们就来聊聊if else。</p>
-<h2 id="为什么太多的if-else不好？"><a href="#为什么太多的if-else不好？" class="headerlink" title="为什么太多的if else不好？"></a>为什么太多的if else不好？</h2><p>我们先看一个例子：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnMessage</span><span class="params">(Push.PushMessage pushMessage)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        String message = pushMessage.messageContent;</span><br><span class="line">        Log.v(<span class="string">"keyes"</span>, <span class="string">"pushMessage = "</span> + message);</span><br><span class="line">        <span class="keyword">if</span> (message != <span class="keyword">null</span>) &#123;</span><br><span class="line">            JsonObject data = <span class="keyword">new</span> JsonParser().parse(message).getAsJsonObject();</span><br><span class="line">            <span class="keyword">if</span> (data.get(<span class="string">"type"</span>) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                String type = data.get(<span class="string">"type"</span>).getAsString();</span><br><span class="line">                <span class="keyword">if</span> (<span class="string">"100"</span>.equals(type)) &#123;<span class="comment">//XX消息</span></span><br><span class="line">                    EventBus.getDefault().post(<span class="keyword">new</span> GrabActionEvent());</span><br><span class="line">                    PopBean bean = PushUtils.dealPushMessage(mContext, message);</span><br><span class="line">                    IDealWithPush dealWithPush = AppStateUtils.getAppState(mContext);</span><br><span class="line">                    dealWithPush.dealPush(mContext, bean);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"106"</span>.equals(type)) &#123;<span class="comment">// </span></span><br><span class="line">                    String nick = data.get(<span class="string">"nick"</span>).getAsString();</span><br><span class="line">                    WPushNotify.notification(<span class="number">106</span>, nick, <span class="string">"正在访问您的信息，请立即回复"</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    Gson temp = <span class="keyword">new</span> Gson();</span><br><span class="line">                    <span class="keyword">final</span> SystemNotification bean = temp.fromJson(pushMessage.messageContent, SystemNotification.class);</span><br><span class="line">                    <span class="keyword">if</span> (bean.getType() == <span class="number">103</span>) &#123;</span><br><span class="line">                        <span class="comment">//应用在后台，不需要刷新UI,通知栏提示新消息</span></span><br><span class="line">                        <span class="keyword">if</span> (!AppInfoUtils.isRunningForeground(HyApplication.getApplication())) &#123;</span><br><span class="line">                            WPushNotify.notification(bean);</span><br><span class="line">                        &#125;</span><br><span class="line">                        saveDataToDB(bean);</span><br><span class="line">                        EventBus.getDefault().post(bean);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (bean.getType() == <span class="number">104</span>) &#123;</span><br><span class="line">                        List&lt;Activity&gt; list = HyApplication.getInstance().getActivityList();</span><br><span class="line">                        <span class="keyword">if</span> (list != <span class="keyword">null</span> &amp;&amp; list.size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                            Activity activity = list.get(list.size() - <span class="number">1</span>);</span><br><span class="line">                            <span class="keyword">if</span> (!TextUtils.isEmpty(bean.getDescribe())) &#123;</span><br><span class="line">                                <span class="keyword">new</span> LogoutDialog(activity, bean.getDescribe());</span><br><span class="line">                            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                <span class="keyword">new</span> LogoutDialog(activity, activity.getString(R.string.force_exit));</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (bean.getType() == <span class="number">108</span>) &#123;<span class="comment">//沉默用户唤醒</span></span><br><span class="line">                        String title = bean.getTitle();</span><br><span class="line">                        String describe = bean.getDescribe();</span><br><span class="line">                        WPushNotify.notification(<span class="number">108</span>, title, describe);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        LogUtils.e(<span class="string">"push"</span>, e.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Log.i(<span class="string">"song"</span>, pushMessage.messageContent);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这个方法里面仅仅嵌套了好多层if else，看上去会比较复杂难懂，再看一个例子：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(isSkipPPUForQA &amp;&amp; StringUtils.isNotBlank(request.getParameter(<span class="string">"userId"</span>)))&#123;</span><br><span class="line">    <span class="keyword">super</span>.doFilter(request, response, chain);</span><br><span class="line">&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">"/app/school/article/share"</span>.equals(request.getRequestURI()))&#123;</span><br><span class="line">        <span class="keyword">super</span>.doFilter(request, response, chain);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">       <span class="keyword">if</span>(!filterReqUrl(request)) &#123;</span><br><span class="line">                <span class="keyword">long</span> ppuUserId = PassportService.passportService.getLoginUserId(RemoteValid.SAPCE_ONE_HOUR, request, response);</span><br><span class="line">                <span class="keyword">if</span> (ppuUserId &lt; <span class="number">2</span>) &#123;</span><br><span class="line">response.getWriter().write(<span class="keyword">this</span>.generateResponse(AppResultStateEnum.PPU_UNVALID.getCodeStr(), <span class="string">"登录认证信息已过期，请重新登录"</span>));</span><br><span class="line">                    log.error(<span class="string">"ppu返回的userId:"</span> + ppuUserId + <span class="string">",ppu过期,ppu="</span> + PPUCookieUtil.getPpuCookie(request) + <span class="string">",url="</span> + request.getRequestURI());</span><br><span class="line">                    log.error(<span class="string">"imei="</span> + request.getParameter(<span class="string">"imei"</span>) + <span class="string">",version="</span> + request.getParameter(<span class="string">"version"</span>) + <span class="string">",platform="</span> + request.getParameter(<span class="string">"platform"</span>));</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">boolean</span> flag = isTouchSingleDeviceLimitWithoutLogin(ppuUserId, request);</span><br><span class="line">                    <span class="keyword">if</span> (flag) &#123;</span><br><span class="line">                        String singleDeviceLoginContent = configComp.getValueByConfigTable(ConfigEnum.APP_SINGLE_DEVICE_LOGIN_CONTENT);</span><br><span class="line">                        <span class="keyword">boolean</span> isH5 = <span class="string">"1"</span>.equals(request.getParameter(<span class="string">"isH5"</span>));</span><br><span class="line">                        <span class="keyword">if</span>(isH5)&#123;</span><br><span class="line">                            String jsAjaxHeader = request.getHeader(<span class="string">"X-Requested-With"</span>);</span><br><span class="line">                            <span class="keyword">if</span>(<span class="string">"XMLHttpRequest"</span>.equals(jsAjaxHeader))&#123;response.getWriter().write(<span class="keyword">this</span>.generateResponse(AppResultStateEnum.SINGLE_DEVICE_LOGIN.getCodeStr(), singleDeviceLoginContent));</span><br><span class="line">                            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                             renderSingleDeviceHtml(response,<span class="string">"/single_device_error"</span>);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                            response.getWriter().write(<span class="keyword">this</span>.generateResponse(AppResultStateEnum.SINGLE_DEVICE_LOGIN.getCodeStr(), singleDeviceLoginContent));</span><br><span class="line">                        &#125;</span><br><span class="line">                        log.error(<span class="string">"触发单设备登录限制错误"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        request.addParameter(<span class="string">"userId"</span>, <span class="keyword">new</span> String[]&#123;ppuUserId + <span class="string">""</span>&#125;);</span><br><span class="line">                        <span class="keyword">super</span>.doFilter(request, response, chain);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        logger.error(<span class="string">"业务处理异常,url="</span>,e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>第一，这个方法中嵌套了七层的if else，层次太多。第二这个方法太长。嵌套层次过多和方法过长都是Bad Smell。那么究竟很多的if else有哪些弊端呢？</p>
-<ul>
-<li><p><strong>僵化</strong>：如果再有更多情况的时候，我们需要在原来的地方写更多的if…else if条件。也就是说你需要去改动原来的代码，然后重新编译，重新部署，这是很浪费时间的。并且这违背了面向对象中的<strong>开放封闭原则</strong>：对扩展开放，对修改封闭。同时由于这个类需要处理各种业务，职责太多，所以也违背了<strong>职责单一原则。</strong></p>
-</li>
-<li><p><strong>效率低下</strong>：很多系统的类，比如<code>HashMaps</code>，<code>Properties</code>等，都非常注意基于数据的条件判断。</p>
-</li>
-<li><p><strong>难阅读</strong>：像这种层层if else嵌套的情况，如果其他人需要来看，并且维护这份代码，由于难阅读，他们会感觉吃力。试想下，如果段代码很长，一个屏看不完，那肯定是维护的灾难。</p>
-</li>
-<li><p><strong>难维护</strong>：if else不像switch case，它的每个分支都和其它分支有关系，如果需求变更，在修改某个分支之前要看懂其它所有分支，确保不会对其它分支造成影响。</p>
-</li>
-<li><p><strong>难调试</strong>：很多if else，调试过程中需要一步步跟进，会影响调试效率。</p>
-</li>
-<li><p><strong>难测试</strong>：每次我们写测试用例的Case，针对每个有很多if else的方法，我们要对每个分支都写一个测试，这样下来这个测试用例将会变得非常长。</p>
-</li>
-</ul>
-<blockquote>
-<p>在任何面向对象语言中，都需要考虑移除分支控制逻辑（<code>if</code>以及<code>switch</code>，<code>case</code>）。移除的常用做法是将这些控制逻辑的方法移到一个类中。 <a href="https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements" target="_blank" rel="noopener">Quora,Simon Hayes</a></p>
-</blockquote>
-<p>那么我们怎样来解决这种情况，因为遇到不同的情况需要用不同的解决方案，我们逐个来分析：</p>
-<h2 id="常见的嵌套类if-else处理方式"><a href="#常见的嵌套类if-else处理方式" class="headerlink" title="常见的嵌套类if else处理方式"></a>常见的嵌套类if else处理方式</h2><p>比如第一个if else的例子，通常</p>
-<h2 id="平行类的if-else处理方式"><a href="#平行类的if-else处理方式" class="headerlink" title="平行类的if else处理方式"></a>平行类的if else处理方式</h2><p><strong>如果我们有几个判断条件是平级if，那么我们可以使用命令模式来解决这种问题。</strong>比如我们现在有如下的if else：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (value.equals(<span class="string">"A"</span>)) &#123; doCommandA() &#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (value.equals(<span class="string">"B"</span>)) &#123; doCommandB() &#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> etc.</span><br></pre></td></tr></table></figure>
-
-<p>这时，我们可以使用<strong>命令模式</strong>来解决，先创建一个接口：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Command</span> </span>&#123;</span><br><span class="line">     <span class="function"><span class="keyword">void</span> <span class="title">exec</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后<code>CommandA</code>和<code>CommandB</code>类实现这个接口：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> class <span class="title">CommandA</span><span class="params">()</span> implements Command </span>&#123;</span><br><span class="line"></span><br><span class="line">     <span class="function"><span class="keyword">void</span> <span class="title">exec</span><span class="params">()</span> </span>&#123;</span><br><span class="line">          <span class="comment">// ...</span></span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> class <span class="title">CommandB</span><span class="params">()</span> implements Command </span>&#123;</span><br><span class="line"></span><br><span class="line">     <span class="function"><span class="keyword">void</span> <span class="title">exec</span><span class="params">()</span> </span>&#123;</span><br><span class="line">          <span class="comment">// ...</span></span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后创建一个<code>Map&lt;String,Command&gt;</code>,并且往其中添加Command实例：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">commandMap.put(<span class="string">"A"</span>, <span class="keyword">new</span> CommandA());</span><br><span class="line">commandMap.put(<span class="string">"B"</span>, <span class="keyword">new</span> CommandB());</span><br></pre></td></tr></table></figure>
-
-<p>然后所有的<strong>if/else if</strong>，就都会变成：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">commandMap.get(value).exec();</span><br></pre></td></tr></table></figure>
-
-<p>如果某个Command有任何的改变只需要改动某个具体的类即可，如果有新加的Command，那么只需要添加响应的Command即可。命令模式就是加了一个<strong>中间件：命令容器</strong>(就是这里的Map，根据情况可能会是List或者其它)来实现解耦。</p>
-<h2 id="复杂处理算法的if-else"><a href="#复杂处理算法的if-else" class="headerlink" title="复杂处理算法的if else"></a>复杂处理算法的if else</h2><p>如果我们if之后的代码处理的业务逻辑很相似，并且这种处理算法可能会经常变动，比如：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> double calculateInsurance(double income, <span class="type">InputType</span> type) &#123;</span><br><span class="line">        <span class="keyword">if</span> (type == smallType) &#123;</span><br><span class="line">            <span class="keyword">return</span> income*<span class="number">0.365</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == mediumType) &#123;</span><br><span class="line">            <span class="keyword">return</span> (income-<span class="number">10000</span>)*<span class="number">0.2</span>+<span class="number">35600</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == bigType) &#123;</span><br><span class="line">            <span class="keyword">return</span> (income-<span class="number">30000</span>)*<span class="number">0.1</span>+<span class="number">76500</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> (income-<span class="number">60000</span>)*<span class="number">0.02</span>+<span class="number">105600</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>那么我们就可以将每个if分支中的代码单独分离到各个类中，然后再抽出一个父类，这样我们每个条件分支中就不会有很多代码了：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">InsuranceStrategy</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">calculateInsuranceVeryHigh</span><span class="params">(<span class="keyword">double</span> income)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (income - getAdjustment()) * getWeight() + getConstant();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">getConstant</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">double</span> <span class="title">getWeight</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">getAdjustment</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InsuranceStrategyMedium</span> <span class="keyword">extends</span> <span class="title">InsuranceStrategy</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getConstant</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">35600</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getWeight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0.2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAdjustment</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">10000</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*InsuranceStrategyLow和InsuranceStrategyHigh的处理方式相似，此处略去*/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IfElseDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> InsuranceStrategy strategy;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">calculateInsurance</span><span class="params">(<span class="keyword">double</span> income, InputType type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (type == smallType) &#123;</span><br><span class="line">            strategy = <span class="keyword">new</span> InsuranceStrategyLow();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == mediumType) &#123;</span><br><span class="line">            strategy = <span class="keyword">new</span> InsuranceStrategyMedium();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == bigType) &#123;</span><br><span class="line">            strategy = <span class="keyword">new</span> InsuranceStrategyHigh();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            strategy = <span class="keyword">new</span> InsuranceStrategyVeryHigh();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> strategy.calculate(income);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这样最终不还是有if else吗？是的，最终还是有if else，但是if else的逻辑变得非常清晰，只是用于创建一个新的类。并且我们将经常变化的算法部分封装到了子类中，如果某个子类中的算法变了，只需要变动某个子类（<strong>封装变化</strong>），然后重新编译就可以了，不需要将整个项目重新编译，部署。</p>
-<h2 id="区间类的if-else"><a href="#区间类的if-else" class="headerlink" title="区间类的if else"></a>区间类的if else</h2><p>如果客户端的if条件表示的是不同的范围，然后根据不同范围来选择不同的对象来处理，比如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Request request = <span class="keyword">new</span> Request();</span><br><span class="line">        request.addSalaryAmount = <span class="number">9999</span>;</span><br><span class="line">        <span class="keyword">if</span> (request.addSalaryAmount &lt;= <span class="number">100</span>)&#123;</span><br><span class="line">            DivisionManager divisionManager = <span class="keyword">new</span> DivisionManager();</span><br><span class="line">            divisionManager.accept();</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> (request.addSalaryAmount &lt;= <span class="number">1000</span>)&#123;</span><br><span class="line">            Chief chief = <span class="keyword">new</span> Chief();</span><br><span class="line">            chief.accept();</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> (request.addSalaryAmount &lt;= <span class="number">10000</span>)&#123;</span><br><span class="line">            GeneralManager generalManager  = <span class="keyword">new</span> GeneralManager();</span><br><span class="line">            generalManager.accept();</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">"金额太大没人能批准"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上面这个例子中，不同的条件分支是让不同的对象来处理这种条件。并且以后可能Request对象会添加其他的请求属性，比如offWork（请假），并且这种请求属性同样需要<code>DivisionManager</code>，<code>Chief</code>，<code>GeneralManager</code>。然而其中的处理顺序变了，并不是现在的请求等级。可能是先由<code>Chief</code>处理，再有<code>GeneralManager</code>处理，最后有<code>DivisionManager</code>来处理，那怎么办呢？难道还要写一套if else吗？<br>这时候我们就可以用责任链模式来将这一长串if else嵌套进每一个对象中去，我们可以这样做：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">ManagerCommand</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">CommManager</span> <span class="keyword">implements</span> <span class="title">ManagerCommand</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> CommManager superior;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSuperior</span><span class="params">(CommManager superior)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.superior = superior;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DivisionManager</span> <span class="keyword">extends</span> <span class="title">CommManager</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (requestAmount&lt;<span class="number">100</span>)&#123;</span><br><span class="line">            System.out.println(<span class="string">"部门经理批准"</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> ( <span class="keyword">this</span>.superior != <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">this</span>.superior.accept(requestAmount);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chief</span> <span class="keyword">extends</span> <span class="title">CommManager</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span>  <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span>  </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (requestAmount &lt; <span class="number">1000</span>)&#123;</span><br><span class="line">        System.out.println(<span class="string">"总监同意"</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.superior != <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">this</span>.superior.accept(requestAmount);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GeneralManager</span> <span class="keyword">extends</span> <span class="title">CommManager</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> requestAmount)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (requestAmount&lt;<span class="number">10000</span>)&#123;</span><br><span class="line">            System.out.println(<span class="string">"总经理批准"</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.superior != <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">this</span>.superior.accept(requestAmount);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>最后在Client端调用的时候，我们可以这样写：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Request request = <span class="keyword">new</span> Request();</span><br><span class="line">        request.addSalaryAmount = <span class="number">999</span>;</span><br><span class="line">        DivisionManager divisionManager = <span class="keyword">new</span> DivisionManager();</span><br><span class="line">        Chief chief = <span class="keyword">new</span> Chief();</span><br><span class="line">        GeneralManager generalManager = <span class="keyword">new</span> GeneralManager();</span><br><span class="line">        divisionManager.setSuperior(chief);</span><br><span class="line">        chief.setSuperior(generalManager);</span><br><span class="line">        divisionManager.accept(request.addSalaryAmount);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这种写法的好处是：<strong>将条件和处理该条件的对象解耦，每个处理条件的对象都不知道其他对象，我们可以随时地增加或者修改处理一个请求的结构。这增加了给对象指派职责的灵活性</strong>。</p>
-<blockquote>
-<p>小结：其实上述的每种方式都是利用<strong>多态</strong>来解决分支带来的僵化，<a href="https://www.youtube.com/watch?v=4F72VULWFvc" target="_blank" rel="noopener">谷歌有一个视频对这个问题阐述得很好。</a>。</p>
-</blockquote>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a href="https://stackoverflow.com/questions/10175805/how-to-avoid-a-lot-of-if-else-conditions" target="_blank" rel="noopener">https://stackoverflow.com/questions/10175805/how-to-avoid-a-lot-of-if-else-conditions</a></li>
-<li><a href="https://stackoverflow.com/questions/271526/avoiding-null-statements?rq=1" target="_blank" rel="noopener">https://stackoverflow.com/questions/271526/avoiding-null-statements?rq=1</a></li>
-<li><a href="https://stackoverflow.com/questions/14136721/converting-many-if-else-statements-to-a-cleaner-approach" target="_blank" rel="noopener">https://stackoverflow.com/questions/14136721/converting-many-if-else-statements-to-a-cleaner-approach</a></li>
-<li><a href="https://www.youtube.com/watch?v=4F72VULWFvc" target="_blank" rel="noopener">https://www.youtube.com/watch?v=4F72VULWFvc</a></li>
-<li><a href="https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements" target="_blank" rel="noopener">https://www.quora.com/Why-should-Java-programmers-try-to-avoid-if-statements</a></li>
-<li><a href="https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-swift/1199677#1199677" target="_blank" rel="noopener">https://stackoverflow.com/questions/1199646/long-list-of-if-statements-in-swift/1199677#1199677</a></li>
-<li><a href="https://industriallogic.com/xp/refactoring/conditionalWithStrategy.html" target="_blank" rel="noopener">https://industriallogic.com/xp/refactoring/conditionalWithStrategy.html</a></li>
-<li>大话设计模式</li>
-<li>重构改善既有代码的设计</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2094,7 +2056,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">56</span>
+                    <span class="site-state-item-count">57</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -2127,7 +2089,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">9</span>
+                      
+                    
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
