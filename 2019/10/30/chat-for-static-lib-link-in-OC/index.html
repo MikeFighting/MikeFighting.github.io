@@ -111,13 +111,13 @@
 <meta property="og:site_name" content="击水湘江">
 <meta property="og:description" content="本文源于开发中的一个困惑：经历了较大的重构，项目中有两个相同的类文件，竟然可以编译并链接通过。经过反思，回顾，整理了关于静态库的相关技术才解决了此疑问。接下来将聊聊静态库出现的原因，链接的原理及其容易令人困惑的点，同时简要说明OC中方法和类链接的特点。 问题由来问题一在iOS开发中，如果项目中有两个相同的类，那么在链接的时候一般会报错：  可是在我开发的项目，为什么不同目录下有两个相同的类确不会报">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2019/png/341672/1571229029299-166df8d8-97dc-41cc-b277-b850b72a5e38.png">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2019/png/341672/1571301198062-586ae3a8-e2d9-4918-8f81-4c94bc6ebccc.png">
-<meta property="og:updated_time" content="2019-10-30T14:28:49.830Z">
+<meta property="og:image" content="http://blog.unidropper.com/blog/link_error_4_duplicate_symbol.png">
+<meta property="og:image" content="http://blog.unidropper.com/blog/link_flow_for_static_lib.png">
+<meta property="og:updated_time" content="2019-10-30T14:40:46.568Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="聊聊OC中静态库的链接">
 <meta name="twitter:description" content="本文源于开发中的一个困惑：经历了较大的重构，项目中有两个相同的类文件，竟然可以编译并链接通过。经过反思，回顾，整理了关于静态库的相关技术才解决了此疑问。接下来将聊聊静态库出现的原因，链接的原理及其容易令人困惑的点，同时简要说明OC中方法和类链接的特点。 问题由来问题一在iOS开发中，如果项目中有两个相同的类，那么在链接的时候一般会报错：  可是在我开发的项目，为什么不同目录下有两个相同的类确不会报">
-<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2019/png/341672/1571229029299-166df8d8-97dc-41cc-b277-b850b72a5e38.png">
+<meta name="twitter:image" content="http://blog.unidropper.com/blog/link_error_4_duplicate_symbol.png">
 
 
 
@@ -348,7 +348,7 @@
       
         <p>本文源于开发中的一个困惑：经历了较大的重构，项目中有两个相同的类文件，竟然可以编译并链接通过。经过反思，回顾，整理了关于静态库的相关技术才解决了此疑问。接下来将聊聊静态库出现的原因，链接的原理及其容易令人困惑的点，同时简要说明OC中方法和类链接的特点。</p>
 <h3 id="问题由来"><a href="#问题由来" class="headerlink" title="问题由来"></a>问题由来</h3><h4 id="问题一"><a href="#问题一" class="headerlink" title="问题一"></a>问题一</h4><p>在iOS开发中，如果项目中有两个相同的类，那么在链接的时候一般会报错：</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2019/png/341672/1571229029299-166df8d8-97dc-41cc-b277-b850b72a5e38.png" alt="image.png"></p>
+<p><img src="http://blog.unidropper.com/blog/link_error_4_duplicate_symbol.png" alt="image.png"></p>
 <p>可是在我开发的项目，为什么不同目录下有两个相同的类确不会报错，能够正常链接通过。</p>
 <h4 id="问题二"><a href="#问题二" class="headerlink" title="问题二"></a>问题二</h4><p>在C语言中，如果某个函数没有被定义，那么在链接时候会报符号找不到的错误，OC中如果某个类的方法只写了声明，为什么可以链接通过呢？</p>
 <h4 id="问题三"><a href="#问题三" class="headerlink" title="问题三"></a>问题三</h4><p>如果在项目中引入的静态库里含有只有分类的文件，为什么会在运行时会报错:<strong>unrecognized selector sent to instance</strong>？</p>
@@ -370,7 +370,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1linux&gt; undefined reference to &apos;some_func&apos;</span><br></pre></td></tr></table></figure>
 
 <p>具体流程如下：</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2019/png/341672/1571301198062-586ae3a8-e2d9-4918-8f81-4c94bc6ebccc.png" alt="静态库的链接流程.png"></p>
+<p><img src="http://blog.unidropper.com/blog/link_flow_for_static_lib.png" alt="静态库的链接流程.png"></p>
 <h3 id="静态库链接注意点"><a href="#静态库链接注意点" class="headerlink" title="静态库链接注意点"></a>静态库链接注意点</h3><p>从上面链接器对静态库处理链接的描述中，我们会发现几个问题：</p>
 <h4 id="链接的顺序很重要"><a href="#链接的顺序很重要" class="headerlink" title="链接的顺序很重要"></a>链接的顺序很重要</h4><p>如果某个文件引用了静态库中的函数，然而将静态库的链接放在了引用文件的前面，将会出现链接失败。为什么？<strong>因为引用符号的文件出现在了静态库的后面，那么，在静态库链接的时候没有被放到U中，所以静态库中需要被加入链接的目标文件被直接舍弃了。</strong>例如在main.c中使用了sumlib.a中的sum方法，而在链接的时候使用:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1linux&gt;  gcc sumlib.a main.c</span><br></pre></td></tr></table></figure>
