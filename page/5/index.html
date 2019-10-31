@@ -276,163 +276,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/28/note-advance-swift-collection-protocols/" itemprop="url">Swift中Collection的Protocol</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-28T17:37:51+08:00">2017-07-28</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Sequences"><a href="#Sequences" class="headerlink" title="Sequences"></a>Sequences</h2><p><code>Sequence</code>协议位于系统架构的底层，其定义是<br>   <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>&#123;</span><br><span class="line">   </span><br><span class="line"> <span class="keyword">associatedtype</span> <span class="type">Iterator</span>: <span class="type">IteratorProtocol</span></span><br><span class="line"> <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span>-&gt; <span class="type">Iterator</span></span><br><span class="line">   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="Iterators"><a href="#Iterators" class="headerlink" title="Iterators"></a>Iterators</h2><pre><code><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">IteratorProtocol</span></span>&#123;</span><br><span class="line"><span class="keyword">associatedtype</span> <span class="type">Element</span></span><br><span class="line"><span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span>-&gt; <span class="type">Element?</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</span><br><span class="line">   <span class="keyword">let</span> string:<span class="type">String</span></span><br><span class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></span><br><span class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</span><br><span class="line">       <span class="keyword">self</span>.string = string</span><br><span class="line">       offset = string.startIndex</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></span><br><span class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String?</span> &#123;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</span><br><span class="line">       offset = string.index(after: offset)</span><br><span class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</span><br><span class="line">       <span class="keyword">return</span> offSetString;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</span><br><span class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</span><br><span class="line">    <span class="built_in">print</span>(content)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> string: <span class="type">String</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</span><br><span class="line">       </span><br><span class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</span><br><span class="line">       </span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"for in\(prefix)"</span>)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</span><br></pre></td></tr></table></figure></p>
-<p>如上所示，我么要想对一个Type实现for in 操作，需要两步：</p>
-<ol>
-<li>创建一个遍历器：让其遵守<code>IteratorProtocol</code>协议</li>
-<li>创建一个Type：让其遵守<code>Sequence</code>协议，在实现<code>makeIterator</code>方法时将第一步中的<code>Iterator</code>返回即可<br><code>Iterator</code>有两种不同的语义，<strong>值语义</strong>(将要遍历的实例拷贝)和<strong>引用语义</strong>（不拷贝所遍历的实例），比如</li>
-</ol>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">		<span class="keyword">let</span> sequ = <span class="built_in">stride</span>(from: <span class="number">0</span>, to: <span class="number">10</span>, by: <span class="number">1</span>)</span><br><span class="line">		<span class="keyword">var</span> i1 = sequ.makeIterator() <span class="comment">// StrideToIterator</span></span><br><span class="line">		i1.next() <span class="comment">//Optional(0)</span></span><br><span class="line">		i1.next() <span class="comment">//Optional(1)</span></span><br><span class="line">		</span><br><span class="line">		<span class="keyword">var</span> i2 = i1;</span><br><span class="line">		i1.next() <span class="comment">//Optional(2)</span></span><br><span class="line">		i1.next() <span class="comment">//Optional(3)</span></span><br><span class="line">		</span><br><span class="line">		i2.next() <span class="comment">//Optional(2)</span></span><br><span class="line">		i2.next() <span class="comment">//Optional(3)</span></span><br><span class="line">		```	</span><br><span class="line">这个<span class="type">StrideToIterator</span>是值语义，所以在赋值的时候会执行拷贝操作。</span><br><span class="line"><span class="type">AnyIterator</span>会将基础<span class="type">Iterator</span>用内部box对象封装，这个box对象时引用类型的，所以其是引用语义。比如:</span><br><span class="line">      ```<span class="type">Swift</span></span><br><span class="line">      <span class="keyword">var</span> i3 = <span class="type">AnyIterator</span>(i1)</span><br><span class="line">      <span class="keyword">var</span> i4 = i3   </span><br><span class="line">      i3.next() <span class="comment">// Optional(4)</span></span><br><span class="line">      i4.next() <span class="comment">// Optional(5)</span></span><br><span class="line">      <span class="keyword">let</span> fibsSequence2 = sequence(state:(<span class="number">0</span>, <span class="number">1</span>)) &#123; (state:<span class="keyword">inout</span> (<span class="type">Int</span>, <span class="type">Int</span>)) -&gt; <span class="type">Int?</span> <span class="keyword">in</span></span><br><span class="line">   </span><br><span class="line">    <span class="keyword">let</span> upcomingNumber = state.<span class="number">0</span></span><br><span class="line">    state = (state.<span class="number">1</span> , state.<span class="number">0</span> + state.<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> upcomingNumber</span><br><span class="line">    </span><br><span class="line">     &#125;</span><br><span class="line">     <span class="type">Array</span>(fibsSequence2.<span class="keyword">prefix</span>(<span class="number">10</span>))</span><br></pre></td></tr></table></figure>
-
-<p>  Sequence的闭包是懒执行的，只有到获取某个数值的时候才执行，比如</p>
-<pre><code>Array(fibsSequence2.prefix(10))</code></pre><p>   这才让构造方法<code>fibsSequence2.prefix(10)</code>产生作用，如果<code>Sequence</code>提前计算了其数值，因为其实无穷<code>Sequence</code>，所以当越界的时候其就会崩溃。</p>
-<p>  有些Sequence是不稳定的，也就是说每次的遍历，结果可能不一样，比如网络流，磁盘文件，UI事件流，以及其它类型的数据，它们都可以被建模，作为<code>Sequence</code>。这也就是为什么，<strong>取出第一个元素的属性只存在于Collection中</strong>，而不是在<code>Sequence</code>中，因为改这个<code>first</code>方法一定要是<code>nondestructive</code>的，也就是说取出第一个元素不应该对其输出结果产生影响，也就是说必须是稳定的。</p>
-<p>  怎样判断一个<code>Sequence</code>是否是稳定的？<br>  如果一个<code>Sequence</code>遵守<code>Collection</code>，那么它就是稳定的。<br>  反过来，就不成立了：如果一个<code>Sequence</code>是稳定的，那么它就是遵守<code>Collection</code>协议的。这时不成立的。比如：<code>StrideTo</code>和<code>StrideThrough</code>类型，就是稳定的，然而他们没有遵守<code>Collection</code>协议。</p>
-<h2 id="Sequences和Iterator之间的关系是怎样的？"><a href="#Sequences和Iterator之间的关系是怎样的？" class="headerlink" title="Sequences和Iterator之间的关系是怎样的？"></a>Sequences和Iterator之间的关系是怎样的？</h2><p>Sequences和Iterator那么相似，为什么不把他们合并成一个呢？在<code>destructively consumed sequence</code>中可以，因为他们可以共用一个Iterator，但是在<code>stable sequence</code>中是不行的，因为它们需要Iterator提供的隔离的遍历状态和遍历逻辑（这种遍历状态就是Iterator创建的）。<code>makeIterator</code>也就是为了创建这种遍历状态。</p>
-<h2 id="SubSequence"><a href="#SubSequence" class="headerlink" title="SubSequence"></a>SubSequence</h2><p>Sequence有另外的一个关联属性SubSequence</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>&#123;</span><br><span class="line"><span class="keyword">associatedtype</span> <span class="type">Iterator</span> : <span class="type">IteratorProtocol</span></span><br><span class="line"><span class="keyword">associatedtype</span> <span class="type">SubSequence</span> </span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>我们可以对其<code>SubSequence</code>做以限制，比如：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Sequence</span> <span class="title">where</span> <span class="title">Iterator</span>.<span class="title">Element</span>: <span class="title">Equatable</span>,</span></span><br><span class="line"><span class="class"><span class="title">SubSequence</span>: <span class="title">Sequence</span>,</span></span><br><span class="line"><span class="class"><span class="title">SubSequence</span>.<span class="title">Iterator</span>.<span class="title">Element</span> == <span class="title">Iterator</span>.<span class="title">Element</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">headMirrorsTrail</span><span class="params">(<span class="number">_</span> n:Int)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> head = <span class="keyword">self</span>.<span class="keyword">prefix</span>(n)</span><br><span class="line">    <span class="keyword">let</span> trail = <span class="keyword">self</span>.suffix(n).reversed()</span><br><span class="line">    <span class="keyword">return</span> head.elementsEqual(trail)</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> result = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">2</span>,<span class="number">1</span>].headMirrorsTrail(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="Collection-Protocol"><a href="#Collection-Protocol" class="headerlink" title="Collection Protocol"></a>Collection Protocol</h2><p>   如上文所示Collection都是稳定的<code>Sequence</code>，它可以稳定的被屡次遍历，并且没有破坏。并且其元素可以使用脚标的形式被访问。Colllection的<code>Index</code>通常是<code>integer</code>，存在数组中，并且是有限的。也就是说不像<code>Sequence</code>，<code>Collection</code>必须是有限的。这也就是为啥其有<code>count</code>属性。<br>不仅仅标准库中的<code>Array</code>,<code>Set</code>,<code>Dictionary</code>,<code>CountableRange</code>以及<code>UnsafeBufferProinter</code>等等遵守<code>Collection</code>协议，Foundation库中的<code>Data</code>和<code>IndexSet</code>也遵守<code>Collection</code>协议。  </p>
-<p>A Queue Implementation中对算法的解释不是很懂。</p>
-<p>如果一个Type要遵守<code>Collection</code>协议，那么它需要满足以下要求：</p>
-<ol>
-<li>提供startIndex属性</li>
-<li>提供endIndex属性</li>
-<li>提供一个subscript，它至少是readonly的，用来获取Type的Element</li>
-<li>index函数，来寻找Collection的Index</li>
-</ol>
-<p>由于Collection的协议的很多方法都有默认实现，所以我们在没有特殊处理的时候不需要再实现其他的方法，比如我们定义完Collection之后就可以使用<code>map</code>,<code>flatMap</code>,<code>filter</code>,<code>sorted</code>,<code>joined</code>等方法。<br>为了让我们定义的Collection使用字面量的形式来创建，我们需要实现<code>ExpressibleByArrayLiteral</code>协议，该协议只有一个方法：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">ExpressibleByArrayLiteral</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The type of the elements of an array literal.</span></span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">Element</span></span><br><span class="line">    <span class="comment">/// Creates an instance initialized with the given elements.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">init</span>(arrayLiteral elements: <span class="type">Self</span>.<span class="type">Element</span>...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>也就是在这个初始化方法里面调用自己的<code>Designated</code>初始化方法。</p>
-<p>注：<br>   只要是遵守<code>ExpressibleByArrayLiteral</code>的Type都可以使用如<br> <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> queue:<span class="type">FIFOQueue</span> = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br></pre></td></tr></table></figure></p>
-<p> 这样的方式进行创建，至于创建的类型需要根据声明的类型以及上下文来推断，也就是说在利用[1,2,3,4]这样的方式进行初始化的时候，系统会自动的调用协议中规定的初始化方法。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collections/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2036,6 +1879,181 @@ if ([NSThread isMainThread]) {\
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2016/06/07/thingking-in-track-using-runtime/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/06/07/thingking-in-track-using-runtime/" itemprop="url">RunTime应用实例--关于埋点的思考</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-06-07T11:35:00+08:00">2016-06-07</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>埋点是现在很多App中都需要用到的，这个问题可能每个人都能处理，但是怎样来减少埋点所带来的侵入性，怎样用更加简洁的方式来处理埋点问题，怎样减少误埋，如果上线了发现少埋了怎么办？下面是本文讨论的重点（<a href="https://github.com/MikeFighting/LogByRunTime" target="_blank" rel="noopener">本文Demo已上传GitHub，可以下载讨论</a>）:</p>
+<ul>
+<li>什么是埋点？埋点的作用是什么？</li>
+<li>常规的处理方式是怎样的？</li>
+<li>我们可以怎样优化？</li>
+<li>怎样使用RunTime对其进行优化？</li>
+<li>在实践中遇到了什么问题以及解决方案？</li>
+<li>最理想的埋点是什么样的？</li>
+<li>其中可能存在的问题是什么？</li>
+</ul>
+<p>接下来将对其一一做以说明:</p>
+<h2 id="什么是埋点？埋点的作用是什么？"><a href="#什么是埋点？埋点的作用是什么？" class="headerlink" title="什么是埋点？埋点的作用是什么？"></a>什么是埋点？埋点的作用是什么？</h2><p>其实埋点也叫日志上报，其实就是根据需求上报一系列关于用户行为的数据，比如：用户点击了哪个按钮，用户浏览了哪个网站，用户在某个页面停留了多久等数据。这些数据对于运营来说很有用，他们可以用来分析某个功能开发的是不是合理，是不是因为某个地方的不合理而到导致了转化率的下降，从而对我们的App进行相应的改进，我们来看下某个第三方平台提供的埋点实例。<br><img src="http://upload-images.jianshu.io/upload_images/1513759-01e20264d3596c3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="埋点统计字段定义"><br>上图中说明了，某个时间对应的事件ID,以及针对这个事件需要关联的字段。下面是后台系统对某个埋点所做的数据统计:<br><img src="http://upload-images.jianshu.io/upload_images/1513759-4630c1435e321dbe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="后台系统对埋点的数据分析"></p>
+<p>这样我们就可以详细的分析出用户对于App的反馈，从而及时的修改我们的产品。</p>
+<h2 id="常规的埋点的做法是怎样的？"><a href="#常规的埋点的做法是怎样的？" class="headerlink" title="常规的埋点的做法是怎样的？"></a>常规的埋点的做法是怎样的？</h2><p>其实很简单，我们就在相应的事件里面加入相关的代码，给服务器上报数据不就得了。如下所示:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个一个按钮的响应事件</span></span><br><span class="line">- (<span class="keyword">void</span>)someButtonAction:(<span class="built_in">UIButton</span> *)someButton&#123;</span><br><span class="line"><span class="comment">// 该按钮需要处理的业务</span></span><br><span class="line">[<span class="keyword">self</span> upDateSomthing]</span><br><span class="line"><span class="comment">// 开始埋点</span></span><br><span class="line"><span class="comment">// eid:事件id，sa:用户id, cI:当前时间</span></span><br><span class="line"><span class="built_in">NSDictionary</span> *upLoadDic = @&#123;<span class="string">@"eid"</span>:<span class="string">@"311"</span>,<span class="string">@"sa"</span>:<span class="string">@"706976487532177"</span>,<span class="string">@"cI"</span>:<span class="string">@"2016-6-4 12:11:34"</span>&#125;;</span><br><span class="line">[ZHUpLoadManager upLoadWithDic:upLoadDic];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样一个埋点问题就解决了，单同时却隐藏着很多问题:1.这样每点击一个一下按钮就请求一次网络会不会出现性能问题？2.如果这样频繁的数据上报会不会消耗更多的用户流量？3.这样的代码能经受住需求的变更吗？比如字段变了，或者你把<code>cI</code>看错了，应该是<code>cl</code>。4.这样的代码会不会造成难以测试？5.这样的频繁上报会不会增加服务器端的压力？6.代码整洁吗？……(<strong>程序员的一个好习惯是:这个代码能否经受住需求的变更。</strong>)</p>
+<h2 id="我们可以怎样优化？"><a href="#我们可以怎样优化？" class="headerlink" title="我们可以怎样优化？"></a>我们可以怎样优化？</h2><ol>
+<li>首先我们可以用一个类，来专门处理这些需要上报的埋点的字段，将这些字段作为常量,例如:</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// LogManager.h</span></span><br><span class="line"><span class="keyword">extern</span> <span class="built_in">NSString</span> * <span class="keyword">const</span> kLogEventKey;   <span class="comment">//事件id</span></span><br><span class="line"><span class="keyword">extern</span> <span class="built_in">NSString</span> * <span class="keyword">const</span> kLogUserIdKey;  <span class="comment">//用户id</span></span><br><span class="line"><span class="keyword">extern</span> <span class="built_in">NSString</span> * <span class="keyword">const</span> kLogOperationInterval;  <span class="comment">//操作时间</span></span><br><span class="line"><span class="comment">// LogManager.m</span></span><br><span class="line"><span class="built_in">NSString</span> * <span class="keyword">const</span> kLogEventKey   = <span class="string">@"co"</span>; <span class="comment">//事件id</span></span><br><span class="line"><span class="built_in">NSString</span> * <span class="keyword">const</span> kLogUserIdKey  = <span class="string">@"sa"</span>; <span class="comment">//用户id</span></span><br><span class="line"><span class="built_in">NSString</span> * <span class="keyword">const</span> kLogOperationInterval  = <span class="string">@"cq"</span>; <span class="comment">//操作时间</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>对于用户id，当前时间，用户手机型号，手机品牌，等等与用户所在页面无关的内容，可以用统一的一个类进行处理，将其作为这个类的一个属性，使用<code>getter</code>方法将其相应的数值返回即可(对于恒定不变的可以使用懒加载)。</li>
+<li>这样的数据传输策略是有问题的，每次点击都上报，可能一个面需要上报的地方很多，这就会造成很大的性能问题，我们可以<strong>先将需要上传的数据缓存起来，然后缓存够50条数据上报一次，或者每隔5分钟上报一次</strong>;</li>
+<li>为了节省流量我们可以，1）将数据压缩之后再上报,<a href="http://www.jianshu.com/p/7016ffdbe97d" target="_blank" rel="noopener">可以参考我的另一篇文章</a>；2）和服务端商量，用尽可能短的字段，如:<code>cityName = @&quot;北京&quot;;</code>变为<code>cn = @&quot;北京&quot;;</code>3)尽量不要上传的频率过高，如第三点。</li>
+<li>如何解决代码的整洁，易于测试的问题？请看下面。</li>
+</ol>
+<h2 id="怎样使用RunTime来进行优化？"><a href="#怎样使用RunTime来进行优化？" class="headerlink" title="怎样使用RunTime来进行优化？"></a>怎样使用RunTime来进行优化？</h2><p>我么能不能利用RunTime来给每一个Button的响应事件中添加一段代码，利用这段代码来进行埋点上报呢？或者进一步来说我们能不能给所有继承自UIControl的对象都添加这样一段代码呢？这样我们不是可以捕获所有的用户事件了吗？(其实答案是否定的，看第五条);这时我们可以利用Mehod Swizzle,或者叫<code>方法注入</code>,或者叫<code>hook</code>住了某个方法，听着挺玄乎，其实就是RunTime的一个API,这个API能够交换两个方法的实现。通过这个API,我们可以这样实现方法注入。如下图所示:<br><img src="http://upload-images.jianshu.io/upload_images/1513759-4e30c9b337c4c891.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="方法注入的实现过程"><br>那么我们点击按钮系统会不会给每个按钮都执行一个统一的方法？然后我们往这个方法中嵌入响应的代码片段就可以了。答案是肯定的。我们可以往</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)sendAction:(SEL)action to:(<span class="keyword">nullable</span> <span class="keyword">id</span>)target forEvent:(<span class="keyword">nullable</span> <span class="built_in">UIEvent</span> *)event;</span><br></pre></td></tr></table></figure>
+
+<p>这个方法里面嵌入相应的代码片段。我们可以这样:1.将互换方法实现的的这个方法放到一个工具类中，因为我们可能不止一处要用到这种方法。2.我们给UIControl添加一个Category,然后在里面调用这个工具类然后实现所插入的代码片段。这里我们既然可以得到<code>target</code>还有<code>action</code>,那么很多情况下我们就可以唯一确定这个埋点了，那么我们怎样从这么多的埋点中选出这个这个埋点呢？<strong>我们其实可以用字典和数组结合的方式将这些方法的target和方法的参数一一存起来，然后在嵌入的方法内部获取其对应的方法，以及其相应的，这个事先配置好的字典和数组的结合放在哪里比较合适呢？plist。</strong>下面就以最简单的形式展示这种思路:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 工具类</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ZHSwizzleTool</span> : <span class="title">NSObject</span></span></span><br><span class="line">+ (<span class="keyword">void</span>)zhSwizzleWithClass:(Class)processedClass originalSelector:(SEL)originSelector swizzleSelector:(SEL)swizzlSelector;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ZHSwizzleTool</span></span></span><br><span class="line"> +(<span class="keyword">void</span>)zhSwizzleWithClass:(Class)processedClass originalSelector:(SEL)originSelector swizzleSelector:(SEL)swizzlSelector&#123;</span><br><span class="line"></span><br><span class="line">    Method originMethod = class_getInstanceMethod(processedClass, originSelector);</span><br><span class="line">    Method swizzleMethod = class_getInstanceMethod(processedClass, swizzlSelector);</span><br><span class="line">    <span class="built_in">BOOL</span> didAddMethod = class_addMethod(processedClass, originSelector, method_getImplementation(swizzleMethod), method_getTypeEncoding(swizzleMethod));</span><br><span class="line">    <span class="keyword">if</span> (didAddMethod) &#123;</span><br><span class="line">    class_replaceMethod(processedClass, swizzlSelector, method_getImplementation(originMethod), method_getTypeEncoding(originMethod));</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        method_exchangeImplementations(originMethod, swizzleMethod);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 分类</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">UIControl</span> (<span class="title">ZHSwizzle</span>)</span></span><br><span class="line">+(<span class="keyword">void</span>)load&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</span><br><span class="line"><span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</span><br><span class="line"></span><br><span class="line">SEL originSEL = <span class="keyword">@selector</span>(sendAction:to:forEvent:);</span><br><span class="line">SEL swizzleSEL = <span class="keyword">@selector</span>(sendSwizzleAction:to:forEvent:);</span><br><span class="line"></span><br><span class="line">[ZHSwizzleTool zhSwizzleWithClass:[<span class="keyword">self</span> <span class="keyword">class</span>]originalSelector:originSEL swizzleSelector:swizzleSEL];</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line">&#125;</span><br><span class="line"> - (<span class="keyword">void</span>)sendSwizzleAction:(SEL)action to:(<span class="keyword">id</span>)target   forEvent:(<span class="built_in">UIEvent</span> *)event&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注意这里调用的是原来的系统方法</span></span><br><span class="line">[<span class="keyword">self</span> sendSwizzleAction:action to:target forEvent:event];</span><br><span class="line"></span><br><span class="line"><span class="built_in">NSString</span> *selectorName = <span class="built_in">NSStringFromSelector</span>(action);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个plist中存储的数据格式是这样的:@&#123;@"someViewController":@"selector0":@[para0,para1,para2],@"selector1":@[para0,para1]]&#125;;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">NSString</span> *pathString = [[<span class="built_in">NSBundle</span> mainBundle]pathForResource:<span class="string">@"ZHLogInfo"</span> ofType:<span class="string">@"plist"</span>];</span><br><span class="line"><span class="built_in">NSDictionary</span> *plistDic = [<span class="built_in">NSDictionary</span> dictionaryWithContentsOfFile:pathString];</span><br><span class="line"></span><br><span class="line"><span class="comment">//1. 获取Target的名字</span></span><br><span class="line"><span class="built_in">NSDictionary</span> *controllerDic = plistDic[<span class="built_in">NSStringFromClass</span>([target <span class="keyword">class</span>])];</span><br><span class="line"></span><br><span class="line"><span class="comment">//2. 获取这个方法对应的参数列表</span></span><br><span class="line"><span class="built_in">NSArray</span> *parameterArray = controllerDic[selectorName];</span><br><span class="line"><span class="comment">//3. 实例化数据中心</span></span><br><span class="line">ZHLogDataCenter *logCenter = [[ZHLogDataCenter alloc]init];</span><br><span class="line"><span class="built_in">NSMutableDictionary</span> *logInfoDic = [<span class="built_in">NSMutableDictionary</span> dictionary];</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="built_in">NSString</span> *parameter <span class="keyword">in</span> parameterArray) &#123;</span><br><span class="line"></span><br><span class="line"><span class="built_in">NSString</span> *getSelector = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@"</span>,parameter];</span><br><span class="line">SEL getSeletor = <span class="built_in">NSSelectorFromString</span>(getSelector);</span><br><span class="line"><span class="comment">//4. 从数据中心中获取相应的数据</span></span><br><span class="line"><span class="keyword">id</span> value =  [logCenter performSelector:getSeletor withObject:<span class="literal">nil</span>];</span><br><span class="line"><span class="comment">//5.获取成功则将其存入需要上传的字典</span></span><br><span class="line"><span class="keyword">if</span> (value)</span><br><span class="line">[logInfoDic setObject:value forKey:parameter];</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">   <span class="comment">//6.将这个字典存入埋点管理类，其会将其存入缓存并等待上传</span></span><br><span class="line">[ZHLogCenter zhLogWithInforDictionary:logInfoDic];</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p> 下面是这个代码中用到的Plist中的配置:<br><img src="http://upload-images.jianshu.io/upload_images/1513759-3c28e14477b58263.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="埋点相关字段的plist配置"></p>
+<h2 id="在实践中遇到了什么问题以及解决方案？"><a href="#在实践中遇到了什么问题以及解决方案？" class="headerlink" title="在实践中遇到了什么问题以及解决方案？"></a>在实践中遇到了什么问题以及解决方案？</h2><ol>
+<li>并不是所有的事件都是有继承自UIControl的控件来发出的，比如：手势，点击Cell。</li>
+<li>并不是所有的按钮点击了之后就立马需要埋点上传？可能在按钮的响应方法中经过了层层的<code>if(){  } else{  }</code>最后才需要埋点。</li>
+<li>和事件所在类无关的埋点数据可以同意从<code>ZHLogDataCenter</code>这个类中中取，那么如果这个数据是和所在类有关呢？</li>
+<li>对于代理方法该怎样处理？</li>
+<li>如果很多个按钮对应着一个事件该怎样处理？</li>
+<li>项目中事件的处理方法不尽相同，方法的参数个数不一样，并且方法的返回值也不一样，如何对他们进行统一的处理?</li>
+</ol>
+<p>下面我们来一一解决这些问题。</p>
+<p><strong>问题1</strong>：对于不是来自UIControl的子类发出的事件，我们一样是可以进行hooK，只不过方法有所不同。我们在UIControl的分类中写了一段嵌入的代码，确实hook住了系统UIButton的点击事件，是<strong>因为UIButton自身会调用UIControl的这个方法。但是对于点击事件，这个是我们自己写的一个方法，它的父类<code>UIViewController</code>中是没有的，所以在执行我们自己点击事件的方法时UIViewController分类中要嵌入的方法是不会被调用的，这时候怎么办，我们可以动态的给我们自己要hook的ViewController动态的添加一个方法，然后就可以hook了</strong>（这一点不太好理解）。具体的添加方法，可以参考本文的实例代码。</p>
+<p><strong>问题2</strong>：对于是否上传和具体的业务逻辑相关的情况，我们可以用方法所在类的一个属性值进行标记，这个属性写在<code>.m</code>文件中即可(KVC可以获取.m文件中的属性值。)，我们先执行要hook那个类的方法，然后根据<code>plist</code>中配置的相关标记进行相应的处理（这里的属性值其实也是不必要的，我么可以根据类名和方法名字符串的哈希生成唯一的key，然后利用runtime自动关联到这个类的<code>mf_condition</code>属性上，这个属性是一个字典其key就是刚才生成的，value就是运行完这个方法之后得到的值，然后这个值再跟plist中的配置做以比较）。</p>
+<p><strong>问题3</strong>：对于和事件所在类有紧密关联的埋点数据，比如某个页面对应的产品ID,比如某个页面点击了cell，之后这个cell对应的model的ID。这个时候我们可以参考方法2，添加一个属性，用一个属性值来存储这些这些需要上传的具体数据。</p>
+<p><strong>问题4</strong>：代理方法和手势的处理也是一样的，既然一个类实现了某个代理方法，那么其<code>[someInstance respondsToSelector:someSelector]</code>所返回的BOOL值应该是YES的，然后其它的就和手势的处理是一样的了。</p>
+<p><strong>问题5</strong>：对于很多按钮对应一个响应事件的情况，我们可以利用RunTime动态的给按钮添加一个属性，比如:buttonIdentifier,这样我们就可以在plist中进行相应的配置，以进行相应的埋点处理。</p>
+<p><strong>问题6</strong>：这个问题其实就是hook住所有的方法，然后给他们添加同一个代码段的问题，这时候我们可以使用<code>Aspects</code>这个第三方框架：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+ (<span class="keyword">id</span>&lt;AspectToken&gt;)aspect_hookSelector:(SEL)selector</span><br><span class="line">  withOptions:(AspectOptions)options</span><br><span class="line">   usingBlock:(<span class="keyword">id</span>)block</span><br><span class="line">error:(<span class="built_in">NSError</span> **)error &#123;</span><br><span class="line"><span class="keyword">return</span> aspect_add((<span class="keyword">id</span>)<span class="keyword">self</span>, selector, options, block, error);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用这个接口，因为在<code>UIViewController</code>的分类中调用这个接口的对象不一样，并且我们根据<code>plist</code>中的配置hook的selector不一样，然而最后执行的block却是一样的，这就很好的解决了问题。</p>
+<h2 id="最理想的埋点是什么样的？"><a href="#最理想的埋点是什么样的？" class="headerlink" title="最理想的埋点是什么样的？"></a>最理想的埋点是什么样的？</h2><p>最理想的埋点是动态的，就是PM给我们说需要哪些埋点，然后服务器给我们发一个类似与上文中提到的<code>plist</code>一样的文件，或者一个<code>json</code>,我们存到本地，如果这些埋点没有更新，我们就从本地中读取相应的文件，做相应的埋点，如果有更新，我们重新从服务器获取最新的需要埋的点，然后进行相应埋点。这样就解决了少埋，或者埋点不恰当，需要添加埋点的问题。</p>
+<h2 id="其中可能存在的问题是什么？"><a href="#其中可能存在的问题是什么？" class="headerlink" title="其中可能存在的问题是什么？"></a>其中可能存在的问题是什么？</h2><p>当然这里面也有其难以处理的问题，比如我们使用了一个第三方控件，这个第三方控件的事件回调不是用delegate实现的，而是用block实现的，并且这个埋点和具体的业务逻辑有关系，那么这种方法就难以处理了。 如果很多事件的逻辑处理放到了block中进行，那么也将造难以处理。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
@@ -2085,7 +2103,7 @@ if ([NSThread isMainThread]) {\
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">57</span>
+                    <span class="site-state-item-count">56</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>

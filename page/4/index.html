@@ -276,204 +276,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/11/vapor-prepare-data-base/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="击水湘江">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="击水湘江">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/11/vapor-prepare-data-base/" itemprop="url">Swift后端Vapor安装数据库</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-11T09:52:02+08:00">2017-08-11</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><img src="http://upload-images.jianshu.io/upload_images/1513759-b14c0ae08140a1d3.png" alt="MySQL"></p>
-<p>Vapor中使用<code>Fluent</code>作为数据库的驱动，它现在可支持的数据库类型有：MySQL，SQL lite，MongoDB，PostgreSQL。因为MySQL用得较多，我们先来学习它。</p>
-<h2 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h2><h3 id="安装MySQL-Provider"><a href="#安装MySQL-Provider" class="headerlink" title="安装MySQL-Provider"></a>安装<code>MySQL-Provider</code></h3><p>在<code>Package.swift</code>文件中加入</p>
-<pre><code>.Package(url: &quot;https://github.com/vapor/mysql-provider.git&quot;, majorVersion: 2)</code></pre><p>然后执行执行<code>vapor clean</code>和<code>rm -rf .build Package.pins</code>，最后执行<code>vapor update</code>和<code>vapor build</code>。<br>安装完MySql之后报错<code>mysql/mysql.h file not found</code>以及<code>Could not build Objective-C module CMySQL</code>，这时因为MySql数据库需要更新，执行下面的指令</p>
-<pre><code>brew update &amp;&amp; brew install mysql vapor/tap/cmysql pkg-config</code></pre><p>然后再执行<code>vapor xcode</code>就可以运行成功了。</p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="在Droplet中添加驱动"><a href="#在Droplet中添加驱动" class="headerlink" title="在Droplet中添加驱动"></a>在Droplet中添加驱动</h3><p>我们要往<code>Config</code>对象中添加相应的<code>Provider</code>，如下所示</p>
-<pre><code class="Swift"><span class="keyword">import</span> MySQLProvider
-<span class="keyword">let</span> config = <span class="keyword">try</span> <span class="type">Config</span>()
-<span class="keyword">try</span> config.addProvider(<span class="type">MySQLProvider</span>.<span class="type">Provider</span>.<span class="keyword">self</span>)
-<span class="keyword">let</span> drop = <span class="keyword">try</span> <span class="type">Droplet</span>(config)</code></pre>
-<h3 id="配置Fluent"><a href="#配置Fluent" class="headerlink" title="配置Fluent"></a>配置Fluent</h3><p>在<code>fluent.json</code>文件中加入如下的配置</p>
-<pre><code>{
-    &quot;//&quot;: &quot;The underlying database technology to use.&quot;,
-    &quot;//&quot;: &quot;memory: SQLite in-memory DB.&quot;,
-    &quot;//&quot;: &quot;sqlite: Persisted SQLite DB (configure with sqlite.json)&quot;,
-    &quot;//&quot;: &quot;Other drivers are available through Vapor providers&quot;,
-    &quot;//&quot;: &quot;https://github.com/search?q=topic:vapor-provider+topic:database&quot;,
-    &quot;driver&quot;: &quot;mysql&quot;,
-}</code></pre><h3 id="配置MySQL"><a href="#配置MySQL" class="headerlink" title="配置MySQL"></a>配置MySQL</h3><p>在Config文件夹下面新建文件<code>mysql.json</code>，并添加如下内容</p>
-<pre><code>{
-    &quot;hostname&quot;: &quot;localhost&quot;,
-    &quot;user&quot;: &quot;root&quot;,
-    &quot;password&quot;: &quot;yourPassword&quot;,
-    &quot;database&quot;: &quot;yourDatabase&quot;
-    &quot;poort&quot;: &quot;3306&quot;
-}      </code></pre><p>也可以将证书作为url传入MySQL。</p>
-<pre><code>{
-&quot;url&quot;: &quot;http://root:password@172.0.0.1/hello&quot;
-}</code></pre><h3 id="多份读取（Read-Replicas）"><a href="#多份读取（Read-Replicas）" class="headerlink" title="多份读取（Read Replicas）"></a>多份读取（Read Replicas）</h3><p>多份读取可以通过配置hostname或者是<code>readReplicas</code>接口数组来进行配置。在mysql.josn中加入：</p>
-<pre><code>{
-   {
-    &quot;master&quot;: &quot;master.mysql.foo.com&quot;,
-    &quot;readReplicas&quot;: [&quot;read01.mysql.foo.com&quot;, &quot;read02.mysql.foo.com&quot;],
-    &quot;user&quot;: &quot;root&quot;,
-    &quot;password&quot;: &quot;password&quot;,
-    &quot;database&quot;: &quot;hello&quot;
-   }
-}</code></pre><p><em>Tip:也可以将readReplicas用字符串表示，多个字符串用逗号分隔开。</em></p>
-<h3 id="驱动"><a href="#驱动" class="headerlink" title="驱动"></a>驱动</h3><p>你可以在Routes中得到<code>MySQL Driver</code>（前提是在你自己的MySQL数据库中创建了<code>your_table</code>)表。</p>
-<pre><code class="Swift"><span class="keyword">import</span> MySQLProvider
-<span class="keyword">get</span>(<span class="string">"mysql"</span>) { req <span class="keyword">in</span>
-
-           <span class="keyword">let</span> mysqlDriver = <span class="keyword">try</span> <span class="keyword">self</span>.mysql()
-           <span class="keyword">let</span> user = <span class="keyword">try</span> mysqlDriver.raw(<span class="string">"SELECT * FROM your_table"</span>)
-           <span class="keyword">let</span> reusltJon = <span class="keyword">try</span> <span class="type">JSON</span>(node: user)
-           <span class="keyword">return</span> reusltJon
-
-       }</code></pre>
-<p>然后在浏览器中输入<code>http://localhost:8080/mysql</code>，如果看到输出了相应的JSON传就证明安装成功了。</p>
-<h3 id="配置缓存"><a href="#配置缓存" class="headerlink" title="配置缓存"></a>配置缓存</h3><p>在<code>Config/droplet.json</code>里面可以配置<code>fluent</code>缓存，这里<code>fluent</code>缓存走的是<code>mysql</code>：</p>
-<pre><code class="Swift">{
- <span class="string">"driver"</span>: <span class="string">"fluent"</span>
-}</code></pre>
-<p>下次，当启动Droplet的时候，如果出现：</p>
-<pre><code class="bash">Database prepared</code></pre>
-<p>就说明安装成功了。</p>
-<h2 id="帮助"><a href="#帮助" class="headerlink" title="帮助"></a>帮助</h2><ol>
-<li>如果运行出现 </li>
-</ol>
-<pre><code class="bash">The current <span class="built_in">hash</span> key <span class="string">"0000000000000000"</span> is not secure.
-Update hash.key <span class="keyword">in</span> Config/crypto.json before using <span class="keyword">in</span> production.
-Use `openssl rand -base64 &lt;length&gt;` to generate a random string.
-The current cipher key <span class="string">"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="</span> is not secure.
-Update cipher.key <span class="keyword">in</span> Config/crypto.json before using <span class="keyword">in</span> production.
-Use `openssl rand -base64 32` to generate a random string.</code></pre>
-<p>这说明我们需要运行<code>openssl rand -base64 &lt;length&gt;</code>，以及<code>openssl rand -base64 32</code>来产生新的hash key和cipher key，并且将原来的数值替换掉。</p>
-<ol start="2">
-<li>MySql更改密码：</li>
-</ol>
-<p>请参考：</p>
-<ol>
-<li><a href="https://stackoverflow.com/questions/2101694/mysql-how-to-set-root-password-to-null" target="_blank" rel="noopener">https://stackoverflow.com/questions/2101694/mysql-how-to-set-root-password-to-null</a> </li>
-<li><a href="https://stackoverflow.com/questions/30692812/mysql-user-db-does-not-have-password-columns-installing-mysql-on-osx" target="_blank" rel="noopener">https://stackoverflow.com/questions/30692812/mysql-user-db-does-not-have-password-columns-installing-mysql-on-osx</a></li>
-<li><a href="https://sraji.wordpress.com/2011/08/10/how-to-reset-mysql-root-password/" target="_blank" rel="noopener">https://sraji.wordpress.com/2011/08/10/how-to-reset-mysql-root-password/</a></li>
-<li><a href="https://stackoverflow.com/questions/9624774/after-mysql-install-via-brew-i-get-the-error-the-server-quit-without-updating" target="_blank" rel="noopener">https://stackoverflow.com/questions/9624774/after-mysql-install-via-brew-i-get-the-error-the-server-quit-without-updating</a></li>
-<li><a href="https://stackoverflow.com/questions/9624774/after-mysql-install-via-brew-i-get-the-error-the-server-quit-without-updating/9704993#comment16367803_9704993" target="_blank" rel="noopener">https://stackoverflow.com/questions/9624774/after-mysql-install-via-brew-i-get-the-error-the-server-quit-without-updating/9704993#comment16367803_9704993</a></li>
-</ol>
-<p>需要注意的是：<em><code>sudo mysqld_safe --skip-grant-tables</code>执行完之后，要重新打开一个终端执行</em>。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/08/10/swift-server-vapor-validation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2453,6 +2255,163 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="击水湘江">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="击水湘江">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/28/note-advance-swift-collection-protocols/" itemprop="url">Swift中Collection的Protocol</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-28T17:37:51+08:00">2017-07-28</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Sequences"><a href="#Sequences" class="headerlink" title="Sequences"></a>Sequences</h2><p><code>Sequence</code>协议位于系统架构的底层，其定义是<br>   <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>&#123;</span><br><span class="line">   </span><br><span class="line"> <span class="keyword">associatedtype</span> <span class="type">Iterator</span>: <span class="type">IteratorProtocol</span></span><br><span class="line"> <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span>-&gt; <span class="type">Iterator</span></span><br><span class="line">   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Iterators"><a href="#Iterators" class="headerlink" title="Iterators"></a>Iterators</h2><pre><code><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">IteratorProtocol</span></span>&#123;</span><br><span class="line"><span class="keyword">associatedtype</span> <span class="type">Element</span></span><br><span class="line"><span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span>-&gt; <span class="type">Element?</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></code></pre><p>实现了IteratorProtocol协议就可以遍历实例中的数据了，比如：<br>    <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PrefixIterator</span>:<span class="title">IteratorProtocol</span> </span>&#123;</span><br><span class="line">   <span class="keyword">let</span> string:<span class="type">String</span></span><br><span class="line">   <span class="keyword">var</span> offset:<span class="type">String</span>.<span class="type">Index</span></span><br><span class="line">   <span class="keyword">init</span>(string:<span class="type">String</span>) &#123;</span><br><span class="line">       <span class="keyword">self</span>.string = string</span><br><span class="line">       offset = string.startIndex</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">typealias</span> <span class="type">Element</span> =  <span class="type">String</span> <span class="comment">// 这里可以省略，因为编译器可以从返回值的类型中推断出来</span></span><br><span class="line">   <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">next</span><span class="params">()</span></span> -&gt; <span class="type">String?</span> &#123;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">guard</span> offset &lt; string.endIndex <span class="keyword">else</span> &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</span><br><span class="line">       offset = string.index(after: offset)</span><br><span class="line">       <span class="keyword">let</span> offSetString = string[string.startIndex..&lt;offset]</span><br><span class="line">       <span class="keyword">return</span> offSetString;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">var</span> prefixIterator = <span class="type">PrefixIterator</span>.<span class="keyword">init</span>(string: <span class="string">"Hello"</span>)</span><br><span class="line"> <span class="keyword">while</span> <span class="keyword">let</span> content = prefixIterator.next() &#123;</span><br><span class="line">    <span class="built_in">print</span>(content)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PrefixSequence</span>:<span class="title">Sequence</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> string: <span class="type">String</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">makeIterator</span><span class="params">()</span></span> -&gt; <span class="type">PrefixIterator</span> &#123;</span><br><span class="line">       </span><br><span class="line">       <span class="keyword">return</span> <span class="type">PrefixIterator</span>(string:string)</span><br><span class="line">       </span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="keyword">for</span> <span class="keyword">prefix</span> <span class="keyword">in</span> <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>)&#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"for in\(prefix)"</span>)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="type">PrefixSequence</span>(string:<span class="string">"Hello"</span>).<span class="built_in">map</span> &#123;$<span class="number">0</span>.uppercased()&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如上所示，我么要想对一个Type实现for in 操作，需要两步：</p>
+<ol>
+<li>创建一个遍历器：让其遵守<code>IteratorProtocol</code>协议</li>
+<li>创建一个Type：让其遵守<code>Sequence</code>协议，在实现<code>makeIterator</code>方法时将第一步中的<code>Iterator</code>返回即可<br><code>Iterator</code>有两种不同的语义，<strong>值语义</strong>(将要遍历的实例拷贝)和<strong>引用语义</strong>（不拷贝所遍历的实例），比如</li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">		<span class="keyword">let</span> sequ = <span class="built_in">stride</span>(from: <span class="number">0</span>, to: <span class="number">10</span>, by: <span class="number">1</span>)</span><br><span class="line">		<span class="keyword">var</span> i1 = sequ.makeIterator() <span class="comment">// StrideToIterator</span></span><br><span class="line">		i1.next() <span class="comment">//Optional(0)</span></span><br><span class="line">		i1.next() <span class="comment">//Optional(1)</span></span><br><span class="line">		</span><br><span class="line">		<span class="keyword">var</span> i2 = i1;</span><br><span class="line">		i1.next() <span class="comment">//Optional(2)</span></span><br><span class="line">		i1.next() <span class="comment">//Optional(3)</span></span><br><span class="line">		</span><br><span class="line">		i2.next() <span class="comment">//Optional(2)</span></span><br><span class="line">		i2.next() <span class="comment">//Optional(3)</span></span><br><span class="line">		```	</span><br><span class="line">这个<span class="type">StrideToIterator</span>是值语义，所以在赋值的时候会执行拷贝操作。</span><br><span class="line"><span class="type">AnyIterator</span>会将基础<span class="type">Iterator</span>用内部box对象封装，这个box对象时引用类型的，所以其是引用语义。比如:</span><br><span class="line">      ```<span class="type">Swift</span></span><br><span class="line">      <span class="keyword">var</span> i3 = <span class="type">AnyIterator</span>(i1)</span><br><span class="line">      <span class="keyword">var</span> i4 = i3   </span><br><span class="line">      i3.next() <span class="comment">// Optional(4)</span></span><br><span class="line">      i4.next() <span class="comment">// Optional(5)</span></span><br><span class="line">      <span class="keyword">let</span> fibsSequence2 = sequence(state:(<span class="number">0</span>, <span class="number">1</span>)) &#123; (state:<span class="keyword">inout</span> (<span class="type">Int</span>, <span class="type">Int</span>)) -&gt; <span class="type">Int?</span> <span class="keyword">in</span></span><br><span class="line">   </span><br><span class="line">    <span class="keyword">let</span> upcomingNumber = state.<span class="number">0</span></span><br><span class="line">    state = (state.<span class="number">1</span> , state.<span class="number">0</span> + state.<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> upcomingNumber</span><br><span class="line">    </span><br><span class="line">     &#125;</span><br><span class="line">     <span class="type">Array</span>(fibsSequence2.<span class="keyword">prefix</span>(<span class="number">10</span>))</span><br></pre></td></tr></table></figure>
+
+<p>  Sequence的闭包是懒执行的，只有到获取某个数值的时候才执行，比如</p>
+<pre><code>Array(fibsSequence2.prefix(10))</code></pre><p>   这才让构造方法<code>fibsSequence2.prefix(10)</code>产生作用，如果<code>Sequence</code>提前计算了其数值，因为其实无穷<code>Sequence</code>，所以当越界的时候其就会崩溃。</p>
+<p>  有些Sequence是不稳定的，也就是说每次的遍历，结果可能不一样，比如网络流，磁盘文件，UI事件流，以及其它类型的数据，它们都可以被建模，作为<code>Sequence</code>。这也就是为什么，<strong>取出第一个元素的属性只存在于Collection中</strong>，而不是在<code>Sequence</code>中，因为改这个<code>first</code>方法一定要是<code>nondestructive</code>的，也就是说取出第一个元素不应该对其输出结果产生影响，也就是说必须是稳定的。</p>
+<p>  怎样判断一个<code>Sequence</code>是否是稳定的？<br>  如果一个<code>Sequence</code>遵守<code>Collection</code>，那么它就是稳定的。<br>  反过来，就不成立了：如果一个<code>Sequence</code>是稳定的，那么它就是遵守<code>Collection</code>协议的。这时不成立的。比如：<code>StrideTo</code>和<code>StrideThrough</code>类型，就是稳定的，然而他们没有遵守<code>Collection</code>协议。</p>
+<h2 id="Sequences和Iterator之间的关系是怎样的？"><a href="#Sequences和Iterator之间的关系是怎样的？" class="headerlink" title="Sequences和Iterator之间的关系是怎样的？"></a>Sequences和Iterator之间的关系是怎样的？</h2><p>Sequences和Iterator那么相似，为什么不把他们合并成一个呢？在<code>destructively consumed sequence</code>中可以，因为他们可以共用一个Iterator，但是在<code>stable sequence</code>中是不行的，因为它们需要Iterator提供的隔离的遍历状态和遍历逻辑（这种遍历状态就是Iterator创建的）。<code>makeIterator</code>也就是为了创建这种遍历状态。</p>
+<h2 id="SubSequence"><a href="#SubSequence" class="headerlink" title="SubSequence"></a>SubSequence</h2><p>Sequence有另外的一个关联属性SubSequence</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Sequence</span> </span>&#123;</span><br><span class="line"><span class="keyword">associatedtype</span> <span class="type">Iterator</span> : <span class="type">IteratorProtocol</span></span><br><span class="line"><span class="keyword">associatedtype</span> <span class="type">SubSequence</span> </span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>我们可以对其<code>SubSequence</code>做以限制，比如：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Sequence</span> <span class="title">where</span> <span class="title">Iterator</span>.<span class="title">Element</span>: <span class="title">Equatable</span>,</span></span><br><span class="line"><span class="class"><span class="title">SubSequence</span>: <span class="title">Sequence</span>,</span></span><br><span class="line"><span class="class"><span class="title">SubSequence</span>.<span class="title">Iterator</span>.<span class="title">Element</span> == <span class="title">Iterator</span>.<span class="title">Element</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">headMirrorsTrail</span><span class="params">(<span class="number">_</span> n:Int)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> head = <span class="keyword">self</span>.<span class="keyword">prefix</span>(n)</span><br><span class="line">    <span class="keyword">let</span> trail = <span class="keyword">self</span>.suffix(n).reversed()</span><br><span class="line">    <span class="keyword">return</span> head.elementsEqual(trail)</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> result = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">2</span>,<span class="number">1</span>].headMirrorsTrail(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Collection-Protocol"><a href="#Collection-Protocol" class="headerlink" title="Collection Protocol"></a>Collection Protocol</h2><p>   如上文所示Collection都是稳定的<code>Sequence</code>，它可以稳定的被屡次遍历，并且没有破坏。并且其元素可以使用脚标的形式被访问。Colllection的<code>Index</code>通常是<code>integer</code>，存在数组中，并且是有限的。也就是说不像<code>Sequence</code>，<code>Collection</code>必须是有限的。这也就是为啥其有<code>count</code>属性。<br>不仅仅标准库中的<code>Array</code>,<code>Set</code>,<code>Dictionary</code>,<code>CountableRange</code>以及<code>UnsafeBufferProinter</code>等等遵守<code>Collection</code>协议，Foundation库中的<code>Data</code>和<code>IndexSet</code>也遵守<code>Collection</code>协议。  </p>
+<p>A Queue Implementation中对算法的解释不是很懂。</p>
+<p>如果一个Type要遵守<code>Collection</code>协议，那么它需要满足以下要求：</p>
+<ol>
+<li>提供startIndex属性</li>
+<li>提供endIndex属性</li>
+<li>提供一个subscript，它至少是readonly的，用来获取Type的Element</li>
+<li>index函数，来寻找Collection的Index</li>
+</ol>
+<p>由于Collection的协议的很多方法都有默认实现，所以我们在没有特殊处理的时候不需要再实现其他的方法，比如我们定义完Collection之后就可以使用<code>map</code>,<code>flatMap</code>,<code>filter</code>,<code>sorted</code>,<code>joined</code>等方法。<br>为了让我们定义的Collection使用字面量的形式来创建，我们需要实现<code>ExpressibleByArrayLiteral</code>协议，该协议只有一个方法：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">ExpressibleByArrayLiteral</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The type of the elements of an array literal.</span></span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">Element</span></span><br><span class="line">    <span class="comment">/// Creates an instance initialized with the given elements.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">init</span>(arrayLiteral elements: <span class="type">Self</span>.<span class="type">Element</span>...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>也就是在这个初始化方法里面调用自己的<code>Designated</code>初始化方法。</p>
+<p>注：<br>   只要是遵守<code>ExpressibleByArrayLiteral</code>的Type都可以使用如<br> <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> queue:<span class="type">FIFOQueue</span> = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br></pre></td></tr></table></figure></p>
+<p> 这样的方式进行创建，至于创建的类型需要根据声明的类型以及上下文来推断，也就是说在利用[1,2,3,4]这样的方式进行初始化的时候，系统会自动的调用协议中规定的初始化方法。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
@@ -2502,7 +2461,7 @@ path.addLineToPoint(<span class="type">CGPoint</span>(x: <span class="number">10
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">57</span>
+                    <span class="site-state-item-count">56</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
